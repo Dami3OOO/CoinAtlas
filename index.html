@@ -4036,7 +4036,7 @@
 
   /* ---------- BTC|ETH RATIO ---------- */
   var ratioVisible = false, ratioBtn = document.getElementById("ratio-btn"), ratioBox = document.getElementById("ratio-container");
-  var RT = { data: null, med: null, at: 0, loading: false, failed: false, view: "YEAR", year: new Date().getFullYear(), fair: "365", hist: "all", cmp: false, cmpYear: null, cur: {}, expandedYear: 0, expandedMo: null, yfv: {} };
+  var RT = { data: null, med: null, at: 0, loading: false, failed: false, view: "YEAR", year: new Date().getFullYear(), fair: "365", hist: "all", cmp: false, cmpYear: null, cur: {}, expandedYear: 0, expandedMo: null, yfv: {}, dom: {} };
   var RT_TIPS_KEY = "top200-rt-tips", rtTipsText = "", rtTipsVisible = false, rtCalcSwapped = false;
   try { rtTipsText = localStorage.getItem(RT_TIPS_KEY) || ""; } catch(e) {}
   var RT_YH_KEY = "top200-rt-yh", rtYH = true; try { rtYH = localStorage.getItem(RT_YH_KEY) !== "0"; } catch (e) {}
@@ -4064,10 +4064,15 @@
     for (i = 0; i < a.length; i++) { acc += a[i].w; if (acc >= tot / 2) return a[i].v; }
     return a[a.length - 1].v;
   }
+  function rtDomHist() { /* real daily dominance, recorded by the repository's scheduled job. Read straight from the repository so a downloaded copy of the page gets it too; empty when unreachable */
+    var f = "data/dominance.json";
+    return getJson("https://raw.githubusercontent.com/Dami3OOO/CoinAtlas/main/" + f, 8000).catch(function () { return getJson(f, 8000); }).catch(function () { return {}; });
+  }
   function rtLoad() {
     if (RT.loading || (RT.data && Date.now() - RT.at < 30 * 60 * 1000)) return;
     RT.loading = true; RT.failed = false;
-    Promise.all([rtKlines("BTCUSDT"), rtKlines("ETHUSDT")]).then(function (r) {
+    Promise.all([rtKlines("BTCUSDT"), rtKlines("ETHUSDT"), rtDomHist()]).then(function (r) {
+      RT.dom = {}; Object.keys(r[2] || {}).forEach(function (k) { var t = Date.parse(k + "T00:00:00Z"), x = r[2][k]; if (t && x && x[0] > 0 && x[1] > 0) RT.dom[t] = x; });
       var b = r[0], e = r[1], ts = Object.keys(b).map(Number).filter(function (t) { return e[t] > 0 && b[t] > 0; }).sort(function (x, y) { return x - y; });
       if (ts.length < 30) throw new Error("few");
       RT.data = { t: ts, b: ts.map(function (t) { return b[t]; }), e: ts.map(function (t) { return e[t]; }), r: ts.map(function (t) { return b[t] / e[t]; }) };
@@ -4150,6 +4155,7 @@
   function rtStdLive() { var r = RT.data.r, n = r.length; return median(r.slice(Math.max(0, n - 365), n)); } /* the one fixed rule: judge against the median of the 365 days before */
   function rtLiveHtml() { var lv = rtLive(); return lv ? '<div class="rt-big">1 BTC <small>=</small> ' + lv.r.toFixed(2) + ' ETH</div>' : '<div class="rt-sub">Waiting for prices…</div>'; }
   function rtDomAt(i, r) { /* modelled share of the whole market [BTC %, ETH %], inferred from where the ratio sits against its all-time fair value */
+    var rec = RT.dom[RT.data.t[i]]; if (rec) return [rec[0], rec[1], 1]; /* a recorded day beats the estimate */
     r = r || RT.data.r[i];
     var b = Math.max(0.37, Math.min(0.70, Math.tanh((r / (RT.med || 24) - 1) * 2) * 0.14 + 0.52)) * 100;
     return [b, b * 120.4e6 / 19.8e6 / r];
@@ -4351,8 +4357,8 @@
     var d = RT.data, W = 528, H = v.mo ? 130 : 180, dom = [], dI, a;
     if (v.i1 - v.i0 < 2) return "";
     var now = rtDomLive();
-    for (dI = v.i0; dI < v.i1; dI++) { a = rtDomAt(dI); dom.push([d.t[dI], a[0], a[1], dI]); }
-    if (v.i1 === d.t.length && now) { dom[dom.length - 1][1] = now[0]; dom[dom.length - 1][2] = now[1]; }
+    for (dI = v.i0; dI < v.i1; dI++) { a = rtDomAt(dI); dom.push([d.t[dI], a[0], a[1], dI, a[2]]); }
+    if (v.i1 === d.t.length && now) { dom[dom.length - 1][1] = now[0]; dom[dom.length - 1][2] = now[1]; dom[dom.length - 1][4] = 1; }
     var allVals = [], addV = function (p) { allVals.push(p[1], p[2]); if (rtDomAlts) allVals.push(100 - p[1] - p[2]); };
     dom.forEach(addV);
     if (v.yv) for (dI = v.yv.i0; dI < v.yv.i1; dI++) { a = rtDomAt(dI); addV([0, a[0], a[1]]); } /* a month is drawn on its year's scale */
@@ -4371,7 +4377,8 @@
     var legHtml = '<div class="rt-dom-legend"><span style="color:' + BTC_C + '"><i style="background:' + BTC_C + '"></i>BTC ' + lg[1].toFixed(1) + '%</span><span style="color:' + ETH_C + '"><i style="background:' + ETH_C + '"></i>ETH ' + lg[2].toFixed(1) + '%</span>' + (rtDomAlts ? '<span style="color:' + GREY_C + '"><i style="background:' + GREY_C + '"></i>ALTS ' + (100 - lg[1] - lg[2]).toFixed(1) + '%</span>' : '') + '</div>';
     RT.cur[rtKey(v, "dom")] = { v: v, S: dom, tip: function (p) {
       var j = p[3] - 90, o = j >= 0 ? rtDomAt(j) : null, ago = function (k) { return o ? ' <small>[90 Days ago · ' + rtDM(d.t[j]) + ': ' + o[k].toFixed(1) + '%]</small>' : ''; };
-      return '<span class="date">' + rtDate(p[0]) + '</span><span class="val" style="color:' + BTC_C + '">BTC ' + p[1].toFixed(1) + '%' + ago(0) + '</span><span class="val" style="color:' + ETH_C + '">ETH ' + p[2].toFixed(1) + '%' + ago(1) + '</span><span style="color:' + GREY_C + '">ALTS ' + (100 - p[1] - p[2]).toFixed(1) + '%</span>';
+      return '<span class="date">' + rtDate(p[0]) + '</span><span class="val" style="color:' + BTC_C + '">BTC ' + p[1].toFixed(1) + '%' + ago(0) + '</span><span class="val" style="color:' + ETH_C + '">ETH ' + p[2].toFixed(1) + '%' + ago(1) + '</span><span style="color:' + GREY_C + '">ALTS ' + (100 - p[1] - p[2]).toFixed(1) + '%</span>' +
+        '<span class="rt-fm-avg">' + (p[4] ? (!o ? "Real data" : o[2] ? "Real data on both days" : "Real data · 90 days ago is an estimate") : "Estimated from the Ratio") + '</span>';
     }};
     return rtWrap(v, "dom", W, H, s, [X(lp[0]) / W * 100, Y(lp[1]) / H * 100, BTC_C], '<div class="rt-ylbl" style="top:4px">' + YMAX.toFixed(0) + '%</div><div class="rt-ylbl" style="bottom:4px">' + YMIN.toFixed(0) + '%</div>') + legHtml + rtAxis(v);
   }
@@ -4514,7 +4521,8 @@
         "Compares the % gain of BTC and ETH over the last 90 days. The asset that gained more is in Season. A gap under 10 points is Neutral."]) +
       sec("Dominance Graph", [
         "The share of BTC and ETH in the total market cap. Hover any day to also see the value 90 days earlier.",
-        "Today's point is real: the market caps of the top 200 coins added together. The history before today is an estimate modelled from the Ratio, because no real dominance history is stored yet. Treat past Dominance as a rough guide, not as exact data."]) +
+        "Today's point is real: the market caps of the top 200 coins added together. Since November 2026 the site also records that value every day, and recorded days are used wherever they exist.",
+        "Days before the recording started are an estimate modelled from the Ratio. Treat those as a rough guide, not as exact data. The tooltip says for every day whether it is real or estimated. Once 90 recorded days exist, the Formula compares real with real."]) +
       sec("CoinAtlas Formula", [
         "Three steps, added up to a score between " + O("−8") + " and " + B("+8") + ". " + B("+ Points") + " lean BTC Overvalued, " + O("− Points") + " lean ETH Overvalued.",
         "<b>Step 1, Ratio:</b> each Fair Value Line gives 1 Point for Mild, 2 for Strong, 3 for Extreme. Both lines are added, so this step gives up to 6 Points.",

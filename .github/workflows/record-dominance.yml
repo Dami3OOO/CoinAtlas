@@ -1,0 +1,31 @@
+name: Record dominance
+
+# Twice a day, so one failed run does not lose the day. The later run overwrites the earlier one.
+on:
+  schedule:
+    - cron: "15 11,23 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: record-dominance
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scripts/record-dominance.mjs
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/dominance.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Record dominance $(date -u +%F)"
+          git pull --rebase
+          git push
