@@ -379,7 +379,11 @@
   .avg-tag.off { transform: none; border-style: dashed; }
   .badge-new { background: rgba(167, 139, 250, 0.12); color: #a78bfa; border: 1px solid rgba(167, 139, 250, 0.35); margin-left: auto; }
   body:not(.dev-mode) #snap-btn, body:not(.dev-mode) #snap-container, #snap-container[hidden] { display: none !important; }
-  #snap-container { margin-bottom: 20px; }
+  #snap-container, #sq-container { margin-bottom: 20px; } #sq-container[hidden] { display: none !important; }
+  .sq-count { display: flex; justify-content: center; gap: 14px; font-size: 12px; font-weight: 600; margin: -6px 0 12px; font-variant-numeric: tabular-nums; }
+  .sq-grid { display: grid; grid-template-columns: repeat(20, 1fr); gap: 2px; }
+  .sq { aspect-ratio: 1; border-radius: 3px; background: var(--line); display: grid; place-items: center; min-width: 0; }
+  .sq .logo { width: 64%; height: 64%; font-size: 8px; }
   .snap-note { margin: 2px 0 8px; line-height: 1.5; } .snap-sec { margin-top: 16px; }
   .snap-day { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; overflow: hidden; }
   .snap-head { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr auto; gap: 10px; align-items: baseline; width: 100%; padding: 10px 14px; background: none; border: 0; color: var(--fg); font: inherit; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer; font-variant-numeric: tabular-nums; }
@@ -422,8 +426,9 @@
     z-index: 1;
   }
   .roadmap-item:last-child::after { display: none; }
-  .roadmap-item:first-child::before, .roadmap-item:first-child:hover::before { background: var(--up); }
-  .roadmap-item:first-child::after { background: var(--up); }
+  .roadmap-item.done::before, .roadmap-item.done:hover::before { background: var(--up); }
+  .roadmap-item.done::after { background: var(--up); }
+  .roadmap-item-note { font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 6px; opacity: .85; }
   .roadmap-item.wip::before, .roadmap-item.wip:hover::before { background: #fb923c; }
   .roadmap-item.wip::after { background: #fb923c; }
 
@@ -841,6 +846,7 @@
       <button class="gear" type="button" id="fg-btn">Fear & Greed Index</button>
       <button class="gear" type="button" id="ratio-btn">BTC|ETH Ratio</button>
       <button class="gear" type="button" id="pf-btn">Portfolio Manager</button>
+      <button class="gear" type="button" id="sq-btn">Sentiment Squares</button>
       <button class="gear" type="button" id="roadmap-btn">Roadmap</button>
       <button class="gear" type="button" id="snap-btn">Snapshots</button>
       <button class="gear" type="button" id="manual-refresh" aria-label="Refresh prices" style="padding:0; width:36px;">
@@ -936,6 +942,7 @@
       </div>
       <div id="fg-chart-container"></div>
       <div id="ui-mode-note" class="pinned-card ui-note" hidden>UI Moving Mode is turned on, Press ESC to Turn it off</div>
+      <div id="sq-container" hidden></div>
       <div id="roadmap-container" hidden></div>
       <div id="snap-container" hidden></div>
       <div id="portfolio-container" hidden></div>
@@ -1079,7 +1086,14 @@
   document.querySelectorAll(".logo-btn").forEach(function (b) { b.addEventListener("click", function () { setLogo(parseInt(b.dataset.logo, 10)); }); });
   setLogo(currentLogo);
 
-  function iconChain(c) { if (c.image) return [c.image]; var s = encodeURIComponent(c.symbol.toLowerCase()); return ["https://assets.coincap.io/assets/icons/" + s + "@2x.png", "https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/" + s + ".png"]; }
+  function iconChain(c) { /* live logo first, then the PNG the daily snapshot job stored in the repository, then public icon sets */
+    var s = encodeURIComponent(c.symbol.toLowerCase()), S = String(c.symbol).toUpperCase(), ch = [];
+    if (c.image) ch.push(c.image);
+    if (/^[A-Z0-9]{1,15}$/.test(S)) ch.push("https://raw.githubusercontent.com/Dami3OOO/CoinAtlas/main/data/logos/" + S + ".png");
+    if (c.paprika_id) ch.push("https://static.coinpaprika.com/coin/" + encodeURIComponent(c.paprika_id) + "/logo.png");
+    ch.push("https://assets.coincap.io/assets/icons/" + s + "@2x.png", "https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/" + s + ".png");
+    return ch;
+  }
   window.logoFail = function (img) { var next = (img.dataset.alt || "").split("|").filter(Boolean); if (next.length) { img.dataset.alt = next.slice(1).join("|"); img.src = next[0]; return; } var s = document.createElement("span"); s.className = "logo ph"; s.textContent = img.dataset.l; img.replaceWith(s); };
   function logoHtml(c) { var letter = esc(c.symbol[0] || "?").toUpperCase(); var ch = iconChain(c); return '<img class="logo" src="' + esc(ch[0]) + '" data-alt="' + esc(ch.slice(1).join("|")) + '" data-l="' + letter + '" alt="" loading="lazy" onerror="logoFail(this)">'; }
 
@@ -2094,7 +2108,7 @@
   function updatePinnedColVisibility() {
     var col = document.getElementById("pinned-col");
     if (!col) return;
-    if (pinnedCoins.length > 0 || roadmapVisible || portfolioVisible || ratioVisible || uiNoteOn || (snapVisible && devActive)) col.classList.add("on");
+    if (pinnedCoins.length > 0 || roadmapVisible || portfolioVisible || ratioVisible || uiNoteOn || sqVisible || (snapVisible && devActive)) col.classList.add("on");
     else col.classList.remove("on");
   }
 
@@ -2657,20 +2671,49 @@
     renderSnaps();
   });
 
+  /* ---------- SENTIMENT SQUARES: 200 assets, 200 squares, coloured by today's change ---------- */
+  var sqVisible = false, sqKey = "", sqBtn = document.getElementById("sq-btn"), sqBox = document.getElementById("sq-container");
+  function sqPaint() { /* colours and counts only; the squares themselves are built once per list */
+    var up = 0, down = 0, flat = 0, wait = 0, cells = sqBox.querySelectorAll(".sq");
+    coins.slice(0, 200).forEach(function (c, i) {
+      var el = cells[i]; if (!el) return;
+      var stable = STABLECOINS.indexOf(String(c.symbol).toUpperCase()) > -1, d = dayOpenCache[c.symbol], pc = d ? changeOf(c) : 0;
+      if (stable) flat++; else if (!d) wait++; else if (pc > 0) up++; else if (pc < 0) down++; else flat++;
+      el.style.background = stable ? "var(--stable-blue)" : d ? (pc > 0 ? "var(--up)" : pc < 0 ? "var(--down)" : "") : "";
+      el.title = c.name + " · " + (stable ? "Stablecoin" : d ? (pc >= 0 ? "+" : "") + pc.toFixed(2) + "% today" : "loading…");
+    });
+    var n = sqBox.querySelector(".sq-count");
+    if (n) n.innerHTML = '<span style="color:var(--up)">' + up + ' up</span><span style="color:var(--down)">' + down + ' down</span><span style="color:var(--muted)">' + flat + ' flat or stable</span>' + (wait ? '<span style="color:var(--muted)">' + wait + ' loading</span>' : '');
+  }
+  function renderSquares() {
+    if (!sqVisible) { sqBox.hidden = true; sqBox.innerHTML = ""; sqKey = ""; updatePinnedColVisibility(); return; }
+    sqBox.hidden = false; updatePinnedColVisibility();
+    var list = coins.slice(0, 200), key = list.map(function (c) { return c.symbol; }).join(",");
+    if (key !== sqKey) {
+      sqKey = key;
+      sqBox.innerHTML = '<div class="pinned-card chart-container pf-card dev-target" data-dev-name="Sentiment Squares" data-dev-color="#34d399"><div class="pf-title">Sentiment Squares</div><div class="sq-count"></div><div class="sq-grid">' + list.map(function (c) { return '<div class="sq">' + logoHtml(c) + '</div>'; }).join("") + '</div></div>';
+      list.forEach(function (c) { if (dayOpenCache[c.symbol] === undefined && !c.__pendingMidnight) { c.__pendingMidnight = true; midnightQueue.push(c); } }); /* today's opening price for every coin, not only the rows on screen */
+      processMidnightQueue();
+    }
+    sqPaint();
+  }
+  sqBtn.addEventListener("click", function () { sqVisible = !sqVisible; sqBtn.classList.toggle("active", sqVisible); renderSquares(); });
+  setInterval(function () { if (sqVisible) renderSquares(); }, 3000);
+
   /* ---------- ROADMAP ---------- */
   var roadmapVisible = false;
   var roadmapBtn = document.getElementById("roadmap-btn");
   var ROADMAP_FEATURES = [
-    { title: "Customizable Locked Hoverchart Timeframes", desc: "Allows Users to choose the Timeframes inside the Locked Hovercharts [4H, 1D, 1W, 1M, 1Y, ALL] plus a Year Selector to jump to any single Year. 1Y always shows the current Calendar Year, January to December." },
-    { title: "Portfolio Manager", wip: true, desc: "Allows Users to enter their Wallet address to Immediately see their Portfolio value, or to build a Portfolio by hand. Assets in said Portfolio are then displayed in the Landing Area as a Locked Window.\nThe Manager is also going to look at the time transactions where made to automatically calculate your Avg. Cost for each Token and thus also the profit / drawdown at current prices.\nOrange = it exists, but it's not perfect yet." },
-    { title: "BTC|ETH Ratio", wip: true, desc: "The Gold / Silver Ratio idea in Crypto Terms: how many ETH does 1 BTC buy right now. Swap into the cheaper Asset, wait for the Ratio to swing back, swap again, and the Stack of BTC and ETH grows without adding a single Dollar.\nLive: Converter, own Ratio Chart [BTC divided by ETH, 90D / 1Y / Year Selector / ALL], a recency-weighted Median as Fair Value with Neutral, Mild, Strong and Extreme Zones, and a first Season Readout.\nOrange = it exists, but it is not perfect yet." },
-    { title: "BTC & ETH Dominance", wip: true, desc: "Market Cap Share of BTC, ETH and all other Coins [Altcoins = everything except BTC and ETH] in the Top 200. Each Asset is compared against its own Average: higher than usual ETH Dominance means lower than usual BTC Dominance. The third Signal for the Ratio.\nOrange = it exists, but it is not perfect yet." },
-    { title: "Bitcoin Season & Ethereum Season", wip: true, desc: "Compares the % Gain of BTC and ETH against each other over 30D, 90D or All Time. The bigger Gainer is in Season, a small Gap is Neutral. Already shown inside the BTC|ETH Ratio, a dedicated Chart is next.\nOrange = it exists, but it is not perfect yet." },
-    { title: "Season x Fear & Greed", desc: "Optional Toggle that overlays the Season and Dominance Data on the Fear & Greed Monthly Averages, to show which Asset dominated during Greed and Extreme Greed Phases [e.g. every Bridge Year]. Kept separate from the main Index, but hand in hand with it." },
-    { title: "Accounts", desc: "To Allow Users to save their Settings, Customized Lists, Portfolios and use future features, Personal Accounts have to be introduced. Because i dont believe in Google or Phone Number Accounts, and prioritize Privacy, we're going to be taking a different Approach. But more on that Soon." },
-    { title: "Forums", desc: "Allows Users to communicate via Forums we Provide. Certain Users might also be allowed to create their Own Forums with their own features. This is the main Usecase for Accounts." },
-    { title: "Price Alerts & Watchlists", desc: "Allows Users to Set Alerts that are going to immediately announce when a Token Reaches a Certain, customizable price threshold. Watchlists are going to be integrated alongside that. users will be able to create and share their own Lists." },
-    { title: "CoinAtlas Sentiment Squares", desc: "200 Assets, 200 Squares. Every Square is one Asset — green means it's up, red means it's down. No numbers, no noise. One glance and you know exactly where the Market's Head is at." }
+    { title: "Customizable Locked Hoverchart Timeframes", st: "done", notes: ["Complete. 4H, 1D, 1W, 1M, 1Y, ALL and the Year Selector all exist. 90D and 365D were added on top."], desc: "Allows Users to choose the Timeframes inside the Locked Hovercharts [4H, 1D, 1W, 1M, 1Y, ALL] plus a Year Selector to jump to any single Year. 1Y always shows the current Calendar Year, January to December." },
+    { title: "Portfolio Manager", st: "wip", notes: ["Works: load a Wallet address or build a Portfolio by hand, shown as a Locked Window.", "Open: the Avg. Cost is still typed in by hand. Reading it from the time of each transaction is not built yet."], desc: "Allows Users to enter their Wallet address to Immediately see their Portfolio value, or to build a Portfolio by hand. Assets in said Portfolio are then displayed in the Landing Area as a Locked Window.\nThe Manager is also going to look at the time transactions where made to automatically calculate your Avg. Cost for each Token and thus also the profit / drawdown at current prices.\nOrange = it exists, but it's not perfect yet." },
+    { title: "BTC|ETH Ratio", st: "wip", notes: ["Grew far past the original scope: Converter with Swap, Ratio, Season and Dominance Graphs, Year and All Time Fair Value Lines, Valuation, Past Years with monthly Fear & Greed, the CoinAtlas Formula with Uncertainty Marks, and the Usage Tips.", "Open: the reading sentences for the Formula outcome still have to be written, and the I key in Dev Mode still shows the old readings."], desc: "The Gold / Silver Ratio idea in Crypto Terms: how many ETH does 1 BTC buy right now. Swap into the cheaper Asset, wait for the Ratio to swing back, swap again, and the Stack of BTC and ETH grows without adding a single Dollar.\nLive: Converter, own Ratio Chart [BTC divided by ETH, 90D / 1Y / Year Selector / ALL], a recency-weighted Median as Fair Value with Neutral, Mild, Strong and Extreme Zones, and a first Season Readout.\nOrange = it exists, but it is not perfect yet." },
+    { title: "BTC & ETH Dominance", st: "wip", notes: ["Works: Dominance Graph, today's value from the real Top 200, and a daily Snapshot that records real Dominance since November 2026.", "Open: history before the recording is an estimate from the Ratio, so the Formula compares real with real only after 90 recorded days. The comparison against each Asset's own Average is not built, the Formula uses the 90 day change instead."], desc: "Market Cap Share of BTC, ETH and all other Coins [Altcoins = everything except BTC and ETH] in the Top 200. Each Asset is compared against its own Average: higher than usual ETH Dominance means lower than usual BTC Dominance. The third Signal for the Ratio.\nOrange = it exists, but it is not perfect yet." },
+    { title: "Bitcoin Season & Ethereum Season", st: "wip", notes: ["Works: the dedicated Season Graph exists and feeds the CoinAtlas Formula.", "Open: only the 90 day window is used. 30D and All Time cannot be selected."], desc: "Compares the % Gain of BTC and ETH against each other over 30D, 90D or All Time. The bigger Gainer is in Season, a small Gap is Neutral. Already shown inside the BTC|ETH Ratio, a dedicated Chart is next.\nOrange = it exists, but it is not perfect yet." },
+    { title: "Season x Fear & Greed", st: "wip", notes: ["Partly there in another form: Past Years shows every month's Fear & Greed average next to its Formula score, which includes Season and Dominance.", "Open: the Toggle inside the Fear & Greed Index itself is not built."], desc: "Optional Toggle that overlays the Season and Dominance Data on the Fear & Greed Monthly Averages, to show which Asset dominated during Greed and Extreme Greed Phases [e.g. every Bridge Year]. Kept separate from the main Index, but hand in hand with it." },
+    { title: "Accounts", notes: ["Not started. The 4 digit Code Screen is only a curtain in front of the Site, not an Account."], desc: "To Allow Users to save their Settings, Customized Lists, Portfolios and use future features, Personal Accounts have to be introduced. Because i dont believe in Google or Phone Number Accounts, and prioritize Privacy, we're going to be taking a different Approach. But more on that Soon." },
+    { title: "Forums", notes: ["Not started. Depends on Accounts."], desc: "Allows Users to communicate via Forums we Provide. Certain Users might also be allowed to create their Own Forums with their own features. This is the main Usecase for Accounts." },
+    { title: "Price Alerts & Watchlists", notes: ["Not started. The daily Snapshots could later power Alerts for Coins entering or leaving the Top 200."], desc: "Allows Users to Set Alerts that are going to immediately announce when a Token Reaches a Certain, customizable price threshold. Watchlists are going to be integrated alongside that. users will be able to create and share their own Lists." },
+    { title: "CoinAtlas Sentiment Squares", st: "wip", notes: ["Prototype: 200 equal Squares with Logo, green or red by today's change, opened from the header.", "Open: other timeframes than today, a hover detail per Square, and optional sizing by Market Cap."], desc: "200 Assets, 200 Squares. Every Square is one Asset — green means it's up, red means it's down. No numbers, no noise. One glance and you know exactly where the Market's Head is at." }
   ];
 
   function renderRoadmap() {
@@ -2686,9 +2729,10 @@
     html += '<div class="roadmap-header"><div class="roadmap-title">Roadmap</div></div>';
     html += '<div class="roadmap-timeline">';
     ROADMAP_FEATURES.forEach(function(f) {
-      html += '<div class="roadmap-item' + (f.wip ? ' wip' : '') + '">';
+      html += '<div class="roadmap-item' + (f.st ? ' ' + f.st : '') + '">';
       html += '<div class="roadmap-item-title">' + esc(f.title) + '</div>';
       html += '<div class="roadmap-item-desc">' + esc(f.desc).replace(/\n/g, '<br>') + '</div>';
+      (f.notes || []).forEach(function (n) { html += '<div class="roadmap-item-note">[' + esc(n) + ']</div>'; });
       html += '</div>';
     });
     html += '</div></div>';
@@ -3575,7 +3619,7 @@
     coins = list; 
     coins.sort(function(a, b) { return (b.market_cap || 0) - (a.market_cap || 0); });
     coins.forEach(function (c) { c.__pendingMidnight = false; }); 
-    if (text) window.coinAtlasList = { label: text, coins: coins.map(function (c) { return [String(c.symbol).toUpperCase(), c.name, c.current_price, c.market_cap]; }) }; /* read by scripts/record-snapshot.mjs */
+    if (text) window.coinAtlasList = { label: text, coins: coins.map(function (c) { return [String(c.symbol).toUpperCase(), c.name, c.current_price, c.market_cap, c.image || "", c.paprika_id || ""]; }) }; /* read by scripts/record-snapshot.mjs */
     
     updateNetworkFilters();
     applyFilters(false);

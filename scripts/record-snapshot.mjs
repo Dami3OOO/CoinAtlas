@@ -6,6 +6,7 @@
 //   new.json                   coins that entered the top 200 less than 14 snapshots ago
 //   history/btc-eth.json       every daily close of BTC and ETH since 2017 (Binance)
 //   history/fear-greed.json    every daily Fear & Greed value since 2018 (alternative.me)
+//   logos/SYMBOL.png           one logo per coin, fetched once, so the page has a logo even when its live source has none
 // The two history files are the page's backup for when those sources are unreachable. Days already
 // stored are never dropped: each run only adds to them or corrects them.
 //
@@ -89,6 +90,26 @@ export async function recordHistory(get = getJson) { /* each source on its own: 
   return out;
 }
 
+async function getImage(url) {
+  const r = await fetch(url, { signal: AbortSignal.timeout(20000) });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  const buf = Buffer.from(await r.arrayBuffer());
+  if (!(r.headers.get("content-type") || "").startsWith("image/") || buf.length < 200 || buf.length > 400000) throw new Error("not a usable image");
+  return buf;
+}
+export async function recordLogos(coins, get = getImage) { /* coins: [symbol, name, price, cap, image url, paprika id]. Only coins without a stored logo are fetched */
+  const dir = join(DATA, "logos"); mkdirSync(dir, { recursive: true });
+  const todo = coins.filter(c => /^[A-Z0-9]{1,15}$/.test(c[0]) && !existsSync(join(dir, c[0] + ".png")));
+  let saved = 0;
+  const one = async c => {
+    const s = encodeURIComponent(c[0].toLowerCase());
+    const urls = [c[4], c[5] && "https://static.coinpaprika.com/coin/" + encodeURIComponent(c[5]) + "/logo.png", "https://assets.coincap.io/assets/icons/" + s + "@2x.png", "https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/" + s + ".png"].filter(Boolean);
+    for (const url of urls) { try { writeFileSync(join(dir, c[0] + ".png"), await get(url)); saved++; return; } catch { /* next source */ } }
+  };
+  for (let i = 0; i < todo.length; i += 8) await Promise.all(todo.slice(i, i + 8).map(one));
+  return { saved, missing: todo.length - saved };
+}
+
 export function build(found) {
   const coins = found.coins.map(c => [String(c[0]).toUpperCase(), String(c[1]), +c[2] || 0, +c[3] || 0]).sort((a, b) => b[3] - a[3]).slice(0, 200);
   const total = coins.reduce((s, c) => s + c[3], 0), cap = s => (coins.find(c => c[0] === s) || [])[3] || 0;
@@ -121,6 +142,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const hist = await recordHistory(), snap = build(found);
   if (hist.fgToday != null) snap.fg = hist.fgToday;
   const out = write(snap);
+  const on = new Set(snap.coins.map(c => c[0])), logos = await recordLogos(found.coins.filter(c => on.has(String(c[0]).toUpperCase())).map(c => [String(c[0]).toUpperCase(), ...c.slice(1)])).catch(e => ({ saved: 0, missing: e.message }));
+  console.log("logos: saved", logos.saved, "· still without a logo:", logos.missing);
   console.log("history: BTC|ETH", hist.ratio || "unchanged", "days · Fear & Greed", hist.fg || "unchanged", "days");
   console.log(snap.date, "·", snap.source, "·", snap.coins.length, "coins · BTC", snap.btc + "% · ETH", snap.eth + "% ·", out.days, "days recorded · new:", Object.keys(out.fresh).join(" ") || "none");
 }
