@@ -380,12 +380,12 @@
   .badge-new { background: rgba(167, 139, 250, 0.12); color: #a78bfa; border: 1px solid rgba(167, 139, 250, 0.35); margin-left: auto; }
   body:not(.dev-mode) #snap-btn, body:not(.dev-mode) #snap-container, #snap-container[hidden] { display: none !important; }
   #snap-container { margin-bottom: 20px; }
-  .snap-note { text-align: center; margin: -8px 0 12px; }
+  .snap-note { margin: 2px 0 8px; line-height: 1.5; } .snap-sec { margin-top: 16px; }
   .snap-day { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; overflow: hidden; }
   .snap-head { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr auto; gap: 10px; align-items: baseline; width: 100%; padding: 10px 14px; background: none; border: 0; color: var(--fg); font: inherit; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer; font-variant-numeric: tabular-nums; }
   .snap-head:hover, .snap-day.open .snap-head { background: var(--hover); } .snap-head b { font-size: 13px; font-weight: 700; }
   .snap-list { max-height: 360px; overflow-y: auto; border-top: 1px solid var(--line); padding: 6px 14px 10px; }
-  .snap-list table { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; } .snap-list td { padding: 4px 0; border-bottom: 1px solid var(--line); } .snap-list td:nth-child(n+3) { text-align: right; padding-left: 14px; white-space: nowrap; } .snap-list td:first-child { color: var(--muted); width: 34px; }
+  .snap-list table { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; } .snap-list td { padding: 4px 0; border-bottom: 1px solid var(--line); } .snap-list td:nth-child(n+3) { text-align: right; padding-left: 14px; white-space: nowrap; } .snap-list td:first-child { color: var(--muted); width: 40px; } .snap-list td:nth-child(2) { padding-left: 8px; }
   #roadmap-container { margin-bottom: 20px; }
   #roadmap-container[hidden] { display: none !important; }
   .roadmap-card { padding: 16px; }
@@ -2551,7 +2551,7 @@
   /* ---------- SNAPSHOTS: the repository records the top 200 once a day ---------- */
   var REPO_RAW = "https://raw.githubusercontent.com/Dami3OOO/CoinAtlas/main/";
   function repoJson(path) { return getJson(REPO_RAW + path, 8000).catch(function () { return getJson(path, 8000); }); } /* straight from the repository, so a downloaded copy of the page gets it too */
-  var snapVisible = false, snapMeta = null, snapDays = null, snapOpen = null, snapLists = {}, snapBtn = document.getElementById("snap-btn"), snapBox = document.getElementById("snap-container");
+  var snapVisible = false, snapMeta = null, snapDays = null, snapOpen = null, snapLists = {}, snapHist = {}, snapBtn = document.getElementById("snap-btn"), snapBox = document.getElementById("snap-container");
   function applyNewBadges() { /* marks coins that entered the top 200 less than 14 snapshots ago */
     Array.prototype.forEach.call(rowsEl.children, function (row, i) {
       var c = displayCoins[i], w = row.querySelector(".name-wrap"), old = row.querySelector(".badge-new"), n = c && snapNew[String(c.symbol).toUpperCase()];
@@ -2564,9 +2564,24 @@
     var L = snapLists[k];
     if (!L) return '<div class="snap-list"><div class="rt-empty">Loading…</div></div>';
     if (!L.coins) return '<div class="snap-list"><div class="rt-empty">This snapshot could not be loaded</div></div>';
-    return '<div class="snap-list"><div class="fg-sub">List: ' + esc(L.source || "") + '</div><table>' + L.coins.map(function (c, i) {
+    return '<div class="snap-list"><div class="fg-sub">List: ' + esc(L.source || "") + (L.ratio ? ' · Ratio ' + L.ratio.toFixed(2) : '') + (L.fg != null ? ' · Fear &amp; Greed <b style="color:' + fgCol(L.fg) + '">' + L.fg + '</b>' : '') + '</div><table>' + L.coins.map(function (c, i) {
       return '<tr><td>' + (i + 1) + '</td><td>' + esc(c[1]) + ' <span class="sym">' + esc(c[0]) + '</span></td><td>' + price(c[2]) + '</td><td>' + (c[3] ? compact(c[3]) : "–") + '</td></tr>';
     }).join("") + '</table></div>';
+  }
+  var SNAP_HIST = [["ratio", "BTC|ETH Ratio", "data/history/btc-eth.json", function (x) { return x[1] / x[2]; }, 1], ["fg", "Fear & Greed Index", "data/history/fear-greed.json", function (x) { return x[1]; }, 0]];
+  function snapDate(k) { return new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }); }
+  function snapHistHtml(H, first) { /* one history set, cut off where the CoinAtlas snapshots begin */
+    var j = snapHist[H[0]], on = snapOpen === "h:" + H[0], head = function (mid, n) { return '<div class="snap-day' + (on ? ' open' : '') + '"><button type="button" class="snap-head" data-snap="h:' + H[0] + '"><b>' + H[1] + '</b><span style="grid-column:span 2">' + mid + '</span><span>' + n + '</span><span class="fg-sub"></span></button>'; };
+    if (!j) return head(j === undefined ? "Loading…" : "Not stored yet", "") + '</div>';
+    var days = j.days.filter(function (x) { return !first || x[0] < first; }), yrs = {}, h;
+    if (!days.length) return head("Not stored yet", "") + '</div>';
+    h = head(snapDate(days[0][0]) + " – " + snapDate(days[days.length - 1][0]), days.length.toLocaleString("en-US") + " days");
+    if (on) {
+      days.forEach(function (x) { var y = x[0].slice(0, 4), v = H[3](x), o = yrs[y] || (yrs[y] = { n: 0, s: 0, lo: v, hi: v }); o.n++; o.s += v; o.lo = Math.min(o.lo, v); o.hi = Math.max(o.hi, v); });
+      h += '<div class="snap-list"><div class="fg-sub">Source: ' + esc(j.source || "") + ' · last updated ' + snapDate(j.updated) + '</div><table><tr><td>Year</td><td>Days</td><td>Average</td><td>Low</td><td>High</td></tr>' +
+        Object.keys(yrs).sort().reverse().map(function (y) { var o = yrs[y], a = o.s / o.n; return '<tr><td>' + y + '</td><td>' + o.n + '</td><td' + (H[4] ? '' : ' style="color:' + fgCol(Math.round(a)) + '"') + '>' + a.toFixed(H[4]) + '</td><td>' + o.lo.toFixed(H[4]) + '</td><td>' + o.hi.toFixed(H[4]) + '</td></tr>'; }).join("") + '</table></div>';
+    }
+    return h + '</div>';
   }
   function renderSnaps() {
     if (!snapVisible) { snapBox.hidden = true; snapBox.innerHTML = ""; updatePinnedColVisibility(); return; }
@@ -2574,12 +2589,13 @@
     var h = '<div class="pinned-card chart-container pf-card dev-target" data-dev-name="Snapshots" data-dev-color="#a78bfa"><div class="pf-title">Snapshots</div>';
     if (!snapDays) h += '<div class="rt-empty">Loading snapshots…</div>';
     else {
-      var keys = Object.keys(snapDays).sort().reverse(), n = keys.length;
-      h += '<div class="fg-sub snap-note">' + n + (n === 1 ? ' day' : ' days') + ' recorded · New in Top 200 ' + (snapMeta && snapMeta.ready ? 'is active' : 'starts at 14 snapshots') + '</div>';
+      var keys = Object.keys(snapDays).sort().reverse(), n = keys.length, first = n ? keys[n - 1] : "";
+      h += '<div class="rt-val-title">Past Snapshots</div><div class="fg-sub snap-note">History from before CoinAtlas started recording. Stored as a backup and used when a source is unreachable.</div>' + SNAP_HIST.map(function (H) { return snapHistHtml(H, first); }).join("");
+      h += '<div class="rt-val-title snap-sec">CoinAtlas Snapshots</div><div class="fg-sub snap-note">' + n + (n === 1 ? ' day' : ' days') + ' recorded from our own list · New in Top 200 ' + (snapMeta && snapMeta.ready ? 'is active' : 'starts at 14 snapshots') + '</div>';
       if (!n) h += '<div class="rt-empty">No snapshots yet. The first one appears after the scheduled job in the repository has run.</div>';
       keys.forEach(function (k) {
         var x = snapDays[k], on = snapOpen === k;
-        h += '<div class="snap-day' + (on ? ' open' : '') + '"><button type="button" class="snap-head" data-snap="' + k + '"><b>' + new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) + '</b>' +
+        h += '<div class="snap-day' + (on ? ' open' : '') + '"><button type="button" class="snap-head" data-snap="' + k + '"><b>' + snapDate(k) + '</b>' +
           '<span style="color:' + BTC_C + '">BTC ' + (+x[0]).toFixed(1) + '%</span><span style="color:' + ETH_C + '">ETH ' + (+x[1]).toFixed(1) + '%</span><span>' + (x[2] ? compact(x[2]) : "–") + '</span><span class="fg-sub">' + (x[3] ? x[3] + ' coins' : '') + '</span></button>' + (on ? snapListHtml(k) : '') + '</div>';
       });
     }
@@ -2587,13 +2603,16 @@
   }
   snapBtn.addEventListener("click", function () {
     snapVisible = !snapVisible; snapBtn.classList.toggle("active", snapVisible);
-    if (snapVisible) repoJson("data/dominance.json").then(function (j) { snapDays = j || {}; }, function () { snapDays = {}; }).then(renderSnaps);
+    if (snapVisible) {
+      repoJson("data/dominance.json").then(function (j) { snapDays = j || {}; }, function () { snapDays = {}; }).then(renderSnaps);
+      SNAP_HIST.forEach(function (H) { repoJson(H[2]).then(function (j) { snapHist[H[0]] = j && j.days ? j : null; }, function () { snapHist[H[0]] = null; }).then(renderSnaps); });
+    }
     renderSnaps();
   });
   snapBox.addEventListener("click", function (e) {
     var b = e.target.closest("button[data-snap]"); if (!b) return;
     var k = b.dataset.snap; snapOpen = snapOpen === k ? null : k;
-    if (snapOpen && !snapLists[k]) repoJson("data/snapshots/" + k + ".json").then(function (j) { snapLists[k] = j; }, function () { snapLists[k] = {}; }).then(renderSnaps);
+    if (snapOpen && k.charAt(1) !== ":" && !snapLists[k]) repoJson("data/snapshots/" + k + ".json").then(function (j) { snapLists[k] = j; }, function () { snapLists[k] = {}; }).then(renderSnaps);
     renderSnaps();
   });
 
@@ -2833,7 +2852,8 @@
   function loadFGData() {
     fgLoading = true;
     var histPromise = fetch("https://api.alternative.me/fng/?limit=0").then(function (r) { return r.json(); })
-      .then(function (j) { return j.data.reverse().map(function (d) { return { timestamp: parseInt(d.timestamp, 10), value: parseInt(d.value, 10), value_classification: d.value_classification }; }); });
+      .then(function (j) { return j.data.reverse().map(function (d) { return { timestamp: parseInt(d.timestamp, 10), value: parseInt(d.value, 10), value_classification: d.value_classification }; }); })
+      .catch(function () { return repoJson("data/history/fear-greed.json").then(function (j) { return j.days.map(function (x) { return { timestamp: Date.parse(x[0] + "T00:00:00Z") / 1000, value: x[1], value_classification: classifyFG(x[1]) }; }); }); }); /* stored history when alternative.me is unreachable */
     var livePromise = fetch("https://pro-api.coinmarketcap.com/public-api/v3/fear-and-greed/latest")
       .then(function (r) { if (!r.ok) throw new Error("cmc"); return r.json(); })
       .then(function (j) { var d = j && j.data; if (d && typeof d.value !== "undefined") return { value: parseInt(d.value, 10), value_classification: d.value_classification || classifyFG(d.value) }; throw new Error("shape"); })
@@ -4127,10 +4147,16 @@
     return a[a.length - 1].v;
   }
   function rtDomHist() { return repoJson("data/dominance.json").catch(function () { return {}; }); } /* real daily dominance from the recorded snapshots; empty when unreachable */
+  function rtPrices() { /* Binance first; the history stored in the repository when Binance is unreachable */
+    return Promise.all([rtKlines("BTCUSDT"), rtKlines("ETHUSDT")]).catch(function () {
+      return repoJson("data/history/btc-eth.json").then(function (j) { var b = {}, e = {}; j.days.forEach(function (x) { var t = Date.parse(x[0] + "T00:00:00Z"); b[t] = x[1]; e[t] = x[2]; }); return [b, e]; });
+    });
+  }
   function rtLoad() {
     if (RT.loading || (RT.data && Date.now() - RT.at < 30 * 60 * 1000)) return;
     RT.loading = true; RT.failed = false;
-    Promise.all([rtKlines("BTCUSDT"), rtKlines("ETHUSDT"), rtDomHist()]).then(function (r) {
+    Promise.all([rtPrices(), rtDomHist()]).then(function (q) {
+      var r = [q[0][0], q[0][1], q[1]];
       RT.dom = {}; Object.keys(r[2] || {}).forEach(function (k) { var t = Date.parse(k + "T00:00:00Z"), x = r[2][k]; if (t && x && x[0] > 0 && x[1] > 0) RT.dom[t] = x; });
       var b = r[0], e = r[1], ts = Object.keys(b).map(Number).filter(function (t) { return e[t] > 0 && b[t] > 0; }).sort(function (x, y) { return x - y; });
       if (ts.length < 30) throw new Error("few");
