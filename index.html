@@ -381,9 +381,9 @@
   body:not(.dev-mode) #snap-btn, body:not(.dev-mode) #snap-container, #snap-container[hidden] { display: none !important; }
   #snap-container, #sq-container { margin-bottom: 20px; } #sq-container[hidden] { display: none !important; }
   .sq-count { display: flex; justify-content: center; gap: 14px; font-size: 12px; font-weight: 600; margin: -6px 0 12px; font-variant-numeric: tabular-nums; }
-  .sq-grid { display: grid; grid-template-columns: repeat(20, 1fr); gap: 2px; }
-  .sq { aspect-ratio: 1; border-radius: 3px; background: var(--line); display: grid; place-items: center; min-width: 0; }
-  .sq .logo { width: 64%; height: 64%; font-size: 8px; }
+  .sq-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; }
+  .sq { aspect-ratio: 1; border-radius: 5px; cursor: crosshair; background: var(--line); display: grid; place-items: center; min-width: 0; }
+  .sq .logo { width: 60%; height: 60%; font-size: 13px; }
   .snap-note { margin: 2px 0 8px; line-height: 1.5; } .snap-sec { margin-top: 16px; }
   .snap-day { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; overflow: hidden; }
   .snap-head { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr auto; gap: 10px; align-items: baseline; width: 100%; padding: 10px 14px; background: none; border: 0; color: var(--fg); font: inherit; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer; font-variant-numeric: tabular-nums; }
@@ -2680,7 +2680,6 @@
       var stable = STABLECOINS.indexOf(String(c.symbol).toUpperCase()) > -1, d = dayOpenCache[c.symbol], pc = d ? changeOf(c) : 0;
       if (stable) flat++; else if (!d) wait++; else if (pc > 0) up++; else if (pc < 0) down++; else flat++;
       el.style.background = stable ? "var(--stable-blue)" : d ? (pc > 0 ? "var(--up)" : pc < 0 ? "var(--down)" : "") : "";
-      el.title = c.name + " · " + (stable ? "Stablecoin" : d ? (pc >= 0 ? "+" : "") + pc.toFixed(2) + "% today" : "loading…");
     });
     var n = sqBox.querySelector(".sq-count");
     if (n) n.innerHTML = '<span style="color:var(--up)">' + up + ' up</span><span style="color:var(--down)">' + down + ' down</span><span style="color:var(--muted)">' + flat + ' flat or stable</span>' + (wait ? '<span style="color:var(--muted)">' + wait + ' loading</span>' : '');
@@ -2691,12 +2690,26 @@
     var list = coins.slice(0, 200), key = list.map(function (c) { return c.symbol; }).join(",");
     if (key !== sqKey) {
       sqKey = key;
-      sqBox.innerHTML = '<div class="pinned-card chart-container pf-card dev-target" data-dev-name="Sentiment Squares" data-dev-color="#34d399"><div class="pf-title">Sentiment Squares</div><div class="sq-count"></div><div class="sq-grid">' + list.map(function (c) { return '<div class="sq">' + logoHtml(c) + '</div>'; }).join("") + '</div></div>';
+      sqBox.innerHTML = '<div class="pinned-card chart-container pf-card dev-target" data-dev-name="Sentiment Squares" data-dev-color="#34d399"><div class="pf-title">Sentiment Squares</div><div class="sq-count"></div><div class="sq-grid">' + list.map(function (c, i) { return '<div class="sq" data-i="' + i + '">' + logoHtml(c) + '</div>'; }).join("") + '</div></div>';
       list.forEach(function (c) { if (dayOpenCache[c.symbol] === undefined && !c.__pendingMidnight) { c.__pendingMidnight = true; midnightQueue.push(c); } }); /* today's opening price for every coin, not only the rows on screen */
       processMidnightQueue();
     }
     sqPaint();
   }
+  var sqHover = null;
+  function sqShowPop(c) { /* the same hover chart as in the list */
+    var k = chartCache[c.symbol + "-" + sourceKey];
+    if (k && Date.now() - k.at < CHART_TTL) popEl.innerHTML = k.d ? chart(c, k.d, k.d.tag, false, 'popup') : placeholder(c, "No trading-day chart for this coin", false);
+    else { popEl.innerHTML = placeholder(c, "Loading chart…", false); fetchChart(c).then(function () { if (sqHover === c.symbol) sqShowPop(c); }, function () {}); }
+  }
+  function sqHidePop() { if (sqHover !== null) { sqHover = null; popEl.classList.remove("on"); } }
+  sqBox.addEventListener("mousemove", function (e) {
+    if (devFrozen) return;
+    var el = e.target.closest(".sq"), c = el && coins[+el.dataset.i]; if (!c) { sqHidePop(); return; }
+    if (sqHover !== c.symbol) { sqHover = c.symbol; current = -1; sqShowPop(c); }
+    place(e); popEl.classList.add("on");
+  });
+  sqBox.addEventListener("mouseleave", function () { if (!devFrozen) sqHidePop(); });
   sqBtn.addEventListener("click", function () { sqVisible = !sqVisible; sqBtn.classList.toggle("active", sqVisible); renderSquares(); });
   setInterval(function () { if (sqVisible) renderSquares(); }, 3000);
 
