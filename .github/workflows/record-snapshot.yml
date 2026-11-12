@@ -1,4 +1,4 @@
-name: Record dominance
+name: Record snapshot
 
 # Twice a day, so one failed run does not lose the day. The later run overwrites the earlier one.
 on:
@@ -9,7 +9,7 @@ on:
 permissions:
   contents: write
 
-concurrency: record-dominance
+concurrency: record-snapshot
 
 jobs:
   record:
@@ -19,13 +19,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: node scripts/record-dominance.mjs
+      # The headless browser reads the list from the page itself. Without it the script falls back to a public top 200.
+      - name: Install headless browser
+        continue-on-error: true
+        run: |
+          npm install --no-save playwright@1.49.1
+          npx playwright install --with-deps chromium
+      - run: node scripts/record-snapshot.mjs
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/dominance.json
+          git add data
           git diff --cached --quiet && exit 0
-          git commit -m "Record dominance $(date -u +%F)"
+          git commit -m "Record snapshot $(date -u +%F)"
           git pull --rebase
           git push
