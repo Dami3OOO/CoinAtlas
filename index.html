@@ -278,16 +278,6 @@
   .tokenomics-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px dashed var(--line); font-size: 13px; }
   .tokenomics-row:last-child { border-bottom: none; }
   .tokenomics-row span:first-child { color: var(--muted); min-width: 100px; font-weight: 500; }
-  .tkn-details-wrap { display: flex; align-items: center; justify-content: space-between; flex: 1; gap: 12px; font-size: 13px; }
-  
-  .tkn-amt { font-weight: 700; font-size: 13px; color: var(--fg); }
-  .tkn-amt.up { color: var(--up); }
-  .tkn-amt.down { color: var(--down); }
-  .tkn-pct { font-weight: 600; font-size: 13px; }
-  .tkn-pct.up { color: var(--up); }
-  .tkn-pct.down { color: var(--down); }
-  .tkn-left { color: var(--muted); font-size: 12px; }
-  .tkn-date { color: var(--fg); font-size: 12px; margin-left: auto; }
 
   #pop { position: fixed; z-index: 20; width: 560px; max-width: calc(100vw - 16px); background: var(--pop); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 8px 28px rgba(0,0,0,.4); pointer-events: none; opacity: 0; transition: opacity .08s; }
   #pop.on { opacity: 1; }
@@ -431,10 +421,6 @@
   .roadmap-item-note { font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 6px; opacity: .85; }
   .roadmap-item.wip::before, .roadmap-item.wip:hover::before { background: #fb923c; }
   .roadmap-item.wip::after { background: #fb923c; }
-
-  .tf-years { flex-wrap: wrap; margin-top: 4px; }
-  .tf-years button.bull { color: var(--up); } .tf-years button.bear { color: var(--down); } .tf-years button.bridge { color: #fb923c; }
-  .tf-years button.active { color: var(--bg); }
   .rt-big { text-align: center; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; } .rt-big small { font-size: 14px; color: var(--muted); font-weight: 600; }
   .rt-sub { text-align: center; font-size: 12px; color: var(--muted); margin-top: 4px; }
   .rt-calc { margin: 14px 0 10px; }
@@ -502,20 +488,6 @@
   .rt-val-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
   .rt-val-title { font-size: 13px; font-weight: 700; }
   .rt-val-fv-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: var(--hover); border: 1px solid; color: var(--muted); }
-  #rt-readings-insp { position:fixed; bottom:24px; right:24px; width:400px; max-height:70vh; overflow-y:auto; background:var(--bg); border:2px solid var(--line); border-radius:12px; padding:16px; z-index:9998; box-shadow:0 8px 32px rgba(0,0,0,.4); }
-  .rt-ri-wrap { font-size:12px; }
-  .rt-ri-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px; }
-  .rt-ri-scores { margin-bottom:8px; font-size:12px; }
-  .rt-ri-inputs { display:flex; flex-direction:column; gap:4px; margin-bottom:12px; padding:8px 10px; background:var(--hover); border-radius:7px; font-size:11px; }
-  .rt-ri-inputs div { display:flex; gap:8px; align-items:baseline; }
-  .rt-ri-k { color:var(--muted); min-width:90px; flex-shrink:0; }
-  .rt-ri-list { display:flex; flex-direction:column; gap:6px; }
-  .rt-ri-row { display:flex; gap:8px; align-items:flex-start; padding:6px 8px; border-radius:6px; opacity:.45; }
-  .rt-ri-row.rt-ri-active { opacity:1; background:var(--hover); }
-  .rt-ri-dot { width:8px; height:8px; border-radius:50%; margin-top:4px; flex-shrink:0; }
-  .rt-ri-body { flex:1; }
-  .rt-ri-body b { display:block; font-size:12px; }
-  .rt-ri-cond { font-size:10px; color:var(--muted); margin-top:2px; } .rt-ri-cond code { font-size:10px; color:var(--fg); }
   .rt-fng-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; padding:6px 0 2px; }
   .rt-fng-cell { background:var(--pop); border:1px solid var(--line); border-radius:6px; padding:14px 4px 8px; min-height:74px; box-sizing:border-box; text-align:center; display:flex; flex-direction:column; gap:3px; }
   .rt-fng-cell[data-rt-mo] { cursor:pointer; } .rt-fng-cell[data-rt-mo]:hover { border-color:var(--muted); } .rt-fng-grid.tint .best-b { background:#3b82f61f; } .rt-fng-grid.tint .best-e { background:#f7931a1f; } .rt-fm-fg { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
@@ -612,8 +584,6 @@
   .fg-high-btn:hover, .fg-high-btn.active { background: rgba(76, 194, 122, 0.22); color: var(--up); border-color: var(--up); }
   .fg-low-btn { color: var(--down); border-color: var(--down); background: rgba(240, 113, 106, 0.08); }
   .fg-low-btn:hover, .fg-low-btn.active { background: rgba(240, 113, 106, 0.22); color: var(--down); border-color: var(--down); }
-  /* Advanced F&G Section */
-  .fg-advanced-section { width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
   .fg-advanced-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); text-align: center; margin-bottom: 12px; }
   .fg-advanced-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
   .fg-adv-card { background: var(--pop); border: 1px solid var(--line); padding: 10px 14px; border-radius: 8px; display: flex; flex-direction: column; gap: 2px; text-align: center; justify-content: center; }
@@ -621,11 +591,8 @@
   .fg-adv-card .val { font-size: 16px; font-weight: 700; color: var(--fg); }
   .fg-adv-card .val.up { color: var(--up); }
   .fg-adv-card .val.down { color: var(--down); }
-  .fg-adv-card.full-width { grid-column: span 4; text-align: left; }
   .fg-annual-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap; }
   .fg-annual-head .fg-annual-title { margin: 0; }
-  .fg-zone { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
-  .fg-now { color: var(--fg); margin-top: 4px; line-height: 1.4; }
   .fg-yearly-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
   .fg-cyc { text-transform: none; letter-spacing: 0; font-size: 9px; } .fg-cyc.bull { color: var(--up); } .fg-cyc.bear { color: var(--down); } .fg-cyc.bridge { color: #fb923c; }
   .fg-yr-pick { position: relative; } .fg-yr-btn { background: var(--fg); color: var(--bg); border: 1px solid var(--fg); padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 600; cursor: pointer; }
@@ -634,17 +601,8 @@
   .fg-yr-pick:hover .fg-yr-menu, .fg-yr-pick:focus-within .fg-yr-menu { display: grid; }
   .fg-yr-menu button { background: transparent; border: none; color: var(--muted); text-align: left; padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; }
   .fg-yr-menu button:hover { background: var(--hover); color: var(--fg); } .fg-yr-menu button.active { color: var(--fg); font-weight: 700; }
-  .fg-exp { position: relative; height: 180px; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); }
-  .fg-exp-bg { position: absolute; inset: 0; display: flex; flex-direction: column; } .fg-exp-bg i { display: block; }
-  .fg-exp-zl { position: absolute; right: 8px; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); opacity: 0.6; }
-  .fg-exp-box { position: absolute; height: 25%; border-radius: 4px; }
-  .fg-exp-box.g { top: 0; background: rgba(76,194,122,.4); border: 1px solid #4cc27a; } .fg-exp-box.f { bottom: 0; background: rgba(240,113,106,.4); border: 1px solid #f0716a; }
-  .fg-exp-box span { position: absolute; top: 3px; white-space: nowrap; font-size: 10px; font-weight: 600; color: var(--fg); text-shadow: 0 1px 2px rgba(0,0,0,.6); padding: 0 4px; line-height: 1.2; }
-  .fg-exp-now { position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--fg); }
-  .fg-exp-axis { position: relative; height: 16px; margin-top: 4px; } .fg-exp-axis span { position: absolute; transform: translateX(-50%); font-size: 10px; color: var(--muted); }
   .fg-annual-grid { grid-auto-rows: auto; } .fg-annual-card .fg-sub { font-size: 9px; line-height: 1.25; } .fg-annual-head .fg-annual-title { flex: 1; text-align: left; }
-  .fg-annual-grid .fg-annual-card { min-height: 62px; }
-  .fg-hdr-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; } .fg-yr-wrap { display: flex; align-items: center; gap: 6px; }
+  .fg-annual-grid .fg-annual-card { min-height: 62px; } .fg-yr-wrap { display: flex; align-items: center; gap: 6px; }
   .fg-yr-btn.idle { background: transparent; color: var(--muted); border-color: var(--line); }
   .fg-cmp-btn { background: transparent; border: 1px solid var(--line); color: var(--fg); padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 600; cursor: pointer; } .fg-cmp-btn:hover { background: var(--hover); }
   .fg-hit-area > svg.fg-cmp-svg { position: absolute; top: 0; left: 0; opacity: 0; transition: opacity .15s; }
@@ -661,23 +619,7 @@
   .fg-cmp-btn.on { background: var(--fg); color: var(--bg); }
 .fg-annual-cmp { display: none; } .fg-mcmp-on .fg-annual-cmp { display: block; }
   .fg-model-badge { text-align: center; font-size: 11px; color: var(--muted); margin: -6px 0 12px; }
-  .fg-tl { margin-bottom: 14px; }
-  .fg-tl-track { position: relative; height: 12px; border-radius: 5px; background: var(--hover); border: 1px solid var(--line); }
-  .fg-tl-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 5px 0 0 5px; opacity: 0.35; background: currentColor; }
-  .fg-tl-range { position: absolute; top: -1px; bottom: -1px; border-radius: 4px; border: 1px dashed currentColor; opacity: 0.8; }
-  .fg-tl-mark { position: absolute; top: -4px; width: 3px; height: 18px; margin-left: -1px; border-radius: 2px; background: currentColor; }
-  .fg-tl-now { position: absolute; top: -3px; width: 2px; height: 16px; margin-left: -1px; background: var(--fg); }
-  .fg-tl .up, .fg-tl .down { color: var(--up); } .fg-tl .down { color: var(--down); }
-  .fg-tl-cap { font-size: 10px; color: var(--muted); text-align: center; margin-bottom: 10px; }
-  .fg-tl-dot { position: absolute; top: 50%; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: currentColor; opacity: 0.55; }
-  .fg-tl-key { display: flex; justify-content: center; gap: 14px; font-size: 10px; color: var(--muted); margin-top: 6px; }
-  .fg-tl-key i { display: inline-block; vertical-align: middle; margin-right: 4px; } .fg-tl-key .k-now { width: 2px; height: 10px; background: var(--fg); } .fg-tl-key .k-est { width: 3px; height: 10px; background: currentColor; border-radius: 2px; } .fg-tl-key .k-rng { width: 12px; height: 8px; border: 1px dashed currentColor; border-radius: 3px; }
-  .fg-tl-lbl { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-top: 6px; }
   .fg-sub { font-size: 10px; color: var(--muted); font-weight: 500; }
-  .fg-bt { margin-top: 12px; font-size: 11px; color: var(--muted); } .fg-bt summary { cursor: pointer; }
-  .fg-bt table { width: 100%; margin: 8px 0; border-collapse: collapse; } .fg-bt th, .fg-bt td { text-align: left; padding: 4px 6px; border-bottom: 1px solid var(--line); font-size: 11px; height: auto; }
-  .fg-bt tr.best td { color: var(--fg); font-weight: 600; }
-  .fg-adv-card.full-width .val { font-size: 13px; font-weight: 500; white-space: pre-wrap; line-height: 1.5; }
   /* Average Monthly Index Value Section */
   .fg-annual-section { width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
   .fg-annual-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); text-align: center; margin-bottom: 12px; }
@@ -739,8 +681,6 @@
     #pop { width: calc(100vw - 16px); }
     .fg-top-row { flex-direction: column; }
     .fg-advanced-grid { grid-template-columns: 1fr 1fr; }
-    .fg-adv-card.full-width { grid-column: span 2; }
-    .fg-zone { grid-template-columns: 1fr; }
     .fg-annual-grid { grid-template-columns: repeat(3, 1fr); }
     .brand h1 { font-size: 26px; }
     .brand svg { width: 40px; height: 40px; }
@@ -885,7 +825,6 @@
             <div class="settings-section">
               <div class="section-title">BTC|ETH</div>
               <div class="grp"><span class="lbl">Linked Hover</span><button class="toggle" type="button" id="rt-link-toggle" role="switch" aria-checked="true" aria-label="Show the hovered day in both graphs"><span></span></button></div>
-              <div class="grp"><span class="lbl">Year Hovercharts</span><button class="toggle" type="button" id="rt-yh-toggle" role="switch" aria-checked="true" aria-label="Show a chart when hovering a past year"><span></span></button></div>
               <div class="grp"><span class="lbl">Tint Strongest Months</span><button class="toggle" type="button" id="rt-tint-toggle" role="switch" aria-checked="false" aria-label="Tint the strongest month boxes in Past Years blue or orange"><span></span></button></div>
               <div class="grp"><span class="lbl">Altcoin Dominance Line</span><button class="toggle" type="button" id="rt-dom-toggle" role="switch" aria-checked="false" aria-label="Show altcoin dominance line in dominance chart"><span></span></button></div>
             </div>
@@ -963,7 +902,6 @@
 <div id="pop" class="chart-container"></div>
 <div id="dev-overlay"></div>
 <div id="dev-box"></div>
-<div id="rt-readings-insp" hidden></div>
 <div id="dev-result">
   <pre id="dev-data"></pre>
   <div class="dev-btn-group">
@@ -1995,7 +1933,7 @@
   }
 
   var API = "https://api.coingecko.com/api/v3/", PAP = "https://api.coinpaprika.com/v1/";
-  var geckoBlockedUntil = 0, papMap = null, papPending = null;
+  var papMap = null, papPending = null;
   function parseInfo(c, j) {
     var d = (j.description && j.description.en) ? stripHtml(j.description.en).trim() : "";
     d = d.replace(/\s*\(?\s*Source:?\s*(?:https?:\/\/)?(?:www\.)?coinpaprika\.com\/?\s*\)?\s*$/i, "").trim();
@@ -2231,7 +2169,7 @@
       var tg = e.target, tn = tg && tg.tagName;
       if (tn !== "INPUT" && tn !== "TEXTAREA" && tn !== "SELECT" && !(tg && tg.isContentEditable)) { e.preventDefault(); qEl.focus(); qEl.select(); return; }
     }
-    if (e.key === "Escape") { if (!resEl.hidden) closeResults(); if (pinnedCoins.length && !devFrozen) { pinnedCoins = []; renderPinned(); } var ri = document.getElementById("rt-readings-insp"); if (ri && !ri.hidden) ri.hidden = true; }
+    if (e.key === "Escape") { if (!resEl.hidden) closeResults(); if (pinnedCoins.length && !devFrozen) { pinnedCoins = []; renderPinned(); } }
     if ((e.key === "p" || e.key === "P") && devActive) {
       if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.tagName === "SELECT") return;
       toggleFreeze();
@@ -2242,15 +2180,6 @@
       document.getElementById("dev-overlay").style.display = (devActive && devOverlayState) ? "block" : "none";
       if (!devOverlayState) document.getElementById("dev-overlay").innerHTML = "";
       else updateDevOverlay();
-    }
-    if ((e.key === "i" || e.key === "I") && devActive) {
-      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.tagName === "SELECT") return;
-      showAdvMath = !showAdvMath;
-      if (fgVisible) renderFGChart();
-      if (ratioVisible && RT.data) {
-        var riEl = document.getElementById("rt-readings-insp");
-        if (riEl) { riEl.hidden = !riEl.hidden; if (!riEl.hidden) riEl.innerHTML = rtReadingsInspHtml(); }
-      }
     }
   });
   window.addEventListener("scroll", function () { if (!pinnedCoins.length) { popEl.classList.remove("on"); current = -1; } }, { passive: true });
@@ -2775,7 +2704,7 @@
 
   /* ---------- DEV MODE SYSTEM ---------- */
   var devToggle = document.getElementById("dev-toggle"), devOverlay = document.getElementById("dev-overlay"), devBox = document.getElementById("dev-box"), devResult = document.getElementById("dev-result"), devData = document.getElementById("dev-data");
-  var devActive = false, devFrozen = false, devOverlayState = true, showAdvMath = false, isDragging = false, startX, startY;
+  var devActive = false, devFrozen = false, devOverlayState = true, isDragging = false, startX, startY;
   var devLoopStarted = false;
 
   function toggleFreeze() {
@@ -2989,7 +2918,6 @@
   window.annualCmpToggle = function (b) { annualCmpPinned = !annualCmpPinned; b.classList.toggle("on", annualCmpPinned); var c = document.getElementById("fg-annual-container"); if (c) c.classList.toggle("fg-mcmp-on", annualCmpPinned || b.matches(":hover")); };
   window.fgCmpToggle = function (b) { fgCmpPinned = !fgCmpPinned; b.classList.toggle("on", fgCmpPinned); fgContainer.classList.toggle("fg-cmp-on", fgCmpPinned || b.matches(":hover")); };
   function yOf(ts) { return new Date(ts * 1000).getUTCFullYear(); }
-  function doyOf(ts) { return Math.floor((ts * 1000 - Date.UTC(yOf(ts), 0, 1)) / 864e5); }
 
   function renderFGChart() {
     if (!fgData || !fgData.length) return;
@@ -3177,36 +3105,7 @@
   }
   function fmtD(ts) { return new Date(ts * 1000).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }); }
 
-  function fgExpBoxes(D) {
-    var DAY = 86400, now = Date.now() / 1000, end = now + 365 * DAY, out = [], L = D.last; if (!L) return out;
-    if (D.curRun && D.stay[D.curRun.c]) { var ce = D.curRun.start + D.stay[D.curRun.c] * DAY; if (ce > now) out.push({ type: D.curRun.c, start: now, end: Math.min(ce, end), cur: true, realEnd: ce }); }
-    var type = L.value_classification, t0 = L.timestamp, guard = 0;
-    while (D.gap[type] && guard++ < 12) {
-      var nx = type === "Extreme Fear" ? "Extreme Greed" : "Extreme Fear", s = t0 + D.gap[type] * DAY, over = s < now, st = Math.max(s, now);
-      if (st > end || !D.stay[nx]) break;
-      out.push({ type: nx, start: st, end: Math.min(st + D.stay[nx] * DAY, end), realEnd: st + D.stay[nx] * DAY, over: over });
-      type = nx; t0 = st;
-    }
-    return out;
-  }
 
-  function buildFGExp() {
-    var D = fgExpectData(), boxes = fgExpBoxes(D), nowMs = Date.now(), span = 365 * 864e5, DAY = 86400;
-    var pc = function (ts) { return Math.min(100, Math.max(0, (ts * 1000 - nowMs) / span * 100)); };
-    var h = '<div class="fg-exp"><div class="fg-exp-bg"><i style="height:25%;background:rgba(76,194,122,.15)"></i><i style="height:20%;background:rgba(76,194,122,.08)"></i><i style="height:10%;background:rgba(234,179,8,.1)"></i><i style="height:20%;background:rgba(240,113,106,.08)"></i><i style="height:25%;background:rgba(240,113,106,.15)"></i></div>';
-    h += '<span class="fg-exp-zl" style="top:6px">Extreme Greed</span><span class="fg-exp-zl" style="bottom:6px">Extreme Fear</span>';
-    boxes.forEach(function (b) {
-      var l = pc(b.start), w = Math.max(1.2, pc(b.end) - l), gr = b.type === "Extreme Greed", days = Math.round((b.realEnd - b.start) / DAY);
-      var txt = (b.cur ? "Now · " : "") + b.type + (b.cur ? " (ongoing) · ends ≈ " + fmtD(b.realEnd) : (b.over ? " · due now" : " · ≈ " + fmtD(b.start)) + " · ~" + days + "d");
-      h += '<div class="fg-exp-box ' + (gr ? "g" : "f") + '" style="left:' + l.toFixed(2) + '%;width:' + w.toFixed(2) + '%" title="' + txt + '"><span style="' + (l + w > 62 ? "right:0" : "left:0") + '">' + txt + '</span></div>';
-    });
-    h += '<div class="fg-exp-now" title="Today"></div></div><div class="fg-exp-axis">';
-    var d = new Date(nowMs); d.setDate(1); d.setHours(0, 0, 0, 0); d.setMonth(d.getMonth() + 1);
-    while (d.getTime() < nowMs + span) { var p = (d.getTime() - nowMs) / span * 100; h += '<span style="left:' + p.toFixed(2) + '%">' + d.toLocaleDateString("en-GB", d.getMonth() === 0 ? { month: "short", year: "2-digit" } : { month: "short" }) + '</span>'; d.setMonth(d.getMonth() + 1); }
-    var stageTxt = D.stage ? D.stage + "s" : "the matching years";
-    h += '</div><div class="fg-model-badge" style="margin:8px 0 0">' + (boxes.length ? 'Next 12 months. Each box is where an extreme is expected and how long it usually lasts, based on ' + stageTxt + ' ' + D.years.join(" & ") + '.' : 'Not enough data in ' + stageTxt + ' ' + (D.years.join(" & ") || "(none)") + ' to draw expectations.') + '</div>';
-    return h;
-  }
 
   function renderFGAdvanced() {
     if (!fgaOn || !fgData || fgData.length < 2) return;
@@ -3551,7 +3450,6 @@
         if (exA.length) {
           // exchanges are authoritative for the traded token; cap sources must agree with them or they are a different coin with the same ticker
           var capP = arr.filter(function (x) { return exIds.indexOf(x.source) < 0; }).map(function (x) { return x.price; }); ref = capP.length ? median(capP) : median(exA.map(function (x) { return x.price; })); /* cap sources decide the reference price; stale exchange prices get filtered out instead of killing the coin */
-          var hadCap = arr.some(function (x) { return exIds.indexOf(x.source) < 0; });
           arr = arr.filter(function (x) { return Math.abs(x.price - ref) / ref <= 0.20; });
         } else ref = median(allPrices);
         // Outlier detection: drop any source >20% away from median
@@ -4228,7 +4126,6 @@
   var RT = { data: null, med: null, at: 0, loading: false, failed: false, view: "YEAR", year: new Date().getFullYear(), fair: "365", hist: "all", cmp: false, cmpYear: null, cur: {}, expandedYear: 0, expandedMo: null, yfv: {}, dom: {} };
   var RT_TIPS_KEY = "top200-rt-tips", rtTipsText = "", rtTipsVisible = false, rtCalcSwapped = false;
   try { rtTipsText = localStorage.getItem(RT_TIPS_KEY) || ""; } catch(e) {}
-  var RT_YH_KEY = "top200-rt-yh", rtYH = true; try { rtYH = localStorage.getItem(RT_YH_KEY) !== "0"; } catch (e) {}
   var RT_LINK_KEY = "top200-rt-link", rtLink = true; try { rtLink = localStorage.getItem(RT_LINK_KEY) !== "0"; } catch (e) {}
   var RT_TINT_KEY = "top200-rt-tint", rtTint = false; try { rtTint = localStorage.getItem(RT_TINT_KEY) === "1"; } catch (e) {}
   var RT_DOM_KEY = "top200-rt-dom-alts", rtDomAlts = false; try { rtDomAlts = localStorage.getItem(RT_DOM_KEY) === "1"; } catch (e) {}
@@ -4328,11 +4225,6 @@
     if (z.lv === 2) return "[ " + s + "35 – " + s + "69.99% " + dir + " Fair Value ]";
     return "[ " + s + "70%+ " + dir + " Fair Value ]";
   }
-  function rtSeason() {
-    var d = RT.data, n = d.t.length, i0 = Math.max(0, n - 91), lv = rtLive();
-    var gb = ((lv ? lv.b : d.b[n - 1]) / d.b[i0] - 1) * 100, ge = ((lv ? lv.e : d.e[n - 1]) / d.e[i0] - 1) * 100, gap = gb - ge;
-    return { gb: gb, ge: ge, s: Math.abs(gap) < RT_TH ? 0 : (gap > 0 ? 1 : -1) };
-  }
   function rtSeasonSeries(v) { /* BTC % gain minus ETH % gain over the trailing 90 days */
     var d = RT.data, S = [], i, lv = rtLive();
     for (i = v.i0; i < v.i1; i++) {
@@ -4408,56 +4300,6 @@
       '<b style="color:' + uc + '">' + (f.unc ? (f.unc === 1 ? "Uncertainty Mark" : "Uncertainty Marks") : "No Uncertainty Marks") + '</b>' + sum(uc, f.unc, 3, "Uncertainty Marks") + '</div>';
   }
 
-  /* ---- Readings Inspector (dev mode I key) ---- */
-  function rtReadingsInspHtml() {
-    var v = rtView(), lv = rtLive(); if (!lv || !RT.data) return "";
-    var f = rtFair(v), z = rtZone(lv.r, f), se = rtSeason();
-    var totalMcap = 0, btcMcap = 0, ethMcap = 0;
-    coins.forEach(function(c) { var mc = c.market_cap || 0, sym = String(c.symbol).toUpperCase(); totalMcap += mc; if (sym==="BTC") btcMcap = mc; else if (sym==="ETH") ethMcap = mc; });
-    var BSd = 19.8e6, ESd = 120.4e6, afrac = totalMcap > 0 ? (totalMcap - btcMcap - ethMcap) / totalMcap : 0.3;
-    var bef = 1 - afrac, nd = RT.data.t.length, t30ago = Date.now() - 30*864e5, r30 = RT.data.r[0];
-    for (var kd = nd-1; kd >= 0; kd--) { if (RT.data.t[kd] <= t30ago) { r30 = RT.data.r[kd]; break; } }
-    var domPct = function(r) { return r * BSd / (r * BSd + ESd) * bef * 100; };
-    var domChange = domPct(lv.r) - domPct(r30);
-    var btcScore = (z.dir > 0 ? z.lv : 0) + (se.s > 0 ? 1 : 0) + (domChange > 0.5 ? 1 : 0);
-    var ethScore = (z.dir < 0 ? z.lv : 0) + (se.s < 0 ? 1 : 0) + (domChange < -0.5 ? 1 : 0);
-    var btcDom = totalMcap > 0 ? btcMcap / totalMcap * 100 : 0;
-    var readings = [
-      { label: "Strong BTC season — BTC is likely outperforming", color: BTC_C,    active: btcScore >= 3,
-        cond: "btcScore ≥ 3", detail: "ratio zone BTC + season BTC + dom rising (each = 1–3 pts)" },
-      { label: "Mild BTC lean — monitor for stronger confirmation", color: "#f6ad55", active: btcScore === 2,
-        cond: "btcScore = 2", detail: "2 of 3 BTC signals firing, or one strong zone signal" },
-      { label: "Strong Altcoin/ETH rotation signal",              color: ETH_D,    active: ethScore >= 3,
-        cond: "ethScore ≥ 3", detail: "ratio zone ETH + season ETH + dom falling (each = 1–3 pts)" },
-      { label: "Mild ETH/Alts lean — watch dominance trend",      color: "#7aa2f7", active: ethScore === 2,
-        cond: "ethScore = 2", detail: "2 of 3 ETH signals firing, or one strong zone signal" },
-      { label: "All signals neutral — no clear directional bias",  color: GREY_C,  active: z.dir === 0 && se.s === 0 && btcScore < 2 && ethScore < 2,
-        cond: "z.dir = 0 AND se.s = 0", detail: "ratio at fair value and season totally flat" },
-      { label: "Mixed signals — wait for clearer confluence",      color: GREY_C,  active: btcScore < 2 && ethScore < 2 && !(z.dir === 0 && se.s === 0),
-        cond: "fallback", detail: "scores below threshold, indicators pulling in different directions" }
-    ];
-    var ratioCol = z.dir > 0 ? BTC_C : z.dir < 0 ? ETH_D : GREY_C;
-    var seasonCol = se.s > 0 ? BTC_C : se.s < 0 ? ETH_D : GREY_C;
-    var domCol = domChange > 0.5 ? BTC_C : domChange < -0.5 ? ETH_D : GREY_C;
-    var h = '<div class="rt-ri-wrap">';
-    h += '<div class="rt-ri-title">Readings Inspector <span class="fg-sub" style="font-weight:400">— press I to close</span></div>';
-    h += '<div class="rt-ri-scores">BTC score <b style="color:' + BTC_C + '">' + btcScore + '</b> · ETH score <b style="color:' + ETH_D + '">' + ethScore + '</b></div>';
-    h += '<div class="rt-ri-inputs">';
-    h += '<div><span class="rt-ri-k">Ratio vs Fair</span><b style="color:' + ratioCol + '">' + (z.dir === 0 ? 'Neutral — 0 pts' : (z.dir > 0 ? 'BTC side' : 'ETH side') + ' · ' + z.name + ' · +' + z.lv + ' pts') + '</b></div>';
-    h += '<div><span class="rt-ri-k">Season [90D]</span><b style="color:' + seasonCol + '">' + (se.s > 0 ? 'BTC Season +1 pt' : se.s < 0 ? 'ETH Season +1 pt' : 'Neutral — 0 pts') + '</b></div>';
-    h += '<div><span class="rt-ri-k">Dom 30-Day</span><b style="color:' + domCol + '">' + (domChange >= 0 ? '+' : '') + domChange.toFixed(2) + 'pp ' + (domChange > 0.5 ? '→ BTC +1 pt' : domChange < -0.5 ? '→ ETH +1 pt' : '→ neutral 0 pts') + '</b></div>';
-    h += '</div>';
-    h += '<div class="rt-ri-list">';
-    readings.forEach(function(r) {
-      h += '<div class="rt-ri-row' + (r.active ? ' rt-ri-active' : '') + '">';
-      h += '<div class="rt-ri-dot" style="background:' + (r.active ? r.color : 'var(--muted)') + '"></div>';
-      h += '<div class="rt-ri-body"><b style="color:' + (r.active ? r.color : 'var(--fg)') + '">' + r.label + '</b>';
-      h += '<div class="rt-ri-cond"><code>' + r.cond + '</code> — ' + r.detail + '</div></div>';
-      h += '</div>';
-    });
-    h += '</div></div>';
-    return h;
-  }
   function rtYrMenu(attr, cur) {
     var cy = new Date().getFullYear(), y0 = new Date(RT.data.t[0]).getUTCFullYear(), ys = "", y;
     for (y = cy; y >= y0; y--) ys += '<button type="button"' + (cur === y ? ' class="active"' : '') + ' ' + attr + '="' + y + '">' + y + ' · ' + stg(y) + '</button>';
@@ -4754,15 +4596,17 @@
   }
   function rtKind(i, s, r) { return !s ? null : (s > 0 ? "B" : "E") + rtTier(s).charAt(0) + (rtRun(i, r, s > 0 ? 1 : -1).ago <= 7 ? "r" : "s"); } /* side, strength, still growing or stalled */
   function rtEvidence(i, s, r) { /* earlier stretches of the same kind of reading whose next 90 days are already known: how many moved back, how many offered a 10% better rate first */
-    var d = RT.data, A = rtAsof().S, kind = rtKind(i, s, r), dir = s > 0 ? 1 : -1, eps = [], cur = null, j, q;
+    var d = RT.data, C = rtAsof(), A = C.S, kind = rtKind(i, s, r), dir = s > 0 ? 1 : -1, eps = [], cur = null, j, q;
     if (!kind) return null;
+    if (C.ev && C.ev[kind]) return C.ev[kind];
     for (j = 365; j + 90 <= i; j++) {
       if (!A[j] || (A[j] > 0) !== (s > 0) || rtKind(j, A[j], d.r[j]) !== kind) continue;
       if (!cur || j - cur.last > 20) { cur = { last: j, k: 0, back: 0, better: 0 }; eps.push(cur); }
       var best = 0; for (q = j + 1; q <= j + 90; q++) best = Math.max(best, (d.r[q] / d.r[j] - 1) * dir);
       cur.k++; cur.last = j; if ((d.r[j + 90] / d.r[j] - 1) * dir < 0) cur.back++; if (best >= 0.10) cur.better++;
     }
-    return { n: eps.length, back: eps.filter(function (x) { return x.back / x.k > 0.5; }).length, better: eps.filter(function (x) { return x.better / x.k > 0.5; }).length };
+    C.ev = C.ev || {};
+    return (C.ev[kind] = { n: eps.length, back: eps.filter(function (x) { return x.back / x.k > 0.5; }).length, better: eps.filter(function (x) { return x.better / x.k > 0.5; }).length });
   }
   function rtPhases(upto) { /* strong phases as the live Formula saw them: score at 3 or beyond for at least 10 days, gaps under 20 days merged */
     var A = rtAsof().S, out = [], cur = null, j, sd;
@@ -4783,7 +4627,6 @@
     var zone = function (v) { return v <= 44 ? -1 : v >= 56 ? 1 : 0; };
     var and = function (a) { return a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1]; };
     var cap = function (s) { return s.charAt(0).toUpperCase() + s.slice(1); };
-    var allOf = function (q) { return q === 1 ? "that year" : q === 2 ? "both years" : "all " + q + " years"; };
     var of = function (q, N) { return q + " of " + N; };
     var add = function (key, text) { P.push('<div class="rt-rd-p"><span class="rt-rd-k">' + key + '</span>' + text + '</div>'); };
     var small = function (N) { return N <= 3 ? ' <span class="rt-rd-m">' + (N === 1 ? "One year is" : N + " years are") + ' a very small sample. Treat this as a hint, not as a rule.</span>' : ''; };
@@ -4876,7 +4719,7 @@
     /* Phases: the projection */
     var PH = rtPhases(i), last = PH.length ? PH[PH.length - 1] : null, inPhase = last && i - last.last <= 20 && A >= 3 && last.sd === dir, proj = null;
     if (last) {
-      var prior = PH.slice(0, inPhase ? -1 : PH.length), ref = inPhase ? last : last, sameSide = 0, cntP = 0, lab = function (sd) { return sd > 0 ? "BTC" : "ETH"; };
+      var ref = last, sameSide = 0, cntP = 0, lab = function (sd) { return sd > 0 ? "BTC" : "ETH"; };
       for (k = 0; k + 1 < PH.length; k++) if (PH[k].sd === ref.sd) { cntP++; if (PH[k + 1].sd === ref.sd) sameSide++; }
       t = inPhase ? "The Formula has been in a strong " + lab(last.sd) + " Overvaluation phase since " + rtDate(d.t[last.first]) + "."
         : "The last strong phase was " + (last.sd > 0 ? "a BTC" : "an ETH") + " Overvaluation from " + rtDate(d.t[last.first]) + " to " + rtDate(d.t[last.last]) + ", " + (i - last.last) + " days ago.";
@@ -5011,7 +4854,7 @@
     ratioBox.hidden = false; updatePinnedColVisibility();
     var h = '<div class="pinned-card chart-container pf-card rt-card dev-target" data-dev-name="BTC|ETH Ratio" data-dev-color="#a78bfa"><div class="rt-title-row"><button type="button" class="gear' + (rtTipsVisible ? ' active' : '') + '" data-rt-tips="1" style="font-size:11px;height:28px;padding:0 10px">Usage Tips</button><div class="pf-title" style="text-align:center">Bitcoin|Ethereum Ratio</div><div></div></div><div id="rt-live">' + rtLiveHtml() + '</div><div class="rt-desc">How many ETH one BTC buys</div>';
     var lv = rtLive(), cv = lv ? lv.r : 0;
-    h += '<div class="rt-calc"><div class="rt-calc-row"><div class="rt-calc-field"><span class="rt-calc-lbl" id="rt-clbl-l">' + (rtCalcSwapped ? "ETH" : "BTC") + '</span><input id="rt-in-b" type="number" min="0" step="any" value="1" aria-label="left amount"></div><button class="rt-calc-swap' + (rtCalcSwapped ? " swapped" : "") + '" type="button" data-rt-swap="1" id="rt-swap-btn">⇄</button><div class="rt-calc-field"><span class="rt-calc-lbl" id="rt-clbl-r">' + (rtCalcSwapped ? "BTC" : "ETH") + '</span><input id="rt-in-e" type="number" min="0" step="any" value="' + (cv ? (rtCalcSwapped ? (1/cv).toFixed(4) : cv.toFixed(2)) : "") + '" aria-label="right amount" readonly></div></div></div>';
+    h += '<div class="rt-calc"><div class="rt-calc-row"><div class="rt-calc-field"><span class="rt-calc-lbl" id="rt-clbl-l">' + (rtCalcSwapped ? "ETH" : "BTC") + '</span><input id="rt-in-b" type="number" min="0" step="any" value="1" aria-label="left amount"></div><button class="rt-calc-swap' + (rtCalcSwapped ? " swapped" : "") + '" type="button" data-rt-swap="1" id="rt-swap-btn">⇄</button><div class="rt-calc-field"><span class="rt-calc-lbl" id="rt-clbl-r">' + (rtCalcSwapped ? "BTC" : "ETH") + '</span><input id="rt-in-e" type="number" min="0" step="any" value="' + (cv ? +(rtCalcSwapped ? 1 / cv : cv).toFixed(4) : "") + '" aria-label="right amount" readonly></div></div></div>';
     if (rtTipsVisible) h += '<div class="rt-tips-panel">' + rtGuideHtml() + '<div class="rt-guide"><h4>Your Notes</h4></div><textarea id="rt-tips-ta" placeholder="Your own notes for the BTC|ETH Ratio... (auto-saved)">' + rtTipsText.replace(/</g, "&lt;") + '</textarea><div class="rt-tips-hint">Auto-saved to your browser. Click Usage Tips again to hide.</div></div>';
     if (!RT.data) h += RT.failed ? '<div class="rt-empty">Ratio history could not be loaded. <button class="gear" type="button" data-rt-retry="1">Retry</button></div>' : '<div class="rt-empty">Loading history…</div>';
     else {
@@ -5124,9 +4967,6 @@
     if (ratioVisible) { RT.view = "YEAR"; RT.year = new Date().getFullYear(); RT.cmp = false; rtLoad(); }
     rtRender();
   });
-  var rtYhToggle = document.getElementById("rt-yh-toggle");
-  rtYhToggle.setAttribute("aria-checked", rtYH ? "true" : "false");
-  rtYhToggle.addEventListener("click", function () { rtYH = !rtYH; rtYhToggle.setAttribute("aria-checked", rtYH ? "true" : "false"); try { localStorage.setItem(RT_YH_KEY, rtYH ? "1" : "0"); } catch (e) {} if (ratioVisible) rtRender(); });
   var rtLinkToggle = document.getElementById("rt-link-toggle");
   rtLinkToggle.setAttribute("aria-checked", rtLink ? "true" : "false");
   rtLinkToggle.addEventListener("click", function () { rtLink = !rtLink; rtLinkToggle.setAttribute("aria-checked", rtLink ? "true" : "false"); try { localStorage.setItem(RT_LINK_KEY, rtLink ? "1" : "0"); } catch (e) {} });
