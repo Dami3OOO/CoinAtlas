@@ -538,6 +538,8 @@
   .rt-fm-total > b { font-size:13px; font-weight:700; } .rt-fm-sum { display:flex; align-items:baseline; justify-content:flex-end; gap:8px; }
   .rt-fm-sum b { font-size:26px; font-weight:700; line-height:1.1; } .rt-fm-sum small { font-size:13px; font-weight:600; color:var(--muted); }
   .rt-fm-note { margin-top:10px; line-height:1.5; }
+  .rt-vd { font-size:17px; line-height:1.5; font-weight:600; letter-spacing:-0.01em; padding:4px 0 2px; }
+  .rt-why { margin-top:12px; border-top:1px solid var(--line); } .rt-why > summary { cursor:pointer; font-size:11px; font-weight:700; color:var(--muted); padding:10px 0 6px; list-style-position:inside; } .rt-why > summary:hover { color:var(--fg); }
   .rt-rd-p { font-size:12px; line-height:1.6; padding:9px 0; border-bottom:1px solid var(--line); } .rt-rd-p:first-child { padding-top:4px; } .rt-rd-p b { font-weight:600; }
   .rt-rd-k { display:block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin-bottom:2px; } .rt-rd-m { color:var(--muted); }
   .rt-rd-hs { margin-top:10px; border:1px dashed #facc15; border-radius:8px; padding:8px 12px; font-size:12px; line-height:1.6; color:var(--muted); } .rt-rd-hs .rt-rd-k { color:#facc15; }
@@ -1001,7 +1003,7 @@
   var pinnedEl = document.getElementById("pinned-container"), statusEl = document.getElementById("status");
   var noticeEl = document.getElementById("notice"), fgContainer = document.getElementById("fg-chart-container");
   var rouletteContainer = document.getElementById("roulette-container"), rouletteList = document.getElementById("roulette-list");
-  var rouletteWrap = document.getElementById("roulette-list-wrap"), coins = [], snapNew = {};
+  var rouletteWrap = document.getElementById("roulette-list-wrap"), coins = [], coinsReal = false, snapNew = {};
   var filterState = { type: null, tier: null, category: null, network: null };
   var displayCoins = [];
   var lastSortMinute = -1;
@@ -2725,7 +2727,7 @@
   var ROADMAP_FEATURES = [
     { title: "Customizable Locked Hoverchart Timeframes", st: "done", notes: ["Complete. 4H, 1D, 1W, 1M, 1Y, ALL and the Year Selector all exist. 90D and 365D were added on top."], desc: "Allows Users to choose the Timeframes inside the Locked Hovercharts [4H, 1D, 1W, 1M, 1Y, ALL] plus a Year Selector to jump to any single Year. 1Y always shows the current Calendar Year, January to December." },
     { title: "Portfolio Manager", st: "wip", notes: ["Works: load a Wallet address or build a Portfolio by hand, shown as a Locked Window.", "Open: the Avg. Cost is still typed in by hand. Reading it from the time of each transaction is not built yet."], desc: "Allows Users to enter their Wallet address to Immediately see their Portfolio value, or to build a Portfolio by hand. Assets in said Portfolio are then displayed in the Landing Area as a Locked Window.\nThe Manager is also going to look at the time transactions where made to automatically calculate your Avg. Cost for each Token and thus also the profit / drawdown at current prices.\nOrange = it exists, but it's not perfect yet." },
-    { title: "BTC|ETH Ratio", st: "wip", notes: ["Grew far past the original scope: Converter with Swap, Ratio, Season and Dominance Graphs, Year and All Time Fair Value Lines, Valuation, Past Years with monthly Fear & Greed, the CoinAtlas Formula with Uncertainty Marks, and the Usage Tips.", "New: the CoinAtlas Formula Reading puts the outcome into words, and Dev Mode can set any past day as live to backtest it.", "Open: the Reading still has to prove itself in backtests, and the I key in Dev Mode still shows the old readings."], desc: "The Gold / Silver Ratio idea in Crypto Terms: how many ETH does 1 BTC buy right now. Swap into the cheaper Asset, wait for the Ratio to swing back, swap again, and the Stack of BTC and ETH grows without adding a single Dollar.\nLive: Converter, own Ratio Chart [BTC divided by ETH, 90D / 1Y / Year Selector / ALL], a recency-weighted Median as Fair Value with Neutral, Mild, Strong and Extreme Zones, and a first Season Readout.\nOrange = it exists, but it is not perfect yet." },
+    { title: "BTC|ETH Ratio", st: "wip", notes: ["Grew far past the original scope: Converter with Swap, Ratio, Season and Dominance Graphs, Year and All Time Fair Value Lines, Valuation, Past Years with monthly Fear & Greed, the CoinAtlas Formula with Uncertainty Marks, and the Usage Tips.", "New: the CoinAtlas Formula Reading gives one verdict with its reasoning folded below, and Dev Mode can set any past day as live to backtest it.", "Open: a backtest on the real history showed that the score does not predict when an overvaluation ends, so the Reading reports its track record and makes no swap call. Finding a signal that times the turn is the open problem. The I key in Dev Mode still shows the old readings."], desc: "The Gold / Silver Ratio idea in Crypto Terms: how many ETH does 1 BTC buy right now. Swap into the cheaper Asset, wait for the Ratio to swing back, swap again, and the Stack of BTC and ETH grows without adding a single Dollar.\nLive: Converter, own Ratio Chart [BTC divided by ETH, 90D / 1Y / Year Selector / ALL], a recency-weighted Median as Fair Value with Neutral, Mild, Strong and Extreme Zones, and a first Season Readout.\nOrange = it exists, but it is not perfect yet." },
     { title: "BTC & ETH Dominance", st: "wip", notes: ["Works: Dominance Graph, today's value from the real Top 200, and a daily Snapshot that records real Dominance since November 2026.", "Open: history before the recording is an estimate from the Ratio, so the Formula compares real with real only after 90 recorded days. The comparison against each Asset's own Average is not built, the Formula uses the 90 day change instead."], desc: "Market Cap Share of BTC, ETH and all other Coins [Altcoins = everything except BTC and ETH] in the Top 200. Each Asset is compared against its own Average: higher than usual ETH Dominance means lower than usual BTC Dominance. The third Signal for the Ratio.\nOrange = it exists, but it is not perfect yet." },
     { title: "Bitcoin Season & Ethereum Season", st: "wip", notes: ["Works: the dedicated Season Graph exists and feeds the CoinAtlas Formula.", "Open: only the 90 day window is used. 30D and All Time cannot be selected."], desc: "Compares the % Gain of BTC and ETH against each other over 30D, 90D or All Time. The bigger Gainer is in Season, a small Gap is Neutral. Already shown inside the BTC|ETH Ratio, a dedicated Chart is next.\nOrange = it exists, but it is not perfect yet." },
     { title: "Season x Fear & Greed", st: "wip", notes: ["Partly there in another form: Past Years shows every month's Fear & Greed average next to its Formula score, which includes Season and Dominance.", "Open: the Toggle inside the Fear & Greed Index itself is not built."], desc: "Optional Toggle that overlays the Season and Dominance Data on the Fear & Greed Monthly Averages, to show which Asset dominated during Greed and Extreme Greed Phases [e.g. every Bridge Year]. Kept separate from the main Index, but hand in hand with it." },
@@ -3638,6 +3640,7 @@
     coins = list; 
     coins.sort(function(a, b) { return (b.market_cap || 0) - (a.market_cap || 0); });
     coins.forEach(function (c) { c.__pendingMidnight = false; }); 
+    coinsReal = !!text;
     if (text) window.coinAtlasList = { label: text, coins: coins.map(function (c) { return [String(c.symbol).toUpperCase(), c.name, c.current_price, c.market_cap, c.image || "", c.paprika_id || ""]; }) }; /* read by scripts/record-snapshot.mjs */
     
     updateNetworkFilters();
@@ -4271,7 +4274,7 @@
   function rtLive() {
     if (RT.w) return RT.w.live;
     var b = null, e = null;
-    coins.forEach(function (c) { var s = String(c.symbol).toUpperCase(); if (s === "BTC" && !b) b = c.current_price; else if (s === "ETH" && !e) e = c.current_price; });
+    if (coinsReal) coins.forEach(function (c) { var s = String(c.symbol).toUpperCase(); if (s === "BTC" && !b) b = c.current_price; else if (s === "ETH" && !e) e = c.current_price; });
     if (b > 0 && e > 0) return { b: b, e: e, r: b / e };
     if (RT.data) { var n = RT.data.t.length - 1; return { b: RT.data.b[n], e: RT.data.e[n], r: RT.data.r[n] }; }
     return null;
@@ -4346,12 +4349,11 @@
   function rtLiveHtml() { var lv = rtLive(); return lv ? '<div class="rt-big">1 BTC <small>=</small> ' + lv.r.toFixed(2) + ' ETH</div>' : '<div class="rt-sub">Waiting for prices…</div>'; }
   function rtDomAt(i, r) { /* modelled share of the whole market [BTC %, ETH %], inferred from where the ratio sits against its all-time fair value */
     var rec = RT.dom[RT.data.t[i]]; if (rec) return [rec[0], rec[1], 1]; /* a recorded day beats the estimate */
-    r = r || RT.data.r[i];
-    var b = Math.max(0.37, Math.min(0.70, Math.tanh((r / (RT.med || 24) - 1) * 2) * 0.14 + 0.52)) * 100;
-    return [b, b * 120.4e6 / 19.8e6 / r];
+    return rtDomModel(r || RT.data.r[i], RT.med || 24);
   }
+  function rtDomModel(r, med) { var b = Math.max(0.37, Math.min(0.70, Math.tanh((r / med - 1) * 2) * 0.14 + 0.52)) * 100; return [b, b * 120.4e6 / 19.8e6 / r]; }
   function rtDomLive() { /* today's real shares [BTC %, ETH %] from the top-200 market caps, null until the list has loaded */
-    if (RT.w) return null;
+    if (RT.w || !coinsReal) return null;
     var tot = 0, b = 0, e = 0;
     coins.forEach(function (c) { var mc = c.market_cap || 0, sym = String(c.symbol).toUpperCase(); tot += mc; if (sym === "BTC") b = mc; else if (sym === "ETH") e = mc; });
     return tot > 0 && b > 0 && e > 0 ? [b / tot * 100, e / tot * 100] : null;
@@ -4724,19 +4726,57 @@
     for (i = v.i0; i < i1; i++) { if (hi < 0 || r[i] > r[hi]) hi = i; if (lo < 0 || r[i] < r[lo]) lo = i; }
     return hi < 0 ? null : { hi: hi, lo: lo, n: i1 - v.i0 };
   }
-  function rtScoreHist() { /* every day's score so far, to say how rare a reading is */
-    var c = RT.w || RT, key = RT.data.t.length + ":" + RT.at, out = [], i; if (c.sh && c.shKey === key) return c.sh;
-    for (i = 90; i < RT.data.t.length; i++) out.push(rtFormula(i, false).total);
-    c.shKey = key; return (c.sh = out);
+  /* ---------- what the live Formula read on every past day ----------
+     Each day is scored with only the data that existed on that day: the Year Line is the median of the 365 days before it,
+     the All Time Line the weighted median up to it. This is the Formula's real track record, free of hindsight. */
+  function rtAsof() {
+    var d = RT.data, n = d.t.length; if (d.asof) return d.asof;
+    var S = new Int8Array(n), vals = [], wts = [], tot = 0, HL = 4 * 365 * 864e5, i, k;
+    for (i = 0; i < n; i++) {
+      var w = Math.pow(2, (d.t[i] - d.t[0]) / HL), lo = 0, hi = vals.length; /* a day loses half its weight every 4 years: relative weights never change, so one sorted list serves every day */
+      while (lo < hi) { k = (lo + hi) >> 1; if (vals[k] < d.r[i]) lo = k + 1; else hi = k; }
+      vals.splice(lo, 0, d.r[i]); wts.splice(lo, 0, w); tot += w;
+      var acc = 0, med = vals[vals.length - 1]; for (k = 0; k < vals.length; k++) { acc += wts[k]; if (acc >= tot / 2) { med = vals[k]; break; } }
+      var zy = rtZone(d.r[i], median(d.r.slice(Math.max(0, i - 364), i + 1))), za = rtZone(d.r[i], med), ratio = zy.dir * zy.lv + za.dir * za.lv, s = 0, dp = 0;
+      if (i >= 90) {
+        var gb = d.b[i] / d.b[i - 90], ge = d.e[i] / d.e[i - 90], a = rtDomModel(d.r[i], med), b = rtDomModel(d.r[i - 90], med), db = +(a[0] - b[0]).toFixed(1), de = +(a[1] - b[1]).toFixed(1);
+        s = Math.abs(gb - ge) * 100 < RT_TH ? 0 : (gb > ge ? 1 : -1); dp = db > de ? 1 : db < de ? -1 : 0;
+      }
+      S[i] = ratio + s + dp;
+    }
+    return (d.asof = { S: S });
   }
+  function rtTier(s) { var a = Math.abs(s); return !a ? "" : a <= 2 ? "Mild" : a <= 5 ? "Strong" : "Extreme"; }
+  function rtRun(i, r, dir) { /* how long ago the Ratio set its 90-day high (BTC lean) or low (ETH lean), and how far it is from it now */
+    var d = RT.data, x = i, j; for (j = Math.max(0, i - 90); j < i; j++) if (dir > 0 ? d.r[j] > d.r[x] : d.r[j] < d.r[x]) x = j;
+    var best = x === i || (dir > 0 ? r >= d.r[x] : r <= d.r[x]) ? r : d.r[x];
+    return { ago: best === r ? 0 : i - x, off: (r / best - 1) * 100 };
+  }
+  function rtKind(i, s, r) { return !s ? null : (s > 0 ? "B" : "E") + rtTier(s).charAt(0) + (rtRun(i, r, s > 0 ? 1 : -1).ago <= 7 ? "r" : "s"); } /* side, strength, still growing or stalled */
+  function rtEvidence(i, s, r) { /* earlier stretches of the same kind of reading whose next 90 days are already known: how many moved back, how many offered a 10% better rate first */
+    var d = RT.data, A = rtAsof().S, kind = rtKind(i, s, r), dir = s > 0 ? 1 : -1, eps = [], cur = null, j, q;
+    if (!kind) return null;
+    for (j = 365; j + 90 <= i; j++) {
+      if (!A[j] || (A[j] > 0) !== (s > 0) || rtKind(j, A[j], d.r[j]) !== kind) continue;
+      if (!cur || j - cur.last > 20) { cur = { last: j, k: 0, back: 0, better: 0 }; eps.push(cur); }
+      var best = 0; for (q = j + 1; q <= j + 90; q++) best = Math.max(best, (d.r[q] / d.r[j] - 1) * dir);
+      cur.k++; cur.last = j; if ((d.r[j + 90] / d.r[j] - 1) * dir < 0) cur.back++; if (best >= 0.10) cur.better++;
+    }
+    return { n: eps.length, back: eps.filter(function (x) { return x.back / x.k > 0.5; }).length, better: eps.filter(function (x) { return x.better / x.k > 0.5; }).length };
+  }
+  function rtPhases(upto) { /* strong phases as the live Formula saw them: score at 3 or beyond for at least 10 days, gaps under 20 days merged */
+    var A = rtAsof().S, out = [], cur = null, j, sd;
+    for (j = 365; j <= upto; j++) { sd = A[j] >= 3 ? 1 : A[j] <= -3 ? -1 : 0; if (!sd) continue; if (cur && cur.sd === sd && j - cur.last <= 20) { cur.last = j; cur.days++; } else { cur = { sd: sd, first: j, last: j, days: 1 }; out.push(cur); } }
+    return out.filter(function (x) { return x.days >= 10; });
+  }
+  function rtMix(a, b, w) { var p = function (h, k) { return parseInt(h.slice(1 + k * 2, 3 + k * 2), 16); }, o = "#", k; for (k = 0; k < 3; k++) o += ("0" + Math.round(p(a, k) * (1 - w) + p(b, k) * w).toString(16)).slice(-2); return o; }
 
-  /* ---------- CoinAtlas Formula Reading: the Formula put into words ----------
-     Built from parts, each written from the data: the score, the Uncertainty Marks, Fear & Greed, the same month in earlier
-     years of the same type, the year's high and low, the months of this year, and a conclusion drawn from all of them. */
+  /* ---------- CoinAtlas Formula Reading ----------
+     On top: one verdict, in a colour that follows its lean, strength and certainty. Below, folded away: the reasoning it is built from.
+     The verdict only claims what the history supports. It reports what followed earlier readings of the same kind and says so when that is a coin flip. */
   function rtReadingHtml(f) {
     var d = RT.data, n = d.t.length, i = n - 1, lv = rtLive(), r = lv ? lv.r : d.r[i], cy = rtCY(), tNow = d.t[i], m = new Date(tNow).getUTCMonth(), doy = rtDoy(tNow);
-    var S = f.total, dir = S > 0 ? 1 : S < 0 ? -1 : 0, A = Math.abs(S), side = dir > 0 ? "BTC" : "ETH", tier = A <= 2 ? "Mild" : A <= 5 ? "Strong" : "Extreme";
-    var swap = dir > 0 ? "BTC into ETH" : "ETH into BTC", type = rtTypeName(cy), P = [], k, t;
+    var S = f.total, dir = S > 0 ? 1 : S < 0 ? -1 : 0, A = Math.abs(S), side = dir > 0 ? "BTC" : "ETH", tier = rtTier(S), swap = dir > 0 ? "BTC into ETH" : "ETH into BTC", type = rtTypeName(cy), P = [], V = [], t;
     var fx = function (x) { return x.toFixed(x < 10 ? 2 : 1); }, hl = function (s, p) { return '<b style="color:' + rtFCol(p) + '">' + s + '</b>'; };
     var pc = function (x) { return (x < 0 ? "−" : "+") + Math.abs(x).toFixed(1) + "%"; };
     var fgT = function (v) { return '<b style="color:' + fgCol(v) + '">' + v + ' · ' + classifyFG(v) + '</b>'; };
@@ -4748,60 +4788,105 @@
     var add = function (key, text) { P.push('<div class="rt-rd-p"><span class="rt-rd-k">' + key + '</span>' + text + '</div>'); };
     var small = function (N) { return N <= 3 ? ' <span class="rt-rd-m">' + (N === 1 ? "One year is" : N + " years are") + ' a very small sample. Treat this as a hint, not as a rule.</span>' : ''; };
     var sn = f.s > 0 ? "Bitcoin Season" : f.s < 0 ? "Ethereum Season" : "Neutral", dn = f.dp > 0 ? "BTC gained more" : f.dp < 0 ? "ETH gained more" : "a tie";
-
-    /* 1. the score */
     var parts = [["the Ratio", f.ratio], ["the Season", f.s], ["Dominance", f.dp]], nm = function (q) { return q[0] + " [" + rtPts(q[1]) + "]"; };
-    if (!dir) {
-      var nz = parts.filter(function (q) { return q[1]; });
-      t = "The Formula reads " + hl("+0 of 8", 0) + " at " + fx(r) + " ETH per BTC. " + (nz.length ? "The score is 0 because the parts cancel each other out, " + and(nz.map(nm)) + ", and not because everything is neutral." : "BTC and ETH are fairly valued against each other, and the data gives no lean in either direction.");
-    } else {
-      var fo = parts.filter(function (q) { return q[1] * dir > 0; }), ne = parts.filter(function (q) { return !q[1]; }), ag = parts.filter(function (q) { return q[1] * dir < 0; });
-      t = "The Formula reads " + hl(rtPts(S) + " of 8", S) + ", " + (tier === "Extreme" ? "an " : "a ") + hl(tier + " " + side + " Overvaluation", S) + " lean. One BTC buys " + fx(r) + " ETH, and the data says " + (dir > 0 ? "BTC is the expensive side" : "ETH is the expensive side") + ".";
+    var nz = parts.filter(function (q) { return q[1]; }), ne = parts.filter(function (q) { return !q[1]; });
+    var run = dir ? rtRun(i, r, dir) : null, growing = !!run && run.ago <= 7, ev = dir && f.unc < 2 ? rtEvidence(i, S, r) : null, word = dir > 0 ? "high" : "low";
+
+    /* ----- the explanation, part by part ----- */
+    /* Ratio: the score and where the Ratio stands inside its year */
+    if (!dir) t = "The Formula reads " + hl("+0 of 8", 0) + " at " + fx(r) + " ETH per BTC. " + (nz.length ? "The score is 0 because the parts cancel each other out, " + and(nz.map(nm)) + ", and not because everything is neutral." : "BTC and ETH are fairly valued against each other, and the data gives no lean in either direction.");
+    else {
+      var fo = parts.filter(function (q) { return q[1] * dir > 0; }), ag = parts.filter(function (q) { return q[1] * dir < 0; });
+      t = "The Formula reads " + hl(rtPts(S) + " of 8", S) + ", " + (tier === "Extreme" ? "an " : "a ") + hl(tier + " " + side + " Overvaluation", S) + " lean. One BTC buys " + fx(r) + " ETH, and the data says " + side + " is the expensive side.";
       t += " The lean is carried by " + and(fo.map(nm)) + ".";
       if (ne.length) t += " " + cap(and(ne.map(function (q) { return q[0]; }))) + (ne.length > 1 ? " are" : " is") + " neutral.";
       if (ag.length) t += " " + cap(and(ag.map(nm))) + (ag.length > 1 ? " point" : " points") + " the other way.";
-      var H = rtScoreHist();
-      if (A >= 3 && H.length > 200) { var sh = H.filter(function (x) { return Math.abs(x) >= A; }).length / H.length * 100; t += " A reading this strong or stronger showed on " + (sh < 1 ? "less than 1%" : Math.round(sh) + "%") + " of all days in the data."; }
+      var H = rtAsof().S, cnt = 0, q; for (q = 365; q < i; q++) if (Math.abs(H[q]) >= A) cnt++;
+      if (A >= 3 && i > 565) t += " A reading this strong or stronger showed on " + Math.max(1, Math.round(cnt / (i - 365) * 100)) + "% of all days so far.";
+      t += growing ? " The Ratio set a new 90-day " + word + (run.ago ? " " + run.ago + (run.ago === 1 ? " day" : " days") + " ago" : " today") + ", so the lean is still growing."
+        : " The last 90-day " + word + " was " + run.ago + " days ago and the Ratio is now " + Math.abs(run.off).toFixed(1) + "% " + (dir > 0 ? "below" : "above") + " it, so the lean has stopped growing for now.";
     }
-    add("Reading", t);
+    var E = rtYearExt(cy, i), young = !E || E.n < 30, atHi = false, atLo = false, PY = [], y, y0 = new Date(d.t[0]).getUTCFullYear();
+    if (young) t += " " + cy + " is only " + (E ? E.n + 1 : 1) + " days old, so its high and low say little yet.";
+    else {
+      atHi = r >= d.r[E.hi] * 0.985; atLo = r <= d.r[E.lo] * 1.015;
+      var hiV = Math.max(d.r[E.hi], r), loV = Math.min(d.r[E.lo], r);
+      t += r >= d.r[E.hi] ? " This is the highest Ratio of " + cy + " so far: BTC has not been this expensive against ETH this year."
+        : r <= d.r[E.lo] ? " This is the lowest Ratio of " + cy + " so far: BTC has not been this cheap against ETH this year."
+        : atHi ? " The Ratio is within 1.5% of its highest value of " + cy + " [" + fx(hiV) + " on " + rtDM(d.t[E.hi]) + "]."
+        : atLo ? " The Ratio is within 1.5% of its lowest value of " + cy + " [" + fx(loV) + " on " + rtDM(d.t[E.lo]) + "]."
+        : " Inside " + cy + " the Ratio sits between a low of " + fx(loV) + " [" + rtDM(d.t[E.lo]) + "] and a high of " + fx(hiV) + " [" + rtDM(d.t[E.hi]) + "], " + Math.round((r - loV) / (hiV - loV) * 100) + "% of the way up.";
+    }
+    for (y = y0; y < cy; y++) {
+      var v = rtYearView(y), cut = v.i0, b1 = -Infinity, b0 = Infinity, a1 = -Infinity, a0 = Infinity, k;
+      if (v.i1 - v.i0 < 330) continue;
+      while (cut < v.i1 && rtDoy(d.t[cut]) <= doy) cut++;
+      if (cut - v.i0 < 1 || cut >= v.i1) continue;
+      for (k = v.i0; k < v.i1; k++) { if (k < cut) { b1 = Math.max(b1, d.r[k]); b0 = Math.min(b0, d.r[k]); } else { a1 = Math.max(a1, d.r[k]); a0 = Math.min(a0, d.r[k]); } }
+      PY.push({ newHi: a1 > b1, newLo: a0 < b0 });
+    }
+    var nH = PY.filter(function (x) { return x.newHi; }).length, nL = PY.filter(function (x) { return x.newLo; }).length;
+    if (PY.length >= 2) t += " After " + rtDM(tNow) + ", the Ratio still went on to a new high of the year in " + of(nH, PY.length) + " past years, and to a new low in " + of(nL, PY.length) + ".";
+    add("Ratio", t);
 
-    /* 2. confidence */
+    /* Confidence: contradictions, not agreement */
     var why = [];
     if (f.u1) why.push("the two Fair Value Lines disagree: against the Year Line the Ratio reads " + rtZName(f.zy) + ", against the All Time Line it reads " + rtZName(f.za));
     if (f.u2) why.push("the Season [" + sn + "] points against the lean of the Ratio");
     if (f.u3) why.push("Dominance [" + dn + "] points against the lean of Ratio and Season");
-    if (!f.unc) t = dir ? "No Uncertainty Marks. Every part of the Formula that has an opinion points the same way, so the score can be read as it stands." : "No Uncertainty Marks, but with a score of 0 there is nothing to confirm.";
+    if (!f.unc) t = "No Uncertainty Marks: no part of the Formula contradicts another." + (dir && ne.length ? " " + cap(and(ne.map(function (q) { return q[0]; }))) + (ne.length > 1 ? " are" : " is") + " neutral, which does not confirm the lean but does not speak against it either." : dir ? " All three parts point the same way." : "");
     else if (f.unc === 1) t = '<b class="rt-unc-m" style="margin:0">One Uncertainty Mark:</b> ' + why[0] + ". The lean is still there, but weaker than the number suggests.";
-    else if (f.unc === 2) t = '<b class="rt-unc-m" style="margin:0">Two Uncertainty Marks:</b> ' + why.join(", and ") + ". The score says little on its own. Waiting for the data to line up is the stronger position.";
-    else t = '<b class="rt-unc-m" style="margin:0">Three Uncertainty Marks, the maximum:</b> ' + why.join("; ") + ". The data is fighting itself, and this score should not be acted on.";
+    else if (f.unc === 2) t = '<b class="rt-unc-m" style="margin:0">Two Uncertainty Marks:</b> ' + why.join(", and ") + ". The score says little on its own.";
+    else t = '<b class="rt-unc-m" style="margin:0">Three Uncertainty Marks, the maximum:</b> ' + why.join("; ") + ". The data is fighting itself.";
     add("Confidence", t);
 
-    /* 3. Fear & Greed */
-    var fgA = rtFgAll(), fgL = fgA && fgA.length ? fgA[fgA.length - 1] : null, fgNow = fgL && tNow / 1000 - fgL.timestamp < 4 * 86400 ? fgL.value : null, fgM = rtFgMonths(cy)[m];
-    var bothDown = f.has90 && f.gb < 0 && f.ge < 0, bothUp = f.has90 && f.gb > 0 && f.ge > 0, fearDriven = false, greedBoost = false;
+    /* Fear & Greed: how unusual the current state is */
+    var fgA = rtFgAll(), fgL = fgA && fgA.length ? fgA[fgA.length - 1] : null, fgNow = fgL && tNow / 1000 - fgL.timestamp < 4 * 86400 ? fgL.value : null;
+    var bothDown = f.has90 && f.gb < 0 && f.ge < 0, bothUp = f.has90 && f.gb > 0 && f.ge > 0, fearDriven = false, fgRare = null, fgX = fgNow !== null && (fgNow <= 24 || fgNow >= 76);
     if (fgNow !== null) {
-      var z = zone(fgNow);
-      t = "Fear &amp; Greed stands at " + fgT(fgNow) + (fgM !== null ? " [" + RT_MOF[m] + " average so far: " + fgM + "]" : "") + ".";
+      var z = zone(fgNow), cntF = 0, lastN = -1;
+      fgA.forEach(function (x, q) { if (z < 0 ? x.value <= fgNow : z > 0 ? x.value >= fgNow : false) cntF++; if (x.value >= 45 && x.value <= 55) lastN = q; });
+      fgRare = z && fgA.length > 200 ? Math.max(1, Math.round(cntF / fgA.length * 100)) : null;
+      t = "Fear &amp; Greed stands at " + fgT(fgNow) + ".";
+      if (!z) t += " That is the normal state the Index keeps returning to, so sentiment adds no pressure in either direction.";
+      else {
+        t += " Neutral is the state the Index keeps returning to, so this is a departure from normal" + (fgRare !== null ? ": a value this " + (z < 0 ? "low" : "high") + " or " + (z < 0 ? "lower" : "higher") + " was seen on " + fgRare + "% of all days so far" : "") + ".";
+        if (lastN >= 0 && fgA.length - 1 - lastN > 0) t += " The last Neutral value was " + (fgA.length - 1 - lastN) + " days ago.";
+        if (fgX) t += " " + (fgNow <= 24 ? "Extreme Fear" : "Extreme Greed") + " marks an unusual moment" + (A >= 3 ? ", and together with a " + tier + " lean it adds to the weight of this reading" : "") + ".";
+      }
       if (f.has90) {
         var gb = '<b style="color:' + BTC_C + '">BTC ' + pc(f.gb) + '</b>', ge = '<b style="color:' + ETH_C + '">ETH ' + pc(f.ge) + '</b>', win = f.s > 0 ? "BTC" : "ETH";
-        if (bothDown) t += " Both assets fell over the last 90 days: " + gb + ", " + ge + "." + (f.s ? " It is " + sn + " only because " + win + " lost less." : " Neither lost clearly less than the other.");
-        else if (bothUp) t += " Both assets rose over the last 90 days: " + gb + ", " + ge + "." + (f.s ? " It is " + sn + " because " + win + " gained more." : " Neither gained clearly more than the other.");
-        else t += " Over the last 90 days: " + gb + ", " + ge + "." + (f.s ? " That makes it " + sn + "." : "");
+        t += bothDown ? " Both assets fell over the last 90 days: " + gb + ", " + ge + "." + (f.s ? " It is " + sn + " only because " + win + " lost less." : "")
+          : bothUp ? " Both assets rose over the last 90 days: " + gb + ", " + ge + "." + (f.s ? " It is " + sn + " because " + win + " gained more." : "")
+          : " Over the last 90 days: " + gb + ", " + ge + "." + (f.s ? " That makes it " + sn + "." : "");
+        fearDriven = !!dir && z < 0 && bothDown && f.s * dir > 0;
+        if (fearDriven) t += " That makes this " + side + " Overvaluation a product of the fear: " + side + " is not strong, it is only falling slower.";
       }
-      if (dir && z < 0) {
-        fearDriven = bothDown && f.s * dir > 0;
-        t += fearDriven ? " That makes this " + side + " Overvaluation a product of the fear: " + side + " is not strong, it is only falling slower. An overvaluation of this kind has less reason to exist once the fear eases."
-          : " The fear is not what drives this lean. It comes from where the Ratio stands against its Fair Value Lines.";
-      } else if (dir && z > 0) {
-        greedBoost = A >= 3;
-        t += greedBoost ? " Greed is a temporary state, and so is an overvaluation. Seeing both together strengthens the case that this " + side + " Overvaluation is a stretched moment and not a new normal."
-          : " Greed is present, but with only a Mild lean nothing looks stretched yet.";
-      } else if (!z) t += " Sentiment is Neutral and adds nothing to the reading in either direction.";
       add("Fear &amp; Greed", t);
     }
 
-    /* 4. the same month in earlier years of the same type */
-    var y0 = new Date(d.t[0]).getUTCFullYear(), AN = [], a, nMo = (m + 1) % 12, easeAll = false, alike = 0;
+    /* Track record: what followed earlier readings of the same kind */
+    if (ev) {
+      t = "The Formula's own history, read day by day with only the data of that day, shows " + ev.n + (ev.n === 1 ? " earlier stretch" : " earlier stretches") + " of the same kind: " + (tier === "Extreme" ? "an " : "a ") + tier + " " + side + " lean that was " + (growing ? "still growing" : "no longer growing") + ".";
+      if (ev.n) t += " 90 days later the Ratio had moved back toward fair value in " + of(ev.back, ev.n) + ". In " + of(ev.better, ev.n) + ", a swap rate at least 10% better than on the day itself appeared within those 90 days.";
+      if (ev.n && ev.n < 4) t += ' <span class="rt-rd-m">That is too few to draw anything from.</span>';
+      add("What Followed Similar Readings", t);
+    }
+
+    /* Phases: the projection */
+    var PH = rtPhases(i), last = PH.length ? PH[PH.length - 1] : null, inPhase = last && i - last.last <= 20 && A >= 3 && last.sd === dir, proj = null;
+    if (last) {
+      var prior = PH.slice(0, inPhase ? -1 : PH.length), ref = inPhase ? last : last, sameSide = 0, cntP = 0, lab = function (sd) { return sd > 0 ? "BTC" : "ETH"; };
+      for (k = 0; k + 1 < PH.length; k++) if (PH[k].sd === ref.sd) { cntP++; if (PH[k + 1].sd === ref.sd) sameSide++; }
+      t = inPhase ? "The Formula has been in a strong " + lab(last.sd) + " Overvaluation phase since " + rtDate(d.t[last.first]) + "."
+        : "The last strong phase was " + (last.sd > 0 ? "a BTC" : "an ETH") + " Overvaluation from " + rtDate(d.t[last.first]) + " to " + rtDate(d.t[last.last]) + ", " + (i - last.last) + " days ago.";
+      if (cntP >= 3) { t += " After " + cntP + " earlier " + lab(ref.sd) + " phases, the next strong phase was " + lab(ref.sd) + " again in " + sameSide + " and " + lab(-ref.sd) + " in " + (cntP - sameSide) + "."; proj = { sd: ref.sd, same: sameSide, n: cntP, ago: i - last.last }; }
+      else t += " There are too few earlier " + lab(ref.sd) + " phases to say which side usually follows.";
+      add("Phases", t);
+    }
+
+    /* The same month in earlier years of the same type */
+    var AN = [], a, nMo = (m + 1) % 12;
     for (a = cy - 4; a >= y0; a -= 4) {
       var mvA = rtMonthView(a, m); if (mvA.i1 - mvA.i0 < 10) continue;
       var ny = m === 11 ? a + 1 : a, mvN = rtMonthView(ny, nMo), EA = rtYearExt(a);
@@ -4811,100 +4896,36 @@
     else {
       var N = AN.length;
       t = "The same month in past " + type + "s: " + AN.map(function (x) { return RT_MOF[m] + " " + x.y + " read " + hl(rtPts(x.f.total), x.f.total) + (x.fg !== null ? " with Fear &amp; Greed at " + fgT(x.fg) : ""); }).join("; ") + ".";
-      if (dir) {
-        alike = AN.filter(function (x) { return x.f.total * dir > 0; }).length;
-        t += " " + (alike === N ? (N === 1 ? "It showed" : N === 2 ? "Both showed" : "All showed") + " the same " + side + " lean as today." : !alike ? (N === 1 ? "It did not show" : N === 2 ? "Neither showed" : "None showed") + " today's " + side + " lean." : of(alike, N) + " showed today's " + side + " lean.");
-      }
-      if (fgNow !== null) {
-        var Z = AN.filter(function (x) { return x.fg !== null; }), zs = Z.filter(function (x) { return zone(x.fg) === zone(fgNow); }).length;
-        if (Z.length) t += " Sentiment was in " + (zs === Z.length ? "the same zone as today" + (Z.length > 1 ? " each time" : "") : !zs ? "a different zone than today" : "the same zone as today in " + of(zs, Z.length)) + ".";
-      }
       var NX = AN.filter(function (x) { return x.fN; });
-      if (NX.length) {
-        t += " What followed in " + RT_MOF[nMo] + ": " + NX.map(function (x) { return x.y + (m === 11 ? "/" + String(x.y + 1).slice(2) : "") + " went from " + hl(rtPts(x.f.total), x.f.total) + " to " + hl(rtPts(x.fN.total), x.fN.total) + (x.fg !== null && x.fgN !== null ? ", Fear &amp; Greed from " + x.fg + " to " + x.fgN : "") + ", the Ratio from " + fx(x.f.r) + " to " + fx(x.fN.r); }).join("; ") + ".";
-        var L = NX.filter(function (x) { return x.f.total; }), ease = L.filter(function (x) { return Math.abs(x.fN.total) < Math.abs(x.f.total); }).length;
-        if (L.length) t += " " + (ease === L.length ? "In " + allOf(L.length) + " the lean eased the month after." : !ease ? "In " + allOf(L.length) + " the lean held or grew the month after." : "The lean eased the month after in " + of(ease, L.length) + ".");
-        var G = NX.filter(function (x) { return x.fg !== null && x.fgN !== null && zone(x.fg); }), back = G.filter(function (x) { return Math.abs(x.fgN - 50) < Math.abs(x.fg - 50); }).length;
-        if (G.length) t += " Fear &amp; Greed moved " + (back === G.length ? "back toward Neutral in " + allOf(G.length) : !back ? "further away from Neutral in " + allOf(G.length) : "back toward Neutral in " + of(back, G.length)) + ".";
-        easeAll = !!dir && L.length > 0 && ease === L.length && alike === N;
-        if (easeAll) t += " If " + RT_MOF[nMo] + " repeats that, today's " + side + " lean should ease next month.";
-      }
+      if (NX.length) t += " What followed in " + RT_MOF[nMo] + ": " + NX.map(function (x) { return x.y + (m === 11 ? "/" + String(x.y + 1).slice(2) : "") + " went from " + hl(rtPts(x.f.total), x.f.total) + " to " + hl(rtPts(x.fN.total), x.fN.total) + (x.fg !== null && x.fgN !== null ? ", Fear &amp; Greed from " + x.fg + " to " + x.fgN : "") + ", the Ratio from " + fx(x.f.r) + " to " + fx(x.fN.r); }).join("; ") + ".";
+      t += " Past " + type + "s set their high in " + and(AN.map(function (x) { return RT_MO[new Date(d.t[x.hi]).getUTCMonth()] + " " + x.y; })) + " and their low in " + and(AN.map(function (x) { return RT_MO[new Date(d.t[x.lo]).getUTCMonth()] + " " + x.y; })) + ".";
       add("Past " + type + "s", t + small(N));
     }
 
-    /* 5. the year's high and low */
-    var E = rtYearExt(cy, i), young = !E || E.n < 30, atHi = false, atLo = false, PY = [], y;
-    if (young) t = cy + " is only " + (E ? E.n + 1 : 1) + " days old, so its high and low say little yet.";
-    else {
-      atHi = r >= d.r[E.hi] * 0.985; atLo = r <= d.r[E.lo] * 1.015;
-      var hiV = Math.max(d.r[E.hi], r), loV = Math.min(d.r[E.lo], r);
-      t = r >= d.r[E.hi] ? "At " + fx(r) + " the Ratio is at its highest value of " + cy + " so far. BTC has not been this expensive against ETH this year."
-        : r <= d.r[E.lo] ? "At " + fx(r) + " the Ratio is at its lowest value of " + cy + " so far. BTC has not been this cheap against ETH this year."
-        : atHi ? "At " + fx(r) + " the Ratio is within 1.5% of its highest value of " + cy + " [" + fx(hiV) + " on " + rtDM(d.t[E.hi]) + "]."
-        : atLo ? "At " + fx(r) + " the Ratio is within 1.5% of its lowest value of " + cy + " [" + fx(loV) + " on " + rtDM(d.t[E.lo]) + "]."
-        : "The Ratio [" + fx(r) + "] sits between this year's low of " + fx(loV) + " [" + rtDM(d.t[E.lo]) + "] and its high of " + fx(hiV) + " [" + rtDM(d.t[E.hi]) + "], " + Math.round((r - loV) / (hiV - loV) * 100) + "% of the way up.";
+    /* ----- the verdict ----- */
+    var col = GREY_C;
+    if (f.unc >= 2) {
+      col = "#eab308";
+      V.push("The data contradicts itself, so there is no call to make.");
+      V.push((f.unc === 2 ? "Two" : "All three") + " Uncertainty Marks are set at a score of " + rtPts(S) + " of 8. Waiting until the parts of the Formula agree again is the only position this supports.");
+    } else if (!dir) {
+      V.push(nz.length ? "No lean. The parts of the Formula cancel each other out." : "No lean. At " + fx(r) + " ETH per BTC the two are fairly valued against each other.");
+      V.push("There is nothing to swap on today.");
+    } else {
+      col = rtMix(dir > 0 ? "#a9c1fb" : "#f9cf9a", dir > 0 ? "#2563eb" : "#ea580c", Math.min(1, (A - 1) / 6));
+      if (f.unc) col = rtMix(col, "#eab308", 0.35);
+      V.push((tier === "Extreme" ? "An " : "A ") + tier + " " + side + " Overvaluation" + (f.unc ? ", with one part of the data disagreeing" : "") + (growing ? ", and it is still growing: the Ratio set a new 90-day " + word + (run.ago ? " " + run.ago + (run.ago === 1 ? " day" : " days") + " ago." : " today.")
+        : ". It has stopped growing for now: the last 90-day " + word + " was " + run.ago + " days ago and the Ratio is " + Math.abs(run.off).toFixed(1) + "% " + (dir > 0 ? "below" : "above") + " it."));
+      if (fgX) V.push("Fear &amp; Greed is at " + fgNow + ", " + classifyFG(fgNow) + (fgRare !== null ? ", a state seen on only " + fgRare + "% of days" : "") + ". That makes this an unusual moment" + (fearDriven ? ", and the lean a product of the fear: " + side + " is only falling slower." : "."));
+      /* The track record is reported as it is. Backtests on the real history showed it does not time the turn, so the verdict draws no swap call from it */
+      if (!ev || ev.n < 4) V.push("There are too few earlier readings of this kind to say what usually follows.");
+      else { V.push("Earlier readings of this kind came in " + ev.n + " separate stretches. 90 days later the Ratio had moved back in " + ev.back + " of them, and in " + ev.better + " a swap rate at least 10% better had shown up first."); if (Math.abs(ev.back / ev.n - 0.5) < 0.2) col = rtMix(col, GREY_C, 0.25); }
+      V.push("The Formula shows that " + side + " is expensive. Its history does not show when that ends.");
     }
-    if (AN.length) t += " Past " + type + "s set their high in " + and(AN.map(function (x) { return RT_MO[new Date(d.t[x.hi]).getUTCMonth()] + " " + x.y; })) + " and their low in " + and(AN.map(function (x) { return RT_MO[new Date(d.t[x.lo]).getUTCMonth()] + " " + x.y; })) + ".";
-    for (y = y0; y < cy; y++) {
-      var v = rtYearView(y), cut = v.i0, b1 = -Infinity, b0 = Infinity, a1 = -Infinity, a0 = Infinity, q;
-      if (v.i1 - v.i0 < 330) continue;
-      while (cut < v.i1 && rtDoy(d.t[cut]) <= doy) cut++;
-      if (cut - v.i0 < 1 || cut >= v.i1) continue;
-      for (q = v.i0; q < v.i1; q++) { if (q < cut) { b1 = Math.max(b1, d.r[q]); b0 = Math.min(b0, d.r[q]); } else { a1 = Math.max(a1, d.r[q]); a0 = Math.min(a0, d.r[q]); } }
-      PY.push({ y: y, newHi: a1 > b1, newLo: a0 < b0, same: y % 4 === cy % 4 });
-    }
-    var nH = PY.filter(function (x) { return x.newHi; }).length, nL = PY.filter(function (x) { return x.newLo; }).length, keep = null;
-    if (PY.length >= 2) {
-      t += " After " + rtDM(tNow) + ", the Ratio still went on to a new high of the year in " + of(nH, PY.length) + " past years, and to a new low in " + of(nL, PY.length) + ".";
-      var SM = PY.filter(function (x) { return x.same; });
-      if (SM.length) t += " Among past " + type + "s: a new high in " + of(SM.filter(function (x) { return x.newHi; }).length, SM.length) + ", a new low in " + of(SM.filter(function (x) { return x.newLo; }).length, SM.length) + ".";
-      if (atHi || atLo) {
-        keep = 1 - (atHi ? nH : nL) / PY.length;
-        t += keep >= 0.75 ? " History favours today's level being close to the " + (atHi ? "high" : "low") + " of the year."
-          : keep >= 0.5 ? " History is split on whether a " + (atHi ? "higher" : "lower") + " level still comes this year."
-          : " History says a " + (atHi ? "higher" : "lower") + " level later in the year is common, so this may not be the " + (atHi ? "top" : "bottom") + ".";
-      }
-    }
-    add("High and Low of the Year", t);
-
-    /* 6. the months of this year */
-    var MS = [];
-    for (k = 0; k <= m; k++) { var mk = rtMonthView(cy, k); MS.push(mk.i1 > mk.i0 ? rtFormulaMonth(mk, cy).total : null); }
-    if (!m) t = "January is the first month of " + cy + ", so there are no earlier months of this year to compare with.";
-    else {
-      t = "Monthly scores of " + cy + ": " + MS.map(function (x, q) { return x === null ? null : RT_MO[q] + " " + hl(rtPts(x), x); }).filter(Boolean).join(" · ") + " [" + RT_MO[m] + " so far].";
-      var cur = MS[m] || 0, sg = function (x) { return x > 0 ? 1 : x < 0 ? -1 : 0; }, run = 0, prev = MS[m - 1], best = 0, sd = cur > 0 ? "BTC" : "ETH";
-      for (k = m; k >= 0 && cur && sg(MS[k] || 0) === sg(cur); k--) run++;
-      for (k = 0; k < m; k++) best = Math.max(best, Math.abs(MS[k] || 0));
-      if (!cur) t += " " + RT_MOF[m] + " reads neutral so far.";
-      else if (run >= 3) t += " The lean has been on the " + sd + " side for " + run + " months in a row.";
-      else if (prev && sg(prev) === -sg(cur)) t += " The lean flipped from " + (prev > 0 ? "BTC" : "ETH") + " to " + sd + " this month.";
-      else if (!prev && run === 1) t += " The " + sd + " lean appeared this month.";
-      if (cur && Math.abs(cur) > best) t += " This is the strongest monthly reading of the year so far.";
-    }
-    add("This Year", t);
-
-    /* 7. conclusion */
-    if (!dir) t = f.unc || f.ratio || f.s || f.dp ? "Nothing to act on. The parts of the Formula cancel each other out, which is a disagreement and not a balance. The reading supports waiting until one side wins."
-      : "Nothing to act on. With BTC and ETH fairly valued against each other, the reading supports keeping the current split.";
-    else if (f.unc >= 2) t = "No clear call. " + (f.unc === 2 ? "Two" : "Three") + " Uncertainty Marks outweigh a score of " + rtPts(S) + ". The reading supports waiting until the data lines up.";
-    else {
-      t = tier === "Mild" ? (f.unc ? "Too weak to act on: a Mild lean with one Uncertainty Mark. Worth watching, not worth swapping."
-            : "A small edge for swapping " + hl(swap, S) + ". The lean is clean but Mild. A partial swap fits it better than a full one, and waiting for a Strong reading is a valid choice.")
-        : tier === "Strong" ? (f.unc ? "The reading leans toward swapping " + hl(swap, S) + ", with caution: the lean is Strong, but one part of the data disagrees. A partial swap respects both."
-            : "The reading supports swapping " + hl(swap, S) + ". The lean is Strong and nothing in the data contradicts it.")
-        : (f.unc ? "An Extreme lean with one part of the data disagreeing. The reading still supports swapping " + hl(swap, S) + ", in steps rather than all at once."
-            : "This is the kind of reading the Formula is built to find: an Extreme " + side + " Overvaluation that nothing contradicts. It strongly supports swapping " + hl(swap, S) + ".");
-      if (tier !== "Mild" || !f.unc) {
-        if (greedBoost) t += " Greed stretches it further.";
-        if (fearDriven) t += " Because the lean is driven by fear, expect it to fade when sentiment recovers.";
-        if (keep !== null && ((dir > 0 && atHi) || (dir < 0 && atLo))) t += keep >= 0.75 ? " The Ratio is at its " + (atHi ? "high" : "low") + " of the year, and in most past years it did not go " + (atHi ? "higher" : "lower") + " after this date, so the conversion rate may not get better this year."
-          : " The Ratio is at its " + (atHi ? "high" : "low") + " of the year, but past years often went " + (atHi ? "higher" : "lower") + " after this date, so a better conversion rate may still come.";
-        if (easeAll) t += " In past " + type + "s the lean eased in " + RT_MOF[nMo] + ", so the window may be short.";
-      }
-    }
-    add("Conclusion", t);
-    return P.join("") + '<div class="fg-sub rt-fm-note">A reading describes where the market stands today and what similar moments looked like. It is not a prediction.</div>';
+    if (proj && !inPhase && f.unc < 2 && A < 3) V.push("Looking ahead: the last strong phase was " + (proj.sd > 0 ? "a BTC" : "an ETH") + " Overvaluation that ended " + proj.ago + " days ago. After " + proj.n + " earlier " + (proj.sd > 0 ? "BTC" : "ETH") + " phases the next strong phase was on the same side in " + proj.same + (proj.same / proj.n >= 0.65 ? ", so another " + (proj.sd > 0 ? "BTC" : "ETH") + " Overvaluation has been the more common next extreme." : proj.same / proj.n <= 0.35 ? ", so the other side has been the more common next extreme." : ", which favours neither side."));
+    return '<div class="rt-vd" style="color:' + col + '">' + V.join(" ") + '</div>' +
+      '<details class="rt-why"' + (RT.whyOpen ? ' open' : '') + '><summary>Why this reading</summary>' + P.join("") + '</details>' +
+      '<div class="fg-sub rt-fm-note">A reading describes where the market stands and what followed similar moments. It is not a prediction.</div>';
   }
   function rtHindsight(w, S) { /* dev only: what really happened after the chosen day. Computed from the full data, never shown to the Reading */
     var d = RT.data, i = w.data.t.length - 1, r0 = d.r[i], dir = S > 0 ? 1 : S < 0 ? -1 : 0, rows = [], v = rtYearView(w.cy), hi = v.i0, lo = v.i0, q;
@@ -4958,8 +4979,10 @@
         "The Live tab at the bottom always shows right now. In Past Years, a month's score uses the average of its daily values. For Season and Dominance that is the average of every day's own 90 day difference.",
         "Hover the name of a step to see the numbers behind it."]) +
       sec("CoinAtlas Formula Reading", [
-        "The Reading below the Formula puts the outcome into words. It is written from the data every time: the score, the Uncertainty Marks, Fear &amp; Greed, the same month in earlier years of the same type, the high and low of the year, and the months of this year so far.",
-        "It only ever uses data up to today. When it compares with past years, it says how many years that is. Two years are a hint, not a rule.",
+        "The Reading below the Formula is one verdict in words. Its colour follows the lean: blue for BTC Overvaluation, orange for ETH, deeper with strength, yellow when the data contradicts itself, greyer when history gives no edge.",
+        "It says whether the overvaluation is still growing, and it reports its own track record: what followed earlier readings of the same kind, judged with only the data of their day. When that record is a coin flip, it says so.",
+        "<b>What the backtest showed:</b> on the real history since 2017, the score alone did not predict when an overvaluation ends. The Formula tells you which side is expensive, not the day it turns. Read the verdict with that in mind.",
+        "Why this reading opens the reasoning behind the verdict. It only ever uses data up to today.",
         "In Dev Mode, the Formula Date in the Settings sets any day since August 2017 as today. The Formula and the Reading then see only what was known on that day. A yellow Hindsight box shows what really happened afterwards, so a Reading can be checked."]) +
       sec("Uncertainty Marks", [
         "A " + U("?") + " is added whenever one piece of data contradicts another. Up to 3 are possible.",
@@ -5038,6 +5061,7 @@
     if (y + hh > window.innerHeight - 6) y = e.clientY - hh - 12;
     tip.style.position = "fixed"; tip.style.right = "auto"; tip.style.left = Math.max(6, x) + "px"; tip.style.top = Math.max(6, y) + "px";
   });
+  ratioBox.addEventListener("toggle", function (e) { if (e.target.classList && e.target.classList.contains("rt-why")) RT.whyOpen = e.target.open; }, true); /* keep the explanation open across refreshes */
   ratioBox.addEventListener("input", function (e) {
     if (e.target && e.target.id === "rt-tips-ta") { rtTipsText = e.target.value; try { localStorage.setItem(RT_TIPS_KEY, rtTipsText); } catch(x) {} }
   }, true);
