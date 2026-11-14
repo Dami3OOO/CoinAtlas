@@ -4137,7 +4137,7 @@
   var RT_TARGET_KEY = "top200-rt-target", rtTarget = false; try { rtTarget = localStorage.getItem(RT_TARGET_KEY) === "1"; } catch (e) {}
   var RT_TINT_KEY = "top200-rt-tint", rtTint = false; try { rtTint = localStorage.getItem(RT_TINT_KEY) === "1"; } catch (e) {}
   var RT_DOM_KEY = "top200-rt-dom-alts", rtDomAlts = false; try { rtDomAlts = localStorage.getItem(RT_DOM_KEY) === "1"; } catch (e) {}
-  var RT_LV = ["Neutral", "Mild", "Strong", "Extreme"], RT_ADV = ["", "Mildly", "Strongly", "Extremely"], RT_EDGES = [0.10, 0.35, 0.70], RT_TH = 10;
+  var RT_LV = ["Neutral", "Mild", "Strong", "Extreme"], RT_ADV = ["", "Mildly", "Strongly", "Extremely"], RT_EDGES = [0.10, 0.35, 0.70], RT_TH = 10, RT_RUN = 25; /* RT_RUN: a Strong lean gets no call when the Ratio ran more than this many % one way within a year */
   var BTC_C = "#f7931a", ETH_C = "#3b82f6", ETH_D = "#2563eb", GREY_C = "#9ca3af", CMP_C = "#e879f9", RT_MO = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   var FAIR_C = { tf: "#facc15", "365": "#facc15", all: "#f472b6" }, FAIR_N = { tf: "Year", "365": "Year", all: "All Time" };
   function rtCls(y) { var s = cycleStage(y); return s === "Bull Year" ? "bull" : s === "Bear Year" ? "bear" : "bridge"; }
@@ -4676,6 +4676,10 @@
       signals: RT_SIGNALS.map(function (g) { var x = g.read(f); x.name = g.name; return x; }) };
     if (s.cause) { var a = Math.abs(dir > 0 ? f.gb : f.ge), b = Math.abs(dir > 0 ? f.ge : f.gb), k = s.cause === "fell" ? b / a : a / b; s.times = k >= 1.75 ? Math.min(5, Math.round(k)) : 0; }
     s.type = f.unc >= 2 ? "contradicted" : !dir ? "balanced" : now ? "now" : A >= 3 ? "strong" : (A === 2 && lastStrong && lastStrong.dir === -dir) ? "back" : "mild";
+    s.zone = v === null ? "" : v <= 24 ? "Extreme Fear" : v <= 44 ? "Fear" : v <= 55 ? "" : v <= 75 ? "Greed" : "Extreme Greed";
+    s.run = dir && i >= 365 ? (r / d.r[i - 365] - 1) * 100 * dir : null; /* how far the Ratio moved towards this Overvaluation within a year */
+    /* measured on the history: in Extreme Greed no kind of call held up, in Greed a Strong lean kept growing, and so did one that came out of a one-way run */
+    s.held = s.type !== "now" && s.type !== "strong" && s.type !== "back" ? "" : s.zone === "Extreme Greed" || (s.type === "strong" && s.zone === "Greed") ? "greed" : s.type === "strong" && s.run > RT_RUN ? "run" : "";
     if (s.type === "now") { s.rec = rtDayRecord("now", 0); s.recOpp = rtDayRecord("now", 2); }
     if (s.type === "strong") { s.rec = rtDayRecord("strong", 2); s.recZero = rtDayRecord("strong", 0); }
     return s;
@@ -4684,7 +4688,7 @@
   function rtCompose(s) { /* the Reading: a call first, then the facts of the day that matter most. Every fact carries a weight; the heaviest ones make it into the text */
     var X = s.side, Y = s.other, F = [], lead, call = "none", T, ok = function (r) { return r && r.groups >= 3 && r.n >= 30; }, W = ["", "", "twice", "three times", "four times", "five times"];
     var fact = function (w, t) { F.push({ w: w, t: t }); };
-    var buy = ", and if you are looking to buy or swap, " + Y + " is the recommendation.";
+    var greed = /Greed/.test(s.zone), buy = ", and if you are looking to " + (greed ? "swap" : "buy or swap") + ", " + Y + " is the recommendation.";
     /* the two Fair Value Lines, always named */
     if (s.dir) {
       if (s.year === "against" || s.all === "against") fact(90, "The two Fair Value Lines contradict each other: the " + (s.year === "against" ? "All Time Line" : "Year Line") + " rates " + X + " as overvalued, the " + (s.year === "against" ? "Year Line" : "All Time Line") + " rates " + Y + " as overvalued.");
@@ -4698,13 +4702,20 @@
     var strong = s.type === "now" || s.type === "strong";
     if (strong && s.cause === "fell") fact(66, X + " did not get here by rising: both fell, " + Y + " " + (s.times ? W[s.times] + " as hard." : "harder."));
     if (strong && s.cause === "rose") fact(64, "Both rose, " + X + " " + (s.times ? W[s.times] + " as much." : "more."));
-    if (strong && s.fg) fact(76, "With sentiment in " + s.fg + " on top, this is not a state that lasts: the Index and the Ratio have always returned to Neutral.");
     if (s.type === "contradicted") {
       lead = "No clear recommendation today: the data contradicts itself."; F = F.filter(function (x) { return x.w === 90 || x.w === 62 || x.w === 60; });
       if (!s.dir) { if (s.linesAgainst) fact(90, "The two Fair Value Lines point to opposite sides."); if (s.seasonAgainst) fact(62, "The Season points against the Ratio."); if (s.domAgainst) fact(60, "Dominance points against the Ratio and the Season."); }
     }
     else if (s.type === "balanced") { lead = "Now is a good time to hold on to your BTC and ETH."; fact(50, "The two are fairly valued against each other."); }
     else if (s.type === "mild") { lead = "Now is a good time to hold on to your BTC and ETH."; fact(95, X + " is only mildly overvalued against " + Y + "."); }
+    else if (s.held === "greed") {
+      call = "wait"; lead = "No swap recommendation today, although " + X + " is " + (s.type === "now" ? "Extremely " : s.type === "strong" ? "clearly " : "") + "overvalued against " + Y + ": sentiment is in " + s.zone + ".";
+      fact(85, "In " + s.zone + " an Overvaluation has mostly kept growing instead of closing.");
+    }
+    else if (s.held === "run") {
+      call = "wait"; lead = "No swap recommendation today, although " + X + " is clearly overvalued against " + Y + ".";
+      fact(85, "The Ratio has been running in favour of " + X + " for a year, and a one-way run like this has mostly kept going.");
+    }
     else if (s.type === "back") { call = "back"; lead = "Holding " + Y + " is a good idea right now" + buy; fact(95, X + " is now the overvalued side, after the last strong phase was " + (X === "BTC" ? "an ETH" : "a BTC") + " Overvaluation."); }
     else if (s.type === "now") {
       call = "now"; lead = "Holding " + Y + " is a really good idea right now" + buy;
@@ -4714,13 +4725,18 @@
       else if (s.rec.profit / s.rec.n >= 0.6) { call = "good"; lead = "Holding " + Y + " is a good idea right now" + buy; fact(85, "On " + rtGrade(s.rec.profit, s.rec.n) + ", swapping now and swapping again once " + Y + " was the overvalued side ended in profit."); }
       else { call = "unclear"; lead = "No clear recommendation, although " + X + " is clearly overvalued against " + Y + "."; fact(85, "Swapping now and swapping again once " + Y + " was the overvalued side ended in profit on " + (s.rec.profit / s.rec.n >= 0.4 ? "only " : "") + rtGrade(s.rec.profit, s.rec.n) + "."); }
     }
+    /* buying with USDC: strong next to a call during Fear, never during Greed */
+    if (call === "now" || call === "good" || call === "back") {
+      if (/Fear/.test(s.zone)) fact(88, "Sentiment is in " + s.zone + ", which also makes this a strong time to buy " + Y + " with USDC.");
+      else if (greed) fact(88, "Sentiment is in Greed, so this is a time to swap, not to buy: keep your USDC and wait for Fear.");
+    } else if (greed) fact(call === "wait" ? 84 : 75, (call === "wait" ? "It is not a time to buy either" : "Sentiment is in " + s.zone + ", so this is not a time to buy") + ": keep your USDC and wait for Fear.");
     F.sort(function (a, b) { return b.w - a.w; });
     T = [lead].concat(F.slice(0, 3).map(function (x) { return x.t; }));
     return { text: T, call: call };
   }
   window.coinAtlasDev = { compose: rtCompose, readAt: function (t) { /* the Reading for any day, with only the data of that day */
     var keep = [RT.asOf, devActive], out; RT.asOf = t; devActive = true;
-    try { out = rtIn(rtWorld(), function () { var f = rtFormula(RT.data.t.length - 1, true), s = rtSituation(f), c = rtCompose(s); return { day: RT.data.t[RT.data.t.length - 1], call: c.call, type: s.type, side: s.side, other: s.other, score: s.score, marks: s.marks, r: s.r, fg: s.fgV, text: c.text.join(" ") }; }); }
+    try { out = rtIn(rtWorld(), function () { var f = rtFormula(RT.data.t.length - 1, true), s = rtSituation(f), c = rtCompose(s); return { day: RT.data.t[RT.data.t.length - 1], call: c.call, type: s.type, held: s.held, side: s.side, other: s.other, score: s.score, marks: s.marks, r: s.r, fg: s.fgV, text: c.text.join(" ") }; }); }
     finally { RT.asOf = keep[0]; devActive = keep[1]; }
     return out; } }; /* lets tests/reading-test.js check the text for any situation */
   function rtReadingColor(s, call) { /* the colour carries the mood: side and strength, full for a call, muted without one, yellow for contradiction, green for the swap back */
@@ -4763,23 +4779,26 @@
       if (s.rec.n) t += "Swapping on such a day and swapping back once " + Y + " was the overvalued side with 2 points or more: " + rc(s.rec) + ". ";
       if (s.recZero.n) t += "Swapping back earlier, on the day the score was back at 0: " + rc(s.recZero) + ". ";
       t += "The losses came from long one-way runs, where the Overvaluation kept growing for months after the swap. Whether the Ratio was at its 90-day " + (s.dir > 0 ? "high" : "low") + " or already below it made no measurable difference to these results, so the Reading does not wait for a turn.";
-      add(call === "good" ? "Why \"a good idea\"?" : "Why no clear recommendation?", t);
+      add(call === "good" ? "Why \"a good idea\"?" : call === "wait" ? "How did swaps at a Strong lean end?" : "Why no clear recommendation?", t);
     } else if (s.type === "mild") add("Why \"hold on to your BTC and ETH\"?", "A Mild lean is 1 or 2 points. Swaps made on Mild days ended in profit about as often as on Strong days, but the middle result was small, and on the " + (s.dir > 0 ? "BTC side about half" : "ETH side only about one in six") + " of such phases later grew into a Strong one. The Reading keeps its calls for Strong and Extreme readings.");
     else if (s.type === "back") add("Why \"a good idea\" at only 2 points?", "The last Strong or Extreme phase was " + (s.dir > 0 ? "an ETH" : "a BTC") + " Overvaluation. " + X + " has now reached 2 points on its own side. That is the point up to which every result in the Reading was counted: a swap made during the earlier Overvaluation is completed by swapping here. On the ETH side the score has rarely gone deeper than this.");
+    if (call === "wait") add("Why no swap recommendation although " + X + " is overvalued?", s.held === "greed" ?
+      "Sentiment is in " + s.zone + ". Every earlier Reading was checked against what really happened afterwards. " + (s.zone === "Greed" ? "Strong readings that showed up during Greed were the weakest group: the Overvaluation mostly kept growing, and half a year later most of those swaps were behind. Extreme readings and the way back at 2 points held up in Greed, so only the Strong lean is held back." : "In Extreme Greed no kind of Reading held up, not even the Extreme ones: the market was in a run, and the Overvaluation kept growing.") + " The Reading returns to a call once sentiment has cooled or both Fair Value Lines rate " + X + " as Extreme." :
+      "The Ratio moved " + pct(s.run) + " in favour of " + X + " within the last 365 days. The Reading allows " + RT_RUN + "% at a Strong lean. Checked against what really happened afterwards, Strong readings that came out of a one-way run like this ended in profit clearly less often than those without one, and the longest losing stretches all began this way. The Reading returns to a call once the run has cooled or both Fair Value Lines rate " + X + " as Extreme.");
     if (s.type === "now" || s.type === "strong") add("What does \"ended in profit\" mean?", "Swap " + X + " into " + Y + " on the day of the Reading, swap back later, and count the " + X + " you hold. \"In profit\" means more " + X + " than you started with after two swaps at 0.3% each. Slippage and taxes are not included.");
 
     /* sentiment */
     if (s.fgV !== null) {
       var st = rtFgStats(s.fgV), fear = s.fgV <= 44, name = classifyFG(s.fgV);
       t = "Fear &amp; Greed stands at " + '<b style="color:' + fgCol(s.fgV) + '">' + s.fgV + " · " + name + "</b>. ";
-      if (!s.fg) t += "That is not an extreme, so sentiment adds nothing to the Reading today.";
-      else {
+      t += s.zone === "" ? "That is Neutral, so sentiment adds nothing to the Reading today. " : /Greed/.test(s.zone) ? "In Greed the Reading never recommends buying with USDC: Fear has returned after every Greed so far. Waiting for it did not always give a lower price, it gave one about half the time, so this is a rule of caution, not a promise. " : call === "now" || call === "good" || call === "back" ? "Buying " + Y + " with USDC on days with a swap call during Fear was in profit a year later on the large majority of such days, clearly more often than buying " + X + " or buying during Greed. " : "Fear alone is not a reason to buy: without a swap call, buying during Fear did not end better than on other days. ";
+      if (s.fg) {
         t += "A value this " + (fear ? "low or lower" : "high or higher") + " occurred on " + Math.max(1, Math.round(st.share)) + "% of all days since 2018. ";
-        if (st.eps) t += "Every one of the " + st.eps + " earlier " + s.fg + " episodes ended with the Index back at Neutral, after a middle wait of " + pl(Math.round(st.med), "day") + " and at most " + st.max + ". Every Strong or Extreme phase of the Ratio has ended back at Neutral as well. That is what \"not a state that lasts\" rests on. ";
+        if (st.eps) t += "Every one of the " + st.eps + " earlier " + s.fg + " episodes ended with the Index back at Neutral, after a middle wait of " + pl(Math.round(st.med), "day") + " and at most " + st.max + ". Every Strong or Extreme phase of the Ratio has ended back at Neutral as well. ";
         if (fear ? s.fgV <= 10 : s.fgV >= 90) t += "Today's value is " + (fear ? (s.fgV < 10 ? "in single digits" : "at the edge of single digits") : "at 90 or above") + ", the most extreme band. The Index stayed that deep for a middle of only " + pl(Math.round(st.runMed), "day") + " at a time, " + st.runMax + " at the longest: a Very Temporary state. The wider " + s.fg + " around it took longer to clear, a middle of " + pl(Math.round(st.sameMed), "day") + " for episodes this deep. ";
         t += "The history is short and this is no guarantee. In long " + (fear ? "downtrends" : "uptrends") + " " + s.fg + " has returned up to " + st.maxYear + " times in one year, so each one is another opening, not a guaranteed good entry. Measured on the history, an Overvaluation during extreme sentiment did not end sooner than one without it: a middle of 87 days against 97.";
       }
-      add(s.fg && (s.type === "now" || s.type === "strong") ? "Why \"not a state that lasts\"?" : "What about Fear &amp; Greed?", t);
+      add("What about Fear &amp; Greed?", t);
     }
 
     /* how often, and what usually follows a phase */
@@ -4804,7 +4823,7 @@
     return { n: g.length, groups: groups, profit: g.filter(function (x) { return x > 0.006; }).length, med: g.length ? median(g) * 100 : 0 };
   }
   function rtTargetHtml(s, call) { /* optional: the Reading stays as it is, and this line says whether a swap still fits a 7 to 10% profit target */
-    if (!rtTarget || !s.dir || s.type === "contradicted" || call === "now" || call === "good" || call === "back") return "";
+    if (!rtTarget || !s.dir || s.type === "contradicted" || call === "now" || call === "good" || call === "back" || call === "wait") return "";
     var r = rtScoreRecord(s.score), X = s.side, Y = s.other;
     if (r.groups >= 3 && r.n >= 30 && r.med >= 7 && r.profit / r.n >= 0.6) return '<div class="rt-target" style="color:' + rtFCol(s.score) + '">Even though the Reading does not show the best possible time to swap, it does match your 7 to 10% profit target, which is why a swap from ' + X + ' into ' + Y + ' is recommended here. On earlier days with this score, swapping ' + X + ' into ' + Y + ' and swapping again once ' + Y + ' was the overvalued side left a middle of ' + r.med.toFixed(0) + '% more ' + X + '.</div>';
     return '<div class="rt-target off">Your 7 to 10% profit target is not met today' + (r.n >= 30 ? ': on earlier days with this score, the middle result of a swap from ' + X + ' into ' + Y + ' was ' + (r.med < 0 ? "−" : "+") + Math.abs(r.med).toFixed(0) + '% in ' + X + '.' : ': there are too few earlier days with this score to say.') + '</div>';

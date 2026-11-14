@@ -6,24 +6,30 @@ const H = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/history/btc-eth.json'
 const rows = sym => H.map(x => { const t = Date.parse(x[0] + 'T00:00:00Z'), p = String(sym === 'BTCUSDT' ? x[1] : x[2]); return [t, p, p, p, p, '1', t + 864e5 - 1, '1', 1, '1', '1', '0']; });
 const TODAY = H[H.length - 1][0];
 // real days, replayed through the page with only the data of that day: [date, situation type, call]
-const REAL = [['2025-04-21', 'now', 'now'], ['2026-06-06', 'strong', 'good'], ['2026-06-09', 'strong', 'good'], ['2024-08-07', 'strong', 'good'], ['2021-12-08', 'strong', 'good'], ['2025-08-12', 'back', 'back'], [TODAY, null, null], ['2025-07-19', 'contradicted', 'none'], ['2022-11-19', 'balanced', 'none']];
+const REAL = [['2025-04-21', 'now', 'now'], ['2026-06-06', 'strong', 'good'], ['2026-06-09', 'strong', 'good'], ['2024-08-07', 'strong', 'wait'], ['2021-12-08', 'strong', 'wait'], ['2025-08-12', 'back', 'back'], [TODAY, null, null], ['2025-07-19', 'contradicted', 'none'], ['2022-11-19', 'balanced', 'none']];
 // invented situations, to cover every combination of strength, Fair Value Lines, sentiment and record
-const rec = (profit, n, groups = 6) => ({ n, groups, profit }), base = { side: 'BTC', other: 'ETH', dir: 1, score: 4, marks: 0, year: 'Mild', all: 'Strong', seasonAgainst: false, domAgainst: false, fg: '', cause: '', times: 0 };
+const rec = (profit, n, groups = 6) => ({ n, groups, profit }), base = { side: 'BTC', other: 'ETH', dir: 1, score: 4, marks: 0, year: 'Mild', all: 'Strong', seasonAgainst: false, domAgainst: false, fg: '', zone: '', held: '', run: null, cause: '', times: 0 };
 const SYN = [
   ['S1 both lines Extreme, record 97%', { ...base, type: 'now', score: 8, year: 'Extreme', all: 'Extreme', cause: 'fell', times: 3, rec: rec(97, 100) }, 'now'],
-  ['S2 score 7, lines Strong and Extreme, Extreme Fear', { ...base, type: 'now', score: 7, year: 'Strong', all: 'Extreme', fg: 'Extreme Fear', rec: rec(90, 100) }, 'now'],
+  ['S2 score 7, lines Strong and Extreme, Extreme Fear', { ...base, type: 'now', score: 7, year: 'Strong', all: 'Extreme', fg: 'Extreme Fear', zone: 'Extreme Fear', rec: rec(90, 100) }, 'now'],
   ['S3 now, too few earlier days', { ...base, type: 'now', score: 8, year: 'Extreme', all: 'Extreme', rec: rec(10, 12, 1) }, 'now'],
   ['S4 strong, both lines agree, 74%', { ...base, type: 'strong', rec: rec(74, 100) }, 'good'],
-  ['S5 strong, only one line, Extreme Greed, both rose', { ...base, type: 'strong', score: 3, year: 'Neutral', all: 'Strong', fg: 'Extreme Greed', cause: 'rose', rec: rec(82, 100) }, 'good'],
+  ['S5 strong, only one line, Extreme Greed, both rose', { ...base, type: 'strong', score: 3, year: 'Neutral', all: 'Strong', fg: 'Extreme Greed', zone: 'Extreme Greed', held: 'greed', cause: 'rose', rec: rec(82, 100) }, 'wait'],
   ['S6 strong ETH, both lines Strong, 50%', { ...base, side: 'ETH', other: 'BTC', dir: -1, score: -5, type: 'strong', year: 'Strong', all: 'Strong', rec: rec(50, 100) }, 'unclear'],
   ['S7 strong, Dominance against, 30%', { ...base, type: 'strong', score: 3, marks: 1, domAgainst: true, rec: rec(30, 100) }, 'unclear'],
   ['S8 strong, too few earlier days', { ...base, type: 'strong', rec: rec(8, 10, 1) }, 'few'],
   ['S9 strong, lines contradict, 70%', { ...base, type: 'strong', score: 3, marks: 1, year: 'against', all: 'Extreme', rec: rec(70, 100) }, 'good'],
   ['S10 mild, only one line', { ...base, type: 'mild', score: 2, year: 'Neutral', all: 'Mild' }, 'none'],
-  ['S11 mild ETH, both lines Mild, Season against, Extreme Fear', { ...base, side: 'ETH', other: 'BTC', dir: -1, score: -1, type: 'mild', year: 'Mild', all: 'Mild', marks: 1, seasonAgainst: true, fg: 'Extreme Fear' }, 'none'],
+  ['S11 mild ETH, both lines Mild, Season against, Extreme Fear', { ...base, side: 'ETH', other: 'BTC', dir: -1, score: -1, type: 'mild', year: 'Mild', all: 'Mild', marks: 1, seasonAgainst: true, fg: 'Extreme Fear', zone: 'Extreme Fear' }, 'none'],
   ['S12 swap back on the ETH side', { ...base, side: 'ETH', other: 'BTC', dir: -1, score: -2, type: 'back', year: 'Mild', all: 'Neutral' }, 'back'],
   ['S13 balanced', { ...base, side: '', dir: 0, score: 0, type: 'balanced', year: 'Neutral', all: 'Neutral' }, 'none'],
-  ['S14 contradicted: lines against each other and Season against', { ...base, type: 'contradicted', score: 1, marks: 2, year: 'against', all: 'Strong', seasonAgainst: true }, 'none']
+  ['S14 contradicted: lines against each other and Season against', { ...base, type: 'contradicted', score: 1, marks: 2, year: 'against', all: 'Strong', seasonAgainst: true }, 'none'],
+  ['S15 strong after a one-way run', { ...base, type: 'strong', held: 'run', run: 42, rec: rec(74, 100) }, 'wait'],
+  ['S16 strong in Greed', { ...base, type: 'strong', zone: 'Greed', held: 'greed', rec: rec(74, 100) }, 'wait'],
+  ['S17 way back on the ETH side in Greed', { ...base, side: 'ETH', other: 'BTC', dir: -1, score: -2, type: 'back', year: 'Mild', all: 'Neutral', zone: 'Greed' }, 'back'],
+  ['S18 now in Extreme Greed', { ...base, type: 'now', score: 8, year: 'Extreme', all: 'Extreme', zone: 'Extreme Greed', held: 'greed', rec: rec(97, 100) }, 'wait'],
+  ['S19 strong in Fear, 74%', { ...base, type: 'strong', zone: 'Fear', rec: rec(74, 100) }, 'good'],
+  ['S20 balanced in Greed', { ...base, side: '', dir: 0, score: 0, type: 'balanced', year: 'Neutral', all: 'Neutral', zone: 'Greed' }, 'none']
 ];
 const sentences = t => t.split(/(?<=[.!?])\s+/).filter(Boolean);
 // the skeleton of a Reading: numbers, sides, level words and grade words replaced, so two Readings can be compared by structure
@@ -37,8 +43,11 @@ function check(name, text, o) {
   ok(!/\bgap\b/i.test(text), name + ': says "gap"'); ok(!/ended ahead/i.test(text), name + ': says "ended ahead"'); ok(!/still growing|still widening/i.test(text), name + ': claims the Overvaluation is still growing');
   ok(!/could|might|maybe|perhaps|theoretically/i.test(text), name + ': hedges'); ok(!/swap(ping)? back|If you swapped/i.test(text), name + ': talks about swapping back');
   if (o.lean) ok(/Fair Value Line/.test(text), name + ': does not name the Fair Value Lines');
-  if (o.sentiment === false) ok(!/Extreme (Fear|Greed)/.test(text), name + ': mentions Fear & Greed without a clear Overvaluation');
-  if (o.sentiment === true) ok(/not a state that lasts/.test(text), name + ': extreme sentiment at a clear Overvaluation is not used as confirmation');
+  const call = ['now', 'good', 'back'].includes(o.call), z = o.zone || '';
+  if (/Greed/.test(z)) { ok(/keep your USDC and wait for Fear/.test(text), name + ': Greed without the advice to keep USDC'); ok(!/buy or swap|strong time to buy/.test(text), name + ': recommends buying during Greed'); }
+  if (/Fear/.test(z)) ok(call === /strong time to buy (BTC|ETH) with USDC/.test(text), name + ': buying in Fear must be recommended next to a call, and only then');
+  if (!z) ok(!/Fear|Greed|USDC/.test(text), name + ': mentions sentiment although it is Neutral');
+  if (z === 'Extreme Greed') ok(!call, name + ': a call during Extreme Greed');
 }
 (async () => {
   const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { width: 1400, height: 900 } });
@@ -58,13 +67,14 @@ function check(name, text, o) {
   console.log('REAL DAYS (replayed with only the data of each day)');
   for (const [d, type, call] of REAL) {
     await p.evaluate(v => { const e = document.getElementById('rt-asof'); e.value = v; e.dispatchEvent(new Event('change')); }, d); await p.waitForTimeout(350);
-    const x = await read(), fgv = FG.find(q => q[0] === d), ext = !!fgv && (fgv[1] <= 24 || fgv[1] >= 76), clear = call === 'now' || call === 'good', lean = x.score !== '+0';
-    check(d, x.text, { lean: lean && type !== 'contradicted', sentiment: ext && clear ? true : !clear ? false : undefined });
+    const x = await read(), fgv = FG.find(q => q[0] === d), zone = !fgv ? '' : fgv[1] <= 24 ? 'Extreme Fear' : fgv[1] <= 44 ? 'Fear' : fgv[1] <= 55 ? '' : fgv[1] <= 75 ? 'Greed' : 'Extreme Greed', lean = x.score !== '+0';
+    check(d, x.text, { lean: lean && type !== 'contradicted', zone, call });
     ok(x.expl.length >= 4, d + ': Explanation has fewer than 4 questions'); ok(x.expl.every(q => /\?$/.test(q)), d + ': an Explanation heading is not a question');
     if (call === 'now') ok(/^Holding (BTC|ETH) is a really good idea right now, and/.test(x.text), d + ': expected "a really good idea"');
     if (call === 'good') ok(/^Holding (BTC|ETH) is a good idea right now, and/.test(x.text), d + ': expected "a good idea"');
     if (call === 'back') ok(/^Holding BTC is a good idea right now, and/.test(x.text), d + ': expected "holding BTC"');
-    if (call === 'now' || call === 'good' || call === 'back') ok(/if you are looking to buy or swap, (BTC|ETH) is the recommendation/.test(x.text), d + ': no buy recommendation');
+    if (call === 'now' || call === 'good' || call === 'back') ok(/if you are looking to (buy or )?swap, (BTC|ETH) is the recommendation/.test(x.text), d + ': no recommendation');
+    if (call === 'wait') ok(/^No swap recommendation today, although/.test(x.text), d + ': expected "no swap recommendation"');
     if (type === 'contradicted') ok(sentences(x.text).length >= 2, d + ': a contradiction must name where it comes from');
     if (type === 'balanced') ok(/^Now is a good time to hold on to your BTC and ETH\./.test(x.text), d + ': expected "hold on"');
     if (type === 'contradicted') ok(/^No clear recommendation today/.test(x.text), d + ': expected "no clear recommendation"');
@@ -73,8 +83,8 @@ function check(name, text, o) {
   }
   console.log('\nINVENTED SITUATIONS');
   for (const [name, sit, call] of SYN) {
-    const c = await p.evaluate(s => window.coinAtlasDev.compose(s), sit), text = c.text.join(' '), clear = c.call === 'now' || c.call === 'good';
-    check(name, text, { lean: !!sit.dir && sit.type !== 'contradicted', sentiment: sit.fg && clear ? true : sit.fg ? false : undefined }); ok(c.call === call, name + ': call is "' + c.call + '", expected "' + call + '"');
+    const c = await p.evaluate(s => window.coinAtlasDev.compose(s), sit), text = c.text.join(' ');
+    check(name, text, { lean: !!sit.dir && sit.type !== 'contradicted', zone: sit.zone, call: c.call }); ok(c.call === call, name + ': call is "' + c.call + '", expected "' + call + '"');
     (skel[sit.type] = skel[sit.type] || new Set()).add(skeleton(text)); console.log('  ' + name + '  →  ' + text);
   }
   // the record wording follows the real share of days, and a better record reads stronger
