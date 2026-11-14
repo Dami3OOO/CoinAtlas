@@ -1,0 +1,5 @@
+{
+  "note": "Candidate search terms. The page decides from the recorded data which of them really rose around Bitcoin's yearly highs (bull) and yearly lows (bear).",
+  "bull": ["bitcoin", "btc", "crypto", "buy bitcoin", "how to buy bitcoin", "bitcoin price", "ethereum", "altcoins", "best crypto to buy", "what to invest in right now", "how to invest", "coinbase", "binance", "crypto wallet", "memecoin", "dogecoin", "nft", "bull market", "bitcoin etf", "crypto app", "robinhood", "how to get rich", "crypto millionaire", "bitcoin all time high", "next bitcoin"],
+  "bear": ["recession", "market crash", "stock market crash", "bitcoin crash", "crypto crash", "bear market", "inflation", "layoffs", "unemployment", "interest rates", "rate hike", "tariffs", "bank run", "bank collapse", "liquidation", "margin call", "is bitcoin dead", "crypto scam", "exchange hack", "war", "debt ceiling", "bankruptcy", "sec lawsuit", "crypto ban", "should i sell my stocks", "safe haven", "gold price", "capital gains tax", "housing crash", "credit crunch"]
+}

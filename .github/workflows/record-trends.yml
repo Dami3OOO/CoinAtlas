@@ -1,0 +1,33 @@
+name: Record trends
+
+# Once a day. Each run fetches a few search terms, so the whole list is filled after about a week
+# and every term is refreshed roughly weekly from then on.
+on:
+  schedule:
+    - cron: "40 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: record-trends
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytrends==4.9.2
+      - run: python scripts/record-trends.py
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/trends
+          git diff --cached --quiet && exit 0
+          git commit -m "Record trends $(date -u +%F)"
+          git pull --rebase
+          git push
