@@ -20,7 +20,9 @@ const SYN = [
   ['S8 strong, too few earlier days', { ...base, type: 'strong', rec: rec(8, 10, 1) }, 'few'],
   ['S9 strong, lines contradict, 70%', { ...base, type: 'strong', score: 3, marks: 1, year: 'against', all: 'Extreme', rec: rec(70, 100) }, 'good'],
   ['S10 mild, only one line', { ...base, type: 'mild', score: 2, year: 'Neutral', all: 'Mild' }, 'none'],
-  ['S11 mild ETH, both lines Mild, Season against, Extreme Fear', { ...base, side: 'ETH', other: 'BTC', dir: -1, score: -1, type: 'mild', year: 'Mild', all: 'Mild', marks: 1, seasonAgainst: true, fg: 'Extreme Fear', zone: 'Extreme Fear' }, 'none'],
+  ['S11 mild ETH, both lines Mild, Season against, Extreme Fear', { ...base, side: 'ETH', other: 'BTC', dir: -1, score: -1, type: 'mild', year: 'Mild', all: 'Mild', marks: 1, seasonAgainst: true, fg: 'Extreme Fear', zone: 'Extreme Fear', fearRec: rec(82, 100) }, 'none'],
+  ['S21 balanced in Fear, record 70%', { ...base, side: '', dir: 0, score: 0, type: 'balanced', year: 'Neutral', all: 'Neutral', zone: 'Fear', fearRec: rec(70, 100) }, 'none'],
+  ['S22 balanced in Fear, record too weak', { ...base, side: '', dir: 0, score: 0, type: 'balanced', year: 'Neutral', all: 'Neutral', zone: 'Fear', fearRec: rec(45, 100) }, 'none'],
   ['S12 swap back on the ETH side', { ...base, side: 'ETH', other: 'BTC', dir: -1, score: -2, type: 'back', year: 'Mild', all: 'Neutral' }, 'back'],
   ['S13 balanced', { ...base, side: '', dir: 0, score: 0, type: 'balanced', year: 'Neutral', all: 'Neutral' }, 'none'],
   ['S14 contradicted: lines against each other and Season against', { ...base, type: 'contradicted', score: 1, marks: 2, year: 'against', all: 'Strong', seasonAgainst: true }, 'none'],
@@ -46,6 +48,8 @@ function check(name, text, o) {
   const call = ['now', 'good', 'back'].includes(o.call), z = o.zone || '';
   if (/Greed/.test(z)) { ok(/keep your USDC and wait for Fear/.test(text), name + ': Greed without the advice to keep USDC'); ok(!/buy or swap|strong time to buy/.test(text), name + ': recommends buying during Greed'); }
   if (/Fear/.test(z)) ok(call === /strong time to buy (BTC|ETH) with USDC/.test(text), name + ': buying in Fear must be recommended next to a call, and only then');
+  if (/Fear/.test(z) && !call && o.call !== 'wait' && o.fearOk !== false) ok(/buying with USDC ended in profit by the time Greed returned/.test(text), name + ': Fear without a swap call must still name the chance to buy');
+  if (o.call === 'wait' || o.fearOk === false) ok(!/buying with USDC/.test(text), name + ': recommends buying where it must not');
   if (!z) ok(!/Fear|Greed|USDC/.test(text), name + ': mentions sentiment although it is Neutral');
   if (z === 'Extreme Greed') ok(!call, name + ': a call during Extreme Greed');
 }
@@ -84,7 +88,7 @@ function check(name, text, o) {
   console.log('\nINVENTED SITUATIONS');
   for (const [name, sit, call] of SYN) {
     const c = await p.evaluate(s => window.coinAtlasDev.compose(s), sit), text = c.text.join(' ');
-    check(name, text, { lean: !!sit.dir && sit.type !== 'contradicted', zone: sit.zone, call: c.call }); ok(c.call === call, name + ': call is "' + c.call + '", expected "' + call + '"');
+    check(name, text, { lean: !!sit.dir && sit.type !== 'contradicted', zone: sit.zone, call: c.call, fearOk: sit.fearRec ? sit.fearRec.profit / sit.fearRec.n >= 0.6 : /Fear/.test(sit.zone || '') && !['now', 'good', 'back'].includes(c.call) ? false : undefined }); ok(c.call === call, name + ': call is "' + c.call + '", expected "' + call + '"');
     (skel[sit.type] = skel[sit.type] || new Set()).add(skeleton(text)); console.log('  ' + name + '  →  ' + text);
   }
   // the record wording follows the real share of days, and a better record reads stronger

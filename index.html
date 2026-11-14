@@ -4658,6 +4658,16 @@
      The Explanation below the Reading answers "why" for every claim, with the day's numbers.
      The call follows one rule, measured on the real history: swap during a Strong or Extreme overvaluation once the gap has stopped
      widening, swap back when the gap has closed. Its record so far is computed with only the data of each day and shown in the Explanation. */
+  function rtFearRecord(deep) { /* buying BTC with USDC on every earlier Fear day (deep: Extreme Fear) and holding until the Index was back in Greed. Days whose Greed has not come yet are left out */
+    var d = RT.data, fa = rtFgAll(), key = "fear" + (deep ? 1 : 0); if (!fa || !fa.length) return null; if (d[key]) return d[key];
+    var m = {}, g = [], groups = 0, last = 1e9, nx = -1, j, v;
+    fa.forEach(function (x) { m[Math.round(x.timestamp / 86400)] = x.value; });
+    for (j = d.t.length - 1; j >= 0; j--) {
+      v = m[Math.round(d.t[j] / 864e5)]; if (v === undefined) continue;
+      if (v >= 56) nx = j; else if (nx > 0 && (deep ? v <= 24 : v > 24 && v <= 44)) { g.push(d.b[nx] / d.b[j] - 1); if (last - j > 20) groups++; last = j; }
+    }
+    return (d[key] = { n: g.length, groups: groups, profit: g.filter(function (x) { return x > 0; }).length, med: g.length ? median(g) * 100 : 0, worst: g.length ? Math.min.apply(null, g) * 100 : 0 });
+  }
   var RT_SIGNALS = [
     { id: "year", name: "Year Line", read: function (f) { return { side: f.zy.dir, level: f.zy.lv, pts: f.py, text: "The Ratio is " + Math.abs(f.zy.dev * 100).toFixed(0) + "% " + (f.zy.dev >= 0 ? "above" : "below") + " the Year Line [" + f.fy.toFixed(1) + "], which rates " + rtZName(f.zy) + "." }; } },
     { id: "all", name: "All Time Line", read: function (f) { return { side: f.za.dir, level: f.za.lv, pts: f.pa, text: "It is " + Math.abs(f.za.dev * 100).toFixed(0) + "% " + (f.za.dev >= 0 ? "above" : "below") + " the All Time Line [" + RT.med.toFixed(1) + "], which rates " + rtZName(f.za) + "." }; } },
@@ -4677,6 +4687,7 @@
     if (s.cause) { var a = Math.abs(dir > 0 ? f.gb : f.ge), b = Math.abs(dir > 0 ? f.ge : f.gb), k = s.cause === "fell" ? b / a : a / b; s.times = k >= 1.75 ? Math.min(5, Math.round(k)) : 0; }
     s.type = f.unc >= 2 ? "contradicted" : !dir ? "balanced" : now ? "now" : A >= 3 ? "strong" : (A === 2 && lastStrong && lastStrong.dir === -dir) ? "back" : "mild";
     s.zone = v === null ? "" : v <= 24 ? "Extreme Fear" : v <= 44 ? "Fear" : v <= 55 ? "" : v <= 75 ? "Greed" : "Extreme Greed";
+    s.fearRec = /Fear/.test(s.zone) ? rtFearRecord(s.zone === "Extreme Fear") : null;
     s.run = dir && i >= 365 ? (r / d.r[i - 365] - 1) * 100 * dir : null; /* how far the Ratio moved towards this Overvaluation within a year */
     /* measured on the history: in Extreme Greed no kind of call held up, in Greed a Strong lean kept growing, and so did one that came out of a one-way run */
     s.held = s.type !== "now" && s.type !== "strong" && s.type !== "back" ? "" : s.zone === "Extreme Greed" || (s.type === "strong" && s.zone === "Greed") ? "greed" : s.type === "strong" && s.run > RT_RUN ? "run" : "";
@@ -4729,6 +4740,9 @@
     if (call === "now" || call === "good" || call === "back") {
       if (/Fear/.test(s.zone)) fact(88, "Sentiment is in " + s.zone + ", which also makes this a strong time to buy " + Y + " with USDC.");
       else if (greed) fact(88, "Sentiment is in Greed, so this is a time to swap, not to buy: keep your USDC and wait for Fear.");
+    } else if (/Fear/.test(s.zone) && call !== "wait" && ok(s.fearRec) && s.fearRec.profit / s.fearRec.n >= 0.6) {
+      /* no swap to make, but Fear on its own has been a time to buy: the record decides how strongly it is said, the Ratio decides what to buy */
+      fact(88, "Sentiment is in " + s.zone + ": on " + rtGrade(s.fearRec.profit, s.fearRec.n) + ", buying with USDC ended in profit by the time Greed returned" + (s.dir && s.type !== "contradicted" ? ", and " + Y + " is the " + (s.type === "mild" ? "slightly " : "") + "cheaper side of the two." : ", so this is a good time to add to what you already hold."));
     } else if (greed) fact(call === "wait" ? 84 : 75, (call === "wait" ? "It is not a time to buy either" : "Sentiment is in " + s.zone + ", so this is not a time to buy") + ": keep your USDC and wait for Fear.");
     F.sort(function (a, b) { return b.w - a.w; });
     T = [lead].concat(F.slice(0, 3).map(function (x) { return x.t; }));
@@ -4791,7 +4805,7 @@
     if (s.fgV !== null) {
       var st = rtFgStats(s.fgV), fear = s.fgV <= 44, name = classifyFG(s.fgV);
       t = "Fear &amp; Greed stands at " + '<b style="color:' + fgCol(s.fgV) + '">' + s.fgV + " · " + name + "</b>. ";
-      t += s.zone === "" ? "That is Neutral, so sentiment adds nothing to the Reading today. " : /Greed/.test(s.zone) ? "In Greed the Reading never recommends buying with USDC: Fear has returned after every Greed so far. Waiting for it did not always give a lower price, it gave one about half the time, so this is a rule of caution, not a promise. " : call === "now" || call === "good" || call === "back" ? "Buying " + Y + " with USDC on days with a swap call during Fear was in profit a year later on the large majority of such days, clearly more often than buying " + X + " or buying during Greed. " : "Fear alone is not a reason to buy: without a swap call, buying during Fear did not end better than on other days. ";
+      t += s.zone === "" ? "That is Neutral, so sentiment adds nothing to the Reading today. " : /Greed/.test(s.zone) ? "In Greed the Reading never recommends buying with USDC: Fear has returned after every Greed so far. Waiting for it did not always give a lower price, it gave one about half the time, so this is a rule of caution, not a promise. " : call === "now" || call === "good" || call === "back" ? "Buying " + Y + " with USDC on days with a swap call during Fear was in profit a year later on the large majority of such days, clearly more often than buying " + X + " or buying during Greed. " : (function (R) { return !R || !R.n ? "There are no earlier " + s.zone + " days yet to measure buying against. " : "Buying BTC with USDC on an earlier " + s.zone + " day and holding it until the Index was back in Greed: " + pl(R.n, "day") + " in " + pl(R.groups, "separate period") + ", " + share(R.profit, R.n) + " ended in profit, with a middle result of " + pct(R.med) + " and a worst of " + pct(R.worst) + ". " + (call === "wait" ? "Today the Reading does not repeat that advice, because the Ratio is in a run: on such days the result a year later was mixed. " : "It did not work every time: Fear that came early in a long downtrend was followed by lower prices first, and the wait for Greed has taken most of a year at the longest. "); })(s.fearRec);
       if (s.fg) {
         t += "A value this " + (fear ? "low or lower" : "high or higher") + " occurred on " + Math.max(1, Math.round(st.share)) + "% of all days since 2018. ";
         if (st.eps) t += "Every one of the " + st.eps + " earlier " + s.fg + " episodes ended with the Index back at Neutral, after a middle wait of " + pl(Math.round(st.med), "day") + " and at most " + st.max + ". Every Strong or Extreme phase of the Ratio has ended back at Neutral as well. ";
