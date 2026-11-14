@@ -35,7 +35,7 @@ function check(name, text, o) {
   ok(st.length <= 4, name + ': more than 4 sentences (' + st.length + ')'); ok(text.length <= 520, name + ': too long (' + text.length + ')');
   ok(!/unusual/i.test(text), name + ': contains "unusual"'); ok(!/\d+ of \d+/.test(text), name + ': contains a count'); ok(!/% of days|stretches|\d%/i.test(text), name + ': contains statistics');
   ok(!/\bgap\b/i.test(text), name + ': says "gap"'); ok(!/ended ahead/i.test(text), name + ': says "ended ahead"'); ok(!/still growing|still widening/i.test(text), name + ': claims the Overvaluation is still growing');
-  ok(!/could|might|maybe|perhaps|theoretically/i.test(text), name + ': hedges');
+  ok(!/could|might|maybe|perhaps|theoretically/i.test(text), name + ': hedges'); ok(!/swap(ping)? back|If you swapped/i.test(text), name + ': talks about swapping back');
   if (o.lean) ok(/Fair Value Line/.test(text), name + ': does not name the Fair Value Lines');
   if (o.sentiment === false) ok(!/Extreme (Fear|Greed)/.test(text), name + ': mentions Fear & Greed without a clear Overvaluation');
   if (o.sentiment === true) ok(/not a state that lasts/.test(text), name + ': extreme sentiment at a clear Overvaluation is not used as confirmation');
@@ -62,8 +62,8 @@ function check(name, text, o) {
     check(d, x.text, { lean: lean && type !== 'contradicted', sentiment: ext && clear ? true : !clear ? false : undefined });
     ok(x.expl.length >= 4, d + ': Explanation has fewer than 4 questions'); ok(x.expl.every(q => /\?$/.test(q)), d + ': an Explanation heading is not a question');
     if (call === 'now') ok(/^Swap (BTC|ETH) into (BTC|ETH) now\./.test(x.text), d + ': expected "swap now"');
-    if (call === 'good') ok(/^Good time to swap/.test(x.text), d + ': expected "good time to swap"');
-    if (call === 'back') ok(/^Time to swap back\./.test(x.text) && /swap ETH back into BTC/.test(x.text), d + ': expected the swap back from ETH into BTC');
+    if (call === 'good') ok(/^Now is a good time to swap/.test(x.text), d + ': expected "now is a good time to swap"');
+    if (call === 'back') ok(/^Now is a good time to swap ETH into BTC\./.test(x.text), d + ': expected a plain swap call from ETH into BTC');
     if (type === 'contradicted') ok(sentences(x.text).length >= 2, d + ': a contradiction must name where it comes from');
     if (type === 'balanced') ok(/^Nothing to swap on today\./.test(x.text), d + ': expected "nothing to swap"');
     if (type === 'contradicted') ok(/^No call today/.test(x.text), d + ': expected "no call"');
