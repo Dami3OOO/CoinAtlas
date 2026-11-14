@@ -59,7 +59,7 @@ def fetch(py, term, today):
 def main():
     data = json.loads(OUT.read_text()) if OUT.exists() else {"terms": {}}
     data.setdefault("terms", {})
-    want = [(t, g) for g in ("bull", "bear") for t in TERMS[g]]
+    want = [(t, g) for g in ("raw", "bull", "bear") for t in TERMS.get(g, [])]
     for t in list(data["terms"]):  # a term removed from the list is dropped from the file
         if t not in dict(want):
             del data["terms"][t]

@@ -2678,21 +2678,40 @@
     if (marks.length) { T.push("Something does not fit: " + marks.join("; ") + "."); col = rtMix(col === GREY_C ? "#9ca3af" : col, "#eab308", 0.5); }
     return { text: T.join(" "), marks: marks, col: col };
   }
+  function trDiscoveryHtml() { /* what was looked up in the 7 days before each big Bitcoin move, as found by scripts/discover-trends.py. Nothing here was chosen by hand */
+    var D = TR.disc; if (!D || !D.events) return '<div class="rt-val-title snap-sec">What Trended Before Bitcoin\'s Moves</div><div class="fg-sub snap-note">Not looked up yet. It appears after the Discover trends job in the repository has run.</div>';
+    var KN = { up10: ["Up 10%+", "var(--up)"], down10: ["Down 10%+", "var(--down)"], high: ["High of the Year", "var(--up)"], low: ["Low of the Year", "var(--down)"], asked: ["Asked", "#eab308"] }, g = D.events.filter(function (e) { return e.google; }).length;
+    var h = '<div class="rt-val-title snap-sec">What Trended Before Bitcoin\'s Moves</div><div class="fg-sub snap-note">' + D.events.length + ' events: every day Bitcoin moved 10% or more, and the high and low of every year. For each, the 7 days before and the day itself. Wikipedia: articles with at least 3 times their normal views. Google: rising searches, found for ' + g + ' of ' + D.events.length + ' events so far.</div>';
+    var rec = ["down10", "up10", "low", "high"].map(function (k) { var a = (D.recurring || {})[k] || []; return a.length ? '<div class="fg-sub snap-note"><b style="color:' + KN[k][1] + '">' + KN[k][0] + ', came up before several events:</b> ' + a.slice(0, 20).map(function (x) { return esc(x[0]) + " [" + x[1] + "]"; }).join(", ") + '</div>' : ''; }).join("");
+    h += rec || '<div class="fg-sub snap-note">No Wikipedia article rose before several events of the same kind.</div>';
+    D.events.slice().reverse().forEach(function (e) {
+      var key = e.date + e.kind, on = TR.open === key;
+      h += '<div class="snap-day' + (on ? ' open' : '') + '"><button type="button" class="snap-head" data-tr-ev="' + key + '" style="grid-template-columns:1.2fr 1fr 2.6fr"><b>' + snapDate(e.date) + '</b><span style="color:' + KN[e.kind][1] + '">' + KN[e.kind][0] + '</span><span class="fg-sub">' + esc(e.note) + '</span></button>';
+      if (on) {
+        h += '<div class="snap-list"><div class="fg-sub"><b>Wikipedia, risen articles:</b> ' + (e.wiki === null ? "no data for this date" : !e.wiki.length ? "none" : e.wiki.map(function (a) { return esc(a[0]) + " [" + a[1] + "×" + (a[3] ? ", " + a[3] + "d before" : ", on the day") + "]"; }).join(", ")) + '</div>';
+        ["bitcoin", "finance"].forEach(function (k) { h += '<div class="fg-sub" style="margin-top:6px"><b>Google, rising ' + (k === "bitcoin" ? 'around "bitcoin"' : "in Finance") + ':</b> ' + (!e.google ? "not answered by Google yet" : !e.google[k].length ? "none" : e.google[k].map(function (q) { return esc(q[0]); }).join(", ")) + '</div>'; });
+        h += '</div>';
+      }
+      h += '</div>';
+    });
+    return h;
+  }
   function renderTrends() {
     if (!trendsVisible) { trendsBox.hidden = true; trendsBox.innerHTML = ""; updatePinnedColVisibility(); return; }
     trendsBox.hidden = false; updatePinnedColVisibility();
     var h = '<div class="pinned-card chart-container pf-card dev-target" data-dev-name="Trends" data-dev-color="#38bdf8"><div class="pf-title">Trends</div>';
-    if (TR.loading || !TR.data) h += '<div class="rt-empty">' + (TR.loading ? "Loading Trends…" : "No Trends data has been recorded yet. It appears after the Record trends job in the repository has run.") + '</div>';
-    else if (!TR.data.terms.bitcoin || !TR.btc) h += '<div class="rt-empty">The recording has started but is not complete yet. ' + Object.keys(TR.data.terms).length + ' terms are stored so far.</div>';
+    if (TR.loading || !TR.data) h += '<div class="rt-empty">' + (TR.loading ? "Loading Trends…" : "No Trends data has been recorded yet. It appears after the Record trends job in the repository has run.") + '</div>' + (TR.loading ? '' : trDiscoveryHtml());
+    else if (!TR.data.terms.bitcoin || !TR.btc) h += '<div class="rt-empty">The recording has started but is not complete yet. ' + Object.keys(TR.data.terms).length + ' terms are stored so far.</div>' + trDiscoveryHtml();
     else {
       var B = trPick("bull"), R = trPick("bear"), bull = trCombine(B.fallback || B.used), bear = trCombine(R.fallback || R.used), rd = trReading(bull, bear);
-      var names = function (P, word) { return P.fallback ? "Fewer than 3 of the " + P.all + " candidate terms rose at half of Bitcoin's yearly " + word + ", so all candidates are combined for now."
+      var names = function (P, word) { return !P.all ? "The terms for this graph have not been chosen yet. They will come from what really trended before Bitcoin's moves, listed below." : P.fallback ? "Fewer than 3 of the " + P.all + " candidate terms rose at half of Bitcoin's yearly " + word + ", so all candidates are combined for now."
         : P.used.length + " of " + P.all + " candidate terms rose at half or more of Bitcoin's yearly " + word + ": " + P.used.map(function (x) { return esc(x.t) + " [" + x.hit + "/" + x.n + "]"; }).join(", ") + "."; };
       var btn = function (k, on) { return '<button type="button" class="gear' + (on ? ' active' : '') + '" data-tr-fg="' + k + '" style="font-size:10px;height:26px;padding:0 10px">Insert Fear and Greed</button>'; };
       h += '<div class="rt-vd" style="color:' + rd.col + ';font-size:15px">' + rd.text + '</div>' + (rd.marks.length ? '<div style="margin-top:6px"><span class="rt-unc">? ' + rd.marks.length + (rd.marks.length === 1 ? " Uncertainty Mark" : " Uncertainty Marks") + '</span></div>' : '');
       h += '<div class="rt-chart-section fg-annual-section" style="margin-top:12px"><div class="rt-head"><div class="rt-title">Bitcoin Google Trends Graph</div></div>' + trChart(trSeries("bitcoin"), BTC_C, false) + '<div class="fg-sub snap-note">Worldwide searches for "bitcoin" per week. 100 is the highest week since November 2017.</div></div>';
       h += '<div class="rt-chart-section fg-annual-section"><div class="rt-head"><div class="rt-title">Bullish Google Trends Graph</div><div class="rt-right">' + btn("B", TR.fgB) + '</div></div>' + trChart(bull, "#4cc27a", TR.fgB) + '<div class="fg-sub snap-note">' + names(B, "highs") + '</div></div>';
       h += '<div class="rt-chart-section fg-annual-section"><div class="rt-head"><div class="rt-title">Bearish Google Trends Graph</div><div class="rt-right">' + btn("R", TR.fgR) + '</div></div>' + trChart(bear, "#f0716a", TR.fgR) + '<div class="fg-sub snap-note">' + names(R, "lows") + '</div></div>';
+      h += trDiscoveryHtml();
       h += '<div class="fg-sub">Recorded from Google Trends, last updated ' + esc(TR.data.updated || "–") + '. A term counts as having risen when its last 4 weeks stood 30% or more above the middle of the year before.</div>';
     }
     trendsBox.innerHTML = h + '</div>';
@@ -2700,12 +2719,12 @@
   function trLoad() {
     TR.loading = true;
     if (!fgData && !fgLoading) loadFGData(); if (!fgData && fgDataCallbacks.indexOf(renderTrends) < 0) fgDataCallbacks.push(renderTrends);
-    Promise.all([repoJson("data/trends/trends.json").catch(function () { return null; }), repoJson("data/history/btc-eth.json").catch(function () { return null; })]).then(function (r) {
-      TR.data = r[0] && r[0].terms ? r[0] : null; TR.btc = r[1] && r[1].days ? r[1].days.map(function (x) { return [Date.parse(x[0] + "T00:00:00Z"), x[1]]; }) : null; TR.loading = false; renderTrends();
+    Promise.all([repoJson("data/trends/trends.json").catch(function () { return null; }), repoJson("data/history/btc-eth.json").catch(function () { return null; }), repoJson("data/trends/discovery.json").catch(function () { return null; })]).then(function (r) {
+      TR.disc = r[2]; TR.data = r[0] && r[0].terms ? r[0] : null; TR.btc = r[1] && r[1].days ? r[1].days.map(function (x) { return [Date.parse(x[0] + "T00:00:00Z"), x[1]]; }) : null; TR.loading = false; renderTrends();
     });
   }
   trendsBtn.addEventListener("click", function () { trendsVisible = !trendsVisible; trendsBtn.classList.toggle("active", trendsVisible); if (trendsVisible) trLoad(); renderTrends(); });
-  trendsBox.addEventListener("click", function (e) { var b = e.target.closest("button[data-tr-fg]"); if (!b) return; if (b.dataset.trFg === "B") TR.fgB = !TR.fgB; else TR.fgR = !TR.fgR; renderTrends(); });
+  trendsBox.addEventListener("click", function (e) { var v = e.target.closest("button[data-tr-ev]"); if (v) { TR.open = TR.open === v.dataset.trEv ? null : v.dataset.trEv; renderTrends(); return; } var b = e.target.closest("button[data-tr-fg]"); if (!b) return; if (b.dataset.trFg === "B") TR.fgB = !TR.fgB; else TR.fgR = !TR.fgR; renderTrends(); });
 
   /* ---------- SENTIMENT SQUARES: 200 assets, 200 squares, coloured by today's change ---------- */
   var sqVisible = false, sqKey = "", sqBtn = document.getElementById("sq-btn"), sqBox = document.getElementById("sq-container");
@@ -2763,7 +2782,7 @@
     { title: "Forums", notes: ["Not started. Depends on Accounts."], desc: "Allows Users to communicate via Forums we Provide. Certain Users might also be allowed to create their Own Forums with their own features. This is the main Usecase for Accounts." },
     { title: "Price Alerts & Watchlists", notes: ["Not started. The daily Snapshots could later power Alerts for Coins entering or leaving the Top 200."], desc: "Allows Users to Set Alerts that are going to immediately announce when a Token Reaches a Certain, customizable price threshold. Watchlists are going to be integrated alongside that. users will be able to create and share their own Lists." },
     { title: "CoinAtlas Sentiment Squares", st: "wip", notes: ["Prototype: 200 equal Squares with Logo, green or red by today's change, opened from the header.", "Open: other timeframes than today, a hover detail per Square, and optional sizing by Market Cap."], desc: "200 Assets, 200 Squares. Every Square is one Asset — green means it's up, red means it's down. No numbers, no noise. One glance and you know exactly where the Market's Head is at." },
-    { title: "Google Trends", st: "wip", notes: ["First version: a daily job records weekly Google Trends for 55 candidate terms, and the Trends tab shows the Bitcoin searches, a bullish and a bearish combined graph, Insert Fear and Greed, and a reading with Uncertainty Marks.", "Open: which terms really rise at yearly highs and lows is decided by the recorded data and has to be checked once the recording is complete. Not yet part of the BTC|ETH Ratio, and not yet for ETH or the Top 200."], desc: "The Goal is To Incorporate Google Trends Into Fear and Greed and into the BTC ETH Ratio tab. Our Workflow is as followed: We determine Extreme Situations, because we go by one rule of thumb: The More Extreme a Situation Is, the more Temporary its going to be. And Google Trends is yet another Confirmation. If we see Extreme Explosions of Certain Searches every time we create the High of the Year, than thats another indicator for us to use. And it goes for the Opposite Case as well. If we see Certain Trends Explode once we create the Low of the Year [which means that afterwards we only saw green], so its bullish, then thats also a Indicator.\nStarts on BTC, Maps out to ETH and eventually the entire Top 200." },
+    { title: "Google Trends", st: "wip", notes: ["First version: the Trends tab with the Bitcoin searches, an empty bullish and bearish graph, Insert Fear and Greed, and a reading with Uncertainty Marks. A discovery job looks up what was searched and read in the 7 days before every 10% move of Bitcoin and before every yearly high and low.", "Open: no term has been chosen yet. The bullish and bearish lists will come from what the discovery really finds. Not yet part of the BTC|ETH Ratio, and not yet for ETH or the Top 200."], desc: "The Goal is To Incorporate Google Trends Into Fear and Greed and into the BTC ETH Ratio tab. Our Workflow is as followed: We determine Extreme Situations, because we go by one rule of thumb: The More Extreme a Situation Is, the more Temporary its going to be. And Google Trends is yet another Confirmation. If we see Extreme Explosions of Certain Searches every time we create the High of the Year, than thats another indicator for us to use. And it goes for the Opposite Case as well. If we see Certain Trends Explode once we create the Low of the Year [which means that afterwards we only saw green], so its bullish, then thats also a Indicator.\nStarts on BTC, Maps out to ETH and eventually the entire Top 200." },
     { title: "Where can i stake?", desc: "\"Staking\" Tag like the Highest Loss / Highest Gain Tags and Staking Filter, which displays every assets thats stakeable.\nAdd that into the Description of Tokens. The best Staking rewards and the APY shown on the site. It would in the future also show the Sites or wallets to stake on, and then you could collab with said Staking providers. So, the Goal is to let Users know how much they can get in Staking Rewards from the Top 3 Providers.\nThen theres an easy 3-Click Function where users can just Click on the Link to said Staking Provider, then connect their Wallet, and click Start Stake. Its as easy as that, if implemented Correctly." }
   ];
 

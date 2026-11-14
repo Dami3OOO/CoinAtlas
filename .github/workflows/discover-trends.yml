@@ -1,0 +1,34 @@
+name: Discover trends
+
+# Looks up what people searched and read right before Bitcoin's big moves. Wikipedia is done in one run.
+# Google answers only a few requests at a time, so the job repeats daily until every event is covered,
+# and then only looks at new events.
+on:
+  schedule:
+    - cron: "10 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: discover-trends
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytrends==4.9.2
+      - run: python scripts/discover-trends.py
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/trends
+          git diff --cached --quiet && exit 0
+          git commit -m "Discover trends $(date -u +%F)"
+          git pull --rebase
+          git push
