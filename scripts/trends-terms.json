@@ -1,6 +1,0 @@
-{
-  "note": "Terms whose weekly Google Trends history is recorded. 'raw' is shown on its own. 'bull' and 'bear' stay empty until scripts/discover-trends.py has shown what really trended before Bitcoin's moves; no term is put here by opinion.",
-  "raw": ["bitcoin"],
-  "bull": [],
-  "bear": []
-}
