@@ -494,6 +494,9 @@
   .rt-fng-cell.best-b { border-color:#3b82f6a6; } .rt-fng-cell.best-e { border-color:#f7931aa6; } .rt-fng-cell.active { border-color:var(--fg); }
   .rt-fng-fm { font-size:12px; font-weight:700; font-variant-numeric:tabular-nums; }
   .rt-unc, .rt-unc-m { color:#eab308; font-style:normal; font-weight:700; } .rt-unc-m { margin-left:3px; }
+  .rt-cert, .rt-cert-m { color:#4cc27a; font-style:normal; font-weight:700; } .rt-cert-m { margin-left:3px; } .rt-fm-tip .rt-cert-m { margin-left:0; }
+  .rt-cert { display:inline-block; font-size:10px; border:1px solid #4cc27a; border-radius:4px; padding:1px 6px; white-space:nowrap; }
+  .rt-target { margin-top:10px; padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-size:13px; line-height:1.5; font-weight:600; } .rt-target.off { color:var(--muted); font-weight:500; font-size:12px; }
   .rt-unc { display:inline-block; font-size:10px; border:1px solid #eab308; border-radius:4px; padding:1px 6px; white-space:nowrap; }
   .rt-fng-note { text-align:center; margin-top:6px; line-height:1.5; }
   .rt-mo-panel { background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:12px; margin-top:10px; }
@@ -826,6 +829,7 @@
             <div class="settings-section">
               <div class="section-title">BTC|ETH</div>
               <div class="grp"><span class="lbl">Linked Hover</span><button class="toggle" type="button" id="rt-link-toggle" role="switch" aria-checked="true" aria-label="Show the hovered day in both graphs"><span></span></button></div>
+              <div class="grp"><span class="lbl">7–10% Profit Target</span><button class="toggle" type="button" id="rt-target-toggle" role="switch" aria-checked="false" aria-label="Add a line below the Reading that says whether a swap fits a 7 to 10 percent profit target"><span></span></button></div>
               <div class="grp"><span class="lbl">Tint Strongest Months</span><button class="toggle" type="button" id="rt-tint-toggle" role="switch" aria-checked="false" aria-label="Tint the strongest month boxes in Past Years blue or orange"><span></span></button></div>
               <div class="grp"><span class="lbl">Altcoin Dominance Line</span><button class="toggle" type="button" id="rt-dom-toggle" role="switch" aria-checked="false" aria-label="Show altcoin dominance line in dominance chart"><span></span></button></div>
             </div>
@@ -4130,6 +4134,7 @@
   var RT_TIPS_KEY = "top200-rt-tips", rtTipsText = "", rtTipsVisible = false, rtCalcSwapped = false;
   try { rtTipsText = localStorage.getItem(RT_TIPS_KEY) || ""; } catch(e) {}
   var RT_LINK_KEY = "top200-rt-link", rtLink = true; try { rtLink = localStorage.getItem(RT_LINK_KEY) !== "0"; } catch (e) {}
+  var RT_TARGET_KEY = "top200-rt-target", rtTarget = false; try { rtTarget = localStorage.getItem(RT_TARGET_KEY) === "1"; } catch (e) {}
   var RT_TINT_KEY = "top200-rt-tint", rtTint = false; try { rtTint = localStorage.getItem(RT_TINT_KEY) === "1"; } catch (e) {}
   var RT_DOM_KEY = "top200-rt-dom-alts", rtDomAlts = false; try { rtDomAlts = localStorage.getItem(RT_DOM_KEY) === "1"; } catch (e) {}
   var RT_LV = ["Neutral", "Mild", "Strong", "Extreme"], RT_ADV = ["", "Mildly", "Strongly", "Extremely"], RT_EDGES = [0.10, 0.35, 0.70], RT_TH = 10;
@@ -4272,6 +4277,7 @@
       f.db = +x.db.toFixed(1); f.de = +x.de.toFixed(1); f.dp = f.db > f.de ? 1 : f.db < f.de ? -1 : 0;
     }
     f.u1 = f.py * f.pa < 0; f.u2 = f.s * f.ratio < 0; f.u3 = f.dp * (f.ratio + f.s) < 0;
+    f.cert = f.py * f.pa > 0 ? 1 : 0; /* Certainty Mark: both Fair Value Lines rate the same side as overvalued */
     f.total = f.ratio + f.s + f.dp; f.unc = (f.u1 ? 1 : 0) + (f.u2 ? 1 : 0) + (f.u3 ? 1 : 0);
     return f;
   }
@@ -4292,15 +4298,16 @@
     var line = function (k, z, p, fv) { return '<span><b style="color:' + FAIR_C[k] + '">' + FAIR_N[k] + ' Line</b> · Fair Value ' + fv.toFixed(1) + '<br><b style="color:' + rtRCol(z.dev) + '">' + rtZName(z) + ' [' + Math.abs(z.dev * 100).toFixed(0) + '% ' + (z.dev >= 0 ? "Above" : "Below") + ']</b> ' + pb(p) + '</span>'; };
     var gains = function (b, e, unit) { return '<span><b style="color:' + BTC_C + '">BTC ' + pp(b) + unit + '</b> · <b style="color:' + ETH_C + '">ETH ' + pp(e) + unit + '</b> over 90 days</span>'; };
     var na = '<span>Needs 90 days of history</span>';
-    var row = function (k, tip, p, u) { return '<div class="rt-fm-k"><span>' + k + '</span><div class="fg-tip rt-fm-tip"><span class="date">' + k + '</span>' + tip + avg + '</div></div><div>' + (u ? '<span class="rt-unc">? Uncertainty</span>' : '') + '</div><div class="rt-fm-p" style="color:' + rtFCol(p) + '">' + rtPts(p) + '</div>'; };
+    var row = function (k, tip, p, u, c) { return '<div class="rt-fm-k"><span>' + k + '</span><div class="fg-tip rt-fm-tip"><span class="date">' + k + '</span>' + tip + avg + '</div></div><div>' + (u ? '<span class="rt-unc">? Uncertainty</span>' : c ? '<span class="rt-cert">! Certainty</span>' : '') + '</div><div class="rt-fm-p" style="color:' + rtFCol(p) + '">' + rtPts(p) + '</div>'; };
     var h = '<div class="rt-fm-rows">' +
-      row("BTC|ETH Ratio", '<span class="val">' + f.r.toFixed(2) + ' ETH per BTC</span>' + line("365", f.zy, f.py, f.fy) + line("all", f.za, f.pa, RT.med) + why(f.u1, "Fair Value Lines contradict each other"), f.ratio, f.u1) +
+      row("BTC|ETH Ratio", '<span class="val">' + f.r.toFixed(2) + ' ETH per BTC</span>' + line("365", f.zy, f.py, f.fy) + line("all", f.za, f.pa, RT.med) + why(f.u1, "Fair Value Lines contradict each other") + (f.cert ? '<span class="rt-cert-m">! Both Fair Value Lines point the same way</span>' : ''), f.ratio, f.u1, f.cert) +
       row("Season Data", f.has90 ? '<span class="val">' + (f.s > 0 ? "Bitcoin Season" : f.s < 0 ? "Ethereum Season" : "Neutral") + ' ' + pb(f.s) + '</span>' + gains(f.gb, f.ge, "%") + why(f.u2, "Contradicts the " + rtPts(f.ratio) + " Ratio lean") : na, f.s, f.u2) +
       row("Dominance Data", f.has90 ? '<span class="val">' + (f.dp > 0 ? "BTC gained more" : f.dp < 0 ? "ETH gained more" : "Tie") + ' ' + pb(f.dp) + '</span>' + gains(f.db, f.de, " pp") + why(f.u3, "Contradicts the " + rtPts(f.ratio + f.s) + " Ratio + Season lean") : na, f.dp, f.u3) + '</div>';
     var c = rtFCol(f.total), uc = f.unc ? "#eab308" : GREY_C;
     var sum = function (col, big, max, what) { return '<div class="rt-fm-sum"><b style="color:' + col + '">' + big + '</b><small>/ ' + max + '</small><span class="fg-sub">out of ' + max + ' possible ' + what + '</span></div>'; };
     return h + '<div class="rt-fm-total"><b style="color:' + c + '">' + (f.total > 0 ? "BTC Overvaluation Lean" : f.total < 0 ? "ETH Overvaluation Lean" : "No Lean") + '</b>' + sum(c, rtPts(f.total), 8, "Points") +
-      '<b style="color:' + uc + '">' + (f.unc ? (f.unc === 1 ? "Uncertainty Mark" : "Uncertainty Marks") : "No Uncertainty Marks") + '</b>' + sum(uc, f.unc, 3, "Uncertainty Marks") + '</div>';
+      '<b style="color:' + uc + '">' + (f.unc ? (f.unc === 1 ? "Uncertainty Mark" : "Uncertainty Marks") : "No Uncertainty Marks") + '</b>' + sum(uc, f.unc, 3, "Uncertainty Marks") +
+      '<b style="color:' + (f.cert ? "#4cc27a" : GREY_C) + '">' + (f.cert ? "Certainty Mark" : "No Certainty Mark") + '</b>' + sum(f.cert ? "#4cc27a" : GREY_C, f.cert, 1, "Certainty Mark") + '</div>';
   }
 
   function rtYrMenu(attr, cur) {
@@ -4447,10 +4454,10 @@
       var best = !f ? '' : (f.total > 0 && f.total === hi && ext(i) === eHi ? ' best-b' : f.total < 0 && f.total === lo && ext(i) === eLo ? ' best-e' : '');
       h += '<div class="rt-fng-cell' + (has ? '' : ' rt-fng-empty') + best + (on ? ' active' : '') + '"' + (has ? ' data-rt-mo="' + key + '"' : '') + '><span class="rt-fng-mo">' + RT_MO[i] + '</span>' +
         '<span class="rt-fng-val" style="color:' + fgCol(avg) + '">' + (avg === null ? (wait && has ? "…" : "–") : avg) + '</span>' +
-        (f ? '<span class="rt-fng-fm" style="color:' + rtFCol(f.total) + '">' + rtPts(f.total) + ' / 8' + (f.unc ? '<i class="rt-unc-m">' + new Array(f.unc + 1).join("?") + '</i>' : '') + '</span>' : '') + '</div>';
+        (f ? '<span class="rt-fng-fm" style="color:' + rtFCol(f.total) + '">' + rtPts(f.total) + ' / 8' + (f.unc ? '<i class="rt-unc-m">' + new Array(f.unc + 1).join("?") + '</i>' : '') + (f.cert ? '<i class="rt-cert-m">!</i>' : '') + '</span>' : '') + '</div>';
       if (on) open = { mv: mv, f: f, m: i, avg: avg };
     }
-    h += '</div><div class="fg-sub rt-fng-note">Top: Fear &amp; Greed monthly average · Bottom: CoinAtlas Formula for the month, out of 8 Points · <i class="rt-unc-m">?</i> Uncertainty Mark · Click a month for its charts</div>';
+    h += '</div><div class="fg-sub rt-fng-note">Top: Fear &amp; Greed monthly average · Bottom: CoinAtlas Formula for the month, out of 8 Points · <i class="rt-unc-m">?</i> Uncertainty Mark · <i class="rt-cert-m">!</i> Certainty Mark · Click a month for its charts</div>';
     if (open) {
       var ov = open.mv, of = open.f, fc = fgCol(open.avg), ay = Math.abs(of.py), aa = Math.abs(of.pa);
       var fk = RT.moFair || (aa > ay ? "all" : ay > aa ? "365" : RT.fair); /* the line with the stronger rating shows first */
@@ -4677,11 +4684,12 @@
   function rtCompose(s) { /* the Reading: a call first, then the facts of the day that matter most. Every fact carries a weight; the heaviest ones make it into the text */
     var X = s.side, Y = s.other, F = [], lead, call = "none", T, ok = function (r) { return r && r.groups >= 3 && r.n >= 30; }, W = ["", "", "twice", "three times", "four times", "five times"];
     var fact = function (w, t) { F.push({ w: w, t: t }); };
+    var buy = ", and if you are looking to buy or swap, " + Y + " is the recommendation.";
     /* the two Fair Value Lines, always named */
     if (s.dir) {
       if (s.year === "against" || s.all === "against") fact(90, "The two Fair Value Lines contradict each other: the " + (s.year === "against" ? "All Time Line" : "Year Line") + " rates " + X + " as overvalued, the " + (s.year === "against" ? "Year Line" : "All Time Line") + " rates " + Y + " as overvalued.");
       else if (s.year === "Extreme" && s.all === "Extreme") fact(100, "Both Fair Value Lines rate " + X + " as Extremely overvalued, the strongest reading the Formula has.");
-      else if (s.year !== "Neutral" && s.all !== "Neutral") fact(80, "Both Fair Value Lines agree on the " + X + " Overvaluation" + (s.year === s.all ? ", and both rate it " + s.year + "." : ": " + s.year + " on the Year Line, " + s.all + " on the All Time Line."));
+      else if (s.year !== "Neutral" && s.all !== "Neutral") fact(80, "Both Fair Value Lines agree on the " + X + " Overvaluation, which adds certainty: " + (s.year === s.all ? "both rate it " + s.year + "." : s.year + " on the Year Line, " + s.all + " on the All Time Line."));
       else if (s.year !== "Neutral" || s.all !== "Neutral") fact(70, "Only one Fair Value Line points to an Overvaluation: the " + (s.year !== "Neutral" ? "Year Line rates it " + s.year + ", the All Time Line is Neutral." : "All Time Line rates it " + s.all + ", the Year Line is Neutral."));
       else fact(70, "Neither Fair Value Line shows an Overvaluation; the lean comes from Season and Dominance alone.");
       if (s.seasonAgainst) fact(62, "The Season points the other way.");
@@ -4692,19 +4700,19 @@
     if (strong && s.cause === "rose") fact(64, "Both rose, " + X + " " + (s.times ? W[s.times] + " as much." : "more."));
     if (strong && s.fg) fact(76, "With sentiment in " + s.fg + " on top, this is not a state that lasts: the Index and the Ratio have always returned to Neutral.");
     if (s.type === "contradicted") {
-      lead = "No call today: the data contradicts itself."; F = F.filter(function (x) { return x.w === 90 || x.w === 62 || x.w === 60; });
+      lead = "No clear recommendation today: the data contradicts itself."; F = F.filter(function (x) { return x.w === 90 || x.w === 62 || x.w === 60; });
       if (!s.dir) { if (s.linesAgainst) fact(90, "The two Fair Value Lines point to opposite sides."); if (s.seasonAgainst) fact(62, "The Season points against the Ratio."); if (s.domAgainst) fact(60, "Dominance points against the Ratio and the Season."); }
     }
-    else if (s.type === "balanced") { lead = "Nothing to swap on today."; fact(50, "BTC and ETH are fairly valued against each other."); }
-    else if (s.type === "mild") { lead = "Not a day to swap."; fact(95, X + " is only mildly overvalued against " + Y + "."); }
-    else if (s.type === "back") { call = "back"; lead = "Now is a good time to swap " + X + " into " + Y + "."; fact(95, X + " is now the overvalued side, after the last strong phase was " + (X === "BTC" ? "an ETH" : "a BTC") + " Overvaluation."); }
+    else if (s.type === "balanced") { lead = "Now is a good time to hold on to your BTC and ETH."; fact(50, "The two are fairly valued against each other."); }
+    else if (s.type === "mild") { lead = "Now is a good time to hold on to your BTC and ETH."; fact(95, X + " is only mildly overvalued against " + Y + "."); }
+    else if (s.type === "back") { call = "back"; lead = "Holding " + Y + " is a good idea right now" + buy; fact(95, X + " is now the overvalued side, after the last strong phase was " + (X === "BTC" ? "an ETH" : "a BTC") + " Overvaluation."); }
     else if (s.type === "now") {
-      call = "now"; lead = "Swap " + X + " into " + Y + " now.";
+      call = "now"; lead = "Holding " + Y + " is a really good idea right now" + buy;
       fact(85, ok(s.rec) && s.rec.profit / s.rec.n >= 0.6 ? "A state this extreme has never lasted, and on " + rtGrade(s.rec.profit, s.rec.n) + ", swapping now and swapping again at Neutral ended in profit." : "A state this extreme has never lasted, but there are too few earlier days like this to say how a swap usually ended.");
     } else {
       if (!ok(s.rec)) { call = "few"; lead = X + " is clearly overvalued against " + Y + "."; fact(85, "There are too few earlier days like this to say how a swap usually ended."); }
-      else if (s.rec.profit / s.rec.n >= 0.6) { call = "good"; lead = "Now is a good time to swap " + X + " into " + Y + "."; fact(85, "On " + rtGrade(s.rec.profit, s.rec.n) + ", swapping now and swapping again once " + Y + " was the overvalued side ended in profit."); }
-      else { call = "unclear"; lead = "No clear call, although " + X + " is clearly overvalued against " + Y + "."; fact(85, "Swapping now and swapping again once " + Y + " was the overvalued side ended in profit on " + (s.rec.profit / s.rec.n >= 0.4 ? "only " : "") + rtGrade(s.rec.profit, s.rec.n) + "."); }
+      else if (s.rec.profit / s.rec.n >= 0.6) { call = "good"; lead = "Holding " + Y + " is a good idea right now" + buy; fact(85, "On " + rtGrade(s.rec.profit, s.rec.n) + ", swapping now and swapping again once " + Y + " was the overvalued side ended in profit."); }
+      else { call = "unclear"; lead = "No clear recommendation, although " + X + " is clearly overvalued against " + Y + "."; fact(85, "Swapping now and swapping again once " + Y + " was the overvalued side ended in profit on " + (s.rec.profit / s.rec.n >= 0.4 ? "only " : "") + rtGrade(s.rec.profit, s.rec.n) + "."); }
     }
     F.sort(function (a, b) { return b.w - a.w; });
     T = [lead].concat(F.slice(0, 3).map(function (x) { return x.t; }));
@@ -4745,19 +4753,19 @@
     /* the call */
     var share = function (k, n) { return Math.round(k / n * 100) + "%"; }, rc = function (r) { return pl(r.n, "earlier day") + " in " + pl(r.groups, "separate period") + ": " + share(r.profit, r.n) + " ended in profit, with a middle result of " + pct(r.med) + ", and " + share(r.big, r.n) + " lost 15% or more [worst " + pct(r.worst) + "]"; };
     if (s.type === "now") {
-      t = "The Reading says \"now\" when both Fair Value Lines rate the same side as Extreme, or when the score is 7 or 8. That is the rarest state the Formula has. ";
+      t = "The Reading says \"a really good idea\" when both Fair Value Lines rate the same side as Extreme, or when the score is 7 or 8. That is the rarest state the Formula has. ";
       if (s.rec.n) t += "Swapping on such a day and swapping back on the day the score was back at 0: " + rc(s.rec) + ". ";
       if (s.recOpp.n) t += "Waiting longer, until " + Y + " itself was the overvalued side with 2 points or more: " + rc(s.recOpp) + ". At a reading this extreme, swapping back at Neutral has been the safer way back. ";
       t += "Three periods is a very small number, even though they cover many days.";
-      add("Why \"swap now\"?", t);
+      add("Why \"a really good idea\"?", t);
     } else if (s.type === "strong") {
-      t = "The Reading says \"good time\" at a Strong lean, which is 3 to 6 points. ";
+      t = "The Reading says \"a good idea\" at a Strong lean, which is 3 to 6 points. ";
       if (s.rec.n) t += "Swapping on such a day and swapping back once " + Y + " was the overvalued side with 2 points or more: " + rc(s.rec) + ". ";
       if (s.recZero.n) t += "Swapping back earlier, on the day the score was back at 0: " + rc(s.recZero) + ". ";
       t += "The losses came from long one-way runs, where the Overvaluation kept growing for months after the swap. Whether the Ratio was at its 90-day " + (s.dir > 0 ? "high" : "low") + " or already below it made no measurable difference to these results, so the Reading does not wait for a turn.";
-      add(call === "good" ? "Why \"a good time to swap\"?" : "Why no clear call?", t);
-    } else if (s.type === "mild") add("Why \"not a day to swap\"?", "A Mild lean is 1 or 2 points. Swaps made on Mild days ended in profit about as often as on Strong days, but the middle result was small, and on the " + (s.dir > 0 ? "BTC side about half" : "ETH side only about one in six") + " of such phases later grew into a Strong one. The Reading keeps its calls for Strong and Extreme readings.");
-    else if (s.type === "back") add("Why \"a good time to swap\" at only 2 points?", "The last Strong or Extreme phase was " + (s.dir > 0 ? "an ETH" : "a BTC") + " Overvaluation. " + X + " has now reached 2 points on its own side. That is the point up to which every result in the Reading was counted: a swap made during the earlier Overvaluation is completed by swapping here. On the ETH side the score has rarely gone deeper than this.");
+      add(call === "good" ? "Why \"a good idea\"?" : "Why no clear recommendation?", t);
+    } else if (s.type === "mild") add("Why \"hold on to your BTC and ETH\"?", "A Mild lean is 1 or 2 points. Swaps made on Mild days ended in profit about as often as on Strong days, but the middle result was small, and on the " + (s.dir > 0 ? "BTC side about half" : "ETH side only about one in six") + " of such phases later grew into a Strong one. The Reading keeps its calls for Strong and Extreme readings.");
+    else if (s.type === "back") add("Why \"a good idea\" at only 2 points?", "The last Strong or Extreme phase was " + (s.dir > 0 ? "an ETH" : "a BTC") + " Overvaluation. " + X + " has now reached 2 points on its own side. That is the point up to which every result in the Reading was counted: a swap made during the earlier Overvaluation is completed by swapping here. On the ETH side the score has rarely gone deeper than this.");
     if (s.type === "now" || s.type === "strong") add("What does \"ended in profit\" mean?", "Swap " + X + " into " + Y + " on the day of the Reading, swap back later, and count the " + X + " you hold. \"In profit\" means more " + X + " than you started with after two swaps at 0.3% each. Slippage and taxes are not included.");
 
     /* sentiment */
@@ -4789,9 +4797,21 @@
     add("What can the Reading not tell you?", "When the Overvaluation ends, how far it grows first, or whether today is the top or the bottom. A call means the situation has paid off more often than not, not that today is the best day of it.");
     return Q.join("");
   }
+  function rtScoreRecord(score) { /* every earlier day with exactly this score: swapped that day, swapped again once the other side was overvalued with 2 points or more */
+    var d = RT.data, A = rtAsof(), S = A.S, n = d.t.length, dir = score > 0 ? 1 : -1, g = [], groups = 0, last = -99, j, q;
+    rtDayRecord("strong", 2); /* builds the look-ahead table */
+    for (j = 365; j < n; j++) { if (S[j] !== score) continue; q = A.nx[2][dir > 0 ? 0 : 1][j]; if (q < 0) continue; g.push((dir > 0 ? d.r[j] / d.r[q] : d.r[q] / d.r[j]) - 1); if (j - last > 20) groups++; last = j; }
+    return { n: g.length, groups: groups, profit: g.filter(function (x) { return x > 0.006; }).length, med: g.length ? median(g) * 100 : 0 };
+  }
+  function rtTargetHtml(s, call) { /* optional: the Reading stays as it is, and this line says whether a swap still fits a 7 to 10% profit target */
+    if (!rtTarget || !s.dir || s.type === "contradicted" || call === "now" || call === "good" || call === "back") return "";
+    var r = rtScoreRecord(s.score), X = s.side, Y = s.other;
+    if (r.groups >= 3 && r.n >= 30 && r.med >= 7 && r.profit / r.n >= 0.6) return '<div class="rt-target" style="color:' + rtFCol(s.score) + '">Even though the Reading does not show the best possible time to swap, it does match your 7 to 10% profit target, which is why a swap from ' + X + ' into ' + Y + ' is recommended here. On earlier days with this score, swapping ' + X + ' into ' + Y + ' and swapping again once ' + Y + ' was the overvalued side left a middle of ' + r.med.toFixed(0) + '% more ' + X + '.</div>';
+    return '<div class="rt-target off">Your 7 to 10% profit target is not met today' + (r.n >= 30 ? ': on earlier days with this score, the middle result of a swap from ' + X + ' into ' + Y + ' was ' + (r.med < 0 ? "−" : "+") + Math.abs(r.med).toFixed(0) + '% in ' + X + '.' : ': there are too few earlier days with this score to say.') + '</div>';
+  }
   function rtReadingHtml(f) {
     var s = rtSituation(f), c = rtCompose(s);
-    return '<div class="rt-vd" style="color:' + rtReadingColor(s, c.call) + '">' + c.text.join(" ") + '</div>' +
+    return '<div class="rt-vd" style="color:' + rtReadingColor(s, c.call) + '">' + c.text.join(" ") + '</div>' + rtTargetHtml(s, c.call) +
       '<details class="rt-why"' + (RT.whyOpen ? ' open' : '') + '><summary>Explanation</summary>' + rtExplain(f, s, c.call) + '</details>';
   }
   function rtHindsight(w, S) { /* dev only: what really happened after the chosen day. Computed from the full data, never shown to the Reading */
@@ -4847,10 +4867,14 @@
         "Hover the name of a step to see the numbers behind it."]) +
       sec("CoinAtlas Formula Reading", [
         "The Reading below the Formula starts with a call and then names the facts of the day that matter most. Its colour follows the lean: blue for BTC Overvaluation, orange for ETH, deeper with strength, muted without a call, yellow when the data contradicts itself, green for the swap back.",
-        "<b>Swap now</b> appears when both Fair Value Lines rate the same side as Extreme, or the score is 7 or 8. <b>Now is a good time to swap</b> appears at a Strong lean of 3 to 6 points, and also once the other side has reached 2 points after a Strong or Extreme phase. A Mild lean is otherwise <b>not a day to swap</b>.",
+        "<b>Holding X is a really good idea</b> appears when both Fair Value Lines rate the other side as Extreme, or the score is 7 or 8. <b>Holding X is a good idea</b> appears at a Strong lean of 3 to 6 points, and once the other side has reached 2 points after a Strong or Extreme phase. Otherwise the Reading says to <b>hold on to your BTC and ETH</b>. The asset to hold or buy is always the undervalued one.",
+        "With the 7–10% Profit Target switched on in the Settings, a line below the Reading says whether a swap still fits that target on days without a recommendation.",
         "<b>What the backtest showed:</b> on days where both lines were Extreme, swapping now and swapping again at Neutral ended in profit on 97% of days, with a middle result of +31%. On Strong days, swapping now and swapping again once the other side was overvalued ended in profit on about three days in four, with a middle result of +14%, and about one day in seven lost 15% or more.",
         "Explanation opens a list of questions that answer every claim in the Reading with the day's numbers, including how the call has done so far. It only ever uses data up to today.",
         "In Dev Mode, the Formula Date in the Settings sets any day since August 2017 as today. The Formula and the Reading then see only what was known on that day. A yellow Hindsight box shows what really happened afterwards, so a Reading can be checked."]) +
+      sec("Certainty Mark", [
+        "A green <b class=\"rt-cert-m\" style=\"margin:0\">!</b> is set when both Fair Value Lines rate the same side as overvalued. It is the counterpart of the Uncertainty Mark for contradicting lines, and it appears wherever Uncertainty Marks do.",
+        "It does not change the score. The Reading names it as added certainty."]) +
       sec("Uncertainty Marks", [
         "A " + U("?") + " is added whenever one piece of data contradicts another. Up to 3 are possible.",
         "<b>Mark 1:</b> the two Fair Value Lines point in opposite directions. <b>Mark 2:</b> the Season points against the lean of the Ratio. <b>Mark 3:</b> the Dominance points against the lean of Ratio plus Season.",
@@ -4994,6 +5018,9 @@
   var rtLinkToggle = document.getElementById("rt-link-toggle");
   rtLinkToggle.setAttribute("aria-checked", rtLink ? "true" : "false");
   rtLinkToggle.addEventListener("click", function () { rtLink = !rtLink; rtLinkToggle.setAttribute("aria-checked", rtLink ? "true" : "false"); try { localStorage.setItem(RT_LINK_KEY, rtLink ? "1" : "0"); } catch (e) {} });
+  var rtTargetToggle = document.getElementById("rt-target-toggle");
+  rtTargetToggle.setAttribute("aria-checked", rtTarget ? "true" : "false");
+  rtTargetToggle.addEventListener("click", function () { rtTarget = !rtTarget; rtTargetToggle.setAttribute("aria-checked", rtTarget ? "true" : "false"); try { localStorage.setItem(RT_TARGET_KEY, rtTarget ? "1" : "0"); } catch (e) {} rtFormulaRefresh(); });
   var rtTintToggle = document.getElementById("rt-tint-toggle");
   rtTintToggle.setAttribute("aria-checked", rtTint ? "true" : "false");
   rtTintToggle.addEventListener("click", function () { rtTint = !rtTint; rtTintToggle.setAttribute("aria-checked", rtTint ? "true" : "false"); try { localStorage.setItem(RT_TINT_KEY, rtTint ? "1" : "0"); } catch (e) {} ratioBox.querySelectorAll(".rt-fng-grid").forEach(function (g) { g.classList.toggle("tint", rtTint); }); });

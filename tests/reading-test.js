@@ -32,7 +32,7 @@ const skeleton = t => t.replace(/\d+(\.\d+)?/g, '#').replace(/\b(BTC|ETH)\b/g, '
 let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log('  FAIL', m); } };
 function check(name, text, o) {
   const st = sentences(text);
-  ok(st.length <= 4, name + ': more than 4 sentences (' + st.length + ')'); ok(text.length <= 520, name + ': too long (' + text.length + ')');
+  ok(st.length <= 4, name + ': more than 4 sentences (' + st.length + ')'); ok(text.length <= 560, name + ': too long (' + text.length + ')');
   ok(!/unusual/i.test(text), name + ': contains "unusual"'); ok(!/\d+ of \d+/.test(text), name + ': contains a count'); ok(!/% of days|stretches|\d%/i.test(text), name + ': contains statistics');
   ok(!/\bgap\b/i.test(text), name + ': says "gap"'); ok(!/ended ahead/i.test(text), name + ': says "ended ahead"'); ok(!/still growing|still widening/i.test(text), name + ': claims the Overvaluation is still growing');
   ok(!/could|might|maybe|perhaps|theoretically/i.test(text), name + ': hedges'); ok(!/swap(ping)? back|If you swapped/i.test(text), name + ': talks about swapping back');
@@ -61,13 +61,14 @@ function check(name, text, o) {
     const x = await read(), fgv = FG.find(q => q[0] === d), ext = !!fgv && (fgv[1] <= 24 || fgv[1] >= 76), clear = call === 'now' || call === 'good', lean = x.score !== '+0';
     check(d, x.text, { lean: lean && type !== 'contradicted', sentiment: ext && clear ? true : !clear ? false : undefined });
     ok(x.expl.length >= 4, d + ': Explanation has fewer than 4 questions'); ok(x.expl.every(q => /\?$/.test(q)), d + ': an Explanation heading is not a question');
-    if (call === 'now') ok(/^Swap (BTC|ETH) into (BTC|ETH) now\./.test(x.text), d + ': expected "swap now"');
-    if (call === 'good') ok(/^Now is a good time to swap/.test(x.text), d + ': expected "now is a good time to swap"');
-    if (call === 'back') ok(/^Now is a good time to swap ETH into BTC\./.test(x.text), d + ': expected a plain swap call from ETH into BTC');
+    if (call === 'now') ok(/^Holding (BTC|ETH) is a really good idea right now, and/.test(x.text), d + ': expected "a really good idea"');
+    if (call === 'good') ok(/^Holding (BTC|ETH) is a good idea right now, and/.test(x.text), d + ': expected "a good idea"');
+    if (call === 'back') ok(/^Holding BTC is a good idea right now, and/.test(x.text), d + ': expected "holding BTC"');
+    if (call === 'now' || call === 'good' || call === 'back') ok(/if you are looking to buy or swap, (BTC|ETH) is the recommendation/.test(x.text), d + ': no buy recommendation');
     if (type === 'contradicted') ok(sentences(x.text).length >= 2, d + ': a contradiction must name where it comes from');
-    if (type === 'balanced') ok(/^Nothing to swap on today\./.test(x.text), d + ': expected "nothing to swap"');
-    if (type === 'contradicted') ok(/^No call today/.test(x.text), d + ': expected "no call"');
-    if (d === TODAY && /^[+−][12]$/.test(x.score)) ok(/^Not a day to swap\./.test(x.text), d + ': a Mild lean must read "not a day to swap"');
+    if (type === 'balanced') ok(/^Now is a good time to hold on to your BTC and ETH\./.test(x.text), d + ': expected "hold on"');
+    if (type === 'contradicted') ok(/^No clear recommendation today/.test(x.text), d + ': expected "no clear recommendation"');
+    if (d === TODAY && /^[+−][12]$/.test(x.score)) ok(/^Now is a good time to hold on to your BTC and ETH\./.test(x.text), d + ': a Mild lean must read "hold on"');
     out.push([d, x.score, x.text]); console.log('  ' + d + ' [' + x.score + (fgv ? ', F&G ' + fgv[1] : '') + ']  ' + x.text);
   }
   console.log('\nINVENTED SITUATIONS');
@@ -79,7 +80,7 @@ function check(name, text, o) {
   // the record wording follows the real share of days, and a better record reads stronger
   const g = async (a) => (await p.evaluate(s => window.coinAtlasDev.compose(s).text.join(' '), { ...base, type: 'strong', rec: rec(a, 100) }));
   ok(/almost every day/.test(await g(97)), '97% must read "almost every day"'); ok(/large majority/.test(await g(85)), '85% must read "the large majority"'); ok(/most days/.test(await g(70)), '70% must read "most days"');
-  ok(/about half/.test(await g(50)) && /No clear call/.test(await g(50)), '50% must read "about half" and make no call'); ok(/fewer than half/.test(await g(20)), '20% must read "fewer than half"');
+  ok(/about half/.test(await g(50)) && /No clear recommendation/.test(await g(50)), '50% must read "about half" and make no recommendation'); ok(/fewer than half/.test(await g(20)), '20% must read "fewer than half"');
   // different situation types never share a sentence skeleton
   const types = Object.keys(skel); for (let i = 0; i < types.length; i++) for (let j = i + 1; j < types.length; j++) for (const s of skel[types[i]]) ok(!skel[types[j]].has(s), 'types "' + types[i] + '" and "' + types[j] + '" share a skeleton');
   ok(errs.length === 0, 'page errors: ' + errs.join(' | '));
