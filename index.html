@@ -4137,7 +4137,7 @@
   var RT_TARGET_KEY = "top200-rt-target", rtTarget = false; try { rtTarget = localStorage.getItem(RT_TARGET_KEY) === "1"; } catch (e) {}
   var RT_TINT_KEY = "top200-rt-tint", rtTint = false; try { rtTint = localStorage.getItem(RT_TINT_KEY) === "1"; } catch (e) {}
   var RT_DOM_KEY = "top200-rt-dom-alts", rtDomAlts = false; try { rtDomAlts = localStorage.getItem(RT_DOM_KEY) === "1"; } catch (e) {}
-  var RT_LV = ["Neutral", "Mild", "Strong", "Extreme"], RT_ADV = ["", "Mildly", "Strongly", "Extremely"], RT_EDGES = [0.10, 0.35, 0.70], RT_TH = 10, RT_OLD = 40, RT_TURN = 10, RT_RUN = 25, RT_FAR = 60, RT_OFF = 5; /* when a Strong lean gets a call. RT_OLD: the Year Line stands this many % beyond the All Time Line on the overvalued side. RT_TURN: it stands this many % on the other side. RT_RUN: the Ratio ran less than this many % towards the lean within a year. RT_FAR and RT_OFF: the Ratio is this many % beyond the All Time Line and already this many % off its 90-day extreme */
+  var RT_LV = ["Neutral", "Mild", "Strong", "Extreme"], RT_ADV = ["", "Mildly", "Strongly", "Extremely"], RT_EDGES = [0.10, 0.35, 0.70], RT_TH = 10, RT_OLD = 40, RT_TURN = 10, RT_RUN = 25, RT_FAR = 60, RT_OFF = 5, RT_MIN = 17; /* RT_MIN: a Strong lean gets a recommendation only when earlier days like it brought at least this many % as their middle result. when a Strong lean gets a call. RT_OLD: the Year Line stands this many % beyond the All Time Line on the overvalued side. RT_TURN: it stands this many % on the other side. RT_RUN: the Ratio ran less than this many % towards the lean within a year. RT_FAR and RT_OFF: the Ratio is this many % beyond the All Time Line and already this many % off its 90-day extreme */
   var BTC_C = "#f7931a", ETH_C = "#3b82f6", ETH_D = "#2563eb", GREY_C = "#9ca3af", CMP_C = "#e879f9", RT_MO = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   var FAIR_C = { tf: "#facc15", "365": "#facc15", all: "#f472b6" }, FAIR_N = { tf: "Year", "365": "Year", all: "All Time" };
   function rtCls(y) { var s = cycleStage(y); return s === "Bull Year" ? "bull" : s === "Bear Year" ? "bear" : "bridge"; }
@@ -4613,6 +4613,7 @@
   function rtIsNow(j, dir) { var A = rtAsof(); return (A.PY[j] * dir >= 3 && A.PA[j] * dir >= 3) || A.S[j] * dir >= 7; } /* both Fair Value Lines at Extreme, or 7 points and more */
   function rtRipe(lead, run, far, off) { return lead >= RT_OLD ? "old" : lead < -RT_TURN ? "turn" : run !== null && run < RT_RUN ? "norun" : far >= RT_FAR && off >= RT_OFF ? "closing" : ""; } /* why a Strong lean is no longer young, "" while it still is */
   function rtRipeAt(j, dir) { var d = RT.data, A = rtAsof(); return rtRipe((A.FY[j] / A.MD[j] - 1) * 100 * dir, j >= 365 ? (d.r[j] / d.r[j - 365] - 1) * 100 * dir : null, (d.r[j] / A.MD[j] - 1) * 100 * dir, Math.abs(rtRun(j, d.r[j], dir).off)); }
+  function rtBig(ripe) { return ripe === "old" || ripe === "closing"; } /* the two kinds of Strong day with room for a large swap; "turn" and "norun" days are counted on their own */
   function rtDayRecord(kind, exit) { /* how a swap ended on every earlier day of one kind ("now": both lines Extreme or 7+ points, "strong": 3 to 6 points).
        exit 0: swapped back on the day the score was back at 0. exit 2: swapped back once the other side was overvalued with 2 points or more. Days whose way back has not happened yet are left out */
     var d = RT.data, A = rtAsof(), S = A.S, n = d.t.length, key = kind + exit, g = [], groups = 0, last = -99, j, q, dir;
@@ -4624,7 +4625,8 @@
     for (j = 365; j < n; j++) {
       if (!S[j]) continue; dir = S[j] > 0 ? 1 : -1;
       if (kind === "now" ? !rtIsNow(j, dir) : !(S[j] * dir >= 3 && !rtIsNow(j, dir))) continue;
-      if (kind === "ripe" && !rtRipeAt(j, dir)) continue; /* only Strong days that were no longer young, like the day being read */
+      if (kind === "ripe" && !rtBig(rtRipeAt(j, dir))) continue; /* only Strong days of the same kind as the day being read */
+      if (kind === "small") { var rp = rtRipeAt(j, dir); if (!rp || rtBig(rp)) continue; }
       q = A.nx[exit][dir > 0 ? 0 : 1][j]; if (q < 0) continue;
       g.push((dir > 0 ? d.r[j] / d.r[q] : d.r[q] / d.r[j]) - 1); if (j - last > 20) groups++; last = j;
     }
@@ -4698,7 +4700,7 @@
     /* measured on the history, every day checked against what really happened afterwards: in Extreme Greed no kind of call held up, and a Strong lean that was still young mostly kept growing */
     s.held = s.type !== "now" && s.type !== "strong" && s.type !== "back" ? "" : s.zone === "Extreme Greed" ? "greed" : s.type === "strong" && !s.ripe ? "young" : "";
     if (s.type === "now") { s.rec = rtDayRecord("now", 0); s.recOpp = rtDayRecord("now", 2); }
-    if (s.type === "strong") { s.rec = rtDayRecord(s.ripe ? "ripe" : "strong", 2); s.recZero = rtDayRecord(s.ripe ? "ripe" : "strong", 0); }
+    if (s.type === "strong") { var kind = rtBig(s.ripe) ? "ripe" : s.ripe ? "small" : "strong"; s.rec = rtDayRecord(kind, 2); s.recZero = rtDayRecord(kind, 0); }
     return s;
   }
   function rtGrade(k, n) { var p = k / n; return p >= 0.95 ? "almost every day like this one" : p >= 0.8 ? "the large majority of days like this one" : p >= 0.6 ? "most days like this one" : p >= 0.4 ? "about half of the days like this one" : "fewer than half of the days like this one"; }
@@ -4739,6 +4741,7 @@
       fact(85, ok(s.rec) && s.rec.profit / s.rec.n >= 0.6 ? "A state this extreme has never lasted, and on " + rtGrade(s.rec.profit, s.rec.n) + ", swapping now and swapping again at Neutral ended in profit." : "A state this extreme has never lasted, but there are too few earlier days like this to say how a swap usually ended.");
     } else {
       if (!ok(s.rec)) { call = "few"; lead = X + " is clearly overvalued against " + Y + "."; fact(85, "There are too few earlier days like this to say how a swap usually ended."); }
+      else if (s.rec.profit / s.rec.n >= 0.6 && s.rec.med < RT_MIN) { call = "small"; lead = "No swap recommendation today, although " + X + " is clearly overvalued against " + Y + "."; fact(85, "A swap on days like this one has mostly ended in profit, but in a small one that is not worth the risk of swapping too early."); }
       else if (s.rec.profit / s.rec.n >= 0.6) { call = "good"; lead = "Holding " + Y + " is a good idea right now" + buy; fact(85, "On " + rtGrade(s.rec.profit, s.rec.n) + ", swapping now and swapping again once " + Y + " was the overvalued side ended in profit."); }
       else { call = "unclear"; lead = "No clear recommendation, although " + X + " is clearly overvalued against " + Y + "."; fact(85, "Swapping now and swapping again once " + Y + " was the overvalued side ended in profit on " + (s.rec.profit / s.rec.n >= 0.4 ? "only " : "") + rtGrade(s.rec.profit, s.rec.n) + "."); }
     }
@@ -4796,12 +4799,13 @@
       t += "Three periods is a very small number, even though they cover many days.";
       add("Why \"a really good idea\"?", t);
     } else if (s.type === "strong") {
-      t = "The Reading says \"a good idea\" at a Strong lean, which is 3 to 6 points, once the Overvaluation is no longer young. ";
-      if (s.ripe) t += "Today that is the case: " + (s.ripe === "old" ? "the Year Line stands " + pct(s.lead) + " beyond the All Time Line on the " + X + " side, and " + RT_OLD + "% or more counts as an old run" : s.ripe === "turn" ? "the Year Line stands " + pct(-s.lead) + " on the other side of the All Time Line, so the Ratio is coming back from the opposite Overvaluation" : s.ripe === "norun" ? "the Ratio moved " + pct(s.run) + " in favour of " + X + " within the last 365 days, less than the " + RT_RUN + "% that count as a one-way run" : "the Ratio stands " + pct(s.far) + " beyond the All Time Line and is already " + s.off.toFixed(0) + "% off its 90-day extreme") + ". The numbers below count only earlier Strong days that were no longer young either. ";
+      t = "The Reading says \"a good idea\" at a Strong lean, which is 3 to 6 points, when two things are true: the Overvaluation is no longer young, and earlier days like this one brought a middle result of " + RT_MIN + "% or more. A smaller result is not worth the risk of swapping too early. ";
+      if (s.ripe) t += "Today that is the case: " + (s.ripe === "old" ? "the Year Line stands " + pct(s.lead) + " beyond the All Time Line on the " + X + " side, and " + RT_OLD + "% or more counts as an old run" : s.ripe === "turn" ? "the Year Line stands " + pct(-s.lead) + " on the other side of the All Time Line, so the Ratio is coming back from the opposite Overvaluation" : s.ripe === "norun" ? "the Ratio moved " + pct(s.run) + " in favour of " + X + " within the last 365 days, less than the " + RT_RUN + "% that count as a one-way run" : "the Ratio stands " + pct(s.far) + " beyond the All Time Line and is already " + s.off.toFixed(0) + "% off its 90-day extreme") + ". The numbers below count only earlier Strong days of " + (rtBig(s.ripe) ? "this kind: an old run, or a Ratio far beyond the All Time Line that had started to come back" : "this kind: a Ratio coming back from the other side, or a lean without a one-way run behind it") + ". ";
       if (s.rec.n) t += "Swapping on such a day and swapping back once " + Y + " was the overvalued side with 2 points or more: " + rc(s.rec) + ". ";
       if (s.recZero.n) t += "Swapping back earlier, on the day the score was back at 0: " + rc(s.recZero) + ". ";
       t += "The losses came from young Overvaluations at the start of a long one-way run, where the lean kept growing for months after the swap. That is why the Reading holds a Strong lean back until it is no longer young.";
-      add(call === "good" ? "Why \"a good idea\"?" : call === "wait" ? "How did swaps at a Strong lean end?" : "Why no clear recommendation?", t);
+      if (call === "small") t += " Today the second condition is not met: the middle result of " + pct(s.rec.med) + " is below " + RT_MIN + "%.";
+      add(call === "good" ? "Why \"a good idea\"?" : call === "wait" ? "How did swaps at a Strong lean end?" : call === "small" ? "Why no swap recommendation although " + X + " is overvalued?" : "Why no clear recommendation?", t);
     } else if (s.type === "mild") add("Why \"hold on to your BTC and ETH\"?", "A Mild lean is 1 or 2 points. Swaps made on Mild days ended in profit about as often as on Strong days, but the middle result was small, and on the " + (s.dir > 0 ? "BTC side about half" : "ETH side only about one in six") + " of such phases later grew into a Strong one. The Reading keeps its calls for Strong and Extreme readings.");
     else if (s.type === "back") add("Why \"a good idea\" at only 2 points?", "The last Strong or Extreme phase was " + (s.dir > 0 ? "an ETH" : "a BTC") + " Overvaluation. " + X + " has now reached 2 points on its own side. That is the point up to which every result in the Reading was counted: a swap made during the earlier Overvaluation is completed by swapping here. On the ETH side the score has rarely gone deeper than this.");
     if (call === "wait") add("Why no swap recommendation although " + X + " is overvalued?", s.held === "greed" ?
@@ -4862,8 +4866,11 @@
     if (dir) {
       q = i; while (q < d.t.length && A[q] * dir > 0) q++;
       rows.push(q < d.t.length ? "The gap closed on " + rtDate(d.t[q]) + " at a Ratio of " + fx(d.r[q]) + ", " + (q - i) + " days later: swapping " + (dir > 0 ? "BTC into ETH" : "ETH into BTC") + " on this day and back then would be " + res(((dir > 0 ? r0 / d.r[q] : d.r[q] / r0) - 1) * 100) + "." : "The gap has not closed yet.");
-      if (q < d.t.length) { var g = ((dir > 0 ? r0 / d.r[q] : d.r[q] / r0) * 0.994 - 1) * 100, rec = call === "now" || call === "good" || call === "back", right = rec ? g >= 0 : g < 7;
-        rows.unshift('<b style="color:var(' + (right ? "--up" : "--down") + ')">' + (rec ? (right ? "The Reading was right: its recommendation ended ahead." : "The Reading was wrong: its recommendation ended behind.") : (right ? "The Reading was right not to recommend a swap." : "The Reading missed this: a swap would have ended 7% or more ahead.")) + "</b>"); }
+      var q2 = i; while (q2 < d.t.length && A[q2] * dir > -2) q2++;
+      if (q2 < d.t.length) rows.push("Swapping back once " + (dir > 0 ? "ETH" : "BTC") + " was the overvalued side, on " + rtDate(d.t[q2]) + " at a Ratio of " + fx(d.r[q2]) + ", would be " + res(((dir > 0 ? r0 / d.r[q2] : d.r[q2] / r0) - 1) * 100) + ".");
+      var qe = q2 < d.t.length ? q2 : q; /* the verdict follows the full swap: back once the other side is overvalued, or at the closed gap while that has not happened yet */
+      if (qe < d.t.length) { var g = ((dir > 0 ? r0 / d.r[qe] : d.r[qe] / r0) * 0.994 - 1) * 100, rec = call === "now" || call === "good" || call === "back", right = rec ? g >= 0 : g < RT_MIN;
+        rows.unshift('<b style="color:var(' + (right ? "--up" : "--down") + ')">' + (rec ? (right ? "The Reading was right: its recommendation ended ahead." : "The Reading was wrong: its recommendation ended behind.") : (right ? "The Reading was right not to recommend a swap." : "The Reading missed this: a swap would have ended " + RT_MIN + "% or more ahead.")) + "</b>"); }
     }
     [30, 90, 180].forEach(function (k) { if (i + k < d.t.length) rows.push("After " + k + " days the Ratio was " + fx(d.r[i + k]) + " [" + pc((d.r[i + k] / r0 - 1) * 100) + "]."); });
     for (q = v.i0; q < v.i1; q++) { if (d.r[q] > d.r[hi]) hi = q; if (d.r[q] < d.r[lo]) lo = q; }

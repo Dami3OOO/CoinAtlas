@@ -6,7 +6,7 @@ const H = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/history/btc-eth.json'
 const rows = sym => H.map(x => { const t = Date.parse(x[0] + 'T00:00:00Z'), p = String(sym === 'BTCUSDT' ? x[1] : x[2]); return [t, p, p, p, p, '1', t + 864e5 - 1, '1', 1, '1', '1', '0']; });
 const TODAY = H[H.length - 1][0];
 // real days, replayed through the page with only the data of that day: [date, situation type, call]
-const REAL = [['2025-04-21', 'now', 'now'], ['2026-06-06', 'strong', 'good'], ['2026-06-09', 'strong', 'good'], ['2024-08-07', 'strong', 'wait'], ['2021-12-08', 'strong', 'good'], ['2025-06-02', 'strong', 'good'], ['2025-08-12', 'back', 'back'], [TODAY, null, null], ['2025-07-19', 'contradicted', 'none'], ['2022-11-19', 'balanced', 'none']];
+const REAL = [['2025-04-21', 'now', 'now'], ['2026-06-06', 'strong', 'small'], ['2026-06-09', 'strong', 'small'], ['2024-08-07', 'strong', 'wait'], ['2021-12-08', 'strong', 'good'], ['2025-06-02', 'strong', 'good'], ['2025-08-12', 'back', 'back'], [TODAY, null, null], ['2025-07-19', 'contradicted', 'none'], ['2022-11-19', 'balanced', 'none']];
 // invented situations, to cover every combination of strength, Fair Value Lines, sentiment and record
 const rec = (profit, n, groups = 6) => ({ n, groups, profit }), base = { side: 'BTC', other: 'ETH', dir: 1, score: 4, marks: 0, year: 'Mild', all: 'Strong', seasonAgainst: false, domAgainst: false, fg: '', zone: '', held: '', run: null, cause: '', times: 0 };
 const SYN = [
@@ -27,6 +27,7 @@ const SYN = [
   ['S13 balanced', { ...base, side: '', dir: 0, score: 0, type: 'balanced', year: 'Neutral', all: 'Neutral' }, 'none'],
   ['S14 contradicted: lines against each other and Season against', { ...base, type: 'contradicted', score: 1, marks: 2, year: 'against', all: 'Strong', seasonAgainst: true }, 'none'],
   ['S15 strong but still young', { ...base, type: 'strong', held: 'young', run: 42, rec: rec(74, 100) }, 'wait'],
+  ['S21 strong, profit almost every time but small', { ...base, type: 'strong', ripe: 'norun', rec: { n: 100, groups: 6, profit: 95, med: 8 } }, 'small'],
   ['S16 strong in Greed, run is old', { ...base, type: 'strong', zone: 'Greed', ripe: 'old', rec: rec(74, 100) }, 'good'],
   ['S17 way back on the ETH side in Greed', { ...base, side: 'ETH', other: 'BTC', dir: -1, score: -2, type: 'back', year: 'Mild', all: 'Neutral', zone: 'Greed' }, 'back'],
   ['S18 now in Extreme Greed', { ...base, type: 'now', score: 8, year: 'Extreme', all: 'Extreme', zone: 'Extreme Greed', held: 'greed', rec: rec(97, 100) }, 'wait'],
@@ -78,7 +79,7 @@ function check(name, text, o) {
     if (call === 'good') ok(/^Holding (BTC|ETH) is a good idea right now, and/.test(x.text), d + ': expected "a good idea"');
     if (call === 'back') ok(/^Holding BTC is a good idea right now, and/.test(x.text), d + ': expected "holding BTC"');
     if (call === 'now' || call === 'good' || call === 'back') ok(/if you are looking to (buy or )?swap, (BTC|ETH) is the recommendation/.test(x.text), d + ': no recommendation');
-    if (call === 'wait') ok(/^No swap recommendation today, although/.test(x.text), d + ': expected "no swap recommendation"');
+    if (call === 'wait' || call === 'small') ok(/^No swap recommendation today, although/.test(x.text), d + ': expected "no swap recommendation"');
     if (type === 'contradicted') ok(sentences(x.text).length >= 2, d + ': a contradiction must name where it comes from');
     if (type === 'balanced') ok(/^Now is a good time to hold on to your BTC and ETH\./.test(x.text), d + ': expected "hold on"');
     if (type === 'contradicted') ok(/^No clear recommendation today/.test(x.text), d + ': expected "no clear recommendation"');
