@@ -76,7 +76,10 @@ function check(name, text, o) {
     ok(/The Reading (was right|was wrong|missed)/.test(hs), d + ': Hindsight gives no verdict'); console.log('\n  HINDSIGHT ' + d + '  ' + hs.slice(0, 220));
   }
   ok(await p.evaluate(() => /[+−]\d+%/.test((document.querySelector('.rt-gap') || {}).textContent || '')), 'the Ratio chart shows no distance between the lines');
-  ok(await p.evaluate(() => /Neutral zone/.test((document.querySelector('.rt-phase-note') || {}).textContent || '')), 'Past Years has no phase note');
+  ok(await p.evaluate(() => !!document.querySelector('.rt-pyc.upcoming') && !!document.querySelector('[data-rt-help]')), 'Past Years has no coming year or no Help button');
+  await p.evaluate(() => document.querySelector('[data-rt-help]').click()); await p.waitForTimeout(300);
+  ok(await p.evaluate(() => /Neutral zone/.test((document.querySelector('.rt-help') || {}).textContent || '') && /Extreme Window/.test(document.querySelector('.rt-help').textContent)), 'the Help of Past Years does not explain the phases and windows');
+  ok(await p.evaluate(() => !/Valuation · Live/.test(document.body.textContent)), 'Valuation · Live is still on the page');
   ok(await p.evaluate(() => !document.getElementById('rt-target-toggle') && !document.querySelector('.rt-target')), 'the mini swaps are still on the page');
   ok(errs.length === 0, 'page errors: ' + errs.join(' | '));
   console.log('\n' + (fails ? fails + ' CHECK(S) FAILED' : 'ALL CHECKS PASSED') + ' · ' + REAL.length + ' real days, ' + SYN.length + ' invented situations');

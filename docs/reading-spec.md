@@ -90,9 +90,14 @@ Zeigt, was nach dem gewählten Tag wirklich passiert ist, und beginnt mit einem 
 ## UI
 
 - Ratio-Chart: Year Line und All Time Line immer sichtbar, keine Umschalt-Buttons. Ein senkrechter Pfeil zwischen beiden zeigt den Linien-Abstand in %.
-- Past Years: Phasen pro Jahr markiert, mit Hinweis auf die Neutral-Zone vor jedem Seitenwechsel.
+- Valuation · Live ist entfernt (das war die erste Version des Readings).
+- Past Years: jede Jahresbox ist schwach getönt, blau für ein BTC-Jahr, orange für ein ETH-Jahr (Jahresdurchschnitt gegen die heutige All Time Line).
+  Ganz oben steht immer das kommende Jahr mit Jahrestyp, erwarteter Phase (These 2 BTC / 4 ETH) und seinen Extreme Months.
+  Ein Help-Knopf neben den Filtern erklärt Jahrestypen, Phasen, Neutral-Zone und Extreme Months. Fenster-Monate tragen einen gestrichelten gelben Rahmen.
+- Explanation-Knopf: zentriert, ohne Pfeil, beim Überfahren dunkelgrau. Im Text steht "median" statt "middle".
+- Settings breiten sich in Spalten aus.
 - Coin-Liste: Rang-Pfeile (grün/rot), wenn ein Coin seit dem Snapshot von gestern auf- oder abgestiegen ist. In den Settings abschaltbar.
-- Coin-Liste: Auswahl "Exactly X Years Ago" (1 bis 8 Jahre) im Kopf der Preisspalte. Sie zeigt den Binance-Tagesschluss
+- Coin-Liste: Knopf "Years Ago" im Header (1 bis 8 Jahre). Sie zeigt den Binance-Tagesschluss
   (Paar SYMBOL/USDT) am selben Kalendertag vor X Jahren und daneben die Veränderung bis heute. Grenzen:
   "This Asset didn't exist X Years Ago" bedeutet genau genommen, dass das Paar auf Binance erst später gehandelt wurde.
   Ohne Binance-Paar steht "No price data from X years ago". USDT gilt immer als 1 $. Auto-Update lässt die Preise von damals stehen.
@@ -102,6 +107,19 @@ Zeigt, was nach dem gewählten Tag wirklich passiert ist, und beginnt mit einem 
 
 Das Reading der Seite, Tag für Tag mit nur den Daten des Tages gelesen, ergibt seit 2019 genau die 6 Runden oben und 0,4345 BTC.
 Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 Swaps in ETH, 6 Swaps in BTC.
+
+## Geprüft und verworfen (15.11.2026)
+
+- Rückweg tiefer unter der Year Line: 12 % ×3,51, 15 % ×3,68, 20 % ×1,23 (gegen 10 % ×4,35). Tiefere Rückwege lassen Runden offen hängen.
+- Tranchen (je ein Drittel bei verschiedenen Linien-Abständen): ×1,91 bis ×3,46, alle Runden weiter im Plus, aber weniger Ertrag.
+- Stufe A schon ab 30 % Abstand: ×2,35, eine Runde −14 %.
+
+## Beschlossen, noch nicht gebaut (Logik, nur nach Absprache)
+
+- Knopf "Which asset are you holding right now?" (Bitcoin / Ethereum), einmal pro Tag. BTC-Halter: Swap bei Stufe A/B. ETH-Halter: Swap,
+  sobald das Ratio 10 % unter der Year Line liegt. Ohne Antwort: nur die Tage der eigenen Spur.
+- "Hold your ETH" fällt weg. Sonst heißt es "Today is not a day to swap."
+- Kauf-Empfehlung nur in Fear und Extreme Fear: "It's currently a good time to buy Bitcoin/Ethereum", das Warum im Explanation-Teil.
 
 ## Offene Punkte
 
