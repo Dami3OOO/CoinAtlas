@@ -98,6 +98,17 @@ function check(name, text, o) {
   ok(/about half/.test(await g(50)) && /No clear recommendation/.test(await g(50)), '50% must read "about half" and make no recommendation'); ok(/fewer than half/.test(await g(20)), '20% must read "fewer than half"');
   // different situation types never share a sentence skeleton
   const types = Object.keys(skel); for (let i = 0; i < types.length; i++) for (let j = i + 1; j < types.length; j++) for (const s of skel[types[i]]) ok(!skel[types[j]].has(s), 'types "' + types[i] + '" and "' + types[j] + '" share a skeleton');
+  // the Extra Reading for mini swaps: judged by the share of earlier days like it that reached the profit in time
+  const mini = async d => p.evaluate(v => window.coinAtlasDev.readAt(Date.parse(v + 'T00:00:00Z')).mini, d);
+  const m1 = await mini('2023-03-19'), m2 = await mini('2026-06-06'), m3 = await mini('2022-11-19');
+  ok(m1.rec === true && m1.r.hits / m1.r.n >= 0.85 && m1.r.n >= 30, '2023-03-19: the Extra Reading must recommend a mini swap'); ok(m2.rec === false && m2.enough === true, '2026-06-06: the Extra Reading must not recommend a mini swap'); ok(m3.none === true, '2022-11-19: no lean, no mini swap');
+  await p.evaluate(() => document.getElementById('rt-target-toggle').click());
+  for (const [d, re] of [['2023-03-19', /^Extra Reading · Mini SwapsThe chance for a mini swap from BTC into ETH is good today\./], ['2026-06-06', /^Extra Reading · Mini SwapsNo mini swap today: the chance is not good enough\./]]) {
+    await p.evaluate(v => { const e = document.getElementById('rt-asof'); e.value = v; e.dispatchEvent(new Event('change')); }, d); await p.waitForTimeout(350);
+    const tx = await p.evaluate(() => { const e = document.querySelector('#rt-reading .rt-target'); return e ? e.textContent : ''; }), hs = await p.evaluate(() => document.querySelector('.rt-rd-hs').textContent);
+    ok(re.test(tx), d + ': Extra Reading text is "' + tx.slice(0, 80) + '"'); ok(/Days like this one: /.test(tx), d + ': Extra Reading does not say what "days like this one" are'); ok(/Extra Reading: (right|wrong|missed)/.test(hs), d + ': Hindsight has no verdict on the Extra Reading');
+    console.log('\n  EXTRA ' + d + '  ' + tx + '\n  HINDSIGHT  ' + hs.slice(0, 400));
+  }
   ok(errs.length === 0, 'page errors: ' + errs.join(' | '));
   console.log('\n' + (fails ? fails + ' CHECK(S) FAILED' : 'ALL CHECKS PASSED') + ' · ' + REAL.length + ' real days, ' + SYN.length + ' invented situations, ' + types.length + ' situation types');
   if (process.argv[2]) fs.writeFileSync(process.argv[2], JSON.stringify(out));

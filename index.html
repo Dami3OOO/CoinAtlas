@@ -496,7 +496,7 @@
   .rt-unc, .rt-unc-m { color:#eab308; font-style:normal; font-weight:700; } .rt-unc-m { margin-left:3px; }
   .rt-cert, .rt-cert-m { color:#4cc27a; font-style:normal; font-weight:700; } .rt-cert-m { margin-left:3px; } .rt-fm-tip .rt-cert-m { margin-left:0; }
   .rt-cert { display:inline-block; font-size:10px; border:1px solid #4cc27a; border-radius:4px; padding:1px 6px; white-space:nowrap; }
-  .rt-target { margin-top:10px; padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-size:13px; line-height:1.5; font-weight:600; } .rt-target.off { color:var(--muted); font-weight:500; font-size:12px; }
+  .rt-target { margin-top:10px; padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-size:13px; line-height:1.5; font-weight:600; } .rt-target.off { color:var(--muted); font-weight:500; font-size:12px; } .rt-target-k { display:block; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:4px; }
   .rt-unc { display:inline-block; font-size:10px; border:1px solid #eab308; border-radius:4px; padding:1px 6px; white-space:nowrap; }
   .rt-fng-note { text-align:center; margin-top:6px; line-height:1.5; }
   .rt-mo-panel { background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:12px; margin-top:10px; }
@@ -829,7 +829,7 @@
             <div class="settings-section">
               <div class="section-title">BTC|ETH</div>
               <div class="grp"><span class="lbl">Linked Hover</span><button class="toggle" type="button" id="rt-link-toggle" role="switch" aria-checked="true" aria-label="Show the hovered day in both graphs"><span></span></button></div>
-              <div class="grp"><span class="lbl">7–10% Profit Target</span><button class="toggle" type="button" id="rt-target-toggle" role="switch" aria-checked="false" aria-label="Add a line below the Reading that says whether a swap fits a 7 to 10 percent profit target"><span></span></button></div>
+              <div class="grp"><span class="lbl">Extra Reading: Mini Swaps</span><button class="toggle" type="button" id="rt-target-toggle" role="switch" aria-checked="false" aria-label="Add an Extra Reading below the Reading that gives the chance of a mini swap reaching a 7 percent profit"><span></span></button></div>
               <div class="grp"><span class="lbl">Tint Strongest Months</span><button class="toggle" type="button" id="rt-tint-toggle" role="switch" aria-checked="false" aria-label="Tint the strongest month boxes in Past Years blue or orange"><span></span></button></div>
               <div class="grp"><span class="lbl">Altcoin Dominance Line</span><button class="toggle" type="button" id="rt-dom-toggle" role="switch" aria-checked="false" aria-label="Show altcoin dominance line in dominance chart"><span></span></button></div>
             </div>
@@ -4137,7 +4137,7 @@
   var RT_TARGET_KEY = "top200-rt-target", rtTarget = false; try { rtTarget = localStorage.getItem(RT_TARGET_KEY) === "1"; } catch (e) {}
   var RT_TINT_KEY = "top200-rt-tint", rtTint = false; try { rtTint = localStorage.getItem(RT_TINT_KEY) === "1"; } catch (e) {}
   var RT_DOM_KEY = "top200-rt-dom-alts", rtDomAlts = false; try { rtDomAlts = localStorage.getItem(RT_DOM_KEY) === "1"; } catch (e) {}
-  var RT_LV = ["Neutral", "Mild", "Strong", "Extreme"], RT_ADV = ["", "Mildly", "Strongly", "Extremely"], RT_EDGES = [0.10, 0.35, 0.70], RT_TH = 10, RT_OLD = 40, RT_TURN = 10, RT_RUN = 25, RT_FAR = 60, RT_OFF = 5, RT_MIN = 17; /* RT_MIN: a Strong lean gets a recommendation only when earlier days like it brought at least this many % as their middle result. when a Strong lean gets a call. RT_OLD: the Year Line stands this many % beyond the All Time Line on the overvalued side. RT_TURN: it stands this many % on the other side. RT_RUN: the Ratio ran less than this many % towards the lean within a year. RT_FAR and RT_OFF: the Ratio is this many % beyond the All Time Line and already this many % off its 90-day extreme */
+  var RT_LV = ["Neutral", "Mild", "Strong", "Extreme"], RT_ADV = ["", "Mildly", "Strongly", "Extremely"], RT_EDGES = [0.10, 0.35, 0.70], RT_TH = 10, RT_OLD = 40, RT_TURN = 10, RT_RUN = 25, RT_FAR = 60, RT_OFF = 5, RT_MIN = 17, RT_MINI = { gain: 7, days: 90, share: 0.85, ev: 3 }; /* RT_MIN: a Strong lean gets a recommendation only when earlier days like it brought at least this many % as their middle result. RT_MINI: the Extra Reading recommends a mini swap when this share of earlier days like today reached this gain within this many days, and the average over all of them, misses included, was at least ev %. when a Strong lean gets a call. RT_OLD: the Year Line stands this many % beyond the All Time Line on the overvalued side. RT_TURN: it stands this many % on the other side. RT_RUN: the Ratio ran less than this many % towards the lean within a year. RT_FAR and RT_OFF: the Ratio is this many % beyond the All Time Line and already this many % off its 90-day extreme */
   var BTC_C = "#f7931a", ETH_C = "#3b82f6", ETH_D = "#2563eb", GREY_C = "#9ca3af", CMP_C = "#e879f9", RT_MO = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   var FAIR_C = { tf: "#facc15", "365": "#facc15", all: "#f472b6" }, FAIR_N = { tf: "Year", "365": "Year", all: "All Time" };
   function rtCls(y) { var s = cycleStage(y); return s === "Bull Year" ? "bull" : s === "Bear Year" ? "bear" : "bridge"; }
@@ -4760,7 +4760,7 @@
   }
   window.coinAtlasDev = { compose: rtCompose, readAt: function (t) { /* the Reading for any day, with only the data of that day */
     var keep = [RT.asOf, devActive], out; RT.asOf = t; devActive = true;
-    try { out = rtIn(rtWorld(), function () { var f = rtFormula(RT.data.t.length - 1, true), s = rtSituation(f), c = rtCompose(s); return { day: RT.data.t[RT.data.t.length - 1], call: c.call, type: s.type, held: s.held, side: s.side, other: s.other, score: s.score, marks: s.marks, r: s.r, fg: s.fgV, text: c.text.join(" ") }; }); }
+    try { out = rtIn(rtWorld(), function () { var f = rtFormula(RT.data.t.length - 1, true), s = rtSituation(f), c = rtCompose(s); return { day: RT.data.t[RT.data.t.length - 1], call: c.call, type: s.type, held: s.held, side: s.side, other: s.other, score: s.score, marks: s.marks, r: s.r, fg: s.fgV, text: c.text.join(" "), mini: rtMini(s) }; }); }
     finally { RT.asOf = keep[0]; devActive = keep[1]; }
     return out; } }; /* lets tests/reading-test.js check the text for any situation */
   function rtReadingColor(s, call) { /* the colour carries the mood: side and strength, full for a call, muted without one, yellow for contradiction, green for the swap back */
@@ -4848,18 +4848,53 @@
     for (j = 365; j < n; j++) { if (S[j] !== score) continue; q = A.nx[2][dir > 0 ? 0 : 1][j]; if (q < 0) continue; g.push((dir > 0 ? d.r[j] / d.r[q] : d.r[q] / d.r[j]) - 1); if (j - last > 20) groups++; last = j; }
     return { n: g.length, groups: groups, profit: g.filter(function (x) { return x > 0.006; }).length, med: g.length ? median(g) * 100 : 0 };
   }
-  function rtTargetHtml(s, call) { /* optional: the Reading stays as it is, and this line says whether a swap still fits a 7 to 10% profit target */
-    if (!rtTarget || !s.dir || s.type === "contradicted" || call === "now" || call === "good" || call === "back" || call === "wait") return "";
-    var r = rtScoreRecord(s.score), X = s.side, Y = s.other;
-    if (r.groups >= 3 && r.n >= 30 && r.med >= 7 && r.profit / r.n >= 0.6) return '<div class="rt-target" style="color:' + rtFCol(s.score) + '">Even though the Reading does not show the best possible time to swap, it does match your 7 to 10% profit target, which is why a swap from ' + X + ' into ' + Y + ' is recommended here. On earlier days with this score, swapping ' + X + ' into ' + Y + ' and swapping again once ' + Y + ' was the overvalued side left a middle of ' + r.med.toFixed(0) + '% more ' + X + '.</div>';
-    return '<div class="rt-target off">Your 7 to 10% profit target is not met today' + (r.n >= 30 ? ': on earlier days with this score, the middle result of a swap from ' + X + ' into ' + Y + ' was ' + (r.med < 0 ? "−" : "+") + Math.abs(r.med).toFixed(0) + '% in ' + X + '.' : ': there are too few earlier days with this score to say.') + '</div>';
+  function rtMiniTier(j, dir) { var S = rtAsof().S; return rtIsNow(j, dir) ? "now" : S[j] * dir >= 3 ? "strong" : "mild"; }
+  function rtMoodAt() { /* sentiment of every day as "fear", "greed" or "n", for the Extra Reading */
+    var d = RT.data, A = rtAsof(), fa = rtFgAll() || [], m = {}; if (A.mood && A.moodN === fa.length) return A.mood;
+    fa.forEach(function (x) { m[Math.round(x.timestamp / 86400)] = x.value; });
+    A.moodN = fa.length; A.rec = null; /* records that depend on sentiment are rebuilt when its data arrives */
+    return (A.mood = d.t.map(function (t) { var v = m[Math.round(t / 864e5)]; return v === undefined ? "" : v <= 44 ? "fear" : v >= 56 ? "greed" : "n"; }));
+  }
+  function rtMiniRecord(tier, ripe, mood) { /* mini swaps on every earlier day of the same kind (strength, how old the Overvaluation is, and sentiment in Fear, Neutral or Greed): swapped that day, swapped back on the first day the profit after both fees reached RT_MINI.gain %.
+       A day counts as a miss when that did not happen within RT_MINI.days days; its result is where the swap stood on that last day. Days whose outcome is not known yet are left out */
+    var d = RT.data, A = rtAsof(), S = A.S, n = d.t.length, M = rtMoodAt(), key = "mini" + tier + ripe + mood, T = RT_MINI.gain / 100, H = RT_MINI.days, hit = [], miss = [], groups = 0, last = -99, j, k, dir, g, done;
+    A.rec = A.rec || {}; if (A.rec[key]) return A.rec[key];
+    for (j = 365; j < n; j++) {
+      if (!S[j]) continue; dir = S[j] > 0 ? 1 : -1;
+      if (j + H >= n) break; /* the full window must lie in the past, so that quick hits of the last weeks do not flatter the share */
+      if (M[j] !== mood || rtMiniTier(j, dir) !== tier || rtRipeAt(j, dir) !== ripe) continue;
+      done = false;
+      for (k = j + 1; k <= j + H && k < n; k++) { g = (dir > 0 ? d.r[j] / d.r[k] : d.r[k] / d.r[j]) * 0.994 - 1; if (g >= T) { hit.push(k - j); done = true; break; } }
+      if (!done) miss.push(g * 100);
+      if (j - last > 20) groups++; last = j;
+    }
+    var N = hit.length + miss.length;
+    return (A.rec[key] = { n: N, groups: groups, hits: hit.length, days: hit.length ? Math.round(median(hit)) : 0, missMed: miss.length ? median(miss) : 0, missWorst: miss.length ? Math.min.apply(null, miss) : 0,
+      ev: N ? (hit.length * RT_MINI.gain + miss.reduce(function (a, x) { return a + x; }, 0)) / N : 0 });
+  }
+  function rtMini(s) { /* the Extra Reading: a mini swap is judged by its chance alone, measured on earlier days like today */
+    if (!s.dir) return { rec: false, none: true };
+    var i = RT.data.t.length - 1, tier = s.type === "now" ? "now" : Math.abs(s.score) >= 3 ? "strong" : "mild", mood = s.fgV === null ? "" : s.fgV <= 44 ? "fear" : s.fgV >= 56 ? "greed" : "n", r = rtMiniRecord(tier, s.ripe, mood);
+    var enough = r.n >= 30 && r.groups >= 3;
+    var like = (tier === "now" ? "an Extreme" : tier === "strong" ? "a Strong" : "a Mild") + " lean, " + (s.ripe === "old" ? "an old run behind it" : s.ripe === "turn" ? "a Ratio coming back from the other side" : s.ripe === "norun" ? "no one-way run behind it" : s.ripe === "closing" ? "a Ratio far out that has started to come back" : "a young Overvaluation") + (mood ? ", sentiment in " + (mood === "fear" ? "Fear" : mood === "greed" ? "Greed" : "Neutral") : "");
+    return { rec: enough && r.hits / r.n >= RT_MINI.share && r.ev >= RT_MINI.ev, enough: enough, r: r, tier: tier, mood: mood, like: like };
+  }
+  function rtTargetHtml(s, call) { /* optional Extra Reading: mini swaps of 7 to 10%, judged by probability. The Reading above stays as it is */
+    if (!rtTarget) return "";
+    var m = rtMini(s), X = s.side, Y = s.other, G = RT_MINI.gain, H = RT_MINI.days, k = '<span class="rt-target-k">Extra Reading · Mini Swaps</span>', pc = function (x) { return (x < 0 ? "−" : "+") + Math.abs(x).toFixed(0) + "%"; };
+    if (m.none) return '<div class="rt-target off">' + k + 'No mini swap today: BTC and ETH are fairly valued against each other, so neither side has an edge.</div>';
+    var r = m.r, share = r.n ? Math.round(r.hits / r.n * 100) : 0, rest = r.n - r.hits;
+    var missT = rest ? " The other " + (rest === 1 ? "day" : rest + " days") + " did not get there: after " + H + " days those swaps stood at a middle of " + pc(r.missMed) + ", the worst at " + pc(r.missWorst) + "." : " Not one of them missed it.";
+    if (!m.enough) return '<div class="rt-target off">' + k + 'No mini swap today: there are too few earlier days like this one to give a chance. Days like this one: ' + m.like + '.</div>';
+    if (m.rec) return '<div class="rt-target" style="color:' + rtFCol(s.score) + '">' + k + 'The chance for a mini swap from ' + X + ' into ' + Y + ' is good today. On ' + share + '% of the ' + r.n + ' earlier days like this one, the swap reached a profit of ' + G + '% within ' + H + ' days, in the middle after ' + r.days + (r.days === 1 ? ' day.' : ' days.') + missT + ' Counted over all of them, a swap brought ' + pc(r.ev) + ' on average. Take the profit when it is there: a mini swap does not wait for ' + Y + ' to be overvalued. Days like this one: ' + m.like + '.</div>';
+    return '<div class="rt-target off">' + k + 'No mini swap today: the chance is not good enough. On ' + share + '% of the ' + r.n + ' earlier days like this one, a swap from ' + X + ' into ' + Y + ' reached a profit of ' + G + '% within ' + H + ' days.' + missT + ' Counted over all of them, a swap brought ' + pc(r.ev) + ' on average. The Extra Reading asks for ' + Math.round(RT_MINI.share * 100) + '% and an average of +' + RT_MINI.ev + '% or more. Days like this one: ' + m.like + '.</div>';
   }
   function rtReadingHtml(f) {
     var s = rtSituation(f), c = rtCompose(s);
     return '<div class="rt-vd" style="color:' + rtReadingColor(s, c.call) + '">' + c.text.join(" ") + '</div>' + rtTargetHtml(s, c.call) +
       '<details class="rt-why"' + (RT.whyOpen ? ' open' : '') + '><summary>Explanation</summary>' + rtExplain(f, s, c.call) + '</details>';
   }
-  function rtHindsight(w, S, call) { /* dev only: what really happened after the chosen day. Computed from the full data, never shown to the Reading */
+  function rtHindsight(w, S, call, mini) { /* dev only: what really happened after the chosen day. Computed from the full data, never shown to the Reading */
     var d = RT.data, A = rtAsof().S, i = w.data.t.length - 1, r0 = d.r[i], dir = S > 0 ? 1 : S < 0 ? -1 : 0, rows = [], v = rtYearView(w.cy), hi = v.i0, lo = v.i0, q;
     var fx = function (x) { return x.toFixed(x < 10 ? 2 : 1); }, pc = function (x) { return (x < 0 ? "−" : "+") + Math.abs(x).toFixed(1) + "%"; };
     var res = function (g) { return '<b style="color:var(' + (g >= 0 ? "--up" : "--down") + ')">' + Math.abs(g).toFixed(1) + "% " + (g >= 0 ? "ahead" : "behind") + "</b>"; };
@@ -4872,14 +4907,21 @@
       if (qe < d.t.length) { var g = ((dir > 0 ? r0 / d.r[qe] : d.r[qe] / r0) * 0.994 - 1) * 100, rec = call === "now" || call === "good" || call === "back", right = rec ? g >= 0 : g < RT_MIN;
         rows.unshift('<b style="color:var(' + (right ? "--up" : "--down") + ')">' + (rec ? (right ? "The Reading was right: its recommendation ended ahead." : "The Reading was wrong: its recommendation ended behind.") : (right ? "The Reading was right not to recommend a swap." : "The Reading missed this: a swap would have ended " + RT_MIN + "% or more ahead.")) + "</b>"); }
     }
+    if (dir && rtTarget) { /* the Extra Reading: did a mini swap reach its profit in time? */
+      var mk = -1, mg = 0, kk; for (kk = i + 1; kk <= i + RT_MINI.days && kk < d.t.length; kk++) { mg = ((dir > 0 ? r0 / d.r[kk] : d.r[kk] / r0) * 0.994 - 1) * 100; if (mg >= RT_MINI.gain) { mk = kk; break; } }
+      if (mk >= 0 || i + RT_MINI.days < d.t.length) {
+        var mr = mini ? mk >= 0 : mk < 0;
+        rows.push('<b style="color:var(' + (mr ? "--up" : "--down") + ')">Extra Reading: ' + (mini ? (mr ? "right, the mini swap reached its profit." : "wrong, the mini swap did not reach its profit.") : (mr ? "right not to recommend a mini swap." : "missed a mini swap.")) + "</b> " + (mk >= 0 ? "A profit of " + RT_MINI.gain + "% was there on " + rtDate(d.t[mk]) + ", " + (mk - i) + (mk - i === 1 ? " day" : " days") + " later, at a Ratio of " + fx(d.r[mk]) + "." : "A profit of " + RT_MINI.gain + "% was not reached within " + RT_MINI.days + " days. After " + RT_MINI.days + " days the swap stood at " + pc(mg) + "."));
+      }
+    }
     [30, 90, 180].forEach(function (k) { if (i + k < d.t.length) rows.push("After " + k + " days the Ratio was " + fx(d.r[i + k]) + " [" + pc((d.r[i + k] / r0 - 1) * 100) + "]."); });
     for (q = v.i0; q < v.i1; q++) { if (d.r[q] > d.r[hi]) hi = q; if (d.r[q] < d.r[lo]) lo = q; }
     rows.push("The real " + w.cy + (v.i1 === d.t.length ? " so far" : "") + ": low " + fx(d.r[lo]) + " on " + rtDM(d.t[lo]) + ", high " + fx(d.r[hi]) + " on " + rtDM(d.t[hi]) + ". On this day the Ratio [" + fx(r0) + "] stood " + pc((r0 / d.r[lo] - 1) * 100) + " from that low and " + pc((r0 / d.r[hi] - 1) * 100) + " from that high.");
     return '<div class="rt-rd-hs"><span class="rt-rd-k">Hindsight · Dev only · the Reading above cannot see this</span>' + rows.join(" ") + '</div>';
   }
   function rtFormulaParts() { /* the Formula tab and the Reading tab, both from the same world */
-    var w = rtWorld(), b = rtIn(w, function () { var f = rtFormula(RT.data.t.length - 1, true); return { S: f.total, fg: rtFgNeed() ? '' : rtFgTag(), fm: rtFormulaHtml(f), rd: rtReadingHtml(f), call: rtCompose(rtSituation(f)).call }; });
-    return { tag: (w ? '<div class="rt-val-fv-tag" style="color:#facc15;border-color:#facc15">Dev · as of ' + rtDate(w.data.t[w.data.t.length - 1]) + '</div>' : '') + b.fg, fm: b.fm, rd: b.rd + (w ? rtHindsight(w, b.S, b.call) : '') };
+    var w = rtWorld(), b = rtIn(w, function () { var f = rtFormula(RT.data.t.length - 1, true); return { S: f.total, fg: rtFgNeed() ? '' : rtFgTag(), fm: rtFormulaHtml(f), rd: rtReadingHtml(f), call: rtCompose(rtSituation(f)).call, mini: rtMini(rtSituation(f)).rec }; });
+    return { tag: (w ? '<div class="rt-val-fv-tag" style="color:#facc15;border-color:#facc15">Dev · as of ' + rtDate(w.data.t[w.data.t.length - 1]) + '</div>' : '') + b.fg, fm: b.fm, rd: b.rd + (w ? rtHindsight(w, b.S, b.call, b.mini) : '') };
   }
   function rtFormulaRefresh() { /* touch the page only where something changed, so an open tooltip does not flicker */
     var el = { tag: document.getElementById("rt-fm-fg"), fm: document.getElementById("rt-formula"), rd: document.getElementById("rt-reading") };
