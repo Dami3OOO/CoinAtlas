@@ -1,58 +1,37 @@
 // Tests for the CoinAtlas Formula Reading. Run: node tests/reading-test.js   (needs Playwright with Chromium)
-// The page is opened with the history stored in data/history as its price and Fear & Greed source, so the result does not depend on the network.
+// The rules are written down in docs/reading-spec.md. The page is opened with the history stored in data/history, so the result does not depend on the network.
 const { chromium } = require('playwright'); const fs = require('fs'); const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const H = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/history/btc-eth.json'), 'utf8')).days, FG = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/history/fear-greed.json'), 'utf8')).days;
 const rows = sym => H.map(x => { const t = Date.parse(x[0] + 'T00:00:00Z'), p = String(sym === 'BTCUSDT' ? x[1] : x[2]); return [t, p, p, p, p, '1', t + 864e5 - 1, '1', 1, '1', '1', '0']; });
 const TODAY = H[H.length - 1][0];
-// real days, replayed through the page with only the data of that day: [date, situation type, call]
-const REAL = [['2025-04-21', 'now', 'now'], ['2026-06-06', 'strong', 'small'], ['2026-06-09', 'strong', 'small'], ['2024-08-07', 'strong', 'wait'], ['2021-12-08', 'strong', 'good'], ['2025-06-02', 'strong', 'good'], ['2025-08-12', 'back', 'back'], [TODAY, null, null], ['2025-07-19', 'contradicted', 'none'], ['2022-11-19', 'balanced', 'none']];
-// invented situations, to cover every combination of strength, Fair Value Lines, sentiment and record
-const rec = (profit, n, groups = 6) => ({ n, groups, profit }), base = { side: 'BTC', other: 'ETH', dir: 1, score: 4, marks: 0, year: 'Mild', all: 'Strong', seasonAgainst: false, domAgainst: false, fg: '', zone: '', held: '', run: null, cause: '', times: 0 };
+// real days, replayed with only the data of that day: [date, expected call, expected stage or buy side]
+const REAL = [['2025-06-22', 'swap', 'A'], ['2022-06-11', 'swap', 'B'], ['2025-07-10', 'hold'], ['2025-08-09', 'back'], ['2025-04-21', 'buy', 'ETH'], ['2022-11-19', 'buy', ''],
+  ['2024-03-10', 'none'], ['2023-01-20', 'none'], [TODAY, null]];
+// invented situations, one for every kind of recommendation
+const base = { side: 'BTC', other: 'ETH', dir: 1, score: 4, tier: 'Strong', marks: 0, contradicted: false, zone: '', fgV: 50, lead: 20, phase: 'BTC', nz: false, win: null, watch: false, yt: 'Bridge Year', stage: '', buySide: '', fellMore: false, open: null };
 const SYN = [
-  ['S1 both lines Extreme, record 97%', { ...base, type: 'now', score: 8, year: 'Extreme', all: 'Extreme', cause: 'fell', times: 3, rec: rec(97, 100) }, 'now'],
-  ['S2 score 7, lines Strong and Extreme, Extreme Fear', { ...base, type: 'now', score: 7, year: 'Strong', all: 'Extreme', fg: 'Extreme Fear', zone: 'Extreme Fear', rec: rec(90, 100) }, 'now'],
-  ['S3 now, too few earlier days', { ...base, type: 'now', score: 8, year: 'Extreme', all: 'Extreme', rec: rec(10, 12, 1) }, 'now'],
-  ['S4 strong, both lines agree, 74%', { ...base, type: 'strong', rec: rec(74, 100) }, 'good'],
-  ['S5 strong, only one line, Extreme Greed, both rose', { ...base, type: 'strong', score: 3, year: 'Neutral', all: 'Strong', fg: 'Extreme Greed', zone: 'Extreme Greed', held: 'greed', cause: 'rose', rec: rec(82, 100) }, 'wait'],
-  ['S6 strong ETH, both lines Strong, 50%', { ...base, side: 'ETH', other: 'BTC', dir: -1, score: -5, type: 'strong', year: 'Strong', all: 'Strong', rec: rec(50, 100) }, 'unclear'],
-  ['S7 strong, Dominance against, 30%', { ...base, type: 'strong', score: 3, marks: 1, domAgainst: true, rec: rec(30, 100) }, 'unclear'],
-  ['S8 strong, too few earlier days', { ...base, type: 'strong', rec: rec(8, 10, 1) }, 'few'],
-  ['S9 strong, lines contradict, 70%', { ...base, type: 'strong', score: 3, marks: 1, year: 'against', all: 'Extreme', rec: rec(70, 100) }, 'good'],
-  ['S10 mild, only one line', { ...base, type: 'mild', score: 2, year: 'Neutral', all: 'Mild' }, 'none'],
-  ['S11 mild ETH, both lines Mild, Season against, Extreme Fear', { ...base, side: 'ETH', other: 'BTC', dir: -1, score: -1, type: 'mild', year: 'Mild', all: 'Mild', marks: 1, seasonAgainst: true, fg: 'Extreme Fear', zone: 'Extreme Fear', fearRec: rec(82, 100) }, 'none'],
-  ['S21 balanced in Fear, record 70%', { ...base, side: '', dir: 0, score: 0, type: 'balanced', year: 'Neutral', all: 'Neutral', zone: 'Fear', fearRec: rec(70, 100) }, 'none'],
-  ['S22 balanced in Fear, record too weak', { ...base, side: '', dir: 0, score: 0, type: 'balanced', year: 'Neutral', all: 'Neutral', zone: 'Fear', fearRec: rec(45, 100) }, 'none'],
-  ['S12 swap back on the ETH side', { ...base, side: 'ETH', other: 'BTC', dir: -1, score: -2, type: 'back', year: 'Mild', all: 'Neutral' }, 'back'],
-  ['S13 balanced', { ...base, side: '', dir: 0, score: 0, type: 'balanced', year: 'Neutral', all: 'Neutral' }, 'none'],
-  ['S14 contradicted: lines against each other and Season against', { ...base, type: 'contradicted', score: 1, marks: 2, year: 'against', all: 'Strong', seasonAgainst: true }, 'none'],
-  ['S15 strong but still young', { ...base, type: 'strong', held: 'young', run: 42, rec: rec(74, 100) }, 'wait'],
-  ['S21 strong, profit almost every time but small', { ...base, type: 'strong', ripe: 'norun', rec: { n: 100, groups: 6, profit: 95, med: 8 } }, 'small'],
-  ['S16 strong in Greed, run is old', { ...base, type: 'strong', zone: 'Greed', ripe: 'old', rec: rec(74, 100) }, 'good'],
-  ['S17 way back on the ETH side in Greed', { ...base, side: 'ETH', other: 'BTC', dir: -1, score: -2, type: 'back', year: 'Mild', all: 'Neutral', zone: 'Greed' }, 'back'],
-  ['S18 now in Extreme Greed', { ...base, type: 'now', score: 8, year: 'Extreme', all: 'Extreme', zone: 'Extreme Greed', held: 'greed', rec: rec(97, 100) }, 'wait'],
-  ['S19 strong in Fear, 74%', { ...base, type: 'strong', zone: 'Fear', rec: rec(74, 100) }, 'good'],
-  ['S20 balanced in Greed', { ...base, side: '', dir: 0, score: 0, type: 'balanced', year: 'Neutral', all: 'Neutral', zone: 'Greed' }, 'none']
+  ['S1 Stage A in Fear', { ...base, call: 'swap', stage: 'A', score: 5, lead: 48, zone: 'Fear', fgV: 35, buySide: 'ETH' }, /^Now is a good time to swap BTC into ETH\. /],
+  ['S2 Stage B in Extreme Fear', { ...base, call: 'swap', stage: 'B', score: 2, tier: 'Mild', lead: -45, phase: 'ETH', zone: 'Extreme Fear', fgV: 12, buySide: 'ETH' }, /^Now is a good time to swap BTC into ETH\. /],
+  ['S3 swap complete in Greed', { ...base, call: 'back', zone: 'Greed', fgV: 68, buySide: 'BTC', open: { t: Date.UTC(2025, 5, 22), r: 45.3 } }, /^Now is a good time to swap ETH into BTC\. /],
+  ['S4 swap running', { ...base, call: 'hold', buySide: 'ETH', open: { t: Date.UTC(2025, 5, 22), r: 45.3 } }, /^Hold your ETH: the swap from 22 Jun 2025 is still running\./],
+  ['S5 buy the cheaper side in Fear', { ...base, call: 'buy', score: 2, tier: 'Mild', zone: 'Extreme Fear', fgV: 13, buySide: 'ETH', fellMore: true }, /^Now is a good time to buy ETH with USDC\. /],
+  ['S6 buy without a lean', { ...base, call: 'buy', side: '', dir: 0, score: 0, tier: '', zone: 'Fear', fgV: 30 }, /^Now is a good time to add to what you already hold with USDC\. /],
+  ['S7 nothing to do in Greed', { ...base, call: 'none', score: 3, zone: 'Greed', fgV: 70 }, /^Nothing to do today\. /],
+  ['S8 Neutral zone of the lines', { ...base, call: 'none', score: -1, side: 'ETH', other: 'BTC', dir: -1, tier: 'Mild', lead: 4, nz: true }, /^Nothing to do today\. /],
+  ['S9 Strong reading in an Extreme Window', { ...base, call: 'none', score: 4, win: [0, 1], watch: true }, /^Nothing to do today\. /]
 ];
 const sentences = t => t.split(/(?<=[.!?])\s+/).filter(Boolean);
-// the skeleton of a Reading: numbers, sides, level words and grade words replaced, so two Readings can be compared by structure
-const skeleton = t => t.replace(/\d+(\.\d+)?/g, '#').replace(/\b(BTC|ETH)\b/g, 'COIN').replace(/Extreme (Fear|Greed)/g, 'SENT').replace(/\b(Mild|Strong|Extreme|Extremely|mildly|clearly)\b/g, 'LEVEL')
-  .replace(/almost every day like this one|the large majority of days like this one|most days like this one|about half of the days like this one|fewer than half of the days like this one/g, 'GRADE');
 let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log('  FAIL', m); } };
 function check(name, text, o) {
-  const st = sentences(text);
-  ok(st.length <= 4, name + ': more than 4 sentences (' + st.length + ')'); ok(text.length <= 560, name + ': too long (' + text.length + ')');
-  ok(!/unusual/i.test(text), name + ': contains "unusual"'); ok(!/\d+ of \d+/.test(text), name + ': contains a count'); ok(!/% of days|stretches|\d%/i.test(text), name + ': contains statistics');
-  ok(!/\bgap\b/i.test(text), name + ': says "gap"'); ok(!/ended ahead/i.test(text), name + ': says "ended ahead"'); ok(!/still growing|still widening/i.test(text), name + ': claims the Overvaluation is still growing');
+  const st = sentences(text.replace(/\d+ [A-Z][a-z]{2} \d{4}/g, 'DATE'));
+  ok(st.length <= 4, name + ': more than 4 sentences (' + st.length + ')'); ok(text.length <= 520, name + ': too long (' + text.length + ')');
+  ok(!/\d+ of \d+|\d%|% of days/.test(text), name + ': contains statistics, they belong in the Explanation'); ok(!/\bgap\b|ended ahead|unusual/i.test(text), name + ': uses a banned word');
   ok(!/could|might|maybe|perhaps|theoretically/i.test(text), name + ': hedges'); ok(!/swap(ping)? back|If you swapped/i.test(text), name + ': talks about swapping back');
-  if (o.lean) ok(/Fair Value Line/.test(text), name + ': does not name the Fair Value Lines');
-  const call = ['now', 'good', 'back'].includes(o.call), z = o.zone || '';
-  if (/Greed/.test(z)) { ok(/keep your USDC and wait for Fear/.test(text), name + ': Greed without the advice to keep USDC'); ok(!/buy or swap|strong time to buy/.test(text), name + ': recommends buying during Greed'); }
-  if (/Fear/.test(z)) ok(call === /strong time to buy (BTC|ETH) with USDC/.test(text), name + ': buying in Fear must be recommended next to a call, and only then');
-  if (/Fear/.test(z) && !call && o.call !== 'wait' && o.fearOk !== false) ok(/buying with USDC ended in profit by the time Greed returned/.test(text), name + ': Fear without a swap call must still name the chance to buy');
-  if (o.call === 'wait' || o.fearOk === false) ok(!/buying with USDC/.test(text), name + ': recommends buying where it must not');
-  if (!z) ok(!/Fear|Greed|USDC/.test(text), name + ': mentions sentiment although it is Neutral');
-  if (z === 'Extreme Greed') ok(!call, name + ': a call during Extreme Greed');
+  const z = o.zone || '';
+  if (/Greed/.test(z)) { ok(!/buy (BTC|ETH) with USDC|add to what you already hold/.test(text), name + ': recommends buying during Greed'); if (o.call === 'none') ok(/keep your USDC and wait for Fear/.test(text), name + ': Greed without the advice to keep USDC'); }
+  if (/Fear/.test(z) && (o.call === 'swap' || o.call === 'back' || o.call === 'hold')) ok(/strong time to buy (BTC|ETH) with USDC/.test(text), name + ': a swap during Fear must also name the purchase');
+  if (o.call === 'buy') ok(/Fear/.test(z), name + ': a purchase outside of Fear');
 }
 (async () => {
   const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { width: 1400, height: 900 } });
@@ -66,51 +45,40 @@ function check(name, text, o) {
   });
   await p.goto('file://' + path.join(ROOT, 'index.html')); await p.waitForTimeout(2500);
   await p.click('#ratio-btn'); await p.waitForSelector('#rt-reading .rt-vd', { timeout: 30000 }); await p.waitForTimeout(1500);
-  await p.evaluate(() => document.getElementById('dev-toggle').click());
-  const read = () => p.evaluate(() => ({ text: document.querySelector('#rt-reading .rt-vd').textContent, fg: document.getElementById('rt-fm-fg').textContent, expl: Array.from(document.querySelectorAll('#rt-reading .rt-rd-q')).map(x => x.textContent), body: document.querySelector('#rt-reading .rt-why').textContent, score: document.querySelector('#rt-formula .rt-fm-sum b').textContent }));
-  const skel = {}, out = [];
+  const readAt = d => p.evaluate(v => window.coinAtlasDev.readAt(Date.parse(v + 'T00:00:00Z')), d);
+  const qs = h => (h.match(/class="rt-rd-q">([^<]*(?:<[^>]+>[^<]*)*?)<\/span>/g) || []).map(x => x.replace(/^class="rt-rd-q">/, '').replace(/<[^>]+>/g, ''));
   console.log('REAL DAYS (replayed with only the data of each day)');
-  for (const [d, type, call] of REAL) {
-    await p.evaluate(v => { const e = document.getElementById('rt-asof'); e.value = v; e.dispatchEvent(new Event('change')); }, d); await p.waitForTimeout(350);
-    const x = await read(), fgv = FG.find(q => q[0] === d), zone = !fgv ? '' : fgv[1] <= 24 ? 'Extreme Fear' : fgv[1] <= 44 ? 'Fear' : fgv[1] <= 55 ? '' : fgv[1] <= 75 ? 'Greed' : 'Extreme Greed', lean = x.score !== '+0';
-    check(d, x.text, { lean: lean && type !== 'contradicted', zone, call });
-    ok(x.expl.length >= 4, d + ': Explanation has fewer than 4 questions'); ok(x.expl.every(q => /\?$/.test(q)), d + ': an Explanation heading is not a question');
-    if (call === 'now') ok(/^Holding (BTC|ETH) is a really good idea right now, and/.test(x.text), d + ': expected "a really good idea"');
-    if (call === 'good') ok(/^Holding (BTC|ETH) is a good idea right now, and/.test(x.text), d + ': expected "a good idea"');
-    if (call === 'back') ok(/^Holding BTC is a good idea right now, and/.test(x.text), d + ': expected "holding BTC"');
-    if (call === 'now' || call === 'good' || call === 'back') ok(/if you are looking to (buy or )?swap, (BTC|ETH) is the recommendation/.test(x.text), d + ': no recommendation');
-    if (call === 'wait' || call === 'small') ok(/^No swap recommendation today, although/.test(x.text), d + ': expected "no swap recommendation"');
-    if (type === 'contradicted') ok(sentences(x.text).length >= 2, d + ': a contradiction must name where it comes from');
-    if (type === 'balanced') ok(/^Now is a good time to hold on to your BTC and ETH\./.test(x.text), d + ': expected "hold on"');
-    if (type === 'contradicted') ok(/^No clear recommendation today/.test(x.text), d + ': expected "no clear recommendation"');
-    if (d === TODAY && /^[+−][12]$/.test(x.score)) ok(/^Now is a good time to hold on to your BTC and ETH\./.test(x.text), d + ': a Mild lean must read "hold on"');
-    out.push([d, x.score, x.text]); console.log('  ' + d + ' [' + x.score + (fgv ? ', F&G ' + fgv[1] : '') + ']  ' + x.text);
+  for (const [d, call, extra] of REAL) {
+    const x = await readAt(d), q = qs(x.expl);
+    check(d, x.text, { zone: x.zone, call: x.call });
+    ok(q.length >= 3, d + ': Explanation has fewer than 3 questions'); ok(q.every(s => /\?$/.test(s)), d + ': an Explanation heading is not a question');
+    if (call) ok(x.call === call, d + ': call is "' + x.call + '", expected "' + call + '"');
+    if (call === 'swap') { ok(x.stage === extra, d + ': stage ' + x.stage + ', expected ' + extra); ok(q.includes('Why swap BTC into ETH today?'), d + ': no question for the swap'); }
+    if (call === 'back') ok(q.includes('Why swap ETH into BTC now?'), d + ': no question for completing the swap');
+    if (call === 'hold') ok(q.includes('When is the swap complete?'), d + ': no question for the running swap');
+    if (call === 'buy') { ok(x.buy === extra, d + ': buys "' + x.buy + '", expected "' + extra + '"'); ok(q.some(s => /^Why buy/.test(s)), d + ': no question for the purchase'); }
+    if (x.win) ok(q.some(s => /Extreme Window|this window/.test(s)), d + ': inside an Extreme Window without explaining it');
+    if (x.nz) ok(q.some(s => /Neutral zone/.test(s)), d + ': Neutral zone of the lines without explaining it');
+    console.log('  ' + d + ' [' + x.call + (x.stage ? ' ' + x.stage : '') + ', score ' + x.score + ', lines ' + x.lead.toFixed(0) + '%' + (x.fg != null ? ', F&G ' + x.fg : '') + ']  ' + x.text);
   }
   console.log('\nINVENTED SITUATIONS');
-  for (const [name, sit, call] of SYN) {
+  for (const [name, sit, re] of SYN) {
     const c = await p.evaluate(s => window.coinAtlasDev.compose(s), sit), text = c.text.join(' ');
-    check(name, text, { lean: !!sit.dir && sit.type !== 'contradicted', zone: sit.zone, call: c.call, fearOk: sit.fearRec ? sit.fearRec.profit / sit.fearRec.n >= 0.6 : /Fear/.test(sit.zone || '') && !['now', 'good', 'back'].includes(c.call) ? false : undefined }); ok(c.call === call, name + ': call is "' + c.call + '", expected "' + call + '"');
-    (skel[sit.type] = skel[sit.type] || new Set()).add(skeleton(text)); console.log('  ' + name + '  →  ' + text);
+    check(name, text, { zone: sit.zone, call: sit.call }); ok(re.test(text), name + ': unexpected start: ' + text.slice(0, 80)); ok(c.call === sit.call, name + ': call changed');
+    if (sit.nz) ok(/Neutral zone/.test(text), name + ': the Neutral zone of the lines is not named'); if (sit.watch) ok(/worth watching/.test(text), name + ': a Strong reading in the window is not named');
+    console.log('  ' + name + '  →  ' + text);
   }
-  // the record wording follows the real share of days, and a better record reads stronger
-  const g = async (a) => (await p.evaluate(s => window.coinAtlasDev.compose(s).text.join(' '), { ...base, type: 'strong', rec: rec(a, 100) }));
-  ok(/almost every day/.test(await g(97)), '97% must read "almost every day"'); ok(/large majority/.test(await g(85)), '85% must read "the large majority"'); ok(/most days/.test(await g(70)), '70% must read "most days"');
-  ok(/about half/.test(await g(50)) && /No clear recommendation/.test(await g(50)), '50% must read "about half" and make no recommendation'); ok(/fewer than half/.test(await g(20)), '20% must read "fewer than half"');
-  // different situation types never share a sentence skeleton
-  const types = Object.keys(skel); for (let i = 0; i < types.length; i++) for (let j = i + 1; j < types.length; j++) for (const s of skel[types[i]]) ok(!skel[types[j]].has(s), 'types "' + types[i] + '" and "' + types[j] + '" share a skeleton');
-  // the Extra Reading for mini swaps: judged by the share of earlier days like it that reached the profit in time
-  const mini = async d => p.evaluate(v => window.coinAtlasDev.readAt(Date.parse(v + 'T00:00:00Z')).mini, d);
-  const m1 = await mini('2023-03-19'), m2 = await mini('2026-06-06'), m3 = await mini('2022-11-19');
-  ok(m1.rec === true && m1.r.hits / m1.r.n >= 0.85 && m1.r.n >= 30, '2023-03-19: the Extra Reading must recommend a mini swap'); ok(m2.rec === false && m2.enough === true, '2026-06-06: the Extra Reading must not recommend a mini swap'); ok(m3.none === true, '2022-11-19: no lean, no mini swap');
-  await p.evaluate(() => document.getElementById('rt-target-toggle').click());
-  for (const [d, re] of [['2023-03-19', /^Extra Reading · Mini SwapsThe chance for a mini swap from BTC into ETH is good today\./], ['2026-06-06', /^Extra Reading · Mini SwapsNo mini swap today: the chance is not good enough\./]]) {
-    await p.evaluate(v => { const e = document.getElementById('rt-asof'); e.value = v; e.dispatchEvent(new Event('change')); }, d); await p.waitForTimeout(350);
-    const tx = await p.evaluate(() => { const e = document.querySelector('#rt-reading .rt-target'); return e ? e.textContent : ''; }), hs = await p.evaluate(() => document.querySelector('.rt-rd-hs').textContent);
-    ok(re.test(tx), d + ': Extra Reading text is "' + tx.slice(0, 80) + '"'); ok(/Days like this one: /.test(tx), d + ': Extra Reading does not say what "days like this one" are'); ok(/Extra Reading: (right|wrong|missed)/.test(hs), d + ': Hindsight has no verdict on the Extra Reading');
-    console.log('\n  EXTRA ' + d + '  ' + tx + '\n  HINDSIGHT  ' + hs.slice(0, 400));
+  // the page around the Reading: the dev Hindsight judges a Reading, the chart shows both lines and their distance, the mini swaps are gone
+  await p.evaluate(() => document.getElementById('dev-toggle').click());
+  for (const d of ['2025-06-22', '2025-04-21']) {
+    await p.evaluate(v => { const e = document.getElementById('rt-asof'); e.value = v; e.dispatchEvent(new Event('change')); }, d); await p.waitForTimeout(400);
+    const hs = await p.evaluate(() => (document.querySelector('.rt-rd-hs') || {}).textContent || '');
+    ok(/The Reading (was right|was wrong|missed)/.test(hs), d + ': Hindsight gives no verdict'); console.log('\n  HINDSIGHT ' + d + '  ' + hs.slice(0, 220));
   }
+  ok(await p.evaluate(() => /[+−]\d+%/.test((document.querySelector('.rt-gap') || {}).textContent || '')), 'the Ratio chart shows no distance between the lines');
+  ok(await p.evaluate(() => /Neutral zone/.test((document.querySelector('.rt-phase-note') || {}).textContent || '')), 'Past Years has no phase note');
+  ok(await p.evaluate(() => !document.getElementById('rt-target-toggle') && !document.querySelector('.rt-target')), 'the mini swaps are still on the page');
   ok(errs.length === 0, 'page errors: ' + errs.join(' | '));
-  console.log('\n' + (fails ? fails + ' CHECK(S) FAILED' : 'ALL CHECKS PASSED') + ' · ' + REAL.length + ' real days, ' + SYN.length + ' invented situations, ' + types.length + ' situation types');
-  if (process.argv[2]) fs.writeFileSync(process.argv[2], JSON.stringify(out));
+  console.log('\n' + (fails ? fails + ' CHECK(S) FAILED' : 'ALL CHECKS PASSED') + ' · ' + REAL.length + ' real days, ' + SYN.length + ' invented situations');
   await b.close(); process.exit(fails ? 1 : 0);
 })();
