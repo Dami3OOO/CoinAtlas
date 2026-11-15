@@ -87,8 +87,12 @@ function check(name, text, o) {
   ok(await p.evaluate(() => /Neutral zone/.test((document.querySelector('.rt-help') || {}).textContent || '') && /Extreme Window/.test(document.querySelector('.rt-help').textContent)), 'the Help of Past Years does not explain the phases and windows');
   ok(await p.evaluate(() => !/Valuation · Live/.test(document.body.textContent)), 'Valuation · Live is still on the page');
   ok(await p.evaluate(() => !document.getElementById('rt-target-toggle') && !document.querySelector('.rt-target')), 'the mini swaps are still on the page');
+  ok(await p.evaluate(() => !!document.querySelector('.rt-rd-body.asking .rt-ask')), 'the Reading does not ask which asset is held');
   await p.evaluate(() => document.querySelector('[data-rt-hold="ETH"]').click()); await p.waitForTimeout(400);
-  ok(await p.evaluate(() => !!document.querySelector('[data-rt-hold="ETH"].active')), 'the answer to the held asset is not kept');
+  ok(await p.evaluate(() => !document.querySelector('.rt-ask') && !!document.querySelector('.rt-chg') && !!document.querySelector('.rt-rd-body.rt-reveal')), 'answering does not reveal the Reading');
+  await p.evaluate(() => document.querySelector('.rt-chg').click()); await p.waitForTimeout(400);
+  ok(await p.evaluate(() => !!document.querySelector('.rt-ask')), 'Change Asset does not ask again');
+  ok(await p.evaluate(() => { const c = document.querySelector('.rt-pyc.upcoming'); c.querySelector('.rt-pyl').click(); return !!c.querySelector('.rt-fng-cell.xwin'); }), 'the coming year does not open with its Extreme Months');
   ok(errs.length === 0, 'page errors: ' + errs.join(' | '));
   console.log('\n' + (fails ? fails + ' CHECK(S) FAILED' : 'ALL CHECKS PASSED') + ' · ' + REAL.length + ' real days, ' + SYN.length + ' invented situations');
   await b.close(); process.exit(fails ? 1 : 0);

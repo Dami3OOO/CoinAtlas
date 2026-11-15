@@ -93,7 +93,8 @@ Zeigt, was nach dem gewählten Tag wirklich passiert ist, und beginnt mit einem 
 - Valuation · Live ist entfernt (das war die erste Version des Readings).
 - Past Years: jede Jahresbox ist schwach getönt, blau für ein BTC-Jahr, orange für ein ETH-Jahr (Jahresdurchschnitt gegen die heutige All Time Line).
   Ganz oben steht immer das kommende Jahr mit Jahrestyp, erwarteter Phase (These 2 BTC / 4 ETH) und seinen Extreme Months.
-  Ein Help-Knopf neben den Filtern erklärt Jahrestypen, Phasen, Neutral-Zone und Extreme Months. Fenster-Monate tragen einen gestrichelten gelben Rahmen.
+  Das kommende Jahr lässt sich aufklappen und zeigt seine Extreme Months, rechts steht "ETH Year · Expected".
+  Ein runder ?-Knopf neben dem Titel "Past Years" erklärt Jahrestypen, Phasen, Neutral-Zone und Extreme Months. Fenster-Monate tragen einen weißen Monatsnamen.
 - Explanation-Knopf: zentriert, ohne Pfeil, beim Überfahren dunkelgrau. Im Text steht "median" statt "middle".
 - Settings breiten sich in Spalten aus.
 - Coin-Liste: Rang-Pfeile (grün/rot), wenn ein Coin seit dem Snapshot von gestern auf- oder abgestiegen ist. In den Settings abschaltbar.
@@ -116,7 +117,8 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 
 ## Held asset, Kauf-Satz, Extreme-Window-These (gebaut 15.11.2026)
 
-- Über dem Reading: "Which asset are you holding right now?" mit Bitcoin / Ethereum. Die Antwort gilt für den UTC-Tag (localStorage "coinatlas-holding").
+- Solange keine Antwort da ist, ist das Reading ausgegraut und verschwommen, in der Mitte steht "Which asset are you holding right now?" mit Bitcoin / Ethereum.
+  Nach der Antwort wird das Reading mit einer Animation sichtbar. Rechts neben dem Titel steht dann "Change Asset". Die Antwort gilt für den UTC-Tag (localStorage "coinatlas-holding").
   - BTC-Halter: "Now is a good time to swap BTC into ETH." bei Stufe A/B, sonst "Today is not a day to swap."
   - ETH-Halter: "Now is a good time to swap ETH into BTC." sobald das Ratio 10 % unter der Year Line liegt, sonst "Today is not a day to swap."
   - Ohne Antwort: die eigene Spur (nur deren Swap-Tage), sonst "Today is not a day to swap." "Hold your ETH" gibt es nicht mehr.

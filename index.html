@@ -444,9 +444,19 @@
   .ago-menu[hidden] { display: none; } .ago-menu button { text-align: left; font: inherit; font-size: 12px; color: var(--fg); background: transparent; border: 0; border-radius: 6px; padding: 6px 8px; cursor: pointer; } .ago-menu button:hover { background: var(--hover); } .ago-menu button.active { color: #facc15; }
   tr.ago-none td { color: #4b5563 !important; } tr.ago-none img { filter: grayscale(1); opacity: .35; } tr.ago-none td:nth-child(3) { font-size: 11px; white-space: normal; }
   .rt-pyc.ph-btc { background-image: linear-gradient(rgba(59,130,246,.07), rgba(59,130,246,.07)); } .rt-pyc.ph-eth { background-image: linear-gradient(rgba(247,147,26,.07), rgba(247,147,26,.07)); }
-  .rt-pyc.upcoming { cursor: default; border-style: dashed; border-left-style: solid; opacity: .9; }
-  .rt-fng-cell.xwin { outline: 1px dashed #facc15aa; outline-offset: -4px; } .rt-hold { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 2px 0 10px; font-size: 12px; color: var(--muted); } .rt-hold span { margin-right: 4px; } .rt-hold button { font: inherit; font-size: 12px; font-weight: 600; color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 14px; padding: 3px 12px; cursor: pointer; } .rt-hold button:hover { background: var(--hover); } .rt-hold button.active[data-rt-hold="BTC"] { background: #f7931a; border-color: #f7931a; color: #111; } .rt-hold button.active[data-rt-hold="ETH"] { background: #3b82f6; border-color: #3b82f6; color: #111; }
-  .rt-xw-key { border: 1px dashed #facc15aa; padding: 0 4px; border-radius: 3px; } .rt-help { margin: 4px 0 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--pop); }
+  .rt-pyc.upcoming { border-style: dashed; border-left-style: solid; }
+  .rt-fng-cell.xwin .rt-fng-mo { color: #fff; } [data-dev-name="CoinAtlas Formula Reading"] { position: relative; }
+  .rt-chg { position: absolute; top: 12px; right: 14px; font: inherit; font-size: 11px; font-weight: 700; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 14px; padding: 3px 10px; cursor: pointer; } .rt-chg:hover { color: var(--fg); background: var(--hover); }
+  .rt-rd-body { position: relative; } .rt-rd-body.asking { min-height: 120px; }
+  .rt-rd-body.asking > .rt-vd, .rt-rd-body.asking > .rt-why { filter: blur(4px) grayscale(1); opacity: .22; pointer-events: none; user-select: none; }
+  .rt-ask { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; font-size: 14px; font-weight: 700; color: var(--fg); animation: rtAskIn .45s ease both; }
+  .rt-ask div { display: flex; gap: 10px; } .rt-ask button { font: inherit; font-size: 13px; font-weight: 700; color: var(--fg); background: var(--pop); border: 1px solid var(--line); border-radius: 18px; padding: 7px 18px; cursor: pointer; transition: transform .15s ease, background .15s ease, color .15s ease; }
+  .rt-ask button:hover { transform: translateY(-1px); } .rt-ask button[data-rt-hold="BTC"]:hover { background: #f7931a; border-color: #f7931a; color: #111; } .rt-ask button[data-rt-hold="ETH"]:hover { background: #3b82f6; border-color: #3b82f6; color: #111; }
+  .rt-rd-body.rt-reveal > .rt-vd, .rt-rd-body.rt-reveal > .rt-why { animation: rtReveal 1.1s cubic-bezier(.2,.7,.2,1) both; } .rt-rd-body.rt-reveal > .rt-why { animation-delay: .25s; }
+  @keyframes rtReveal { 0% { filter: blur(4px) grayscale(1); opacity: .22; transform: translateY(6px); } 60% { filter: blur(0) grayscale(.2); } 100% { filter: none; opacity: 1; transform: none; } }
+  @keyframes rtAskIn { from { opacity: 0; transform: scale(.98); } to { opacity: 1; transform: none; } }
+  .rt-py-title { display: flex; align-items: center; gap: 8px; } .rt-help-btn { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--muted); background: transparent; color: var(--muted); font: inherit; font-size: 11px; font-weight: 700; line-height: 1; cursor: pointer; padding: 0; } .rt-help-btn:hover, .rt-help-btn.active { color: #111; background: var(--fg); border-color: var(--fg); }
+  .rt-help { margin: 4px 0 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--pop); }
   .rt-gap { position: absolute; right: 16px; transform: translateY(-50%); font-size: 11px; font-weight: 700; padding: 1px 6px; border: 1px solid; border-radius: 10px; background: var(--card, #111); pointer-events: none; }
   .rt-lbl { position: absolute; right: 4px; transform: translateY(-110%); font-size: 10px; color: var(--muted); pointer-events: none; }
   .rt-cross { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,.6); opacity: 0; pointer-events: none; }
@@ -2745,6 +2755,7 @@
     { title: "Price Alerts & Watchlists", notes: ["Not started. The daily Snapshots could later power Alerts for Coins entering or leaving the Top 200."], desc: "Allows Users to Set Alerts that are going to immediately announce when a Token Reaches a Certain, customizable price threshold. Watchlists are going to be integrated alongside that. users will be able to create and share their own Lists." },
     { title: "CoinAtlas Sentiment Squares", st: "wip", notes: ["Prototype: 200 equal Squares with Logo, green or red by today's change, opened from the header.", "Open: other timeframes than today, a hover detail per Square, and optional sizing by Market Cap."], desc: "200 Assets, 200 Squares. Every Square is one Asset — green means it's up, red means it's down. No numbers, no noise. One glance and you know exactly where the Market's Head is at." },
     { title: "Google Trends", notes: ["A first attempt was removed again: the search data could not be fetched reliably.", "Next idea: Google offers an official embed for every Trends chart. It would show the chart on the site without an API, but its numbers could not feed the Formula."], desc: "The Goal is To Incorporate Google Trends Into Fear and Greed and into the BTC ETH Ratio tab. Our Workflow is as followed: We determine Extreme Situations, because we go by one rule of thumb: The More Extreme a Situation Is, the more Temporary its going to be. And Google Trends is yet another Confirmation. If we see Extreme Explosions of Certain Searches every time we create the High of the Year, than thats another indicator for us to use. And it goes for the Opposite Case as well. If we see Certain Trends Explode once we create the Low of the Year [which means that afterwards we only saw green], so its bullish, then thats also a Indicator.\nStarts on BTC, Maps out to ETH and eventually the entire Top 200." },
+    { title: "Settings Window Overhaul", notes: ["Planned. A first step is done: the settings open into columns instead of growing downwards."], desc: "A new Settings Window: grouped, searchable and easier to scan, without growing endlessly." },
     { title: "Crypto Investor Cheatsheet", notes: ["Not started. If the owner has published the sheet to the web, it can be embedded as it is instead of copied, so it always stays up to date."], desc: "Bring the Crypto Investor Cheatsheet onto the site as a reference next to the other tools." },
     { title: "X Market Sentiment", notes: ["Not started. Reading posts on X needs the paid X API or a paid social sentiment provider; scraping is against the terms of X and breaks often. The Fear & Greed Index already carries a social component."], desc: "A market sentiment built from what is being posted about Bitcoin and Ethereum on X." },
     { title: "Where can i stake?", desc: "\"Staking\" Tag like the Highest Loss / Highest Gain Tags and Staking Filter, which displays every assets thats stakeable.\nAdd that into the Description of Tokens. The best Staking rewards and the APY shown on the site. It would in the future also show the Sites or wallets to stake on, and then you could collab with said Staking providers. So, the Goal is to let Users know how much they can get in Staking Rewards from the Top 3 Providers.\nThen theres an easy 3-Click Function where users can just Click on the Link to said Staking Provider, then connect their Wallet, and click Start Stake. Its as easy as that, if implemented Correctly." }
@@ -4538,7 +4549,7 @@
         (f ? '<span class="rt-fng-fm" style="color:' + rtFCol(f.total) + '">' + rtPts(f.total) + ' / 8' + (f.unc ? '<i class="rt-unc-m">' + new Array(f.unc + 1).join("?") + '</i>' : '') + (f.cert ? '<i class="rt-cert-m">!</i>' : '') + '</span>' : '') + '</div>';
       if (on) open = { mv: mv, f: f, m: i, avg: avg };
     }
-    h += '</div><div class="fg-sub rt-fng-note">Top: Fear &amp; Greed monthly average · Bottom: CoinAtlas Formula for the month, out of 8 Points · <i class="rt-unc-m">?</i> Uncertainty Mark · <i class="rt-cert-m">!</i> Certainty Mark · <span class="rt-xw-key">dashed</span> Extreme Window of the ' + cycleStage(y) + ' · Click a month for its charts</div>';
+    h += '</div><div class="fg-sub rt-fng-note">Top: Fear &amp; Greed monthly average · Bottom: CoinAtlas Formula for the month, out of 8 Points · <i class="rt-unc-m">?</i> Uncertainty Mark · <i class="rt-cert-m">!</i> Certainty Mark · <b style="color:#fff">White</b> month: Extreme Window of the ' + cycleStage(y) + ' · Click a month for its charts</div>';
     if (open) {
       var ov = open.mv, of = open.f, fc = fgCol(open.avg), ay = Math.abs(of.py), aa = Math.abs(of.pa);
       var fk = "365"; /* both lines are drawn; the zones follow the Year Line */
@@ -4568,20 +4579,20 @@
         "Live, the phase is read from the two Fair Value Lines: when the Year Line stands above the All Time Line, BTC has been the stronger side for a year. Today it stands " + (lead >= 0 ? "+" : "−") + Math.abs(lead).toFixed(0) + "% from it."]) +
       sec("Neutral Zone of the Lines", ["When the Year Line comes closer than " + RT_NZ + "% to the All Time Line, it is in their Neutral zone. The Year Line crossed the All Time Line " + T.cross.length + (T.cross.length === 1 ? " time: " : " times: ") + cross.join("; ") + ". Every crossing came after the Year Line had entered the Neutral zone, so the Reading names that moment as the start of a phase change."]) +
       sec("Extreme Months", ["An Extreme Window is a two-month span in which every earlier year of the same type had one of its two Formula extremes, the most overvalued month on either side. Bridge Years: January and February. Bear Years: June and July, and September and October. Bull Years: March and April.",
-        "In the months of a year, window months carry a dashed yellow frame. The month with the strongest BTC Overvaluation has a blue border, the strongest ETH Overvaluation an orange one.",
+        "In the months of a year, the names of window months are written in white. The month with the strongest BTC Overvaluation has a blue border, the strongest ETH Overvaluation an orange one.",
         "A window says when an extreme came before, not in which direction, and not whether it is already behind us. The Reading uses it as context and never swaps on it alone."]) + '</div>';
   }
-  function rtUpcomingCard() { /* the year after the current one, shown ahead of time with its type, its expected phase and its Extreme Months */
-    var y = new Date(RT.data.t[RT.data.t.length - 1]).getUTCFullYear() + 1, P = rtPhaseGroups(), W = RT_WIN[cycleStage(y)] || [];
+  function rtUpcomingCard() { /* the year after the current one, shown ahead of time with its type and its expected phase; it opens like any year to show its Extreme Months */
+    var y = new Date(RT.data.t[RT.data.t.length - 1]).getUTCFullYear() + 1, P = rtPhaseGroups(), isExp = RT.expandedYear === y;
     if (RT.hist !== "all" && rtCls(y) !== RT.hist) return "";
-    return '<div class="rt-pyc ' + rtCls(y) + ' upcoming' + (P.next ? ' ph-' + P.next.toLowerCase() : '') + '"><div class="rt-pyl"><div class="rt-yhead">' + rtYr(y) + '</div><div class="rt-yvals">' +
-      '<div><span>Expected Phase</span><b style="color:' + (P.next === "BTC" ? ETH_C : BTC_C) + '">' + P.next + ' Year</b></div><div><span>Extreme Months</span><b>' + W.map(function (w) { return RT_MO[w[0]] + "–" + RT_MO[w[1]]; }).join(", ") + '</b></div></div></div>' +
-      '<div class="rt-pyr"><span class="rt-avg" style="color:var(--muted)">–</span><span class="fg-sub">Upcoming · starts 1 Jan ' + y + '</span></div></div>';
+    return '<div class="rt-pyc ' + rtCls(y) + ' upcoming' + (P.next ? ' ph-' + P.next.toLowerCase() : '') + (isExp ? ' expanded' : '') + '" data-rt-year="' + y + '"><div class="rt-pyl"><div class="rt-yhead">' + rtYr(y) + '</div><div class="fg-sub">Upcoming · starts 1 Jan ' + y + '</div></div>' +
+      '<div class="rt-pyr"><span class="rt-avg" style="color:' + (P.next === "BTC" ? ETH_C : BTC_C) + '">' + P.next + ' Year</span><span class="fg-sub">Expected</span></div>' + (isExp ? '<div class="rt-yd-panel">' + rtYearPanel(y) + '</div>' : '') + '</div>';
   }
+
 
   function rtHistory() {
     var d = RT.data, cy = new Date().getFullYear(), y0 = new Date(d.t[0]).getUTCFullYear(), cards = "", y, lv = rtLive();
-    var filt = '<div class="fg-timeframes">' + [["bull", "Bull Years"], ["bear", "Bear Years"], ["bridge", "Bridge Years"], ["all", "All"]].map(function (r) { return '<button type="button"' + (RT.hist === r[0] ? ' class="active"' : '') + ' data-rt-hist="' + r[0] + '">' + r[1] + '</button>'; }).join("") + '<button type="button"' + (RT.help ? ' class="active"' : '') + ' data-rt-help="1">Help</button></div>';
+    var filt = '<div class="fg-timeframes">' + [["bull", "Bull Years"], ["bear", "Bear Years"], ["bridge", "Bridge Years"], ["all", "All"]].map(function (r) { return '<button type="button"' + (RT.hist === r[0] ? ' class="active"' : '') + ' data-rt-hist="' + r[0] + '">' + r[1] + '</button>'; }).join("") + '</div>';
     var cc = function (x) { return rtRCol(x / RT.med - 1); };
     cards += rtUpcomingCard();
     for (y = cy; y >= y0; y--) {
@@ -4600,7 +4611,7 @@
         (isExp ? '<div class="rt-yd-panel">' + rtYearPanel(y) + '</div>' : '') +
         '</div>';
     }
-    var h = '<div class="rt-hist fg-annual-section dev-target" data-dev-name="Past Years History" data-dev-color="#c084fc"><div class="fg-annual-head"><div class="rt-val-title">Past Years</div>' + filt + '</div>' + (RT.help ? rtHelpHtml() : '');
+    var h = '<div class="rt-hist fg-annual-section dev-target" data-dev-name="Past Years History" data-dev-color="#c084fc"><div class="fg-annual-head"><div class="rt-val-title rt-py-title">Past Years<button type="button" class="rt-help-btn' + (RT.help ? ' active' : '') + '" data-rt-help="1" title="What the tints, year types, phases and Extreme Months mean">?</button></div>' + filt + '</div>' + (RT.help ? rtHelpHtml() : '');
     if (!cards) return h + '<div class="rt-empty">No years of this type with data yet</div></div>';
     return h + '<div class="rt-ylist">' + cards + '</div><div class="fg-sub" style="text-align:center;margin-top:8px">Average of every daily conversion rate in the year. The current year is still in progress, so its values can change. The tint shows the phase of a year: blue a BTC year, orange an ETH year.</div></div>';
   }
@@ -4869,9 +4880,11 @@
   }
   function rtReadingHtml(f) {
     var s = rtSituation(f), c = rtCompose(s);
-    return '<div class="rt-hold"><span>Which asset are you holding right now?</span><button type="button" data-rt-hold="BTC"' + (s.hold === "BTC" ? ' class="active"' : '') + '>Bitcoin</button><button type="button" data-rt-hold="ETH"' + (s.hold === "ETH" ? ' class="active"' : '') + '>Ethereum</button></div>' +
+    var rev = RT.reveal; RT.reveal = false;
+    return (s.hold ? '<button type="button" class="rt-chg" data-rt-chg="1" title="You hold ' + ({ BTC: "Bitcoin", ETH: "Ethereum" })[s.hold] + ' today">Change Asset</button>' : '') +
+      '<div class="rt-rd-body' + (s.hold ? (rev ? ' rt-reveal' : '') : ' asking') + '">' + (s.hold ? '' : '<div class="rt-ask"><span>Which asset are you holding right now?</span><div><button type="button" data-rt-hold="BTC">Bitcoin</button><button type="button" data-rt-hold="ETH">Ethereum</button></div></div>') +
       '<div class="rt-vd" style="color:' + rtReadingColor(s, c.call) + '">' + c.text.join(" ") + '</div>' +
-      '<details class="rt-why"' + (RT.whyOpen ? ' open' : '') + '><summary>Explanation</summary>' + rtExplain(f, s, c) + '</details>';
+      '<details class="rt-why"' + (RT.whyOpen ? ' open' : '') + '><summary>Explanation</summary>' + rtExplain(f, s, c) + '</details></div>';
   }
   function rtHindsight(w, s) { /* dev only: what really happened after the chosen day. Computed from the full data, never shown to the Reading */
     var d = RT.data, A = rtAsof(), i = w.data.t.length - 1, r0 = d.r[i], n = d.t.length, rows = [], v = rtYearView(w.cy), hi = v.i0, lo = v.i0, q, V = [];
@@ -5075,7 +5088,8 @@
     }
     else if (D.rtHist) RT.hist = D.rtHist;
     else if (D.rtHelp) RT.help = !RT.help;
-    else if (D.rtHold) rtSetHold(rtHold() === D.rtHold ? "" : D.rtHold);
+    else if (D.rtHold) { rtSetHold(D.rtHold); RT.reveal = true; }
+    else if (D.rtChg) rtSetHold("");
     else if (D.rtCmp !== undefined) RT.cmp = D.rtCmp === "0" ? false : !RT.cmp;
     else if (D.rtCmpyear) { RT.cmpYear = +D.rtCmpyear; RT.cmp = true; }
     else return;
