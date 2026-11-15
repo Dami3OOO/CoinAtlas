@@ -114,12 +114,19 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Tranchen (je ein Drittel bei verschiedenen Linien-Abständen): ×1,91 bis ×3,46, alle Runden weiter im Plus, aber weniger Ertrag.
 - Stufe A schon ab 30 % Abstand: ×2,35, eine Runde −14 %.
 
-## Beschlossen, noch nicht gebaut (Logik, nur nach Absprache)
+## Held asset, Kauf-Satz, Extreme-Window-These (gebaut 15.11.2026)
 
-- Knopf "Which asset are you holding right now?" (Bitcoin / Ethereum), einmal pro Tag. BTC-Halter: Swap bei Stufe A/B. ETH-Halter: Swap,
-  sobald das Ratio 10 % unter der Year Line liegt. Ohne Antwort: nur die Tage der eigenen Spur.
-- "Hold your ETH" fällt weg. Sonst heißt es "Today is not a day to swap."
-- Kauf-Empfehlung nur in Fear und Extreme Fear: "It's currently a good time to buy Bitcoin/Ethereum", das Warum im Explanation-Teil.
+- Über dem Reading: "Which asset are you holding right now?" mit Bitcoin / Ethereum. Die Antwort gilt für den UTC-Tag (localStorage "coinatlas-holding").
+  - BTC-Halter: "Now is a good time to swap BTC into ETH." bei Stufe A/B, sonst "Today is not a day to swap."
+  - ETH-Halter: "Now is a good time to swap ETH into BTC." sobald das Ratio 10 % unter der Year Line liegt, sonst "Today is not a day to swap."
+  - Ohne Antwort: die eigene Spur (nur deren Swap-Tage), sonst "Today is not a day to swap." "Hold your ETH" gibt es nicht mehr.
+- Kauf nur in Fear und Extreme Fear als zweiter Satz: "It's currently a good time to buy Bitcoin/Ethereum." (die günstigere Seite),
+  ohne Lean "…to add to what you already hold." In Greed: "keep your USDC and wait for Fear." Sonst nichts zum Kauf.
+- Strong-Lean (Score ab 3) im Extreme Window ohne Swap, auf der Seite des Halters: "Swapping X into Y would be a good idea right now
+  if you believe in the Extreme Window thesis." Explanation: "What is an Extreme Window?" und "Why could a swap inside an Extreme Window be a good idea?"
+  mit den gemessenen Zahlen (innen etwa 7 von 10 im Plus, außen etwa 6 von 10, Bear-Fenster alle, Bull-Fenster keiner).
+- Hindsight nach einem Kauf: der höchste Wert danach ("Afterwards the highest value of ETH was $X on <Datum>, a +Y% gain") statt des heutigen Werts,
+  verglichen mit dem höchsten Wert der anderen Seite.
 
 ## Offene Punkte
 

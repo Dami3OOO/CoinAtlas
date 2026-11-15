@@ -445,7 +445,8 @@
   tr.ago-none td { color: #4b5563 !important; } tr.ago-none img { filter: grayscale(1); opacity: .35; } tr.ago-none td:nth-child(3) { font-size: 11px; white-space: normal; }
   .rt-pyc.ph-btc { background-image: linear-gradient(rgba(59,130,246,.07), rgba(59,130,246,.07)); } .rt-pyc.ph-eth { background-image: linear-gradient(rgba(247,147,26,.07), rgba(247,147,26,.07)); }
   .rt-pyc.upcoming { cursor: default; border-style: dashed; border-left-style: solid; opacity: .9; }
-  .rt-fng-cell.xwin { outline: 1px dashed #facc15aa; outline-offset: -4px; } .rt-xw-key { border: 1px dashed #facc15aa; padding: 0 4px; border-radius: 3px; } .rt-help { margin: 4px 0 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--pop); }
+  .rt-fng-cell.xwin { outline: 1px dashed #facc15aa; outline-offset: -4px; } .rt-hold { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 2px 0 10px; font-size: 12px; color: var(--muted); } .rt-hold span { margin-right: 4px; } .rt-hold button { font: inherit; font-size: 12px; font-weight: 600; color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 14px; padding: 3px 12px; cursor: pointer; } .rt-hold button:hover { background: var(--hover); } .rt-hold button.active[data-rt-hold="BTC"] { background: #f7931a; border-color: #f7931a; color: #111; } .rt-hold button.active[data-rt-hold="ETH"] { background: #3b82f6; border-color: #3b82f6; color: #111; }
+  .rt-xw-key { border: 1px dashed #facc15aa; padding: 0 4px; border-radius: 3px; } .rt-help { margin: 4px 0 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--pop); }
   .rt-gap { position: absolute; right: 16px; transform: translateY(-50%); font-size: 11px; font-weight: 700; padding: 1px 6px; border: 1px solid; border-radius: 10px; background: var(--card, #111); pointer-events: none; }
   .rt-lbl { position: absolute; right: 4px; transform: translateY(-110%); font-size: 10px; color: var(--muted); pointer-events: none; }
   .rt-cross { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,.6); opacity: 0; pointer-events: none; }
@@ -4731,6 +4732,12 @@
     }
     return out;
   }
+  var RT_HOLD_KEY = "coinatlas-holding";
+  function rtHold() { /* the asset the visitor said they hold, valid for the UTC day it was given */
+    if (RT.holdOverride !== null && RT.holdOverride !== undefined) return RT.holdOverride;
+    try { var x = JSON.parse(localStorage.getItem(RT_HOLD_KEY) || "null"); return x && x.d === new Date().toISOString().slice(0, 10) ? x.a : ""; } catch (e) { return ""; }
+  }
+  function rtSetHold(a) { try { localStorage.setItem(RT_HOLD_KEY, JSON.stringify({ d: new Date().toISOString().slice(0, 10), a: a })); } catch (e) {} }
   function rtSituation(f) { /* everything the text needs, and nothing indicator-specific */
     var d = RT.data, i = d.t.length - 1, lv = rtLive(), r = lv ? lv.r : d.r[i], S = f.total, dir = S > 0 ? 1 : S < 0 ? -1 : 0, Ab = Math.abs(S);
     var fgA = rtFgAll(), fgL = fgA && fgA.length ? fgA[fgA.length - 1] : null, v = fgL && d.t[i] / 1000 - fgL.timestamp < 4 * 86400 ? fgL.value : null;
@@ -4746,58 +4753,62 @@
     s.stage = rtStage(S, s.lead, v !== null && v <= RT_A.fg);
     s.exitAt = f.fy * (1 - RT_BACK / 100);
     s.open = T.open ? { t: d.t[T.open.j], r: T.open.r, stage: T.open.stage } : null; s.rounds = T.rounds.map(function (x) { return { t0: d.t[x.a], t1: d.t[x.z], r0: x.r0, r1: x.r1, stage: x.stage, g: x.g }; });
-    s.call = T.eth ? (r <= s.exitAt ? "back" : "hold") : s.stage ? "swap" : /Fear/.test(s.zone) ? "buy" : "none";
-    if (s.call === "back") s.roundG = (s.open.r / r * 0.994 - 1) * 100;
-    s.buySide = s.call === "swap" || s.call === "hold" ? "ETH" : s.call === "back" ? "BTC" : dir && !s.contradicted ? s.other : "";
+    s.hold = rtHold(); s.upAt = f.fy * (1 + RT_BACK / 100); /* the held asset, asked once a day; "" when not answered */
+    var swapIn = !!s.stage, swapOut = r <= s.exitAt;
+    s.call = s.hold === "BTC" ? (swapIn ? "swap" : "none") : s.hold === "ETH" ? (swapOut ? "back" : "none") : T.eth ? (swapOut ? "back" : "none") : swapIn ? "swap" : "none";
+    if (s.call === "back" && s.open && s.hold !== "ETH") s.roundG = (s.open.r / r * 0.994 - 1) * 100;
+    s.buySide = /Fear/.test(s.zone) ? (s.call === "swap" ? "ETH" : s.call === "back" ? "BTC" : dir && !s.contradicted ? s.other : "") : "";
+    s.buy = /Fear/.test(s.zone);
     s.fellMore = s.buySide && f.has90 ? (s.buySide === "ETH" ? f.ge < f.gb : f.gb < f.ge) && (s.buySide === "ETH" ? f.ge : f.gb) < 0 : false;
     s.gb = f.gb; s.ge = f.ge; s.has90 = f.has90;
     var cy = rtCY(), mo = new Date(d.t[i]).getUTCMonth(); s.yt = cycleStage(cy); s.cy = cy;
     s.win = null; rtWindowsOf(s.yt).forEach(function (w) { if (w[0] === mo || w[1] === mo) s.win = w; });
-    s.watch = !!s.win && Ab >= 3 && s.call !== "swap" && s.call !== "back" && !s.contradicted;
-    s.fearRec = /Fear/.test(s.zone) ? rtFearRecord(s.zone === "Extreme Fear") : null;
+    s.watch = !!s.win && Ab >= 3 && s.call === "none" && !s.contradicted && (!s.hold || s.hold === s.side); /* a Strong reading inside the window, on the side the holder is in */
+    if (s.watch) s.call = "window";
+    s.fearRec = s.buy ? rtFearRecord(s.zone === "Extreme Fear") : null;
     return s;
   }
-  function rtCompose(s) { /* the Reading: the recommendation first, then the facts of the day that matter most. Every fact has a key, and the Explanation answers each key */
-    var X = s.side, Y = s.other, F = [], lead, call = s.call, add = function (w, k, t) { F.push({ w: w, k: k, t: t }); };
+  function rtCompose(s) { /* the Reading: the swap first, the purchase second, then the facts of the day that matter most. Every fact has a key, and the Explanation answers each key */
+    var X = s.side, Y = s.other, F = [], lead, call = s.call, add = function (w, k, t) { F.push({ w: w, k: k, t: t }); }, NM = { BTC: "Bitcoin", ETH: "Ethereum" };
     var ov = s.tier === "Extreme" ? "Extremely" : s.tier === "Strong" ? "clearly" : "mildly";
     if (call === "swap") lead = "Now is a good time to swap BTC into ETH.";
     else if (call === "back") lead = "Now is a good time to swap ETH into BTC.";
-    else if (call === "hold") lead = "Hold your ETH: the swap from " + rtDate(s.open.t) + " is still running.";
-    else if (call === "buy") lead = s.buySide ? "Now is a good time to buy " + s.buySide + " with USDC." : "Now is a good time to add to what you already hold with USDC.";
-    else lead = "Nothing to do today.";
+    else if (call === "window") lead = "Swapping " + X + " into " + Y + " would be a good idea right now if you believe in the Extreme Window thesis.";
+    else lead = "Today is not a day to swap.";
+    var T = [lead];
+    if (s.buy) T.push(s.buySide ? "It's currently a good time to buy " + NM[s.buySide] + "." : "It's currently a good time to add to what you already hold.");
     /* the lean */
     if (s.contradicted) add(80, "contra", "The data contradicts itself, so there is no clear lean.");
-    else if (s.dir) add(call === "none" ? 95 : 70, "lean", X + " is " + ov + " overvalued against " + Y + ".");
+    else if (s.dir) { if (call !== "window") add(call === "none" ? 95 : 70, "lean", X + " is " + ov + " overvalued against " + Y + "."); }
     else add(60, "lean", "BTC and ETH are fairly valued against each other.");
-    /* why this recommendation */
+    /* why this swap */
     if (call === "swap") add(100, "stage" + s.stage, s.stage === "A" ? "The run behind this BTC Overvaluation is old, and sentiment is in Fear." : "BTC is turning after a long ETH phase.");
-    if (call === "back") add(100, "back", "The Year Line now rates ETH as the overvalued side, which completes the swap from " + rtDate(s.open.t) + ".");
-    if (call === "hold") add(100, "hold", "The swap is complete once the Year Line rates ETH as the overvalued side.");
-    if ((call === "none" || call === "buy") && s.dir > 0 && Math.abs(s.score) >= 3 && !s.contradicted) add(85, "noswap", s.lead > 0 && s.lead < RT_A.lead ? "There is no swap yet: the BTC run behind it is not old enough." : s.lead >= RT_A.lead ? "There is no swap yet: the run is old, but sentiment is not in Fear." : "There is no swap yet: BTC has not turned far enough after the ETH phase.");
+    if (call === "back") add(100, "back", "The Year Line now rates ETH as the overvalued side" + (s.open && s.hold !== "ETH" ? ", which completes the swap from " + rtDate(s.open.t) + "." : "."));
+    if (call === "window") add(100, "window", "This is the " + s.yt + " Extreme Window, and " + X + " is " + ov + " overvalued inside it.");
+    if (call === "none" && s.dir > 0 && s.hold !== "ETH" && Math.abs(s.score) >= 3 && !s.contradicted) add(85, "noswap", s.lead > 0 && s.lead < RT_A.lead ? "There is no swap yet: the BTC run behind it is not old enough." : s.lead >= RT_A.lead ? "There is no swap yet: the run is old, but sentiment is not in Fear." : "There is no swap yet: BTC has not turned far enough after the ETH phase.");
+    /* the purchase */
+    if (s.buy && s.buySide) add(87, "buy", s.fellMore ? NM[s.buySide] + " is the cheaper side, and it also fell harder over the last 90 days." : NM[s.buySide] + " is the cheaper side of the two, and sentiment is in " + s.zone + ".");
+    else if (s.buy) add(87, "buy", "Sentiment is in " + s.zone + ", and neither side is overvalued.");
+    else if (/Greed/.test(s.zone)) add(call === "none" ? 92 : 72, "greed", "Sentiment is in " + s.zone + ": keep your USDC and wait for Fear.");
     /* the phase */
     if (s.nz) add(90, "nz", "The Year Line has entered the Neutral zone of the All Time Line, which so far has always led to a phase change.");
     else add(call === "none" ? 75 : 50, "phase", "We are in " + (s.phase === "BTC" ? "a" : "an") + " " + s.phase + " phase: the Year Line stands " + (s.phase === "BTC" ? "above" : "below") + " the All Time Line.");
-    /* the Extreme Window of this year type */
-    if (s.win) add(s.watch ? 88 : 55, s.watch ? "watch" : "window", s.watch ? "This is the " + s.yt + " Extreme Window, and a Strong reading inside it is worth watching closely." : "This is the " + s.yt + " Extreme Window, a time of year in which every earlier " + s.yt + " saw an extreme of the Formula.");
-    /* buying with USDC */
-    if (/Fear/.test(s.zone)) {
-      if (call === "swap" || call === "back" || call === "hold") add(87, "buy", "Sentiment is in " + s.zone + ", which also makes this a strong time to buy " + s.buySide + " with USDC.");
-      else if (call === "buy") add(87, "fear", s.buySide ? (s.fellMore ? s.buySide + " is the cheaper side, and it also fell harder over the last 90 days." : s.buySide + " is the cheaper side of the two, and sentiment is in " + s.zone + ".") : "Sentiment is in " + s.zone + ", and neither side is overvalued.");
-    } else if (/Greed/.test(s.zone)) add(call === "none" ? 92 : 72, "greed", "Sentiment is in " + s.zone + ": keep your USDC and wait for Fear.");
+    /* the Extreme Window as context */
+    if (s.win && call !== "window") add(55, "wctx", "This is the " + s.yt + " Extreme Window, a time of year in which every earlier " + s.yt + " saw an extreme of the Formula.");
     F.sort(function (a, b) { return b.w - a.w; });
-    F = F.slice(0, 3);
-    return { text: [lead].concat(F.map(function (x) { return x.t; })), call: call, keys: F.map(function (x) { return x.k; }) };
+    F = F.slice(0, 4 - T.length);
+    return { text: T.concat(F.map(function (x) { return x.t; })), call: call, buy: s.buy, keys: F.map(function (x) { return x.k; }) };
   }
-  window.coinAtlasDev = { compose: rtCompose, readAt: function (t) { /* the Reading for any day, with only the data of that day */
-    var keep = [RT.asOf, devActive], out; RT.asOf = t; devActive = true;
-    try { out = rtIn(rtWorld(), function () { var f = rtFormula(RT.data.t.length - 1, true), s = rtSituation(f), c = rtCompose(s); return { day: RT.data.t[RT.data.t.length - 1], call: c.call, keys: c.keys, stage: s.stage, phase: s.phase, lead: s.lead, nz: s.nz, win: s.win, watch: s.watch, buy: s.buySide, side: s.side, score: s.score, marks: s.marks, r: s.r, fg: s.fgV, zone: s.zone, text: c.text.join(" "), expl: rtExplain(f, s, c) }; }); }
-    finally { RT.asOf = keep[0]; devActive = keep[1]; }
+  window.coinAtlasDev = { compose: rtCompose, readAt: function (t, hold) { /* the Reading for any day, with only the data of that day. hold: "BTC", "ETH" or "" for the held asset */
+    var keep = [RT.asOf, devActive, RT.holdOverride], out; RT.asOf = t; devActive = true; RT.holdOverride = hold === undefined ? null : hold;
+    try { out = rtIn(rtWorld(), function () { var f = rtFormula(RT.data.t.length - 1, true), s = rtSituation(f), c = rtCompose(s); return { day: RT.data.t[RT.data.t.length - 1], call: c.call, keys: c.keys, stage: s.stage, phase: s.phase, lead: s.lead, nz: s.nz, win: s.win, watch: s.watch, buy: s.buy, buySide: s.buySide, hold: s.hold, side: s.side, score: s.score, marks: s.marks, r: s.r, fg: s.fgV, zone: s.zone, text: c.text.join(" "), expl: rtExplain(f, s, c) }; }); }
+    finally { RT.asOf = keep[0]; devActive = keep[1]; RT.holdOverride = keep[2]; }
     return out; } }; /* lets tests/reading-test.js check the text for any situation */
   function rtReadingColor(s, call) { /* the colour carries the recommendation: blue into ETH, green into BTC, the cheaper side for a purchase, grey without one */
     if (call === "swap") return ETH_D;
     if (call === "back") return "#4cc27a";
-    if (call === "hold") return rtMix(ETH_C, GREY_C, 0.35);
-    if (call === "buy") return s.buySide === "ETH" ? ETH_C : s.buySide === "BTC" ? BTC_C : "#4cc27a";
+    if (call === "window") return rtMix(s.dir > 0 ? ETH_D : "#ea580c", GREY_C, 0.25);
+    if (s.buy) return s.buySide === "ETH" ? ETH_C : s.buySide === "BTC" ? BTC_C : "#4cc27a";
     return s.contradicted ? "#eab308" : GREY_C;
   }
   function rtExplain(f, s, c) { /* the Explanation: one question for every statement the Reading makes today, answered with this day's numbers */
@@ -4812,10 +4823,14 @@
     if (c.call === "swap") add("Why swap BTC into ETH today?", (s.stage === "A" ?
       "This is Stage A, the end of an old BTC run. Three things are true today: the Formula scores " + rtPts(s.score) + " of 8 (" + RT_A.score + " or more needed), the Year Line stands " + pct(s.lead) + " above the All Time Line (" + RT_A.lead + "% or more means the run is old), and Fear &amp; Greed stands at " + s.fgV + " (" + RT_A.fg + " or lower needed). A BTC Overvaluation that is still young has mostly kept growing; an old one during Fear has turned." :
       "This is Stage B, BTC turning after a long ETH phase. The Formula scores " + rtPts(s.score) + " of 8 (" + RT_B.score + " or more needed) while the Year Line still stands " + pct(s.lead) + " below the All Time Line (" + RT_B.lead + "% or more below needed). After a long ETH run the Ratio has come back towards BTC.") + " " + record());
-    if (c.call === "back") add("Why swap ETH into BTC now?", "The swap into ETH on " + rtDate(s.open.t) + " was made at a Ratio of " + fx(s.open.r) + ". Today the Ratio is " + fx(s.r) + ", " + pct((s.r / s.fy - 1) * 100) + " from the Year Line [" + fx(s.fy) + "], so the Year Line rates ETH as the overvalued side. Swapping now leaves " + pct(s.roundG) + " more BTC than before the first swap. The All Time Line moves slowly and can still lean BTC on a day like this; the Reading follows the Year Line here because it turns first. " + record());
-    if (c.call === "hold") add("When is the swap complete?", "The swap into ETH on " + rtDate(s.open.t) + " was made at a Ratio of " + fx(s.open.r) + ". It is complete once the Ratio falls to " + fx(s.exitAt) + " or lower, 10% below today's Year Line [" + fx(s.fy) + "]. Today the Ratio is " + fx(s.r) + ", which would be " + pct((s.open.r / s.r * 0.994 - 1) * 100) + " in BTC if the swap ended now. " + record());
+    if (c.call === "back") add("Why swap ETH into BTC now?", "Today the Ratio is " + fx(s.r) + ", " + pct((s.r / s.fy - 1) * 100) + " from the Year Line [" + fx(s.fy) + "], so the Year Line rates ETH as the overvalued side. A swap into ETH completes here, 10% or more below the Year Line." + (s.roundG !== undefined ? " The Reading's own swap into ETH on " + rtDate(s.open.t) + " was made at a Ratio of " + fx(s.open.r) + "; swapping now leaves " + pct(s.roundG) + " more BTC than before it." : "") + " The All Time Line moves slowly and can still lean BTC on a day like this; the Reading follows the Year Line here because it turns first. " + record());
+    if (c.call === "window") {
+      add("What is an Extreme Window?", "An Extreme Window is a two-month span in which every earlier year of the same type saw one of its two Formula extremes, the most overvalued month on either side. " + s.cy + " is a " + s.yt + ", and its " + (rtWindowsOf(s.yt).length > 1 ? "windows are " + rtWindowsOf(s.yt).map(rtWinLabel).join(", and ") : "window is " + rtWinLabel(s.win)) + ". " + (function (E) { return E.length ? "Earlier " + s.yt + "s: " + E.map(function (e) { return e.y + " high " + RT_MO[e.hi] + " " + rtPts(e.H) + ", low " + RT_MO[e.lo] + " " + rtPts(e.L); }).join("; ") + "." : ""; })(rtYearExtremes(s.yt, s.cy)));
+      add("Why could a swap inside an Extreme Window be a good idea?", "If extremes keep coming at the same time of year, a Strong reading inside the window has a better chance of being close to the turn. Measured since 2019 on Strong readings the Reading did not swap on, swapping on that day and swapping again once the other side was overvalued ended ahead on about 7 of 10 days inside the windows and about 6 of 10 outside. It differs by year type: in the Bear Year windows every such swap ended ahead, in the Bull Year windows none did (2021 and 2025). A window says when an extreme came before, not in which direction and not whether it is already behind us, which is why the Reading names it as a thesis and not as a recommendation of its own.");
+    }
+    if (c.call === "none") add("Why is today not a day to swap?", s.hold === "ETH" ? "You hold ETH. A swap into BTC comes once the Ratio is 10% or more below the Year Line, at " + fx(s.exitAt) + " or lower today. The Ratio stands at " + fx(s.r) + "." : (s.hold === "BTC" ? "You hold BTC. " : "") + "A swap of BTC into ETH needs Stage A or Stage B" + (s.dir > 0 && Math.abs(s.score) >= 3 ? "" : ", and today BTC is not clearly overvalued") + "." + (s.hold ? "" : " Holding ETH, the swap into BTC comes once the Ratio is 10% or more below the Year Line, at " + fx(s.exitAt) + " or lower; today it stands at " + fx(s.r) + "."));
     if (has("noswap")) add("Why no swap although BTC is overvalued?", "A swap needs Stage A or Stage B. Stage A: " + RT_A.score + " points or more, the Year Line " + RT_A.lead + "% or more above the All Time Line, and Fear &amp; Greed at " + RT_A.fg + " or lower. Today: " + rtPts(s.score) + ", " + pct(s.lead) + ", and " + (s.fgV === null ? "no Fear &amp; Greed value" : s.fgV) + ". Stage B: " + RT_B.score + " points or more while the Year Line stands " + RT_B.lead + "% or more below the All Time Line. Swaps made earlier in a BTC run, while it was still young, mostly ended behind, because the Overvaluation kept growing for months.");
-    if (c.call === "buy") add(s.buySide ? "Why buy " + s.buySide + "?" : "Why buy now?", (s.buySide ? s.buySide + " is the side that is not overvalued today" + (s.fellMore ? ", and over the last 90 days it fell " + pct(s.buySide === "ETH" ? s.ge : s.gb) + " against " + pct(s.buySide === "ETH" ? s.gb : s.ge) + " for " + (s.buySide === "ETH" ? "BTC" : "ETH") : "") + ". Measured on the history, buying the cheaper side during Fear did better than the other side a year later on about 7 of 10 days, and on about 8 of 10 when it had also fallen harder. " : "Neither side is overvalued, so there is no better side to pick. ") +
+    if (c.buy) add(s.buySide ? "Why buy " + ({ BTC: "Bitcoin", ETH: "Ethereum" })[s.buySide] + " now?" : "Why buy now?", (s.buySide ? s.buySide + " is the side that is not overvalued today" + (s.fellMore ? ", and over the last 90 days it fell " + pct(s.buySide === "ETH" ? s.ge : s.gb) + " against " + pct(s.buySide === "ETH" ? s.gb : s.ge) + " for " + (s.buySide === "ETH" ? "BTC" : "ETH") : "") + ". Measured on the history, buying the cheaper side during Fear did better than the other side a year later on about 7 of 10 days, and on about 8 of 10 when it had also fallen harder. " : "Neither side is overvalued, so there is no better side to pick. ") +
       (s.fearRec && s.fearRec.n ? "Buying BTC on an earlier " + s.zone + " day and holding until the Index was back in Greed: " + pl(s.fearRec.n, "day") + " in " + pl(s.fearRec.groups, "separate period") + ", " + Math.round(s.fearRec.profit / s.fearRec.n * 100) + "% ended in profit, with a median result of " + pct(s.fearRec.med) + " and a worst of " + pct(s.fearRec.worst) + "." : ""));
 
     /* the lean */
@@ -4830,12 +4845,12 @@
     t += " Phases so far, by the yearly average of the Ratio: 2017 and 2018 ETH, 2019 and 2020 BTC, 2021 to 2024 ETH, 2025 and 2026 BTC. That is two BTC years after four ETH years, seen once in full; whether the rhythm repeats is open.";
     add(s.nz ? "What does it mean that the Year Line entered the Neutral zone?" : "What is " + (s.phase === "BTC" ? "a" : "an") + " " + s.phase + " phase?", (s.nz ? "The Neutral zone of the lines is a distance of less than " + RT_NZ + "% between them. The Year Line stayed in it for longer " + pl(s.nzCount, "time") + " before, and every time it ended on the other side: in 2019 towards BTC, in 2021 towards ETH, in 2023 to 2024 towards BTC. " : "") + t);
 
-    /* the Extreme Window */
-    if (s.win) {
+    /* the Extreme Window as context */
+    if (s.win && c.call !== "window") {
       var E = rtYearExtremes(s.yt, s.cy), mo = function (m) { return RT_MO[m]; };
-      add(s.watch ? "Why is a Strong reading worth watching in this window?" : "What is an Extreme Window?", "An Extreme Window is a two-month span in which every earlier year of the same type saw one of its two Formula extremes, the most overvalued month on either side. " + s.cy + " is a " + s.yt + ", and its " + (rtWindowsOf(s.yt).length > 1 ? "windows are " + rtWindowsOf(s.yt).map(rtWinLabel).join(", and ") : "window is " + rtWinLabel(s.win)) + ". " +
+      add("What is an Extreme Window?", "An Extreme Window is a two-month span in which every earlier year of the same type saw one of its two Formula extremes, the most overvalued month on either side. " + s.cy + " is a " + s.yt + ", and its " + (rtWindowsOf(s.yt).length > 1 ? "windows are " + rtWindowsOf(s.yt).map(rtWinLabel).join(", and ") : "window is " + rtWinLabel(s.win)) + ". " +
         (E.length ? "Earlier " + s.yt + "s: " + E.map(function (e) { return e.y + " high " + mo(e.hi) + " " + rtPts(e.H) + ", low " + mo(e.lo) + " " + rtPts(e.L); }).join("; ") + ". " : "") +
-        "A window says when an extreme has come before, not in which direction, and not whether it is already behind us. That is why it never makes a swap on its own." + (s.watch ? " A Strong reading that the Reading does not swap on is still worth watching inside it: if Stage A or B follows, it falls into the time of year in which extremes have come." : ""));
+        "A window says when an extreme has come before, not in which direction, and not whether it is already behind us.");
     }
 
     /* sentiment */
@@ -4848,35 +4863,40 @@
     }
 
     /* limits */
+    add("Why does the Reading ask which asset you hold?", "A swap only makes sense from the asset you hold. Holding BTC, the Reading names a swap into ETH at Stage A or B. Holding ETH, it names a swap into BTC once the Year Line rates ETH as overvalued. " + (s.hold ? "You answered " + ({ BTC: "Bitcoin", ETH: "Ethereum" })[s.hold] + " today." : "Without an answer, the Reading follows its own path since 2019 and names only the days on which that path swaps.") + " The results above count the swap on the first day of a signal; a swap on a later day of the same signal gets a different Ratio. The answer is kept in this browser for the day.");
     add("What could make this wrong?", "The swap rules rest on few events: Stage A on the BTC runs of 2019 to 2020 and 2025, Stage B on a single one in 2022. History is no guarantee of what comes next, and the rhythm of the phases has been seen only once in full. Dominance before November 2026 is an estimate, not a recorded value. Fees, slippage and taxes reduce any result.");
     return Q.join("");
   }
   function rtReadingHtml(f) {
     var s = rtSituation(f), c = rtCompose(s);
-    return '<div class="rt-vd" style="color:' + rtReadingColor(s, c.call) + '">' + c.text.join(" ") + '</div>' +
+    return '<div class="rt-hold"><span>Which asset are you holding right now?</span><button type="button" data-rt-hold="BTC"' + (s.hold === "BTC" ? ' class="active"' : '') + '>Bitcoin</button><button type="button" data-rt-hold="ETH"' + (s.hold === "ETH" ? ' class="active"' : '') + '>Ethereum</button></div>' +
+      '<div class="rt-vd" style="color:' + rtReadingColor(s, c.call) + '">' + c.text.join(" ") + '</div>' +
       '<details class="rt-why"' + (RT.whyOpen ? ' open' : '') + '><summary>Explanation</summary>' + rtExplain(f, s, c) + '</details>';
   }
   function rtHindsight(w, s) { /* dev only: what really happened after the chosen day. Computed from the full data, never shown to the Reading */
-    var d = RT.data, A = rtAsof(), i = w.data.t.length - 1, r0 = d.r[i], n = d.t.length, rows = [], v = rtYearView(w.cy), hi = v.i0, lo = v.i0, q, verdict = null;
-    var fx = function (x) { return x.toFixed(x < 10 ? 2 : 1); }, pc = function (x) { return (x < 0 ? "−" : "+") + Math.abs(x).toFixed(1) + "%"; };
-    var exitFrom = function (j) { for (var k = j + 1; k < n; k++) if (d.r[k] <= A.FY[k] * (1 - RT_BACK / 100)) return k; return -1; };
-    if (s.call === "swap" || (s.call === "none" && s.dir > 0)) {
-      q = exitFrom(i);
+    var d = RT.data, A = rtAsof(), i = w.data.t.length - 1, r0 = d.r[i], n = d.t.length, rows = [], v = rtYearView(w.cy), hi = v.i0, lo = v.i0, q, V = [];
+    var fx = function (x) { return x.toFixed(x < 10 ? 2 : 1); }, pc = function (x) { return (x < 0 ? "−" : "+") + Math.abs(x).toFixed(1) + "%"; }, usd = function (x) { return "$" + x.toLocaleString("en-US", { maximumFractionDigits: x < 100 ? 2 : 0 }); };
+    var exitOut = function (j) { for (var k = j + 1; k < n; k++) if (d.r[k] <= A.FY[k] * (1 - RT_BACK / 100)) return k; return -1; }, exitIn = function (j) { for (var k = j + 1; k < n; k++) if (d.r[k] >= A.FY[k] * (1 + RT_BACK / 100)) return k; return -1; };
+    var toEth = s.call === "swap" || (s.call === "window" && s.dir > 0), toBtc = s.call === "back" || (s.call === "window" && s.dir < 0);
+    if (toEth || (s.call === "none" && s.dir > 0 && s.hold !== "ETH")) {
+      q = exitOut(i);
       if (q >= 0) { var g = (r0 / d.r[q] * 0.994 - 1) * 100; rows.push("Swapping BTC into ETH on this day and into BTC again once the Year Line rated ETH as overvalued, on " + rtDate(d.t[q]) + " at a Ratio of " + fx(d.r[q]) + ", would leave " + pc(g) + " BTC.");
-        verdict = s.call === "swap" ? (g >= 0 ? [1, "The Reading was right: its swap ended ahead."] : [0, "The Reading was wrong: its swap ended behind."]) : (g >= RT_BIG ? [0, "The Reading missed a large swap."] : [1, "The Reading was right not to recommend a swap."]); }
-      else rows.push("The swap from this day has not completed yet.");
+        V.push(toEth ? (g >= 0 ? [1, "The Reading was right: its swap ended ahead."] : [0, "The Reading was wrong: its swap ended behind."]) : (g >= RT_BIG ? [0, "The Reading missed a large swap."] : [1, "The Reading was right not to recommend a swap."])); }
+      else rows.push("A swap from this day has not completed yet.");
     }
-    if (s.call === "back" || s.call === "hold") {
-      var M = rtMoodAt(), nx = -1; for (q = i + 1; q < n; q++) { if (rtStage(A.S[q], (A.FY[q] / A.MD[q] - 1) * 100, M[q] === "fear")) { nx = q; break; } }
-      if (s.call === "back") { var rr = nx >= 0 ? d.r[nx] : d.r[n - 1]; rows.push("Holding BTC from here " + (nx >= 0 ? "until the next swap recommendation on " + rtDate(d.t[nx]) : "until today") + " went with a Ratio from " + fx(r0) + " to " + fx(rr) + "."); verdict = rr >= r0 * 0.994 ? [1, "The Reading was right: BTC was the better side to hold."] : [0, "The Reading was wrong: ETH did better after this day."]; }
-      else { q = exitFrom(i); if (q >= 0) rows.push("The running swap completed on " + rtDate(d.t[q]) + " at a Ratio of " + fx(d.r[q]) + ": " + pc((s.open.r / d.r[q] * 0.994 - 1) * 100) + " BTC."); }
+    if (toBtc) {
+      q = exitIn(i);
+      if (q >= 0) { var g2 = (d.r[q] / r0 * 0.994 - 1) * 100; rows.push("Swapping ETH into BTC on this day and into ETH again once the Year Line rated BTC as overvalued, on " + rtDate(d.t[q]) + " at a Ratio of " + fx(d.r[q]) + ", would leave " + pc(g2) + " ETH."); V.push(g2 >= 0 ? [1, "The Reading was right: its swap ended ahead."] : [0, "The Reading was wrong: its swap ended behind."]); }
+      else { var best = i; for (q = i + 1; q < n; q++) if (d.r[q] > d.r[best]) best = q; rows.push("Afterwards the highest Ratio was " + fx(d.r[best]) + " on " + rtDate(d.t[best]) + ", which would have been " + pc((d.r[best] / r0 * 0.994 - 1) * 100) + " ETH on a swap back."); }
     }
-    if (s.call === "buy" && s.buySide && i + 30 < n) {
-      var k = Math.min(n - 1, i + 365), gb = (d.b[k] / d.b[i] - 1) * 100, ge = (d.e[k] / d.e[i] - 1) * 100, mine = s.buySide === "ETH" ? ge : gb, other = s.buySide === "ETH" ? gb : ge;
-      rows.push((k === i + 365 ? "A year later" : "Until today") + " " + s.buySide + " moved " + pc(mine) + " in dollars, " + (s.buySide === "ETH" ? "BTC" : "ETH") + " " + pc(other) + ".");
-      verdict = mine >= other ? [1, "The Reading was right: " + s.buySide + " was the better buy."] : [0, "The Reading was wrong: the other side was the better buy."];
+    if (s.buy && s.buySide && i + 1 < n) { /* the best value reached afterwards, so that a later fall does not hide a high in between */
+      var P = s.buySide === "ETH" ? d.e : d.b, O = s.buySide === "ETH" ? d.b : d.e, bi = i + 1, bo = i + 1;
+      for (q = i + 1; q < n; q++) { if (P[q] > P[bi]) bi = q; if (O[q] > O[bo]) bo = q; }
+      var gm = (P[bi] / P[i] - 1) * 100, go = (O[bo] / O[i] - 1) * 100;
+      rows.push("Afterwards the highest value of " + s.buySide + " was " + usd(P[bi]) + " on " + rtDate(d.t[bi]) + ", which would have been a " + pc(gm) + " gain. The highest value of " + (s.buySide === "ETH" ? "BTC" : "ETH") + " would have been a " + pc(go) + " gain.");
+      V.push(gm >= go ? [1, "The Reading was right: " + s.buySide + " was the better buy."] : [0, "The Reading was wrong: the other side was the better buy."]);
     }
-    if (verdict) rows.unshift('<b style="color:var(' + (verdict[0] ? "--up" : "--down") + ')">' + verdict[1] + "</b>");
+    V.forEach(function (x, k) { rows.splice(k, 0, '<b style="color:var(' + (x[0] ? "--up" : "--down") + ')">' + x[1] + "</b>"); });
     [30, 90, 180].forEach(function (k) { if (i + k < n) rows.push("After " + k + " days the Ratio was " + fx(d.r[i + k]) + " [" + pc((d.r[i + k] / r0 - 1) * 100) + "]."); });
     for (q = v.i0; q < v.i1; q++) { if (d.r[q] > d.r[hi]) hi = q; if (d.r[q] < d.r[lo]) lo = q; }
     rows.push("The real " + w.cy + (v.i1 === n ? " so far" : "") + ": low " + fx(d.r[lo]) + " on " + rtDM(d.t[lo]) + ", high " + fx(d.r[hi]) + " on " + rtDM(d.t[hi]) + ". On this day the Ratio [" + fx(r0) + "] stood " + pc((r0 / d.r[lo] - 1) * 100) + " from that low and " + pc((r0 / d.r[hi] - 1) * 100) + " from that high.");
@@ -5055,6 +5075,7 @@
     }
     else if (D.rtHist) RT.hist = D.rtHist;
     else if (D.rtHelp) RT.help = !RT.help;
+    else if (D.rtHold) rtSetHold(rtHold() === D.rtHold ? "" : D.rtHold);
     else if (D.rtCmp !== undefined) RT.cmp = D.rtCmp === "0" ? false : !RT.cmp;
     else if (D.rtCmpyear) { RT.cmpYear = +D.rtCmpyear; RT.cmp = true; }
     else return;
