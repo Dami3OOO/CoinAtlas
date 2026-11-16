@@ -14,14 +14,15 @@ const HELD = [['2025-08-24', 'ETH', 'back'], ['2025-08-24', 'BTC', 'none'], ['20
 // invented situations, one for every kind of recommendation
 const base = { side: 'BTC', other: 'ETH', dir: 1, score: 4, tier: 'Strong', marks: 0, contradicted: false, zone: '', fgV: 50, lead: 20, phase: 'BTC', nz: false, win: null, watch: false, yt: 'Bridge Year', stage: '', buy: false, buySide: '', fellMore: false, open: null, hold: '' };
 const SYN = [
-  ['S1 Stage A in Fear', { ...base, call: 'swap', stage: 'A', score: 5, lead: 48, zone: 'Fear', fgV: 35, buy: true, buySide: 'ETH' }, /^Now is a good time to swap BTC into ETH\. It's currently a good time to buy Ethereum\. /],
+  ['S1 Stage A in Fear', { ...base, call: 'swap', stage: 'A', score: 5, lead: 48, zone: 'Fear', fgV: 35, buy: true, buySide: 'ETH' }, /^Now is a good time to swap BTC into ETH\. It's currently a good time to buy Ethereum, amidst this period of Fear\. /],
   ['S2 Stage B in Extreme Fear', { ...base, call: 'swap', stage: 'B', score: 2, tier: 'Mild', lead: -45, phase: 'ETH', zone: 'Extreme Fear', fgV: 12, buy: true, buySide: 'ETH' }, /^Now is a good time to swap BTC into ETH\. /],
   ['S3 swap into BTC in Greed', { ...base, call: 'back', zone: 'Greed', fgV: 68, open: { t: Date.UTC(2025, 5, 22), r: 45.3 } }, /^Now is a good time to swap ETH into BTC\. /],
   ['S4 nothing for an ETH holder', { ...base, call: 'none', hold: 'ETH' }, /^Today is not a day to swap\. /],
-  ['S5 no swap, buy the cheaper side in Fear', { ...base, call: 'none', score: 2, tier: 'Mild', zone: 'Extreme Fear', fgV: 13, buy: true, buySide: 'ETH', fellMore: true }, /^Today is not a day to swap\. It's currently a good time to buy Ethereum\. /],
-  ['S6 buy without a lean', { ...base, call: 'none', side: '', dir: 0, score: 0, tier: '', zone: 'Fear', fgV: 30, buy: true }, /^Today is not a day to swap\. It's currently a good time to add to what you already hold\. /],
+  ['S5 no swap, buy the cheaper side in Fear', { ...base, call: 'none', score: 2, tier: 'Mild', zone: 'Extreme Fear', fgV: 13, buy: true, buySide: 'ETH', fellMore: true }, /^Today is not a day to swap\. It's currently a good time to buy Ethereum, amidst this period of Extreme Fear\. /],
+  ['S6 buy without a lean', { ...base, call: 'none', side: '', dir: 0, score: 0, tier: '', zone: 'Fear', fgV: 30, buy: true }, /^Today is not a day to swap\. It's currently a good time to add to what you already hold, amidst this period of Fear\. /],
   ['S7 nothing to do in Greed', { ...base, call: 'none', score: 3, zone: 'Greed', fgV: 70 }, /^Today is not a day to swap\. /],
   ['S8 Neutral zone of the lines', { ...base, call: 'none', score: -1, side: 'ETH', other: 'BTC', dir: -1, tier: 'Mild', lead: 4, nz: true }, /^Today is not a day to swap\. /],
+  ['S10 Neutral after Greed', { ...base, call: 'none', score: 1, tier: 'Mild', fgV: 50, prep: true }, /^Today is not a day to swap\. Prepare your USDC for the next period of Fear\. /],
   ['S9 Strong reading in an Extreme Window', { ...base, call: 'window', score: 4, win: [0, 1], watch: true }, /^Swapping BTC into ETH would be a good idea right now if you believe in the Extreme Window thesis\. /]
 ];
 const sentences = t => t.split(/(?<=[.!?])\s+/).filter(Boolean);
@@ -32,7 +33,8 @@ function check(name, text, o) {
   ok(!/\d+ of \d+|\d%|% of days/.test(text), name + ': contains statistics, they belong in the Explanation'); ok(!/\bgap\b|ended ahead|unusual/i.test(text), name + ': uses a banned word');
   ok(!/could|might|maybe|perhaps|theoretically/i.test(text), name + ': hedges'); ok(!/swap(ping)? back|If you swapped/i.test(text), name + ': talks about swapping back');
   const z = o.zone || '';
-  if (/Greed/.test(z)) { ok(!/buy (BTC|ETH) with USDC|add to what you already hold/.test(text), name + ': recommends buying during Greed'); if (o.call === 'none') ok(/keep your USDC and wait for Fear/.test(text), name + ': Greed without the advice to keep USDC'); }
+  if (/Greed/.test(z)) { ok(!/buy (BTC|ETH) with USDC|add to what you already hold/.test(text), name + ': recommends buying during Greed'); ok(/You should hold onto your USDC, amidst this period of (Extreme )?Greed\./.test(text), name + ': Greed without the advice to hold USDC'); }
+  if (/Fear/.test(z)) ok(/, amidst this period of (Extreme )?Fear\./.test(text), name + ': the purchase does not name the period of Fear');
   ok(/Fear/.test(z) === /It's currently a good time to (buy|add)/.test(text), name + ': a purchase must be named during Fear, and only then');
   ok(!/Hold your/.test(text), name + ': still tells to hold');
 }

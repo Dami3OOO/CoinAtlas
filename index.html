@@ -4777,6 +4777,8 @@
     s.watch = !!s.win && Ab >= 3 && s.call === "none" && !s.contradicted && (!s.hold || s.hold === s.side); /* a Strong reading inside the window, on the side the holder is in */
     if (s.watch) s.call = "window";
     s.fearRec = s.buy ? rtFearRecord(s.zone === "Extreme Fear") : null;
+    s.prep = false; /* Neutral that came out of Greed: so far it mostly went on into Fear */
+    if (v !== null && v >= 45 && v <= 55 && fgA) for (var k = fgA.length - 2; k >= 0; k--) { var fv = fgA[k].value; if (fv < 45 || fv > 55) { s.prep = fv > 55; break; } }
     return s;
   }
   function rtCompose(s) { /* the Reading: the swap first, the purchase second, then the facts of the day that matter most. Every fact has a key, and the Explanation answers each key */
@@ -4787,7 +4789,9 @@
     else if (call === "window") lead = "Swapping " + X + " into " + Y + " would be a good idea right now if you believe in the Extreme Window thesis.";
     else lead = "Today is not a day to swap.";
     var T = [lead];
-    if (s.buy) T.push(s.buySide ? "It's currently a good time to buy " + NM[s.buySide] + "." : "It's currently a good time to add to what you already hold.");
+    if (s.buy) T.push((s.buySide ? "It's currently a good time to buy " + NM[s.buySide] : "It's currently a good time to add to what you already hold") + ", amidst this period of " + s.zone + ".");
+    else if (/Greed/.test(s.zone)) T.push("You should hold onto your USDC, amidst this period of " + s.zone + ".");
+    else if (s.prep) T.push("Prepare your USDC for the next period of Fear.");
     /* the lean */
     if (s.contradicted) add(80, "contra", "The data contradicts itself, so there is no clear lean.");
     else if (s.dir) { if (call !== "window") add(call === "none" ? 95 : 70, "lean", X + " is " + ov + " overvalued against " + Y + "."); }
@@ -4798,9 +4802,8 @@
     if (call === "window") add(100, "window", "This is the " + s.yt + " Extreme Window, and " + X + " is " + ov + " overvalued inside it.");
     if (call === "none" && s.dir > 0 && s.hold !== "ETH" && Math.abs(s.score) >= 3 && !s.contradicted) add(85, "noswap", s.lead > 0 && s.lead < RT_A.lead ? "There is no swap yet: the BTC run behind it is not old enough." : s.lead >= RT_A.lead ? "There is no swap yet: the run is old, but sentiment is not in Fear." : "There is no swap yet: BTC has not turned far enough after the ETH phase.");
     /* the purchase */
-    if (s.buy && s.buySide) add(87, "buy", s.fellMore ? NM[s.buySide] + " is the cheaper side, and it also fell harder over the last 90 days." : NM[s.buySide] + " is the cheaper side of the two, and sentiment is in " + s.zone + ".");
-    else if (s.buy) add(87, "buy", "Sentiment is in " + s.zone + ", and neither side is overvalued.");
-    else if (/Greed/.test(s.zone)) add(call === "none" ? 92 : 72, "greed", "Sentiment is in " + s.zone + ": keep your USDC and wait for Fear.");
+    if (s.buy && s.buySide) add(87, "buy", s.fellMore ? NM[s.buySide] + " is the cheaper side, and it also fell harder over the last 90 days." : NM[s.buySide] + " is the cheaper side of the two.");
+    else if (s.buy) add(87, "buy", "Neither side is overvalued, so there is no better side to pick.");
     /* the phase */
     if (s.nz) add(90, "nz", "The Year Line has entered the Neutral zone of the All Time Line, which so far has always led to a phase change.");
     else add(call === "none" ? 75 : 50, "phase", "We are in " + (s.phase === "BTC" ? "a" : "an") + " " + s.phase + " phase: the Year Line stands " + (s.phase === "BTC" ? "above" : "below") + " the All Time Line.");
@@ -4841,6 +4844,8 @@
     }
     if (c.call === "none") add("Why is today not a day to swap?", s.hold === "ETH" ? "You hold ETH. A swap into BTC comes once the Ratio is 10% or more below the Year Line, at " + fx(s.exitAt) + " or lower today. The Ratio stands at " + fx(s.r) + "." : (s.hold === "BTC" ? "You hold BTC. " : "") + "A swap of BTC into ETH needs Stage A or Stage B" + (s.dir > 0 && Math.abs(s.score) >= 3 ? "" : ", and today BTC is not clearly overvalued") + "." + (s.hold ? "" : " Holding ETH, the swap into BTC comes once the Ratio is 10% or more below the Year Line, at " + fx(s.exitAt) + " or lower; today it stands at " + fx(s.r) + "."));
     if (has("noswap")) add("Why no swap although BTC is overvalued?", "A swap needs Stage A or Stage B. Stage A: " + RT_A.score + " points or more, the Year Line " + RT_A.lead + "% or more above the All Time Line, and Fear &amp; Greed at " + RT_A.fg + " or lower. Today: " + rtPts(s.score) + ", " + pct(s.lead) + ", and " + (s.fgV === null ? "no Fear &amp; Greed value" : s.fgV) + ". Stage B: " + RT_B.score + " points or more while the Year Line stands " + RT_B.lead + "% or more below the All Time Line. Swaps made earlier in a BTC run, while it was still young, mostly ended behind, because the Overvaluation kept growing for months.");
+    if (/Greed/.test(s.zone)) add("Why hold onto USDC now?", "Sentiment is in " + s.zone + " [" + s.fgV + "]. During Greed the Reading never recommends buying: so far Fear has followed every Greed. Measured since 2018, Greed lasted a median of about a month at a time, and when it cooled into Neutral, about 7 of 10 times the Index went on into Fear, a median of 8 days later. Waiting for it gave a lower price about half the time, so this is a rule of caution, not a promise.");
+    if (s.prep) add("Why prepare USDC now?", "Sentiment is Neutral [" + s.fgV + "], and the last period before it was Greed. Measured since 2018, 9 of 13 such Neutral periods went on into Fear, and the first Fear day came a median of 8 days later, within 28 days in three of four cases. After a Neutral period that came out of Fear, the Index went back into Fear 17 of 29 times. Thirteen cases are few, so this is a hint to be ready, not a call to act.");
     if (c.buy) add(s.buySide ? "Why buy " + ({ BTC: "Bitcoin", ETH: "Ethereum" })[s.buySide] + " now?" : "Why buy now?", (s.buySide ? s.buySide + " is the side that is not overvalued today" + (s.fellMore ? ", and over the last 90 days it fell " + pct(s.buySide === "ETH" ? s.ge : s.gb) + " against " + pct(s.buySide === "ETH" ? s.gb : s.ge) + " for " + (s.buySide === "ETH" ? "BTC" : "ETH") : "") + ". Measured on the history, buying the cheaper side during Fear did better than the other side a year later on about 7 of 10 days, and on about 8 of 10 when it had also fallen harder. " : "Neither side is overvalued, so there is no better side to pick. ") +
       (s.fearRec && s.fearRec.n ? "Buying BTC on an earlier " + s.zone + " day and holding until the Index was back in Greed: " + pl(s.fearRec.n, "day") + " in " + pl(s.fearRec.groups, "separate period") + ", " + Math.round(s.fearRec.profit / s.fearRec.n * 100) + "% ended in profit, with a median result of " + pct(s.fearRec.med) + " and a worst of " + pct(s.fearRec.worst) + "." : ""));
 

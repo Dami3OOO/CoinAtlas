@@ -122,13 +122,29 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   - BTC-Halter: "Now is a good time to swap BTC into ETH." bei Stufe A/B, sonst "Today is not a day to swap."
   - ETH-Halter: "Now is a good time to swap ETH into BTC." sobald das Ratio 10 % unter der Year Line liegt, sonst "Today is not a day to swap."
   - Ohne Antwort: die eigene Spur (nur deren Swap-Tage), sonst "Today is not a day to swap." "Hold your ETH" gibt es nicht mehr.
-- Kauf nur in Fear und Extreme Fear als zweiter Satz: "It's currently a good time to buy Bitcoin/Ethereum." (die günstigere Seite),
-  ohne Lean "…to add to what you already hold." In Greed: "keep your USDC and wait for Fear." Sonst nichts zum Kauf.
+- Zweiter Satz, je nach Fear & Greed:
+  - Fear / Extreme Fear: "It's currently a good time to buy Ethereum, amidst this period of Extreme Fear." (die günstigere Seite;
+    ohne Lean "…to add to what you already hold, amidst this period of Fear.")
+  - Greed / Extreme Greed: "You should hold onto your USDC, amidst this period of Greed."
+  - Neutral direkt nach Greed: "Prepare your USDC for the next period of Fear." Messung seit 2018: 9 von 13 solcher Neutral-Abschnitte
+    gingen weiter in Fear, erster Fear-Tag im Median nach 8 Tagen (in drei von vier Fällen innerhalb von 28 Tagen).
+    Neutral nach Fear: 17 von 29 gingen zurück in Fear, dafür gibt es keinen Satz.
+  - Sonst Neutral: nichts zum Kauf.
 - Strong-Lean (Score ab 3) im Extreme Window ohne Swap, auf der Seite des Halters: "Swapping X into Y would be a good idea right now
   if you believe in the Extreme Window thesis." Explanation: "What is an Extreme Window?" und "Why could a swap inside an Extreme Window be a good idea?"
   mit den gemessenen Zahlen (innen etwa 7 von 10 im Plus, außen etwa 6 von 10, Bear-Fenster alle, Bull-Fenster keiner).
 - Hindsight nach einem Kauf: der höchste Wert danach ("Afterwards the highest value of ETH was $X on <Datum>, a +Y% gain") statt des heutigen Werts,
   verglichen mit dem höchsten Wert der anderen Seite.
+
+## Fear & Greed nach Jahrestyp (Messung 16.11.2026, Daten seit Februar 2018)
+
+- Bear Years (2018, 2022, 2026): 72 bis 93 % der Tage in Fear, praktisch nie Extreme Greed. Juni ist der tiefste Monat (Ø 18; 26, 11, 16),
+  passend zum Bear-Fenster Jun–Jul.
+- Bull Years (2021, 2025): Januar in Greed (81, 72), Ende des Jahres in Fear (Dezember 29 und 22).
+- Bridge Years: zweites Bridge-Jahr endet in Extreme Greed (2020 Nov/Dez 86/92, 2024 80/76). Das erste Bridge-Jahr ist gemischt
+  (2019 endete in Fear, 2023 in Greed).
+- Extreme folgen meist auf Extreme derselben Seite: nach Extreme Fear kam als nächstes Extrem 30-mal wieder Extreme Fear und 4-mal Extreme Greed.
+- Alle Jahrestyp-Muster beruhen auf 2 bis 4 Jahren pro Typ. Kontext, keine Regel.
 
 ## Offene Punkte
 
