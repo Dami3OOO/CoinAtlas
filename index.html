@@ -2738,6 +2738,26 @@
     if (a.src === "snap") return repoJson("data/dominance.json").then(function (j) { return chAgg(Object.keys(j || {}).sort().map(function (k) { var v = j[k][a.k]; return v == null ? null : { timestamp: Date.parse(k + "T00:00:00Z"), open: v * a.scale, high: v * a.scale, low: v * a.scale, close: v * a.scale, volume: 0 }; }).filter(Boolean), tf); });
     return repoJson("data/fred-walcl.json").catch(function () { return null; }).then(function (j) { /* missing until the first weekly import */ return chAgg(((j && j.days) || []).map(function (r) { var v = r[1] * a.scale; return { timestamp: Date.parse(r[0] + "T00:00:00Z"), open: v, high: v, low: v, close: v, volume: 0 }; }), tf); });
   }
+  var CH_LOWER = { "3m": "1m", "5m": "1m", "15m": "5m", "1h": "15m", "4h": "1h", "1D": "1h", "1W": "1D", "1M": "1D" }, CH_STEP = { "1m": 6e4, "3m": 18e4, "5m": 3e5, "15m": 9e5, "1h": 36e5, "4h": 144e5, "1D": 864e5, "1W": 6048e5 };
+  function chNext(tf, ts) { if (tf !== "1M") return ts + CH_STEP[tf]; var d = new Date(ts); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1); }
+  function chGaps(tf, l) { /* the start times of candles missing between the ones the exchange sent */
+    var out = [], k, t; for (k = 1; k < l.length; k++) for (t = chNext(tf, l[k - 1].timestamp); t < l[k].timestamp - 6e4; t = chNext(tf, t)) out.push(t);
+    return out;
+  }
+  function chFill(a, tf, l) { /* resolves to the list with missing candles built from the next smaller timeframe, and how many were built and how many are still missing */
+    var miss = chGaps(tf, l), lo = CH_LOWER[tf]; if (!miss.length || !lo) return Promise.resolve({ l: l, built: 0, left: miss.length });
+    var groups = [], cur = null; miss.forEach(function (t) { if (cur && t - cur[cur.length - 1] <= (CH_STEP[tf] || 2678400000) * 1.01) cur.push(t); else groups.push(cur = [t]); });
+    groups = groups.slice(-10); /* at most ten separate gaps, the newest ones */
+    return Promise.all(groups.map(function (g) { return chLoad(a, lo, chNext(tf, g[g.length - 1]) + 1).catch(function () { return []; }); })).then(function (parts) {
+      var add = [];
+      groups.forEach(function (g, gi) { g.forEach(function (t) {
+        var e = chNext(tf, t), sub = parts[gi].filter(function (x) { return x.timestamp >= t && x.timestamp < e; }); if (!sub.length) return;
+        add.push({ timestamp: t, open: sub[0].open, close: sub[sub.length - 1].close, high: Math.max.apply(null, sub.map(function (x) { return x.high; })), low: Math.min.apply(null, sub.map(function (x) { return x.low; })), volume: sub.reduce(function (s, x) { return s + (x.volume || 0); }, 0) });
+      }); });
+      var all = l.concat(add).sort(function (x, y) { return x.timestamp - y.timestamp; });
+      return { l: all, built: add.length, left: miss.length - add.length };
+    });
+  }
   function chPrec(v) { return v >= 1000 ? 1 : v >= 10 ? 2 : v >= 1 ? 3 : v >= 0.01 ? 5 : 7; }
   var CH_SKEY = "coinatlas-chart-style", CH_DEF = { bg: "#FFE0B2", gridV: false, gridH: false, gridVc: "#d9c3a0", gridHc: "#d9c3a0", cross: "#000000", crossStyle: "dashed",
     body: true, up: "#43b147", dn: "#F23645", border: true, bUp: "#000000", bDn: "#000000", wick: true, wUp: "#000000", wDn: "#000000",
@@ -2894,7 +2914,8 @@
       if (p.type !== "forward" || line || !p.data) return p.callback([], false);
       chLoad(a, tf, p.data.timestamp).then(function (l) { if (seq === chSeq) p.callback(l, l.length > 0); }, function () { p.callback([], false); });
     });
-    chLoad(a, tf).then(function (l) {
+    chLoad(a, tf).then(function (l) { return a.src === "snap" || a.src === "fred" ? { l: l, built: 0, left: 0 } : chFill(a, tf, l); }).then(function (F) {
+      var l = F.l;
       if (seq !== chSeq) return;
       if (!l.length) { chChart.clearData(); chEl.info.textContent = a.src === "fred" ? "No data yet: the first import runs with the next snapshot job." : "No data yet."; return; }
       var last = l[l.length - 1]; chPrecNow = chPrec(Math.abs(last.close)); chChart.setPriceVolumePrecision(chPrecNow, 2);
@@ -2904,9 +2925,7 @@
         if (n >= 25 || list[0].timestamp <= anchor) return go(list);
         chLoad(a, tf, list[0].timestamp).then(function (o) { if (seq !== chSeq) return; if (!o.length) return go(list); back(o.filter(function (x) { return x.timestamp < list[0].timestamp; }).concat(list), n + 1); }, function () { go(list); });
       })(l, 0);
-      var gaps = 0, stp = { "1m": 6e4, "3m": 18e4, "5m": 3e5, "15m": 9e5, "1h": 36e5, "4h": 144e5, "1D": 864e5, "1W": 6048e5 }[tf]; /* missing candles in what the exchange sent */
-      if (stp && !line) for (var k = 1; k < l.length; k++) if (l[k].timestamp - l[k - 1].timestamp > stp * 1.5) gaps += Math.round((l[k].timestamp - l[k - 1].timestamp) / stp) - 1;
-      chEl.info.textContent = (gaps ? gaps + (gaps === 1 ? " candle" : " candles") + " missing from the exchange · " : "") + (a.unit ? a.unit + " · " : "") + (a.src === "perp" || a.src === "inv" ? "Bitget" : a.src === "binance" ? "Binance" : a.src === "snap" ? "CoinAtlas snapshots, " + l.length + (l.length === 1 ? " point" : " points") : "FRED") + (line ? "" : " · live");
+      chEl.info.textContent = (F.built ? F.built + (F.built === 1 ? " missing candle" : " missing candles") + " built from " + CH_LOWER[tf] + " · " : "") + (F.left ? F.left + (F.left === 1 ? " candle" : " candles") + " missing from the exchange · " : "") + (a.unit ? a.unit + " · " : "") + (a.src === "perp" || a.src === "inv" ? "Bitget" : a.src === "binance" ? "Binance" : a.src === "snap" ? "CoinAtlas snapshots, " + l.length + (l.length === 1 ? " point" : " points") : "FRED") + (line ? "" : " · live");
       if (!line) chPoll = setInterval(function () { /* live: the newest candles every 5 seconds while the screen is open */
         if (chScreen.hidden || document.hidden) return;
         chLoad(a, tf).then(function (n) { if (seq === chSeq) n.slice(-2).forEach(function (x) { chChart.updateData(x); }); }, function () {});

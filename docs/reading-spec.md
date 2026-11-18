@@ -159,7 +159,9 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   letzten Preis. Schrift wie TradingView (Trebuchet MS), schwarze Achsenlinien, Zeitachse mit Tagen und Monatsnamen, Fadenkreuz-Beschriftung
   schwarz mit weißer Schrift ("Mon Nov 16, 2026   03:00"). Preisachse mit runden Schritten etwa alle 30 Pixel.
 - Letzter Preis als Schild auf der Preisachse mit Restzeit bis zum Schließen der Kerze.
-- Fehlen in den Daten der Börse Kerzen (Abstand größer als die Zeiteinheit), steht oben rechts "N candles missing from the exchange".
+- Fehlen in den Daten der Börse Kerzen, werden sie aus der nächstkleineren Zeiteinheit derselben Börse zusammengesetzt
+  (1W und 1M aus 1D, 1D und 4h aus 1h, 1h aus 15m, 15m aus 5m, 5m und 3m aus 1m; höchstens zehn Lücken, die neuesten).
+  Oben rechts steht dann "N missing candles built from 1D". Was sich so nicht füllen lässt: "N candles missing from the exchange".
 - Kerzen werden auf ganze Bildschirmpixel gezeichnet (eigene "rect"-Figur), sonst wirken sie bei 125 % Skalierung unscharf.
 - Beim Wechsel der Zeiteinheit bleibt der Zeitpunkt am rechten Rand erhalten, notfalls werden ältere Kerzen nachgeladen.
 - "Copy settings" kopiert die eigenen Einstellungen. Wer sie an Claude schickt, bekommt sie als Standard der Seite (CH_DEF in index.html).
