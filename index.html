@@ -2729,8 +2729,9 @@
     list.forEach(function (x) { var k = key(x.timestamp), o = out[out.length - 1]; if (o && o.timestamp === k) { o.high = Math.max(o.high, x.high); o.low = Math.min(o.low, x.low); o.close = x.close; } else out.push({ timestamp: k, open: x.open, high: x.high, low: x.low, close: x.close, volume: 0 }); });
     return out;
   }
-  function chLoad(a, tf, end) { /* resolves to the candles of an asset, the newest last. end: only candles before this time, for scrolling back */
-    var lim = end ? 200 : 1000, e = end ? "&endTime=" + (end - 1) : "";
+  function chLoad(a, tf, end) { return chLoadRaw(a, tf, end).then(function (l) { return end ? l.filter(function (x) { return x.timestamp < end; }) : l; }); }
+  function chLoadRaw(a, tf, end) { /* resolves to the candles of an asset, the newest last. end: candles before this time, for scrolling back */
+    var lim = end ? 200 : 1000, e = end ? "&endTime=" + (end + Math.floor((CH_STEP[tf] || 864e5 * 14) / 2)) : ""; /* Bitget counts endTime against the end of a candle: asking only up to the start left out the candle right before it */
     if (a.src === "perp") return chBitget("https://api.bitget.com/api/v2/mix/market/" + (end ? "history-candles" : "candles") + "?symbol=" + a.sym + "&productType=USDT-FUTURES&granularity=GRAN&limit=" + lim + e, CH_PERP[tf]);
     if (a.src === "inv") return chBitget("https://api.bitget.com/api/v2/spot/market/" + (end ? "history-candles" : "candles") + "?symbol=" + a.sym + "&granularity=GRAN&limit=" + lim + e, CH_SPOT[tf]).then(function (l) { return l.map(function (x) { return { timestamp: x.timestamp, open: 1 / x.open, high: 1 / x.low, low: 1 / x.high, close: 1 / x.close, volume: x.volume }; }); });
     if (a.src === "binance") return getJson("https://data-api.binance.vision/api/v3/klines?symbol=" + a.sym + "&interval=" + CH_BIN[tf] + "&limit=" + lim + e, 12000).then(chRows);
@@ -2912,7 +2913,11 @@
     var line = a.src === "snap" || a.src === "fred"; chEl.chart.style.background = chS.bg; chChart.setStyles(chStyles(line));
     chChart.setLoadDataCallback(function (p) {
       if (p.type !== "forward" || line || !p.data) return p.callback([], false);
-      chLoad(a, tf, p.data.timestamp).then(function (l) { if (seq === chSeq) p.callback(l, l.length > 0); }, function () { p.callback([], false); });
+      var first = p.data;
+      chLoad(a, tf, first.timestamp).then(function (l) { return l.length ? chFill(a, tf, l.concat([first])) : { l: [first], built: 0, left: 0 }; }).then(function (F) {
+        var l = F.l.filter(function (x) { return x.timestamp < first.timestamp; });
+        if (seq !== chSeq) return; p.callback(l, l.length > 0);
+      }, function () { p.callback([], false); });
     });
     chLoad(a, tf).then(function (l) { return a.src === "snap" || a.src === "fred" ? { l: l, built: 0, left: 0 } : chFill(a, tf, l); }).then(function (F) {
       var l = F.l;
