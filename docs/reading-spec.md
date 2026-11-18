@@ -146,6 +146,20 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Extreme folgen meist auf Extreme derselben Seite: nach Extreme Fear kam als nächstes Extrem 30-mal wieder Extreme Fear und 4-mal Extreme Greed.
 - Alle Jahrestyp-Muster beruhen auf 2 bis 4 Jahren pro Typ. Kontext, keine Regel.
 
+## Charts (Etappe 1 gebaut 18.11.2026)
+
+- Knopf "Charts" im Header öffnet ein Vollbild. Zuerst wählt man das Asset aus einer gruppierten Liste mit Kurzbeschreibung, erst dann erscheint der Chart.
+- Zeiteinheiten 1m, 3m, 5m, 15m, 1h, 4h, 1D, 1W, 1M (die zuletzt gewählte wird gemerkt). Live-Update alle 5 Sekunden, ältere Kerzen beim Scrollen nach links.
+- Assets: BTCUSDT.P, ETHUSDT.P, TRXUSDT.P, POLUSDT.P, RENDERUSDT.P, SANDUSDT.P (Bitget USDT-Futures), BTCETH (Bitget Spot ETHBTC, umgedreht),
+  BTCUSD (Binance BTCUSDT Spot), TOTAL200 / BTC.D / USDT.D (hauseigen aus den Snapshots, nur 1D/1W/1M, Daten ab 12.11.2026),
+  WALCL (FRED, wöchentlich, 1W/1M, vom Snapshot-Job geholt nach data/fred-walcl.json).
+- dominance.json hat als 6. Wert den USDT-Anteil an der Top-200-Marktkapitalisierung.
+- Bibliothek: KLineChart 9.8.12 (Apache 2.0), unverändert in index.html eingebettet, mit NOTICE als Kommentar.
+- Bitget-Zeiteinheiten werden mit Ausweich-Namen versucht (1Dutc, dann 1D usw.), weil die genauen Namen nicht getestet werden konnten.
+- Weggelassen: DXY, JXY, BTC1!, NQ1! (lizenzpflichtige Börsendaten), kein TradingView-Embed, keine geschätzte Historie.
+- Nächste Etappen: Zeichenwerkzeuge (Linie, waagrecht/senkrecht unendlich, Box, Pfeile, Long/Short mit RR, Date and Price Range,
+  Rotated Rectangle), Mini-Version in der Landing Area, Zeichnungen pro Asset speichern.
+
 ## Offene Punkte
 
 - Kritischer Rundum-Test des neuen Systems (nur auf Wunsch des Nutzers).

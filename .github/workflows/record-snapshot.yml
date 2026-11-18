@@ -26,6 +26,10 @@ jobs:
           npm install --no-save playwright@1.49.1
           npx playwright install --with-deps chromium
       - run: node scripts/record-snapshot.mjs
+      # The Fed balance sheet for the Charts screen. FRED updates it once a week; a failure here never stops the snapshot.
+      - name: Record WALCL
+        continue-on-error: true
+        run: node scripts/record-fred.mjs
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"

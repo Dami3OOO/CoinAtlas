@@ -2,7 +2,7 @@
 //
 // Writes under data/:
 //   snapshots/YYYY-MM-DD.json  the full list of that day: symbol, name, price, market cap
-//   dominance.json             one line per day: [BTC %, ETH %, total market cap, coins, source]
+//   dominance.json             one line per day: [BTC %, ETH %, total market cap, coins, source, USDT %]
 //   new.json                   coins that entered the top 200 less than 14 snapshots ago
 //   history/btc-eth.json       every daily close of BTC and ETH since 2017 (Binance)
 //   history/fear-greed.json    every daily Fear & Greed value since 2018 (alternative.me)
@@ -123,7 +123,7 @@ export function write(snap) {
   writeFileSync(join(dir, snap.date + ".json"), JSON.stringify(head).slice(0, -1) + ',"coins":[\n' + coins.map(c => JSON.stringify(c)).join(",\n") + "\n]}\n");
 
   const domFile = join(DATA, "dominance.json"), dom = existsSync(domFile) ? JSON.parse(readFileSync(domFile, "utf8") || "{}") : {};
-  dom[snap.date] = [snap.btc, snap.eth, snap.total, coins.length, snap.source];
+  dom[snap.date] = [snap.btc, snap.eth, snap.total, coins.length, snap.source, +((coins.find(c => c[0] === "USDT") || [0, 0, 0, 0])[3] / snap.total * 100).toFixed(3)];
   writeFileSync(domFile, "{\n" + Object.keys(dom).sort().map(k => JSON.stringify(k) + ": " + JSON.stringify(dom[k])).join(",\n") + "\n}\n");
 
   // new in the top 200: how many snapshots in a row, counted back from today, a coin has been on the list
