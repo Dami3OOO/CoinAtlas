@@ -444,7 +444,7 @@
   .cs-title { font-size: 15px; margin-right: 4px; } .cs-asset { font: inherit; font-size: 13px; font-weight: 700; color: var(--fg); background: var(--pop); border: 1px solid var(--line); border-radius: 8px; padding: 5px 12px; cursor: pointer; } .cs-asset:hover { background: var(--hover); }
   .cs-tfs { display: flex; flex-wrap: wrap; gap: 2px; } .cs-tfs button { font: inherit; font-size: 12px; font-weight: 600; color: var(--muted); background: transparent; border: 0; border-radius: 6px; padding: 5px 8px; cursor: pointer; } .cs-tfs button:hover:not(:disabled) { color: var(--fg); background: var(--hover); } .cs-tfs button.active { color: #111; background: var(--fg); } .cs-tfs button:disabled { opacity: .3; cursor: default; }
   .cs-info { font-size: 11px; color: var(--muted); margin-left: auto; } .cs-close { font: inherit; font-size: 15px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 8px; width: 32px; height: 30px; cursor: pointer; } .cs-close:hover { color: var(--fg); background: var(--hover); }
-  .cs-body { position: relative; flex: 1; min-height: 0; } .cs-chart { position: absolute; inset: 0; }
+  .cs-body { position: relative; flex: 1; min-height: 0; } .cs-chart { position: absolute; inset: 0; background: #FFE0B2; }
   #chart-screen.picking .cs-chart { filter: blur(4px) grayscale(1); opacity: .25; pointer-events: none; }
   .cs-pick { position: absolute; inset: 0; z-index: 3; overflow-y: auto; animation: rtAskIn .35s ease both; } .cs-pick[hidden] { display: none; }
   .cs-pick-in { max-width: 1100px; margin: 0 auto; padding: 24px 16px 40px; } .cs-pick-h { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 18px; }
@@ -2725,15 +2725,19 @@
     return repoJson("data/fred-walcl.json").catch(function () { return null; }).then(function (j) { /* missing until the first weekly import */ return chAgg(((j && j.days) || []).map(function (r) { var v = r[1] * a.scale; return { timestamp: Date.parse(r[0] + "T00:00:00Z"), open: v, high: v, low: v, close: v, volume: 0 }; }), tf); });
   }
   function chPrec(v) { return v >= 1000 ? 1 : v >= 10 ? 2 : v >= 1 ? 3 : v >= 0.01 ? 5 : 7; }
-  function chStyles(line) {
-    var up = "#22c55e", dn = "#ef4444", tx = "#9ca3af", ln = "#2a2a2a";
-    return { grid: { horizontal: { color: "#1f1f1f" }, vertical: { color: "#1f1f1f" } },
-      candle: { type: line ? "area" : "candle_solid", bar: { upColor: up, downColor: dn, noChangeColor: tx, upBorderColor: up, downBorderColor: dn, noChangeBorderColor: tx, upWickColor: up, downWickColor: dn, noChangeWickColor: tx },
-        area: { lineColor: "#60a5fa", value: "close", backgroundColor: [{ offset: 0, color: "rgba(96,165,250,0.25)" }, { offset: 1, color: "rgba(96,165,250,0.02)" }] },
-        priceMark: { last: { upColor: up, downColor: dn, noChangeColor: tx } }, tooltip: { text: { color: tx } } },
+  function chStyles(line) { /* the user's setup: green and red bodies, black borders and wicks, on a light peach background (set on the chart element) */
+    var up = "#4CAF50", dn = "#F23645", bk = "#000000", tx = "#3f3a33", ln = "rgba(0,0,0,0.18)", gr = "rgba(0,0,0,0.07)";
+    return { grid: { horizontal: { color: gr }, vertical: { color: gr } },
+      candle: { type: line ? "area" : "candle_solid", bar: { upColor: up, downColor: dn, noChangeColor: "#888", upBorderColor: bk, downBorderColor: bk, noChangeBorderColor: bk, upWickColor: bk, downWickColor: bk, noChangeWickColor: bk },
+        area: { lineColor: "#2962FF", value: "close", backgroundColor: [{ offset: 0, color: "rgba(41,98,255,0.22)" }, { offset: 1, color: "rgba(41,98,255,0.02)" }] },
+        priceMark: { high: { color: tx }, low: { color: tx }, last: { upColor: up, downColor: dn, noChangeColor: "#888" } }, tooltip: { text: { color: tx } } },
       xAxis: { axisLine: { color: ln }, tickLine: { color: ln }, tickText: { color: tx } }, yAxis: { axisLine: { color: ln }, tickLine: { color: ln }, tickText: { color: tx } },
-      separator: { color: ln }, crosshair: { horizontal: { line: { color: "#555" }, text: { backgroundColor: "#333" } }, vertical: { line: { color: "#555" }, text: { backgroundColor: "#333" } } } };
+      separator: { color: ln }, crosshair: { horizontal: { line: { color: "#6b6257" }, text: { backgroundColor: "#3f3a33" } }, vertical: { line: { color: "#6b6257" }, text: { backgroundColor: "#3f3a33" } } } };
   }
+  function chFree(on) { /* no auto-fit of the price axis: once the data is drawn, the chart can be dragged freely up and down like sideways. Double-clicking the price axis fits it again */
+    try { chChart.getDrawPaneById("candle_pane").getAxisComponent().setAutoCalcTickFlag(!on); } catch (e) {}
+  }
+
   function chShow() { /* (re)draws the chosen asset in the chosen timeframe */
     var a = chAsset, tf = chTf, seq = ++chSeq; if (!a) return;
     if (a.tf.indexOf(tf) < 0) tf = chTf = a.tf[0];
@@ -2750,7 +2754,7 @@
       if (seq !== chSeq) return;
       if (!l.length) { chChart.clearData(); chEl.info.textContent = a.src === "fred" ? "No data yet: the first import runs with the next snapshot job." : "No data yet."; return; }
       var last = l[l.length - 1]; chChart.setPriceVolumePrecision(chPrec(Math.abs(last.close)), 2);
-      chChart.applyNewData(l, !line);
+      chFree(false); chChart.applyNewData(l, !line, function () { chFree(true); });
       chEl.info.textContent = (a.unit ? a.unit + " · " : "") + (a.src === "perp" || a.src === "inv" ? "Bitget" : a.src === "binance" ? "Binance" : a.src === "snap" ? "CoinAtlas snapshots, " + l.length + (l.length === 1 ? " point" : " points") : "FRED") + (line ? "" : " · live");
       if (!line) chPoll = setInterval(function () { /* live: the newest candles every 5 seconds while the screen is open */
         if (chScreen.hidden || document.hidden) return;
