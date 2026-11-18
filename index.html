@@ -2740,7 +2740,7 @@
   }
   function chPrec(v) { return v >= 1000 ? 1 : v >= 10 ? 2 : v >= 1 ? 3 : v >= 0.01 ? 5 : 7; }
   var CH_SKEY = "coinatlas-chart-style", CH_DEF = { bg: "#FFE0B2", gridV: false, gridH: false, gridVc: "#d9c3a0", gridHc: "#d9c3a0", cross: "#000000", crossStyle: "dashed",
-    body: true, up: "#4CAF50", dn: "#F23645", border: true, bUp: "#000000", bDn: "#000000", wick: true, wUp: "#000000", wDn: "#000000",
+    body: true, up: "#43b147", dn: "#F23645", border: true, bUp: "#000000", bDn: "#000000", wick: true, wUp: "#000000", wDn: "#000000",
     auto: false, invert: false, type: "normal", pos: "right", last: false };
   var chS = {}; (function () { var x = {}; try { x = JSON.parse(localStorage.getItem(CH_SKEY) || "{}") || {}; } catch (e) {} Object.keys(CH_DEF).forEach(function (k) { chS[k] = k in x ? x[k] : CH_DEF[k]; }); })();
   function chSave() { try { localStorage.setItem(CH_SKEY, JSON.stringify(chS)); } catch (e) {} }
@@ -2904,7 +2904,9 @@
         if (n >= 25 || list[0].timestamp <= anchor) return go(list);
         chLoad(a, tf, list[0].timestamp).then(function (o) { if (seq !== chSeq) return; if (!o.length) return go(list); back(o.filter(function (x) { return x.timestamp < list[0].timestamp; }).concat(list), n + 1); }, function () { go(list); });
       })(l, 0);
-      chEl.info.textContent = (a.unit ? a.unit + " · " : "") + (a.src === "perp" || a.src === "inv" ? "Bitget" : a.src === "binance" ? "Binance" : a.src === "snap" ? "CoinAtlas snapshots, " + l.length + (l.length === 1 ? " point" : " points") : "FRED") + (line ? "" : " · live");
+      var gaps = 0, stp = { "1m": 6e4, "3m": 18e4, "5m": 3e5, "15m": 9e5, "1h": 36e5, "4h": 144e5, "1D": 864e5, "1W": 6048e5 }[tf]; /* missing candles in what the exchange sent */
+      if (stp && !line) for (var k = 1; k < l.length; k++) if (l[k].timestamp - l[k - 1].timestamp > stp * 1.5) gaps += Math.round((l[k].timestamp - l[k - 1].timestamp) / stp) - 1;
+      chEl.info.textContent = (gaps ? gaps + (gaps === 1 ? " candle" : " candles") + " missing from the exchange · " : "") + (a.unit ? a.unit + " · " : "") + (a.src === "perp" || a.src === "inv" ? "Bitget" : a.src === "binance" ? "Binance" : a.src === "snap" ? "CoinAtlas snapshots, " + l.length + (l.length === 1 ? " point" : " points") : "FRED") + (line ? "" : " · live");
       if (!line) chPoll = setInterval(function () { /* live: the newest candles every 5 seconds while the screen is open */
         if (chScreen.hidden || document.hidden) return;
         chLoad(a, tf).then(function (n) { if (seq === chSeq) n.slice(-2).forEach(function (x) { chChart.updateData(x); }); }, function () {});

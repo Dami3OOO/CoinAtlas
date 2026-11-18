@@ -155,10 +155,11 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   WALCL (FRED, wöchentlich, 1W/1M, vom Snapshot-Job geholt nach data/fred-walcl.json).
 - dominance.json hat als 6. Wert den USDT-Anteil an der Top-200-Marktkapitalisierung.
 - Aussehen (Standard, über das Zahnrad "Chart settings" änderbar und im Browser gespeichert): Hintergrund #FFE0B2, keine Gitterlinien,
-  Fadenkreuz schwarz gestrichelt, Körper grün #4CAF50 / rot #F23645, Ränder und Dochte schwarz, keine Hoch-/Tief-Markierungen, keine Linie für den
+  Fadenkreuz schwarz gestrichelt, Körper grün #43b147 / rot #F23645, Ränder und Dochte schwarz, keine Hoch-/Tief-Markierungen, keine Linie für den
   letzten Preis. Schrift wie TradingView (Trebuchet MS), schwarze Achsenlinien, Zeitachse mit Tagen und Monatsnamen, Fadenkreuz-Beschriftung
   schwarz mit weißer Schrift ("Mon Nov 16, 2026   03:00"). Preisachse mit runden Schritten etwa alle 30 Pixel.
 - Letzter Preis als Schild auf der Preisachse mit Restzeit bis zum Schließen der Kerze.
+- Fehlen in den Daten der Börse Kerzen (Abstand größer als die Zeiteinheit), steht oben rechts "N candles missing from the exchange".
 - Kerzen werden auf ganze Bildschirmpixel gezeichnet (eigene "rect"-Figur), sonst wirken sie bei 125 % Skalierung unscharf.
 - Beim Wechsel der Zeiteinheit bleibt der Zeitpunkt am rechten Rand erhalten, notfalls werden ältere Kerzen nachgeladen.
 - "Copy settings" kopiert die eigenen Einstellungen. Wer sie an Claude schickt, bekommt sie als Standard der Seite (CH_DEF in index.html).
