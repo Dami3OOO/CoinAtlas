@@ -443,7 +443,19 @@
   .cs-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
   .cs-title { font-size: 15px; margin-right: 4px; } .cs-asset { font: inherit; font-size: 13px; font-weight: 700; color: var(--fg); background: var(--pop); border: 1px solid var(--line); border-radius: 8px; padding: 5px 12px; cursor: pointer; } .cs-asset:hover { background: var(--hover); }
   .cs-tfs { display: flex; flex-wrap: wrap; gap: 2px; } .cs-tfs button { font: inherit; font-size: 12px; font-weight: 600; color: var(--muted); background: transparent; border: 0; border-radius: 6px; padding: 5px 8px; cursor: pointer; } .cs-tfs button:hover:not(:disabled) { color: var(--fg); background: var(--hover); } .cs-tfs button.active { color: #111; background: var(--fg); } .cs-tfs button:disabled { opacity: .3; cursor: default; }
-  .cs-info { font-size: 11px; color: var(--muted); margin-left: auto; } .cs-close { font: inherit; font-size: 15px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 8px; width: 32px; height: 30px; cursor: pointer; } .cs-close:hover { color: var(--fg); background: var(--hover); }
+  .cs-info { font-size: 11px; color: var(--muted); margin-left: auto; } .cs-gear { font: inherit; font-size: 15px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 8px; width: 32px; height: 30px; cursor: pointer; } .cs-gear:hover { color: var(--fg); background: var(--hover); }
+  .cs-menu { position: fixed; z-index: 220; width: 260px; padding: 6px 0; background: #1e1e1e; border: 1px solid #333; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.5); } .cs-menu[hidden] { display: none; }
+  .cs-menu button { display: flex; align-items: center; gap: 8px; width: 100%; font: inherit; font-size: 13px; color: #e5e5e5; background: transparent; border: 0; padding: 7px 14px; cursor: pointer; text-align: left; } .cs-menu button:hover { background: #2c2c2c; }
+  .cs-menu .cs-ck { width: 14px; color: #e5e5e5; } .cs-menu kbd { margin-left: auto; font: inherit; font-size: 11px; color: #777; } .cs-menu hr { border: 0; border-top: 1px solid #333; margin: 5px 0; }
+  .cs-set { position: absolute; inset: 0; z-index: 210; display: flex; align-items: flex-start; justify-content: center; padding-top: 80px; background: rgba(0,0,0,.35); } .cs-set[hidden] { display: none; }
+  .cs-set-in { width: 360px; max-width: calc(100vw - 32px); background: #2a221c; color: #e8e2da; border: 1px solid #3a3029; border-radius: 10px; padding: 14px 18px 16px; box-shadow: 0 10px 40px rgba(0,0,0,.5); }
+  .cs-set-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; } .cs-set-h button { font: inherit; color: #b9aea2; background: transparent; border: 0; cursor: pointer; font-size: 15px; }
+  .cs-set-t { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #9b8f83; margin: 12px 0 6px; }
+  .cs-set label { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 13px; } .cs-set label span { flex: 1; } .cs-set label i { width: 16px; }
+  .cs-set input[type=checkbox] { width: 16px; height: 16px; accent-color: #e8e2da; } .cs-set input[type=color] { width: 34px; height: 30px; padding: 2px; background: #1f1915; border: 1px solid #4a3d33; border-radius: 6px; cursor: pointer; }
+  .cs-set select { font: inherit; font-size: 12px; color: #e8e2da; background: #1f1915; border: 1px solid #4a3d33; border-radius: 6px; padding: 5px; }
+  .cs-set-f { margin-top: 12px; text-align: right; } .cs-set-f button { font: inherit; font-size: 12px; color: #e8e2da; background: transparent; border: 1px solid #4a3d33; border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+  .cs-close { font: inherit; font-size: 15px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 8px; width: 32px; height: 30px; cursor: pointer; } .cs-close:hover { color: var(--fg); background: var(--hover); }
   .cs-body { position: relative; flex: 1; min-height: 0; } .cs-chart { position: absolute; inset: 0; background: #FFE0B2; }
   #chart-screen.picking .cs-chart { filter: blur(4px) grayscale(1); opacity: .25; pointer-events: none; }
   .cs-pick { position: absolute; inset: 0; z-index: 3; overflow-y: auto; animation: rtAskIn .35s ease both; } .cs-pick[hidden] { display: none; }
@@ -2690,7 +2702,7 @@
   var CH_KEY = "coinatlas-chart-tf", chTf = "15m", chAsset = null, chChart = null, chPoll = null, chSeq = 0;
   try { chTf = localStorage.getItem(CH_KEY) || "15m"; } catch (e) {}
   var chScreen = document.createElement("div"); chScreen.id = "chart-screen"; chScreen.hidden = true;
-  chScreen.innerHTML = '<div class="cs-bar"><b class="cs-title">Charts</b><button type="button" class="cs-asset" id="cs-asset">Choose Asset</button><div class="cs-tfs" id="cs-tfs"></div><span class="cs-info" id="cs-info"></span><button type="button" class="cs-close" id="cs-close" aria-label="Close the charts">✕</button></div>' +
+  chScreen.innerHTML = '<div class="cs-bar"><b class="cs-title">Charts</b><button type="button" class="cs-asset" id="cs-asset">Choose Asset</button><div class="cs-tfs" id="cs-tfs"></div><span class="cs-info" id="cs-info"></span><button type="button" class="cs-gear" id="cs-gear" aria-label="Chart settings" title="Chart settings">⚙</button><button type="button" class="cs-close" id="cs-close" aria-label="Close the charts">✕</button></div>' +
     '<div class="cs-body"><div class="cs-chart" id="cs-chart"></div><div class="cs-pick" id="cs-pick"></div></div>';
   document.body.appendChild(chScreen);
   var chEl = { chart: document.getElementById("cs-chart"), pick: document.getElementById("cs-pick"), tfs: document.getElementById("cs-tfs"), info: document.getElementById("cs-info"), asset: document.getElementById("cs-asset") };
@@ -2725,18 +2737,81 @@
     return repoJson("data/fred-walcl.json").catch(function () { return null; }).then(function (j) { /* missing until the first weekly import */ return chAgg(((j && j.days) || []).map(function (r) { var v = r[1] * a.scale; return { timestamp: Date.parse(r[0] + "T00:00:00Z"), open: v, high: v, low: v, close: v, volume: 0 }; }), tf); });
   }
   function chPrec(v) { return v >= 1000 ? 1 : v >= 10 ? 2 : v >= 1 ? 3 : v >= 0.01 ? 5 : 7; }
-  function chStyles(line) { /* the user's setup: green and red bodies, black borders and wicks, on a light peach background (set on the chart element) */
-    var up = "#4CAF50", dn = "#F23645", bk = "#000000", tx = "#3f3a33", ln = "rgba(0,0,0,0.18)", gr = "rgba(0,0,0,0.07)";
-    return { grid: { horizontal: { color: gr }, vertical: { color: gr } },
-      candle: { type: line ? "area" : "candle_solid", bar: { upColor: up, downColor: dn, noChangeColor: "#888", upBorderColor: bk, downBorderColor: bk, noChangeBorderColor: bk, upWickColor: bk, downWickColor: bk, noChangeWickColor: bk },
+  var CH_SKEY = "coinatlas-chart-style", CH_DEF = { bg: "#FFE0B2", gridV: false, gridH: false, gridVc: "#d9c3a0", gridHc: "#d9c3a0", cross: "#000000", crossStyle: "dashed",
+    body: true, up: "#4CAF50", dn: "#F23645", border: true, bUp: "#000000", bDn: "#000000", wick: true, wUp: "#000000", wDn: "#000000",
+    auto: false, invert: false, type: "normal", pos: "right", last: true };
+  var chS = {}; (function () { var x = {}; try { x = JSON.parse(localStorage.getItem(CH_SKEY) || "{}") || {}; } catch (e) {} Object.keys(CH_DEF).forEach(function (k) { chS[k] = k in x ? x[k] : CH_DEF[k]; }); })();
+  function chSave() { try { localStorage.setItem(CH_SKEY, JSON.stringify(chS)); } catch (e) {} }
+  function chStyles(line) { /* built from the chart settings: clean by default, no grid lines, black dashed crosshair, green and red bodies with black borders and wicks */
+    var S = chS, tx = "#3f3a33", ln = "rgba(0,0,0,0.25)", tr = "rgba(0,0,0,0)";
+    var cr = function () { return { line: { color: S.cross, style: S.crossStyle, dashedValue: [4, 4], size: 1 }, text: { backgroundColor: S.cross === "#000000" ? "#222" : S.cross } }; };
+    return { grid: { show: S.gridV || S.gridH, horizontal: { show: S.gridH, color: S.gridHc, style: "solid" }, vertical: { show: S.gridV, color: S.gridVc, style: "solid" } },
+      candle: { type: line ? "area" : "candle_solid",
+        bar: { upColor: S.body ? S.up : tr, downColor: S.body ? S.dn : tr, noChangeColor: S.body ? "#888" : tr,
+          upBorderColor: S.border ? S.bUp : (S.body ? S.up : tr), downBorderColor: S.border ? S.bDn : (S.body ? S.dn : tr), noChangeBorderColor: S.border ? S.bUp : "#888",
+          upWickColor: S.wick ? S.wUp : tr, downWickColor: S.wick ? S.wDn : tr, noChangeWickColor: S.wick ? S.wUp : tr },
         area: { lineColor: "#2962FF", value: "close", backgroundColor: [{ offset: 0, color: "rgba(41,98,255,0.22)" }, { offset: 1, color: "rgba(41,98,255,0.02)" }] },
-        priceMark: { high: { color: tx }, low: { color: tx }, last: { upColor: up, downColor: dn, noChangeColor: "#888" } }, tooltip: { text: { color: tx } } },
-      xAxis: { axisLine: { color: ln }, tickLine: { color: ln }, tickText: { color: tx } }, yAxis: { axisLine: { color: ln }, tickLine: { color: ln }, tickText: { color: tx } },
-      separator: { color: ln }, crosshair: { horizontal: { line: { color: "#6b6257" }, text: { backgroundColor: "#3f3a33" } }, vertical: { line: { color: "#6b6257" }, text: { backgroundColor: "#3f3a33" } } } };
+        priceMark: { high: { show: false }, low: { show: false }, last: { show: S.last, upColor: S.up, downColor: S.dn, noChangeColor: "#888", line: { show: S.last, style: "dashed", dashedValue: [2, 2], size: 1 } } }, tooltip: { text: { color: tx } } },
+      xAxis: { axisLine: { color: ln }, tickLine: { color: ln }, tickText: { color: tx } },
+      yAxis: { axisLine: { color: ln }, tickLine: { color: ln }, tickText: { color: tx }, type: S.type, reverse: S.invert, position: S.pos },
+      separator: { color: ln }, crosshair: { horizontal: cr(), vertical: cr() } };
   }
-  function chFree(on) { /* no auto-fit of the price axis: once the data is drawn, the chart can be dragged freely up and down like sideways. Double-clicking the price axis fits it again */
-    try { chChart.getDrawPaneById("candle_pane").getAxisComponent().setAutoCalcTickFlag(!on); } catch (e) {}
+  function chApply() { if (!chChart || !chAsset) return; chEl.chart.style.background = chS.bg; chChart.setStyles(chStyles(chAsset.src === "snap" || chAsset.src === "fred")); chFree(true); }
+  function chFree(on) { /* no auto-fit of the price axis unless "Auto" is on: the chart can be dragged freely up and down */
+    try { chChart.getDrawPaneById("candle_pane").getAxisComponent().setAutoCalcTickFlag(chS.auto || !on); } catch (e) {}
   }
+  function chResetScale() { chFree(false); chChart.resize(); requestAnimationFrame(function () { chFree(true); }); }
+  /* zooming keeps the right edge in place, like TradingView, wherever the mouse is */
+  chEl.chart.addEventListener("wheel", function (e) {
+    if (!chChart || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+    var sz = chChart.getSize("candle_pane", "main"), r = chEl.chart.getBoundingClientRect(); if (!sz) return;
+    var x = e.clientX - r.left - (chS.pos === "left" ? r.width - sz.width : 0); if (x < 0 || x > sz.width) return; /* over the price axis: leave it to the chart */
+    e.preventDefault(); e.stopPropagation();
+    var d = -e.deltaY / (e.deltaMode === 1 ? 3 : e.deltaMode === 2 ? 1 : 100), s = Math.sign(d) * Math.min(1, Math.abs(d));
+    chChart.zoomAtCoordinate(1 + 0.12 * s, { x: sz.width, y: sz.height / 2 });
+  }, { capture: true, passive: false });
+  /* the price scale menu, on a right click */
+  var chMenu = document.createElement("div"); chMenu.className = "cs-menu"; chMenu.hidden = true; chScreen.appendChild(chMenu);
+  function chMenuHtml() {
+    var ck = function (on) { return '<span class="cs-ck">' + (on ? "✓" : "") + '</span>'; }, it = function (act, label, on, key) { return '<button type="button" data-cm="' + act + '">' + ck(on) + '<span>' + label + '</span><kbd>' + (key || "") + '</kbd></button>'; };
+    return it("reset", "Reset price scale", false, "Alt + R") + '<hr>' + it("auto", "Auto (fits data to screen)", chS.auto) + it("invert", "Invert scale", chS.invert, "Alt + I") + '<hr>' +
+      it("normal", "Regular", chS.type === "normal") + it("percentage", "Percent", chS.type === "percentage", "Alt + P") + it("log", "Logarithmic", chS.type === "log", "Alt + L") + '<hr>' +
+      it("pos", chS.pos === "right" ? "Move scale to left" : "Move scale to right", false) + it("last", "Last price line", chS.last) + '<hr>' + it("more", "More settings…", false);
+  }
+  function chMenuDo(a) {
+    if (a === "reset") chResetScale(); else if (a === "auto") chS.auto = !chS.auto; else if (a === "invert") chS.invert = !chS.invert;
+    else if (a === "normal" || a === "percentage" || a === "log") chS.type = a; else if (a === "pos") chS.pos = chS.pos === "right" ? "left" : "right"; else if (a === "last") chS.last = !chS.last;
+    else if (a === "more") { chMenu.hidden = true; chSettings(true); return; }
+    chSave(); chApply(); chMenu.hidden = true;
+  }
+  chEl.chart.addEventListener("contextmenu", function (e) { if (!chChart) return; e.preventDefault(); chMenu.innerHTML = chMenuHtml(); chMenu.hidden = false; var w = 260, h = chMenu.offsetHeight; chMenu.style.left = Math.min(e.clientX, innerWidth - w - 8) + "px"; chMenu.style.top = Math.min(e.clientY, innerHeight - h - 8) + "px"; });
+  chMenu.addEventListener("click", function (e) { var b = e.target.closest("[data-cm]"); if (b) chMenuDo(b.dataset.cm); });
+  document.addEventListener("mousedown", function (e) { if (!chMenu.hidden && !e.target.closest(".cs-menu")) chMenu.hidden = true; });
+  document.addEventListener("keydown", function (e) { if (chScreen.hidden || !e.altKey || !chChart) return; var m = { r: "reset", i: "invert", p: "percentage", l: "log" }[e.key.toLowerCase()]; if (!m) return; e.preventDefault(); if ((m === "percentage" || m === "log") && chS.type === m) m = "normal"; chMenuDo(m); });
+  /* chart settings, like TradingView's: the candles and the basic styles */
+  var chSet = document.createElement("div"); chSet.className = "cs-set"; chSet.hidden = true; chScreen.appendChild(chSet);
+  function chSettings(show) {
+    if (!show) { chSet.hidden = true; return; }
+    var S = chS, col = function (k) { return '<input type="color" data-cs="' + k + '" value="' + S[k] + '">'; }, box = function (k) { return '<input type="checkbox" data-cs="' + k + '"' + (S[k] ? ' checked' : '') + '>'; };
+    chSet.innerHTML = '<div class="cs-set-in"><div class="cs-set-h"><b>Chart settings</b><button type="button" data-cs-close="1" aria-label="Close">✕</button></div>' +
+      '<div class="cs-set-t">Candles</div>' +
+      '<label>' + box("body") + '<span>Body</span>' + col("up") + col("dn") + '</label>' +
+      '<label>' + box("border") + '<span>Borders</span>' + col("bUp") + col("bDn") + '</label>' +
+      '<label>' + box("wick") + '<span>Wick</span>' + col("wUp") + col("wDn") + '</label>' +
+      '<div class="cs-set-t">Chart basic styles</div>' +
+      '<label><i></i><span>Background</span>' + col("bg") + '</label>' +
+      '<label>' + box("gridV") + '<span>Vertical grid lines</span>' + col("gridVc") + '</label>' +
+      '<label>' + box("gridH") + '<span>Horizontal grid lines</span>' + col("gridHc") + '</label>' +
+      '<label><i></i><span>Crosshair</span>' + col("cross") + '<select data-cs="crossStyle"><option value="dashed"' + (S.crossStyle === "dashed" ? " selected" : "") + '>- - - -</option><option value="solid"' + (S.crossStyle === "solid" ? " selected" : "") + '>———</option></select></label>' +
+      '<div class="cs-set-f"><button type="button" data-cs-reset="1">Reset to defaults</button></div></div>';
+    chSet.hidden = false;
+  }
+  chSet.addEventListener("input", function (e) { var k = e.target.dataset.cs; if (!k) return; chS[k] = e.target.type === "checkbox" ? e.target.checked : e.target.value; chSave(); chApply(); });
+  chSet.addEventListener("click", function (e) {
+    if (e.target.closest("[data-cs-close]") || e.target === chSet) chSettings(false);
+    else if (e.target.closest("[data-cs-reset]")) { Object.keys(CH_DEF).forEach(function (k) { chS[k] = CH_DEF[k]; }); chSave(); chApply(); chSettings(true); }
+  });
+
 
   function chShow() { /* (re)draws the chosen asset in the chosen timeframe */
     var a = chAsset, tf = chTf, seq = ++chSeq; if (!a) return;
@@ -2745,7 +2820,7 @@
     chEl.info.textContent = "Loading…";
     if (!window.klinecharts) { chEl.info.textContent = "The chart library could not be loaded."; return; }
     if (!chChart) chChart = klinecharts.init(chEl.chart);
-    var line = a.src === "snap" || a.src === "fred"; chChart.setStyles(chStyles(line));
+    var line = a.src === "snap" || a.src === "fred"; chEl.chart.style.background = chS.bg; chChart.setStyles(chStyles(line));
     chChart.setLoadDataCallback(function (p) {
       if (p.type !== "forward" || line || !p.data) return p.callback([], false);
       chLoad(a, tf, p.data.timestamp).then(function (l) { if (seq === chSeq) p.callback(l, l.length > 0); }, function () { p.callback([], false); });
@@ -2767,8 +2842,9 @@
   function chClose() { chScreen.hidden = true; document.body.classList.remove("cs-open"); clearInterval(chPoll); }
   document.getElementById("charts-btn").addEventListener("click", chOpen);
   document.getElementById("cs-close").addEventListener("click", chClose);
+  document.getElementById("cs-gear").addEventListener("click", function () { chSettings(chSet.hidden); });
   chEl.asset.addEventListener("click", function () { chPick(chEl.pick.hidden); });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !chScreen.hidden) { if (!chEl.pick.hidden && chAsset) chPick(false); else chClose(); } });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !chScreen.hidden) { if (!chMenu.hidden) chMenu.hidden = true; else if (!chSet.hidden) chSettings(false); else if (!chEl.pick.hidden && chAsset) chPick(false); else chClose(); } });
   chEl.pick.addEventListener("click", function (e) { var b = e.target.closest("[data-ch]"); if (!b) return; chAsset = CH_ASSETS.filter(function (a) { return a.id === b.dataset.ch; })[0]; chPick(false); chShow(); });
   chEl.tfs.addEventListener("click", function (e) { var b = e.target.closest("[data-tf]"); if (!b || b.disabled) return; chTf = b.dataset.tf; try { localStorage.setItem(CH_KEY, chTf); } catch (x) {} chShow(); });
   window.addEventListener("resize", function () { if (chChart && !chScreen.hidden) chChart.resize(); });

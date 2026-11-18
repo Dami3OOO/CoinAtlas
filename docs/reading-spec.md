@@ -154,9 +154,12 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   BTCUSD (Binance BTCUSDT Spot), TOTAL200 / BTC.D / USDT.D (hauseigen aus den Snapshots, nur 1D/1W/1M, Daten ab 12.11.2026),
   WALCL (FRED, wöchentlich, 1W/1M, vom Snapshot-Job geholt nach data/fred-walcl.json).
 - dominance.json hat als 6. Wert den USDT-Anteil an der Top-200-Marktkapitalisierung.
-- Aussehen: Hintergrund #FFE0B2, Kerzenkörper grün #4CAF50 / rot #F23645, Ränder und Dochte schwarz.
-- Kein Auto-Fit der Preisachse: Nach dem Laden lässt sich der Chart frei nach oben und unten ziehen wie zur Seite.
-  Doppelklick auf die Preisachse passt sie einmal wieder an.
+- Aussehen (Standard, über das Zahnrad "Chart settings" änderbar und im Browser gespeichert): Hintergrund #FFE0B2, keine Gitterlinien,
+  Fadenkreuz schwarz gestrichelt, Körper grün #4CAF50 / rot #F23645, Ränder und Dochte schwarz, keine Hoch-/Tief-Markierungen.
+- Kein Auto-Fit der Preisachse: Der Chart lässt sich frei nach oben und unten ziehen. Zoomen hält immer den rechten Rand fest, egal wo die Maus steht.
+- Rechtsklick öffnet das Preisachsen-Menü: Reset price scale (Alt+R), Auto (fits data to screen), Invert scale (Alt+I),
+  Regular / Percent (Alt+P) / Logarithmic (Alt+L), Move scale to left/right, Last price line, More settings.
+  Nicht übernommen aus TradingView: Lock price to bar ratio, Scale price chart only, Indexed to 100, Labels, Plus button.
 - Bibliothek: KLineChart 9.8.12 (Apache 2.0), unverändert in index.html eingebettet, mit NOTICE als Kommentar.
 - Bitget-Zeiteinheiten werden mit Ausweich-Namen versucht (1Dutc, dann 1D usw.), weil die genauen Namen nicht getestet werden konnten.
 - Weggelassen: DXY, JXY, BTC1!, NQ1! (lizenzpflichtige Börsendaten), kein TradingView-Embed, keine geschätzte Historie.
