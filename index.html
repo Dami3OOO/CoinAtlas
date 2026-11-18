@@ -454,7 +454,9 @@
   .cs-set label { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 13px; } .cs-set label span { flex: 1; } .cs-set label i { width: 16px; }
   .cs-set input[type=checkbox] { width: 16px; height: 16px; accent-color: #e8e2da; } .cs-set input[type=color] { width: 34px; height: 30px; padding: 2px; background: #1f1915; border: 1px solid #4a3d33; border-radius: 6px; cursor: pointer; }
   .cs-set select { font: inherit; font-size: 12px; color: #e8e2da; background: #1f1915; border: 1px solid #4a3d33; border-radius: 6px; padding: 5px; }
-  .cs-set-f { margin-top: 12px; text-align: right; } .cs-set-f button { font: inherit; font-size: 12px; color: #e8e2da; background: transparent; border: 1px solid #4a3d33; border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+  .cs-set-n { margin-top: 10px; font-size: 11px; line-height: 1.5; color: #9b8f83; }
+  .cs-badge { position: absolute; z-index: 2; transform: translateY(-50%); display: flex; flex-direction: column; align-items: flex-start; padding: 2px 6px; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif; font-size: 12px; line-height: 1.3; pointer-events: none; box-sizing: border-box; } .cs-badge[hidden] { display: none; } .cs-badge b { font-weight: normal; }
+  .cs-set-f { margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px; } .cs-set-f button { font: inherit; font-size: 12px; color: #e8e2da; background: transparent; border: 1px solid #4a3d33; border-radius: 6px; padding: 5px 10px; cursor: pointer; }
   .cs-close { font: inherit; font-size: 15px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 8px; width: 32px; height: 30px; cursor: pointer; } .cs-close:hover { color: var(--fg); background: var(--hover); }
   .cs-body { position: relative; flex: 1; min-height: 0; } .cs-chart { position: absolute; inset: 0; background: #FFE0B2; }
   #chart-screen.picking .cs-chart { filter: blur(4px) grayscale(1); opacity: .25; pointer-events: none; }
@@ -2739,21 +2741,21 @@
   function chPrec(v) { return v >= 1000 ? 1 : v >= 10 ? 2 : v >= 1 ? 3 : v >= 0.01 ? 5 : 7; }
   var CH_SKEY = "coinatlas-chart-style", CH_DEF = { bg: "#FFE0B2", gridV: false, gridH: false, gridVc: "#d9c3a0", gridHc: "#d9c3a0", cross: "#000000", crossStyle: "dashed",
     body: true, up: "#4CAF50", dn: "#F23645", border: true, bUp: "#000000", bDn: "#000000", wick: true, wUp: "#000000", wDn: "#000000",
-    auto: false, invert: false, type: "normal", pos: "right", last: true };
+    auto: false, invert: false, type: "normal", pos: "right", last: false };
   var chS = {}; (function () { var x = {}; try { x = JSON.parse(localStorage.getItem(CH_SKEY) || "{}") || {}; } catch (e) {} Object.keys(CH_DEF).forEach(function (k) { chS[k] = k in x ? x[k] : CH_DEF[k]; }); })();
   function chSave() { try { localStorage.setItem(CH_SKEY, JSON.stringify(chS)); } catch (e) {} }
   function chStyles(line) { /* built from the chart settings: clean by default, no grid lines, black dashed crosshair, green and red bodies with black borders and wicks */
-    var S = chS, tx = "#3f3a33", ln = "rgba(0,0,0,0.25)", tr = "rgba(0,0,0,0)";
-    var cr = function () { return { line: { color: S.cross, style: S.crossStyle, dashedValue: [4, 4], size: 1 }, text: { backgroundColor: S.cross === "#000000" ? "#222" : S.cross } }; };
+    var S = chS, tx = "#787B86", ln = "rgba(0,0,0,0.25)", tr = "rgba(0,0,0,0)", FF = "-apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif";
+    var cr = function () { return { line: { color: S.cross, style: S.crossStyle, dashedValue: [4, 4], size: 1 }, text: { color: "#ffffff", backgroundColor: "#000000", borderColor: "#000000", family: FF, size: 12, weight: "normal", borderRadius: 2, paddingLeft: 8, paddingRight: 8, paddingTop: 4, paddingBottom: 4 } }; };
     return { grid: { show: S.gridV || S.gridH, horizontal: { show: S.gridH, color: S.gridHc, style: "solid" }, vertical: { show: S.gridV, color: S.gridVc, style: "solid" } },
       candle: { type: line ? "area" : "candle_solid",
         bar: { upColor: S.body ? S.up : tr, downColor: S.body ? S.dn : tr, noChangeColor: S.body ? "#888" : tr,
           upBorderColor: S.border ? S.bUp : (S.body ? S.up : tr), downBorderColor: S.border ? S.bDn : (S.body ? S.dn : tr), noChangeBorderColor: S.border ? S.bUp : "#888",
           upWickColor: S.wick ? S.wUp : tr, downWickColor: S.wick ? S.wDn : tr, noChangeWickColor: S.wick ? S.wUp : tr },
         area: { lineColor: "#2962FF", value: "close", backgroundColor: [{ offset: 0, color: "rgba(41,98,255,0.22)" }, { offset: 1, color: "rgba(41,98,255,0.02)" }] },
-        priceMark: { high: { show: false }, low: { show: false }, last: { show: S.last, upColor: S.up, downColor: S.dn, noChangeColor: "#888", line: { show: S.last, style: "dashed", dashedValue: [2, 2], size: 1 } } }, tooltip: { text: { color: tx } } },
-      xAxis: { axisLine: { color: ln }, tickLine: { color: ln }, tickText: { color: tx } },
-      yAxis: { axisLine: { color: ln }, tickLine: { color: ln }, tickText: { color: tx }, type: S.type, reverse: S.invert, position: S.pos },
+        priceMark: { high: { show: false }, low: { show: false }, last: { show: false, line: { show: S.last } } }, tooltip: { text: { color: "#3f3a33", family: FF, size: 12 } } },
+      xAxis: { axisLine: { color: "#000000" }, tickLine: { show: false }, tickText: { color: tx, family: FF, size: 12 } },
+      yAxis: { axisLine: { color: "#000000" }, tickLine: { show: false }, tickText: { color: tx, family: FF, size: 12 }, type: S.type, reverse: S.invert, position: S.pos },
       separator: { color: ln }, crosshair: { horizontal: cr(), vertical: cr() } };
   }
   function chApply() { if (!chChart || !chAsset) return; chEl.chart.style.background = chS.bg; chChart.setStyles(chStyles(chAsset.src === "snap" || chAsset.src === "fred")); chFree(true); }
@@ -2803,23 +2805,90 @@
       '<label>' + box("gridV") + '<span>Vertical grid lines</span>' + col("gridVc") + '</label>' +
       '<label>' + box("gridH") + '<span>Horizontal grid lines</span>' + col("gridHc") + '</label>' +
       '<label><i></i><span>Crosshair</span>' + col("cross") + '<select data-cs="crossStyle"><option value="dashed"' + (S.crossStyle === "dashed" ? " selected" : "") + '>- - - -</option><option value="solid"' + (S.crossStyle === "solid" ? " selected" : "") + '>———</option></select></label>' +
-      '<div class="cs-set-f"><button type="button" data-cs-reset="1">Reset to defaults</button></div></div>';
+      '<div class="cs-set-f"><button type="button" data-cs-copy="1">Copy settings</button><button type="button" data-cs-reset="1">Reset to defaults</button></div><div class="cs-set-n">Your settings are saved in this browser. To make them the default of the site for everyone, copy them and send them to Claude.</div></div>';
     chSet.hidden = false;
   }
+  /* candles drawn on whole screen pixels: with a display scale like 125%, the library put wicks and borders between two pixels, which made them grey and soft */
+  if (window.klinecharts) (function () {
+    var Orig = klinecharts.getFigureClass("rect"), clear = function (c) { return !c || c === "transparent" || /rgba\([^)]*,\s*0\)$/.test(String(c).replace(/\s/g, "")); };
+    klinecharts.registerFigure({ name: "rect",
+      checkEventOn: function (p, a) { return [].concat(a).some(function (r) { return p.x >= r.x && p.x <= r.x + r.width && p.y >= r.y && p.y <= r.y + r.height; }); },
+      draw: function (ctx, attrs, styles) {
+        if ((styles.borderRadius || 0) > 0 || styles.borderStyle === "dashed") return new Orig({ name: "rect", attrs: attrs, styles: styles }).draw(ctx);
+        var M = ctx.getTransform ? ctx.getTransform() : null, pr = M && M.a > 0 ? M.a : window.devicePixelRatio || 1, pv = M && M.d > 0 ? M.d : pr; /* the real scale of this canvas, which can differ a little from devicePixelRatio */
+        var px = 1 / pr, py = 1 / pv, sn = function (v) { return Math.round(v * pr) / pr; }, sv = function (v) { return Math.round(v * pv) / pv; }, st = styles.style || "fill";
+        var fill = (st === "fill" || st === "stroke_fill") && !clear(styles.color), line = (st === "stroke" || st === "stroke_fill") && (styles.borderSize == null ? 1 : styles.borderSize) > 0 && !clear(styles.borderColor);
+        [].concat(attrs).forEach(function (a) {
+          var x0 = sn(a.x), x1 = a.width <= 1.01 ? x0 + Math.max(1, Math.floor(pr)) * px : Math.max(sn(a.x + a.width), x0 + px), y0 = sv(a.y), y1 = Math.max(sv(a.y + a.height), y0 + py), w = x1 - x0, h = y1 - y0;
+          var b = Math.max(1, Math.round((styles.borderSize == null ? 1 : styles.borderSize) * pr)) * px;
+          if (line) {
+            ctx.fillStyle = styles.borderColor;
+            var bv = b * pr * py;
+            if (fill || w <= 2 * b || h <= 2 * bv) ctx.fillRect(x0, y0, w, h); else { ctx.fillRect(x0, y0, w, bv); ctx.fillRect(x0, y1 - bv, w, bv); ctx.fillRect(x0, y0, b, h); ctx.fillRect(x1 - b, y0, b, h); }
+            if (fill && w > 2 * b && h > 2 * bv) { ctx.fillStyle = styles.color; ctx.fillRect(x0 + b, y0 + bv, w - 2 * b, h - 2 * bv); }
+          } else if (fill) { ctx.fillStyle = styles.color; ctx.fillRect(x0, y0, w, h); }
+        });
+      } });
+    /* the price axis with TradingView's spacing: a round step chosen so that a label comes about every 30 pixels */
+    klinecharts.registerYAxis({ name: "tv", createTicks: function (p) {
+      var R = p.range, H = p.bounding.height; if (chS.type !== "normal" || !(R.range > 0) || !(H > 0)) return p.defaultTicks;
+      var raw = R.range / Math.max(2, H / 30), m = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10)), step = [1, 2, 2.5, 5, 10].map(function (k) { return k * m; }).filter(function (s) { return s >= raw; })[0];
+      var out = [], v, prec = chPrecNow;
+      for (v = Math.ceil(R.from / step) * step; v <= R.to; v += step) { var y = H - (v - R.from) / R.range * H; out.push({ coord: chS.invert ? H - y : y, value: v, text: v.toLocaleString("en-US", { minimumFractionDigits: prec, maximumFractionDigits: prec }) }); }
+      return out;
+    } });
+  })();
+  var chPrecNow = 2, CH_MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], CH_WD = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  function chDate(dtf, ts, format, type) { /* dates like TradingView: day numbers and month names on the time axis, "Mon Nov 16, 2026   03:00" on the crosshair */
+    var d = new Date(ts), p2 = function (n) { return (n < 10 ? "0" : "") + n; }, hm = p2(d.getHours()) + ":" + p2(d.getMinutes()), day = chTf === "1D" || chTf === "1W" || chTf === "1M";
+    if (type === 1) return CH_WD[d.getDay()] + " " + CH_MON[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear() + (day ? "" : "   " + hm);
+    if (type === 0) return CH_MON[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear() + (day ? "" : " " + hm);
+    if (/YYYY$/.test(format) || format === "YYYY") return String(d.getFullYear());
+    if (/HH:mm/.test(format) && (d.getHours() || d.getMinutes())) return hm;
+    if (/YYYY-MM$/.test(format) || (d.getDate() === 1)) return d.getMonth() === 0 && !/HH/.test(format) && /YYYY/.test(format) ? String(d.getFullYear()) : CH_MON[d.getMonth()];
+    return String(d.getDate());
+  }
+  /* the last price on the axis as a label with the time left until the candle closes, instead of a line across the chart */
+  var chBadge = document.createElement("div"); chBadge.className = "cs-badge"; chBadge.hidden = true; document.getElementById("cs-chart").appendChild(chBadge);
+  var CH_MS = { "1m": 6e4, "3m": 18e4, "5m": 3e5, "15m": 9e5, "1h": 36e5, "4h": 144e5, "1D": 864e5 };
+  function chBadgeTick() {
+    if (chScreen.hidden || !chChart || !chAsset) { chBadge.hidden = true; return; }
+    var dl = chChart.getDataList(), x = dl[dl.length - 1], ax = chChart.getSize("candle_pane", "yAxis"), mn = chChart.getSize("candle_pane", "main");
+    if (!x || !ax || !mn) { chBadge.hidden = true; return; }
+    var y = chChart.convertToPixel({ value: x.close }, { paneId: "candle_pane" }).y;
+    if (!(y >= 0 && y <= mn.height)) { chBadge.hidden = true; return; }
+    var line = chAsset.src === "snap" || chAsset.src === "fred", txt = x.close.toLocaleString("en-US", { minimumFractionDigits: chPrecNow, maximumFractionDigits: chPrecNow }), left = "";
+    if (!line) {
+      var now = Date.now(), end;
+      if (CH_MS[chTf]) end = x.timestamp + CH_MS[chTf]; else { var d = new Date(x.timestamp); end = chTf === "1W" ? x.timestamp + 6048e5 : Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1); }
+      var s = Math.max(0, Math.round((end - now) / 1000)), dd = Math.floor(s / 86400), p2 = function (n) { return (n < 10 ? "0" : "") + n; };
+      left = dd ? dd + "d " + p2(Math.floor(s % 86400 / 3600)) + "h" : (s >= 3600 ? p2(Math.floor(s / 3600)) + ":" : "") + p2(Math.floor(s % 3600 / 60)) + ":" + p2(s % 60);
+    }
+    chBadge.innerHTML = '<b>' + txt + '</b>' + (left ? '<span>' + left + '</span>' : '');
+    chBadge.style.background = line ? "#2962FF" : x.close >= x.open ? chS.up : chS.dn;
+    chBadge.style.left = ax.left + "px"; chBadge.style.width = ax.width + "px"; chBadge.style.top = y + "px"; chBadge.hidden = false;
+  }
+  (function loop() { chBadgeTick(); setTimeout(function () { requestAnimationFrame(loop); }, 80); })();
   chSet.addEventListener("input", function (e) { var k = e.target.dataset.cs; if (!k) return; chS[k] = e.target.type === "checkbox" ? e.target.checked : e.target.value; chSave(); chApply(); });
   chSet.addEventListener("click", function (e) {
     if (e.target.closest("[data-cs-close]") || e.target === chSet) chSettings(false);
+    else if (e.target.closest("[data-cs-copy]")) { var txt = "CoinAtlas chart settings: " + JSON.stringify(chS), bt = e.target.closest("[data-cs-copy]"); (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { bt.textContent = "Copied"; }, function () { window.prompt("Copy these settings:", txt); }); }
     else if (e.target.closest("[data-cs-reset]")) { Object.keys(CH_DEF).forEach(function (k) { chS[k] = CH_DEF[k]; }); chSave(); chApply(); chSettings(true); }
   });
 
 
+  var chShown = null; window.coinAtlasChart = function () { return chChart; }; /* lets the tests read the chart */
+  function chAnchor() { /* the time at the right edge of what is on screen, when the chart was moved away from the newest candle; null while it shows the newest */
+    try { var dl = chChart.getDataList(), vr = chChart.getVisibleRange(); if (!dl.length || vr.realTo >= dl.length) return null; return dl[Math.max(0, Math.min(dl.length - 1, Math.floor(vr.realTo) - 1))].timestamp; } catch (e) { return null; }
+  }
   function chShow() { /* (re)draws the chosen asset in the chosen timeframe */
     var a = chAsset, tf = chTf, seq = ++chSeq; if (!a) return;
+    var anchor = chChart && chShown === a.id ? chAnchor() : null; chShown = a.id;
     if (a.tf.indexOf(tf) < 0) tf = chTf = a.tf[0];
     chTfs(); chEl.asset.textContent = a.id; clearInterval(chPoll);
     chEl.info.textContent = "Loading…";
     if (!window.klinecharts) { chEl.info.textContent = "The chart library could not be loaded."; return; }
-    if (!chChart) chChart = klinecharts.init(chEl.chart);
+    if (!chChart) chChart = klinecharts.init(chEl.chart, { customApi: { formatDate: chDate }, layout: [{ type: "candle", options: { axisOptions: { name: "tv" } } }, { type: "xAxis" }] });
     var line = a.src === "snap" || a.src === "fred"; chEl.chart.style.background = chS.bg; chChart.setStyles(chStyles(line));
     chChart.setLoadDataCallback(function (p) {
       if (p.type !== "forward" || line || !p.data) return p.callback([], false);
@@ -2828,8 +2897,13 @@
     chLoad(a, tf).then(function (l) {
       if (seq !== chSeq) return;
       if (!l.length) { chChart.clearData(); chEl.info.textContent = a.src === "fred" ? "No data yet: the first import runs with the next snapshot job." : "No data yet."; return; }
-      var last = l[l.length - 1]; chChart.setPriceVolumePrecision(chPrec(Math.abs(last.close)), 2);
-      chFree(false); chChart.applyNewData(l, !line, function () { chFree(true); });
+      var last = l[l.length - 1]; chPrecNow = chPrec(Math.abs(last.close)); chChart.setPriceVolumePrecision(chPrecNow, 2);
+      var go = function (list) { chFree(false); chChart.applyNewData(list, !line, function () { chFree(true); if (anchor) chChart.scrollToTimestamp(anchor); }); };
+      if (!anchor || line || l[0].timestamp <= anchor) go(l);
+      else (function back(list, n) { /* the place on screen lies further back: fetch older candles until it is covered */
+        if (n >= 25 || list[0].timestamp <= anchor) return go(list);
+        chLoad(a, tf, list[0].timestamp).then(function (o) { if (seq !== chSeq) return; if (!o.length) return go(list); back(o.filter(function (x) { return x.timestamp < list[0].timestamp; }).concat(list), n + 1); }, function () { go(list); });
+      })(l, 0);
       chEl.info.textContent = (a.unit ? a.unit + " · " : "") + (a.src === "perp" || a.src === "inv" ? "Bitget" : a.src === "binance" ? "Binance" : a.src === "snap" ? "CoinAtlas snapshots, " + l.length + (l.length === 1 ? " point" : " points") : "FRED") + (line ? "" : " · live");
       if (!line) chPoll = setInterval(function () { /* live: the newest candles every 5 seconds while the screen is open */
         if (chScreen.hidden || document.hidden) return;
