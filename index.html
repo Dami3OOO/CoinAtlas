@@ -2968,7 +2968,11 @@
     }
     chBadge.innerHTML = '<b>' + txt + '</b>' + (left ? '<span>' + left + '</span>' : '');
     chBadge.style.background = line && chS.caView === "line" ? chS.caLine : x.close >= x.open ? chS.up : chS.dn;
-    chBadge.style.left = ax.left + "px"; chBadge.style.width = ax.width + "px"; chBadge.style.top = y + "px"; chBadge.hidden = false;
+    /* the badge sits inside the price axis, between its scale and the crosshair layer, so the crosshair's price label stays on top where they overlap */
+    var pane = chEl.chart.querySelector(":scope > div > div"), yc = pane && Array.prototype.filter.call(pane.children, function (d) { return d.offsetLeft === ax.left && d.offsetWidth === ax.width && d.querySelectorAll("canvas").length === 2; })[0];
+    if (yc) { if (chBadge.parentNode !== yc || chBadge.nextSibling !== yc.lastElementChild) yc.insertBefore(chBadge, yc.lastElementChild); chBadge.style.left = "0px"; chBadge.style.width = "100%"; }
+    else { chBadge.style.left = ax.left + "px"; chBadge.style.width = ax.width + "px"; }
+    chBadge.style.top = y + "px"; chBadge.hidden = false;
   }
   (function loop() { chBadgeTick(); setTimeout(function () { requestAnimationFrame(loop); }, 80); })();
   chSet.addEventListener("input", function (e) { var k = e.target.dataset.cs; if (!k) return; chS[k] = e.target.type === "checkbox" ? e.target.checked : e.target.value; chSave(); chApply(); });
