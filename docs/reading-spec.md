@@ -176,19 +176,27 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Bibliothek: KLineChart 9.8.12 (Apache 2.0), unverändert in index.html eingebettet, mit NOTICE als Kommentar.
 - Bitget-Zeiteinheiten werden mit Ausweich-Namen versucht (1Dutc, dann 1D usw.), weil die genauen Namen nicht getestet werden konnten.
 - Weggelassen: DXY, JXY, BTC1!, NQ1! (lizenzpflichtige Börsendaten), kein TradingView-Embed, keine geschätzte Historie.
-- Currencies (20.11.2026): Jedes Asset hat eine Reihenfolge von Börsen, die erste antwortende wird pro Zeiteinheit gemerkt
-  (Zurückscrollen bleibt auf derselben Quelle). Oben rechts steht, welche geantwortet hat.
-  BTCUSD: Bitstamp btcusd, Kraken XBTUSD, Binance BTCUSDT. BTCEUR: Bitstamp btceur, Kraken XBTEUR, Binance BTCEUR.
-  BTCCHF: Kraken XBTCHF, Bitstamp btcchf, zuletzt Binance BTCUSDT × Tageskurs USD/CHF der EZB (Frankfurter).
-  Bitstamp hat kein 1W/1M (aus 1D gebaut), Kraken kein 3m (aus 1m) und kein Zurückscrollen (nur die neuesten 720 Kerzen).
-  Nicht getestet mit echten Daten (Börsen aus der Claude-Umgebung gesperrt), nur mit Nachbildungen der Antworten.
+- CoinAtlas Currency Pairs (20.11.2026, ersetzt die Gruppe "Currencies"): BTCUSD von Bitstamp (btcusd), wenn Bitstamp nicht antwortet Binance BTCUSDT,
+  ab 01.01.2018. BTCEUR und BTCCHF rechnet die Seite selbst: jede BTCUSD-Kerze mal EZB-Kurs USD→EUR bzw. USD→CHF desselben Tages
+  (Frankfurter, an Wochenenden und Feiertagen der letzte bekannte). 1W und 1M werden aus den umgerechneten Tageskerzen gebaut.
+  Oben rechts steht die Quelle, z. B. "CoinAtlas · Bitstamp BTC/USD × ECB EUR rate". Nur mit Nachbildungen getestet.
 - CoinAtlas-Charts (TOTAL200, BTC.D, USDT.D, WALCL) als Kerzen statt blauer Fläche: jede Kerze öffnet beim Wert davor und schließt beim eigenen.
   In den Chart settings umschaltbar auf "Line" (schlichte Linie ohne Punkte, Farbe wählbar). Bei wenigen Werten werden die Kerzen breiter.
-- Zeichenwerkzeuge (20.11.2026), Leiste links: Trend line, Ray, Extended line, Horizontal line, Horizontal ray, Vertical line, Parallel channel,
-  Fib retracement, Rectangle, Arrow, Text, Price label; dazu Magnet, alle sperren, alle ausblenden, alle löschen.
-  Ausgewählte Zeichnung: Leiste oben mit Farbe, Linienbreite, Lock, Remove; Entf/Backspace löscht, Esc bricht ein Werkzeug ab, Doppelklick ändert Text.
-  Gespeichert pro Asset im Browser (localStorage "coinatlas-drawings") als Zeitpunkt + Preis, deshalb auf allen Zeiteinheiten an derselben Stelle.
+- Zeichenwerkzeuge (20.11.2026, zweite Fassung nach TradingView-Vorbild, Qualität vor Menge). Leiste links:
+  Trend line (Extend none/left/right/both, Left/Right end Normal/Arrow, Preis-Labels auf der Skala, Stats mit Änderung, % und Kerzen),
+  Horizontal line (Extend both/left/right, Preis-Label auf der Skala, Preis als Koordinate eingebbar),
+  Vertical line (Extend both/up/down, Zeit-Label auf der Zeitachse),
+  Rectangle (8 Griffe: Ecken und Kantenmitten, eine Kantenmitte bewegt nur ihre Kante; Rand, Hintergrund mit Deckkraft, Extend left/right,
+  Middle line, Oben/Unten als Koordinaten; ausgewählt zeigt es Preis- und Zeitbereich auf den Achsen; Standardfarbe #9C27B0, 20 %),
+  Fib retracement (TradingView-Stufen und Farben, 11 an und 12 zuschaltbar; Level 0 am zweiten Punkt; Trendlinie gestrichelt,
+  Extend left/right, Reverse, Prices, Levels, Prozent, Labels links/rechts, Hintergrund mit Deckkraft; Fläche ist anklickbar),
+  Price label (Sprechblase mit dem Preis, Spitze am Punkt; Hintergrund, Rand, Text, Schriftgröße).
+  Dazu Magnet, alle sperren, alle ausblenden, alle löschen. Ausgewählt: Leiste oben mit Farbe, Breite, Stil, ⚙, Lock, Remove.
+  Doppelklick oder ⚙ öffnet die Einstellungen; Änderungen wirken sofort, "Save as default" gilt für neue Zeichnungen des Werkzeugs (chS.tdef).
+  Entf/Backspace löscht, Esc schließt die Einstellungen oder bricht ein Werkzeug ab.
+  Gespeichert pro Asset im Browser (localStorage "coinatlas-drawings") als Zeitpunkt + Preis plus Einstellungen, auf allen Zeiteinheiten an derselben Stelle.
   Die Zeitachse rechnet über die erste und neueste Kerze hinaus in Schritten der Zeiteinheit weiter, damit Zeichnungen in die Zukunft ihr Datum behalten.
+  Zeichnungen der ersten Fassung werden beim Laden übernommen; Ray, Extended line, Parallel channel, Arrow und Text gibt es nicht mehr als Werkzeug.
   Noch nicht synchronisiert zwischen Geräten: kommt mit dem Account-System.
 - Nächste Etappen: Long/Short mit RR, Date and Price Range, Rotated Rectangle, Account-System (Zeichnungen und Einstellungen geräteübergreifend),
   Mini-Version in der Landing Area.
