@@ -225,6 +225,22 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Linked Hover, Tint Strongest Months und Altcoin Dominance Line sind immer an und keine Schalter mehr.
 - Experimental: Dev Mode, Party Mode.
 
+## Accounts (Plan, 20.11.2026, noch nicht gebaut)
+
+- Keine E-Mail, keine Telefonnummer, kein Name. Wer CoinAtlas unterstützt, bekommt einen Account; die Seite bleibt für alle frei und werbefrei.
+- Erstellen: zufällige Account-ID (z. B. CA-7K4M-92QX-HT3P), Passwort sofort setzen, Wiederherstellungs-Code zum Herunterladen.
+- Freischalten: eigene Bitcoin-Adresse pro Account, abgeleitet aus dem xpub einer eigenen Tangem-Wallet nur für CoinAtlas (Dynamic Addresses).
+  Jeder Betrag ab 5 $ zählt. Der Server kennt nur den xpub und kann kein Geld bewegen.
+- Erkennen: Backend prüft offene Adressen jede Minute bei mempool.space (Ausweich: Blockstream), aktiv ab 1 Bestätigung.
+  Unbezahlte Adressen laufen nach 24 h ab und werden wiederverwendet, nie mehr als 10 offen (Lückengrenze der Wallet).
+- Speichern: Cloudflare Workers + D1. Passwörter und Wiederherstellungs-Codes nur als Hash (PBKDF2/Argon2 mit Salz).
+  Einstellungen und Zeichnungen werden im Browser mit einem Schlüssel aus dem Passwort verschlüsselt (Ende-zu-Ende).
+- Security: xpub und Schlüssel nur in Cloudflare Secrets, nie im öffentlichen Repo; Login-Versuche begrenzt; Turnstile beim Erstellen;
+  Sitzung in HttpOnly-Cookie; CORS nur für die CoinAtlas-Seite; nur HTTPS; keine IP-Adressen speichern; D1-Backups.
+- Vor dem Start: erste Adressen aus dem xpub mit Tangem abgleichen; Kleinbetrag auf die 3. Adresse testen; rechtlich prüfen (Kauf, keine Spende).
+- Schritte: 1. Account-ID, Passwort, synchronisierte Einstellungen. 2. Bitcoin-Zahlung. 3. USDC/ETH später (günstiges Netzwerk oder Bezahldienst).
+  Ersetzt die 4-stellige PIN-Sperre.
+
 ## Offene Punkte
 
 - Kritischer Rundum-Test des neuen Systems (nur auf Wunsch des Nutzers).
