@@ -458,6 +458,10 @@
   .cs-badge { position: absolute; z-index: 2; transform: translateY(-50%); display: flex; flex-direction: column; align-items: flex-start; padding: 2px 6px; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif; font-size: 12px; line-height: 1.3; pointer-events: none; box-sizing: border-box; } .cs-badge[hidden] { display: none; } .cs-badge b { font-weight: normal; }
   .cs-set-f { margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px; } .cs-set-f button { font: inherit; font-size: 12px; color: #e8e2da; background: transparent; border: 1px solid #4a3d33; border-radius: 6px; padding: 5px 10px; cursor: pointer; }
   .cs-close { font: inherit; font-size: 15px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 8px; width: 32px; height: 30px; cursor: pointer; } .cs-close:hover { color: var(--fg); background: var(--hover); }
+  .cs-land { font: inherit; font-size: 12px; font-weight: 600; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 8px; height: 30px; padding: 0 10px; cursor: pointer; } .cs-land:hover { color: var(--fg); background: var(--hover); } #chart-screen.picking .cs-land { display: none; }
+  .mini-card { padding: 10px 12px 12px; margin-bottom: 16px; } .mini-head { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 8px; } .mini-head span { font-size: 12px; color: var(--muted); }
+  .mini-head .mini-info { margin-left: auto; color: var(--fg); font-variant-numeric: tabular-nums; } .mini-head button { font: inherit; font-size: 13px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 6px; width: 26px; height: 24px; cursor: pointer; padding: 0; } .mini-head button:hover { color: var(--fg); background: var(--hover); }
+  .mini-chart { height: 230px; border-radius: 6px; overflow: hidden; cursor: pointer; }
   .cs-body { position: relative; flex: 1; min-height: 0; } .cs-chart { position: absolute; inset: 0 0 0 44px; background: #FFE0B2; }
   #chart-screen.picking .cs-chart, #chart-screen.picking .cs-tools { filter: blur(4px) grayscale(1); opacity: .25; pointer-events: none; }
   .cs-tools { position: absolute; left: 0; top: 0; bottom: 0; width: 44px; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0; overflow-y: auto; border-right: 1px solid var(--line); box-sizing: border-box; scrollbar-width: none; }
@@ -467,6 +471,8 @@
   .cs-dbar { position: absolute; z-index: 4; top: 10px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 6px; padding: 5px 8px; background: #1e1e1e; border: 1px solid #333; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.35); } .cs-dbar[hidden] { display: none; }
   .cs-dbar input[type=color] { width: 30px; height: 26px; padding: 2px; background: #111; border: 1px solid #444; border-radius: 5px; cursor: pointer; }
   .cs-dbar select, .cs-dbar button { font: inherit; font-size: 12px; color: #e5e5e5; background: #111; border: 1px solid #444; border-radius: 5px; padding: 4px 8px; cursor: pointer; } .cs-dbar button:hover { background: #2c2c2c; } .cs-dbar button.on { color: #111; background: #e5e5e5; }
+  .cs-dbar button:has(svg) { width: 30px; height: 28px; padding: 0; display: grid; place-items: center; } .cs-dbar svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .cs-tools button { position: relative; } .cs-hk { position: absolute; right: 2px; bottom: 1px; font-style: normal; font-size: 8px; line-height: 1; font-weight: 700; opacity: .7; }
   .cs-set.cs-dset { inset: auto; top: 56px; right: 76px; display: block; padding: 0; background: transparent; z-index: 5; } .cs-set.cs-dset[hidden] { display: none; }
   .cs-dset .cs-set-in { width: 340px; max-height: calc(100vh - 150px); overflow-y: auto; } .cs-dset em { font-style: normal; font-size: 11px; color: #9b8f83; width: 34px; text-align: right; }
   .cs-dset input[type=range] { width: 90px; accent-color: #e8e2da; } .cs-dset input[type=number] { width: 110px; font: inherit; font-size: 12px; color: #e8e2da; background: #1f1915; border: 1px solid #4a3d33; border-radius: 6px; padding: 5px 6px; }
@@ -581,7 +587,10 @@
   .rt-rd-q { display:block; font-size:12px; font-weight:700; color:var(--fg); margin-bottom:3px; } .rt-why .rt-rd-p { color:var(--muted); } .rt-why .rt-rd-p b { color:var(--fg); }
   .rt-rd-k { display:block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin-bottom:2px; } .rt-rd-m { color:var(--muted); }
   .rt-rd-hs { margin-top:10px; border:1px dashed #facc15; border-radius:8px; padding:8px 12px; font-size:12px; line-height:1.6; color:var(--muted); } .rt-rd-hs .rt-rd-k { color:#facc15; }
-  body:not(.dev-mode) #rt-asof-grp { display:none; } .rt-asof { display:flex; align-items:center; gap:6px; }
+  body:not(.dev-mode) #rt-asof-grp, body:not(.dev-mode) .dev-only-sec { display:none; }
+  .settings-card .wide-btn { width: 100%; height: 34px; margin-top: 8px; font-size: 12px; } .settings-card .wide-btn.active { color: #111; background: var(--fg); }
+  header .hb-off { display: none !important; }
+  .set-note { font-size: 11px; line-height: 1.5; color: var(--muted); margin: -2px 0 6px; } .set-note[hidden] { display: none; } .rt-asof { display:flex; align-items:center; gap:6px; }
   #rt-asof { background:var(--bg); color:var(--fg); border:1px solid var(--line); border-radius:6px; padding:4px 6px; font:inherit; font-size:12px; color-scheme:dark; } #rt-asof-live { height:28px; padding:0 10px; font-size:11px; }
   .rt-fng-mo { font-size:9px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
   .rt-fng-val { font-size:15px; font-weight:700; }
@@ -874,12 +883,6 @@
         <div class="box">
           <div class="card settings-card" role="group" aria-label="Settings">
             <div class="settings-section">
-              <div class="section-title">Source</div>
-              <label class="grp"><span class="lbl">Main Source</span><select id="source" aria-label="Data source"></select></label>
-              <div class="grp"><span class="lbl">Fallback Chart</span><select id="fallback-chart-select" aria-label="Fallback data source"></select></div>
-            </div>
-            <div class="sep"></div>
-            <div class="settings-section">
               <div class="section-title">Header</div>
               <div class="grp"><span class="lbl">Simple Market Sentiment Counter</span><button class="toggle" type="button" id="breadth-toggle" role="switch" aria-checked="false" aria-label="Show Simple Market Sentiment Counter"><span></span></button></div>
               <div class="sub-grp" id="breadth-sub">
@@ -888,22 +891,29 @@
                 <div class="grp"><span class="lbl" style="color: var(--stable-blue);">Stablecoins</span><button class="toggle" type="button" data-bv="stable" role="switch" aria-checked="true" aria-label="Show stablecoin count"><span></span></button></div>
                 <div class="grp"><span class="lbl">Neutral</span><button class="toggle" type="button" data-bv="white" role="switch" aria-checked="true" aria-label="Show neutral count"><span></span></button></div>
               </div>
+              <div class="grp"><span class="lbl">Filters</span><button class="toggle" type="button" data-hb="filters-btn" role="switch" aria-checked="true" aria-label="Show Filters in the header"><span></span></button></div>
+              <div class="grp"><span class="lbl">Search</span><button class="toggle" type="button" data-hb="search" role="switch" aria-checked="true" aria-label="Show Search in the header"><span></span></button></div>
+              <div class="grp"><span class="lbl">Fear &amp; Greed Index</span><button class="toggle" type="button" data-hb="fg-btn" role="switch" aria-checked="true" aria-label="Show Fear &amp; Greed Index in the header"><span></span></button></div>
+              <div class="grp"><span class="lbl">BTC|ETH Ratio</span><button class="toggle" type="button" data-hb="ratio-btn" role="switch" aria-checked="true" aria-label="Show BTC|ETH Ratio in the header"><span></span></button></div>
+              <div class="grp"><span class="lbl">Charts</span><button class="toggle" type="button" data-hb="charts-btn" role="switch" aria-checked="true" aria-label="Show Charts in the header"><span></span></button></div>
+              <div class="grp"><span class="lbl">Portfolio Manager</span><button class="toggle" type="button" data-hb="pf-btn" role="switch" aria-checked="true" aria-label="Show Portfolio Manager in the header"><span></span></button></div>
+              <div class="grp"><span class="lbl">Sentiment Squares</span><button class="toggle" type="button" data-hb="sq-btn" role="switch" aria-checked="true" aria-label="Show Sentiment Squares in the header"><span></span></button></div>
+              <div class="grp"><span class="lbl">Roadmap</span><button class="toggle" type="button" data-hb="roadmap-btn" role="switch" aria-checked="true" aria-label="Show Roadmap in the header"><span></span></button></div>
+              <div class="grp"><span class="lbl">Snapshots</span><button class="toggle" type="button" data-hb="snap-btn" role="switch" aria-checked="true" aria-label="Show Snapshots in the header"><span></span></button></div>
+              <div class="grp"><span class="lbl">Years Ago</span><button class="toggle" type="button" data-hb="ago-btn" role="switch" aria-checked="true" aria-label="Show Years Ago in the header"><span></span></button></div>
+              <div class="grp"><span class="lbl">Refresh Button</span><button class="toggle" type="button" data-hb="manual-refresh" role="switch" aria-checked="true" aria-label="Show Refresh Button in the header"><span></span></button></div>
+              <button class="gear wide-btn" type="button" id="moveui-btn">UI Moving Mode</button>
             </div>
             <div class="sep"></div>
             <div class="settings-section">
-              <div class="section-title">BTC|ETH</div>
-              <div class="grp"><span class="lbl">Linked Hover</span><button class="toggle" type="button" id="rt-link-toggle" role="switch" aria-checked="true" aria-label="Show the hovered day in both graphs"><span></span></button></div>
-              <div class="grp"><span class="lbl">Tint Strongest Months</span><button class="toggle" type="button" id="rt-tint-toggle" role="switch" aria-checked="false" aria-label="Tint the strongest month boxes in Past Years blue or orange"><span></span></button></div>
-              <div class="grp"><span class="lbl">Altcoin Dominance Line</span><button class="toggle" type="button" id="rt-dom-toggle" role="switch" aria-checked="false" aria-label="Show altcoin dominance line in dominance chart"><span></span></button></div>
-            </div>
-            <div class="sep"></div>
-            <div class="settings-section">
-              <div class="section-title">List</div>
+              <div class="section-title">Asset List</div>
+              <label class="grp"><span class="lbl">Main Source</span><select id="source" aria-label="Data source"></select></label>
+              <div class="grp"><span class="lbl">Fallback Chart</span><select id="fallback-chart-select" aria-label="Fallback data source"></select></div>
               <div class="grp"><span class="lbl">List range</span><span class="pair"><input class="fix" value="1" readonly tabindex="-1" aria-label="First rank, fixed"><span class="to">to</span><input id="range" type="number" min="2" max="200" step="1" inputmode="numeric" placeholder="200" aria-label="Last rank to show, 2 to 200"></span></div>
               <div class="grp"><span class="lbl">Rank Change Arrows</span><button class="toggle" type="button" id="rank-toggle" role="switch" aria-checked="true" aria-label="Show an arrow next to the rank when a coin moved up or down since yesterday's snapshot"><span></span></button></div>
-              <div class="grp"><span class="lbl">Pulse Tint</span><button class="toggle" type="button" id="pulse-toggle" role="switch" aria-checked="false" aria-label="Color coins by performance"><span></span></button></div>
               <div class="grp"><span class="lbl">Auto Update</span><button class="toggle" type="button" id="auto-update-toggle" role="switch" aria-checked="true" aria-label="Enable Auto Update"><span></span></button></div>
-              <div class="grp" id="interval-grp"><span class="lbl">Interval (s)</span><input id="update-interval" type="number" min="1" max="60" step="1" value="10"></div>
+              <div class="grp" id="interval-grp"><span class="lbl">Update Interval (s)</span><input id="update-interval" type="number" min="1" max="60" step="1" value="10"></div>
+              <div class="grp" hidden><span class="lbl">Pulse Tint</span><button class="toggle" type="button" id="pulse-toggle" role="switch" aria-checked="false" aria-label="Color coins by performance"><span></span></button></div>
             </div>
             <div class="sep"></div>
             <div class="settings-section">
@@ -913,21 +923,30 @@
               <div class="grp"><span class="lbl">Show Socials</span><button class="toggle" type="button" id="socials-toggle" role="switch" aria-checked="true" aria-label="Show socials in locked charts"><span></span></button></div>
               <div class="grp"><span class="lbl">Show Tokenomics</span><button class="toggle" type="button" id="tokenomics-toggle" role="switch" aria-checked="true" aria-label="Show tokenomics in locked charts"><span></span></button></div>
               <div class="grp"><span class="lbl">Advanced Time Display</span><button class="toggle" type="button" id="adv-time-toggle" role="switch" aria-checked="false" aria-label="Show advanced chart times"><span></span></button></div>
+              <div class="set-note" id="adv-time-note"></div>
             </div>
             <div class="sep"></div>
             <div class="settings-section">
-              <div class="section-title">Fear & Greed Index</div>
+              <div class="section-title">Fear &amp; Greed Index</div>
               <div class="grp" style="display:none"><span class="lbl">Show Average Extremes Value</span><button class="toggle" type="button" id="fga-toggle" role="switch" aria-checked="true" aria-label="Show Average Extremes Value"><span></span></button></div>
               <div class="grp"><span class="lbl">Show Average Monthly Index Value</span><button class="toggle" type="button" id="annual-toggle" role="switch" aria-checked="true" aria-label="Show Average Monthly Index Value"><span></span></button></div>
               <div class="grp"><span class="lbl">Show Average Yearly Index Value</span><button class="toggle" type="button" id="yearly-toggle" role="switch" aria-checked="true" aria-label="Show Average Yearly Index Value"><span></span></button></div>
+            </div>
+            <div class="dev-only-sec">
+            <div class="sep"></div>
+            <div class="settings-section">
+              <div class="section-title">BTC|ETH Ratio</div>
+              <div class="grp" id="rt-asof-grp"><span class="lbl">Formula Date</span><span class="rt-asof"><input type="date" id="rt-asof" min="2017-08-18" aria-label="Day the CoinAtlas Formula and its Reading treat as live"><button class="gear" type="button" id="rt-asof-live">Live</button></span></div>
+              <div class="grp" hidden><span class="lbl">Linked Hover</span><button class="toggle" type="button" id="rt-link-toggle" role="switch" aria-checked="true" aria-label="Show the hovered day in both graphs"><span></span></button></div>
+              <div class="grp" hidden><span class="lbl">Tint Strongest Months</span><button class="toggle" type="button" id="rt-tint-toggle" role="switch" aria-checked="false" aria-label="Tint the strongest month boxes in Past Years blue or orange"><span></span></button></div>
+              <div class="grp" hidden><span class="lbl">Altcoin Dominance Line</span><button class="toggle" type="button" id="rt-dom-toggle" role="switch" aria-checked="false" aria-label="Show altcoin dominance line in dominance chart"><span></span></button></div>
+            </div>
             </div>
             <div class="sep"></div>
             <div class="settings-section">
               <div class="section-title">Experimental</div>
               <div class="grp"><span class="lbl">Dev Mode</span><button class="toggle" type="button" id="dev-toggle" role="switch" aria-checked="false" aria-label="Enable Dev Mode"><span></span></button></div>
-              <div class="grp" id="rt-asof-grp"><span class="lbl">Formula Date</span><span class="rt-asof"><input type="date" id="rt-asof" min="2017-08-18" aria-label="Day the CoinAtlas Formula and its Reading treat as live"><button class="gear" type="button" id="rt-asof-live">Live</button></span></div>
               <div class="grp"><span class="lbl">Party Mode</span><button class="toggle" type="button" id="party-toggle" role="switch" aria-checked="false" aria-label="Enable Party Mode"><span></span></button></div>
-              <div class="grp"><span class="lbl">UI Moving Mode</span><button class="gear" type="button" id="moveui-btn" style="height:30px;font-size:11px;">Enable</button></div>
             </div>
             <div id="dev-hotkeys" style="display:none; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line);">
                <div class="section-title" style="border:none; margin-bottom: 8px;">Dev Mode Hotkeys</div>
@@ -1144,7 +1163,7 @@
   var ANNUAL_RANGE_KEY = "top200-annual-range", annualRange = "all"; try { annualRange = localStorage.getItem(ANNUAL_RANGE_KEY) || "all"; } catch (e) {}
   if (!/^\d{4}$/.test(annualRange)) annualRange = "all";
   var annualOn = true; try { annualOn = localStorage.getItem(ANNUAL_KEY) !== "0"; } catch (e) {}
-  var advTimeOn = false; try { advTimeOn = localStorage.getItem(ADV_TIME_KEY) === "1"; } catch (e) {}
+  var advTimeOn = true; try { advTimeOn = localStorage.getItem(ADV_TIME_KEY) !== "0"; } catch (e) {}
   var showBreadth = false; try { showBreadth = localStorage.getItem(BREADTH_KEY) === "1"; } catch (e) {}
 
   var fallbackOn = true; /* extended fallback is always on */
@@ -2138,7 +2157,7 @@
   function updatePinnedColVisibility() {
     var col = document.getElementById("pinned-col");
     if (!col) return;
-    if (pinnedCoins.length > 0 || roadmapVisible || portfolioVisible || ratioVisible || uiNoteOn || sqVisible || (snapVisible && devActive)) col.classList.add("on");
+    if (pinnedCoins.length > 0 || (typeof chMinis !== "undefined" && chMinis.length) || roadmapVisible || portfolioVisible || ratioVisible || uiNoteOn || sqVisible || (snapVisible && devActive)) col.classList.add("on");
     else col.classList.remove("on");
   }
 
@@ -2354,9 +2373,16 @@
   annualToggle.addEventListener("click", function () { annualOn = !annualOn; annualToggle.setAttribute("aria-checked", annualOn ? "true" : "false"); try { localStorage.setItem(ANNUAL_KEY, annualOn ? "1" : "0"); } catch (e) {} if (fgVisible) renderFGChart(); });
 
   var advTimeToggle = document.getElementById("adv-time-toggle"); advTimeToggle.setAttribute("aria-checked", advTimeOn ? "true" : "false");
+  function advTimeNote() { /* under the setting: when London and New York open today, in New York time and in the viewer's own time */
+    var el = document.getElementById("adv-time-note"); if (!el) return; el.hidden = !advTimeOn; if (!advTimeOn) return;
+    var p = tzParts(Date.now(), "America/New_York"), lo = tzClockMs("Europe/London", p.y, p.m, p.d, 8, 0, 0), ny = tzClockMs("America/New_York", p.y, p.m, p.d, 9, 30, 0);
+    var loc = function (t) { return new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(t)); };
+    el.innerHTML = "London Session opens " + fmtHM(lo) + ", New York Session " + fmtHM(ny) + " (New York time).<br>In your time: " + loc(lo) + " and " + loc(ny) + ".";
+  }
+  advTimeNote();
   advTimeToggle.addEventListener("click", function () { 
     advTimeOn = !advTimeOn; 
-    advTimeToggle.setAttribute("aria-checked", advTimeOn ? "true" : "false"); 
+    advTimeToggle.setAttribute("aria-checked", advTimeOn ? "true" : "false"); advTimeNote();
     try { localStorage.setItem(ADV_TIME_KEY, advTimeOn ? "1" : "0"); } catch (e) {} 
     renderPinned();
     if (current > -1) showPop(current);
@@ -2718,7 +2744,7 @@
   var CH_KEY = "coinatlas-chart-tf", chTf = "15m", chAsset = null, chChart = null, chPoll = null, chSeq = 0;
   try { chTf = localStorage.getItem(CH_KEY) || "15m"; } catch (e) {}
   var chScreen = document.createElement("div"); chScreen.id = "chart-screen"; chScreen.hidden = true;
-  chScreen.innerHTML = '<div class="cs-bar"><b class="cs-title">Charts</b><button type="button" class="cs-asset" id="cs-asset">Choose Asset</button><div class="cs-tfs" id="cs-tfs"></div><span class="cs-info" id="cs-info"></span><button type="button" class="cs-gear" id="cs-gear" aria-label="Chart settings" title="Chart settings">⚙</button><button type="button" class="cs-close" id="cs-close" aria-label="Close the charts">✕</button></div>' +
+  chScreen.innerHTML = '<div class="cs-bar"><b class="cs-title">Charts</b><button type="button" class="cs-asset" id="cs-asset">Choose Asset</button><div class="cs-tfs" id="cs-tfs"></div><span class="cs-info" id="cs-info"></span><button type="button" class="cs-land" id="cs-land" title="Show this chart small and live in the Landing Area">Move to Landing Area</button><button type="button" class="cs-gear" id="cs-gear" aria-label="Chart settings" title="Chart settings">⚙</button><button type="button" class="cs-close" id="cs-close" aria-label="Close the charts">✕</button></div>' +
     '<div class="cs-body"><div class="cs-tools" id="cs-tools"></div><div class="cs-chart" id="cs-chart"></div><div class="cs-dbar" id="cs-dbar" hidden></div><div class="cs-pick" id="cs-pick"></div></div>';
   document.body.appendChild(chScreen);
   var chEl = { chart: document.getElementById("cs-chart"), pick: document.getElementById("cs-pick"), tfs: document.getElementById("cs-tfs"), info: document.getElementById("cs-info"), asset: document.getElementById("cs-asset") };
@@ -2737,8 +2763,8 @@
   var CH_PERP = { "1m": ["1m"], "3m": ["3m"], "5m": ["5m"], "15m": ["15m"], "1h": ["1H"], "4h": ["4H"], "1D": ["1Dutc", "1D"], "1W": ["1Wutc", "1W"], "1M": ["1Mutc", "1M"] };
   var CH_SPOT = { "1m": ["1min"], "3m": ["3min"], "5m": ["5min"], "15m": ["15min"], "1h": ["1h"], "4h": ["4h"], "1D": ["1Dutc", "1day"], "1W": ["1Wutc", "1week"], "1M": ["1Mutc", "1M"] };
   var CH_BIN = { "1m": "1m", "3m": "3m", "5m": "5m", "15m": "15m", "1h": "1h", "4h": "4h", "1D": "1d", "1W": "1w", "1M": "1M" };
-  function chAgg(list, tf) { /* daily or weekly values into weeks (from Monday, UTC) or months */
-    if (tf === "1D" || (tf === "1W" && chAsset.src === "fred")) return list;
+  function chAgg(list, tf, a) { /* daily or weekly values into weeks (from Monday, UTC) or months */
+    if (tf === "1D" || (tf === "1W" && a.src === "fred")) return list;
     var out = [], key = function (t) { var d = new Date(t); return tf === "1M" ? Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1) : t - ((d.getUTCDay() + 6) % 7) * 864e5; };
     list.forEach(function (x) { var k = key(x.timestamp), o = out[out.length - 1]; if (o && o.timestamp === k) { o.high = Math.max(o.high, x.high); o.low = Math.min(o.low, x.low); o.close = x.close; } else out.push({ timestamp: k, open: x.open, high: x.high, low: x.low, close: x.close, volume: 0 }); });
     return out;
@@ -2751,8 +2777,8 @@
     if (a.src === "binance") return getJson("https://data-api.binance.vision/api/v3/klines?symbol=" + a.sym + "&interval=" + CH_BIN[tf] + "&limit=" + lim + e, 12000).then(chRows);
     if (a.src === "fiat") return chFiat(a, tf, end);
     if (end) return Promise.resolve([]);
-    if (a.src === "snap") return repoJson("data/dominance.json").then(function (j) { return chAgg(chSteps(Object.keys(j || {}).sort().map(function (k) { var v = j[k][a.k]; return v == null ? null : { timestamp: Date.parse(k + "T00:00:00Z"), open: v * a.scale, high: v * a.scale, low: v * a.scale, close: v * a.scale, volume: 0 }; }).filter(Boolean)), tf); });
-    return repoJson("data/fred-walcl.json").catch(function () { return null; }).then(function (j) { /* missing until the first weekly import */ return chAgg(chSteps(((j && j.days) || []).map(function (r) { var v = r[1] * a.scale; return { timestamp: Date.parse(r[0] + "T00:00:00Z"), open: v, high: v, low: v, close: v, volume: 0 }; })), tf); });
+    if (a.src === "snap") return repoJson("data/dominance.json").then(function (j) { return chAgg(chSteps(Object.keys(j || {}).sort().map(function (k) { var v = j[k][a.k]; return v == null ? null : { timestamp: Date.parse(k + "T00:00:00Z"), open: v * a.scale, high: v * a.scale, low: v * a.scale, close: v * a.scale, volume: 0 }; }).filter(Boolean)), tf, a); });
+    return repoJson("data/fred-walcl.json").catch(function () { return null; }).then(function (j) { /* missing until the first weekly import */ return chAgg(chSteps(((j && j.days) || []).map(function (r) { var v = r[1] * a.scale; return { timestamp: Date.parse(r[0] + "T00:00:00Z"), open: v, high: v, low: v, close: v, volume: 0 }; })), tf, a); });
   }
   function chSteps(l) { /* one value per day or week into candles: each one opens at the value before it and closes at its own */
     return l.map(function (x, i) { var o = i ? l[i - 1].close : x.close; return { timestamp: x.timestamp, open: o, high: Math.max(o, x.close), low: Math.min(o, x.close), close: x.close, volume: 0 }; });
@@ -2825,7 +2851,7 @@
     });
   }
   function chVal(v) { /* the CoinAtlas charts on the axis, crosshair, badge and legend: 59.09% or 2.142T instead of plain numbers */
-    var u = chAsset && chAsset.unit; if (!u || v == null || !isFinite(v)) return null; if (u === "%") return v.toFixed(2) + "%";
+    var u = arguments.length > 1 ? arguments[1] : chAsset && chAsset.unit; if (!u || v == null || !isFinite(v)) return null; if (u === "%") return v.toFixed(2) + "%";
     var a = Math.abs(v); return a >= 1e12 ? (v / 1e12).toFixed(3) + "T" : a >= 1e9 ? (v / 1e9).toFixed(2) + "B" : a >= 1e6 ? (v / 1e6).toFixed(2) + "M" : Math.round(v).toLocaleString("en-US");
   }
   function chPrec(v) { return v >= 1000 ? 1 : v >= 10 ? 2 : v >= 1 ? 3 : v >= 0.01 ? 5 : 7; }
@@ -2850,7 +2876,7 @@
       yAxis: { axisLine: { color: "#000000" }, tickLine: { show: false }, tickText: { color: tx, family: FF, size: 12 }, type: S.type, reverse: S.invert, position: S.pos },
       separator: { color: ln }, crosshair: { horizontal: cr(), vertical: cr() } };
   }
-  function chApply() { if (!chChart || !chAsset) return; chEl.chart.style.background = chS.bg; chChart.setStyles(chStyles(chAsset.src === "snap" || chAsset.src === "fred")); chFree(true); }
+  function chApply() { chMiniRestyle(); if (!chChart || !chAsset) return; chEl.chart.style.background = chS.bg; chChart.setStyles(chStyles(chAsset.src === "snap" || chAsset.src === "fred")); chFree(true); }
   function chFree(on) { /* no auto-fit of the price axis unless "Auto" is on: the chart can be dragged freely up and down */
     try { chChart.getDrawPaneById("candle_pane").getAxisComponent().setAutoCalcTickFlag(chS.auto || !on); } catch (e) {}
   }
@@ -2929,13 +2955,15 @@
         });
       } });
     /* the price axis with TradingView's spacing: a round step chosen so that a label comes about every 30 pixels */
-    klinecharts.registerYAxis({ name: "tv", createTicks: function (p) {
+    var ticks = function (p, unit, prec) {
       var R = p.range, H = p.bounding.height; if (chS.type !== "normal" || !(R.range > 0) || !(H > 0)) return p.defaultTicks;
       var raw = R.range / Math.max(2, H / 30), m = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10)), step = [1, 2, 2.5, 5, 10].map(function (k) { return k * m; }).filter(function (s) { return s >= raw; })[0];
-      var out = [], v, prec = chPrecNow;
-      for (v = Math.ceil(R.from / step) * step; v <= R.to; v += step) { var y = H - (v - R.from) / R.range * H; out.push({ coord: chS.invert ? H - y : y, value: v, text: chVal(v) || v.toLocaleString("en-US", { minimumFractionDigits: prec, maximumFractionDigits: prec }) }); }
+      var out = [], v;
+      for (v = Math.ceil(R.from / step) * step; v <= R.to; v += step) { var y = H - (v - R.from) / R.range * H; out.push({ coord: chS.invert ? H - y : y, value: v, text: chVal(v, unit) || v.toLocaleString("en-US", { minimumFractionDigits: prec, maximumFractionDigits: prec }) }); }
       return out;
-    } });
+    };
+    klinecharts.registerYAxis({ name: "tv", createTicks: function (p) { return ticks(p, chAsset && chAsset.unit, chPrecNow); } });
+    ["", "%", "$"].forEach(function (u) { klinecharts.registerYAxis({ name: "tvm" + u, createTicks: function (p) { return ticks(p, u || null, chPrec(Math.abs(p.range.to))); } }); }); /* mini charts */
   })();
   /* arrow and text from the first version of the drawing tools, so drawings made with them still show */
   if (window.klinecharts) (function () {
@@ -3028,8 +3056,8 @@
   var chMeasureCtx = null; function chMeasure(t, size) { chMeasureCtx = chMeasureCtx || document.createElement("canvas").getContext("2d"); chMeasureCtx.font = size + "px " + CH_FF; return chMeasureCtx.measureText(t).width; }
   /* the rectangle keeps 8 handles: corners 0 top left, 1 top right, 2 bottom right, 3 bottom left, edge middles 4 top, 5 right, 6 bottom, 7 left. A middle handle moves only its own edge */
   var CH_RL = [0, 3, 7], CH_RR = [1, 2, 5], CH_RT = [0, 1, 4], CH_RB = [2, 3, 6];
-  function chRectPts(L, R, T, B) {
-    var ts = chChart.getChartStore().getTimeScaleStore(), M = Math.round((L + R) / 2), V = (T + B) / 2;
+  function chRectPts(L, R, T, B, c) {
+    var ts = (c || chChart).getChartStore().getTimeScaleStore(), M = Math.round((L + R) / 2), V = (T + B) / 2;
     return [[L, T], [R, T], [R, B], [L, B], [M, T], [R, V], [M, B], [L, V]].map(function (q) { return { timestamp: q[0], value: q[1], dataIndex: ts.timestampToDataIndex(q[0]) }; });
   }
   function chBounds(P) { var t = P.map(function (p) { return p.timestamp; }), v = P.map(function (p) { return p.value; }); return { L: Math.min.apply(null, t), R: Math.max.apply(null, t), T: Math.max.apply(null, v), B: Math.min.apply(null, v) }; }
@@ -3047,7 +3075,9 @@
   })();
   function chDur(ms) { var m = Math.round(Math.abs(ms) / 6e4), d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mi = m % 60; return d ? d + "d" + (h ? " " + h + "h" : "") : h ? h + "h" + (mi ? " " + mi + "m" : "") : mi + "m"; }
   if (window.klinecharts) (function () {
-    var reg = function (o) { o.needDefaultPointFigure = o.needDefaultPointFigure !== false; klinecharts.registerOverlay(o); };
+    var reg = function (o) { o.needDefaultPointFigure = o.needDefaultPointFigure !== false; var pm = o.performEventPressedMove;
+      o.performEventPressedMove = function (e) { chSnapPt(e.performPoint); if (pm) pm(e); }; o.performEventMoveForDrawing = function (e) { chSnapPt(e.performPoint); };
+      klinecharts.registerOverlay(o); };
     /* Date and price range: a box from the first to the second point with the move in price and %, the bars and the time between them */
     reg({ name: "caRange", totalStep: 3,
       createPointFigures: function (e) {
@@ -3136,15 +3166,17 @@
   })();
   var CH_ICON = { cursor: '<path d="M12 3v18M3 12h18"/>', caTrend: '<circle cx="5" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><path d="M6.5 17.5l11-11"/>', caHLine: '<path d="M2 12h20"/><circle cx="12" cy="12" r="2"/>',
     caVLine: '<path d="M12 2v20"/><circle cx="12" cy="12" r="2"/>', caRect: '<rect x="4" y="6" width="16" height="12" rx="1"/><circle cx="4" cy="6" r="1.6"/><circle cx="20" cy="18" r="1.6"/>', caFib: '<path d="M3 4h18M3 9h18M3 14h18M3 20h18"/>',
-    caPrice: '<path d="M4 4h16v11h-9l-3 5v-5H4z"/>', caRange: '<rect x="3" y="4" width="18" height="16" rx="1"/><path d="M12 8v8M9.5 10.5L12 8l2.5 2.5M7 12h10M14.5 9.5L17 12l-2.5 2.5"/>', mag: '<path d="M6 3v8a6 6 0 0012 0V3h-4v8a2 2 0 01-4 0V3zM6 7h4M14 7h4"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/>',
+    caPrice: '<path d="M4 4h16v11h-9l-3 5v-5H4z"/>', caRange: '<rect x="3" y="4" width="18" height="16" rx="1"/><path d="M12 7.5v9M9.5 10L12 7.5l2.5 2.5M9.5 14L12 16.5l2.5-2.5"/>', mag: '<path d="M6 3v8a6 6 0 0012 0V3h-4v8a2 2 0 01-4 0V3zM6 7h4M14 7h4"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/>',
     hide: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>', trash: '<path d="M4 7h16M10 7V4h4v3M6 7l1 13h10l1-13"/>' };
   var CH_TOOLS = [["cursor", "Cursor"], ["caTrend", "Trend line"], ["caHLine", "Horizontal line"], ["caVLine", "Vertical line"], ["caRect", "Rectangle"], ["caFib", "Fib retracement"], ["caRange", "Date and price range: move in price and %, bars and time"], 0,
     ["mag", "Magnet: drawings snap to open, high, low and close (or hold Ctrl)"], ["lock", "Lock all drawings"], ["hide", "Hide all drawings"], ["trash", "Remove all drawings of this asset"]];
+  var CH_HOT = CH_TOOLS.filter(function (t) { return t && /^ca/.test(t[0]); }).map(function (t) { return t[0]; }); /* keys 1 to 6 pick the drawing tools */
   var chTools = document.getElementById("cs-tools"), chDbar = document.getElementById("cs-dbar");
   var chDset = document.createElement("div"); chDset.className = "cs-set cs-dset"; chDset.hidden = true; document.querySelector("#chart-screen .cs-body").appendChild(chDset);
   function chToolsHtml() {
     var on = { mag: chS.mag || chCtrl, lock: chLockAll, hide: chHideAll };
-    chTools.innerHTML = CH_TOOLS.map(function (t) { if (!t) return "<hr>"; var a = t[0] in on ? on[t[0]] : chTool === t[0]; return '<button type="button" data-dt="' + t[0] + '" title="' + t[1] + '" aria-label="' + t[1] + '"' + (a ? ' class="on"' : '') + '><svg viewBox="0 0 24 24">' + CH_ICON[t[0]] + '</svg></button>'; }).join("");
+    chTools.innerHTML = CH_TOOLS.map(function (t) { if (!t) return "<hr>"; var a = t[0] in on ? on[t[0]] : chTool === t[0], k = CH_HOT.indexOf(t[0]) + 1;
+      return '<button type="button" data-dt="' + t[0] + '" title="' + t[1] + (k ? " (" + k + ")" : "") + '" aria-label="' + t[1] + '"' + (a ? ' class="on"' : '') + '><svg viewBox="0 0 24 24">' + CH_ICON[t[0]] + '</svg>' + (k ? '<i class="cs-hk">' + k + '</i>' : '') + '</button>'; }).join("");
   }
   chToolsHtml();
   function chHandle(c) { return { point: { color: "#FFFFFF", borderColor: c, borderSize: 1.5, radius: 5, activeColor: "#FFFFFF", activeBorderColor: c, activeBorderSize: 2, activeRadius: 6 } }; }
@@ -3160,13 +3192,14 @@
     return { n: m[0], p: r.p, o: o, l: r.l };
   }
   /* the chart counts candles; past the first and the newest one it now continues in steps of the timeframe, so a drawing into the future keeps its date */
-  function chStepMs() { return CH_STEP[chTf] || 2629746e3; }
-  function chAddSteps(t, k) { if (chTf !== "1M") return t + k * chStepMs(); var d = new Date(t); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + k, 1); }
-  function chPatchTime() {
-    var ts; try { ts = chChart.getChartStore().getTimeScaleStore(); } catch (e) { return; } if (!ts || ts.caPatched) return; ts.caPatched = true;
+  function chStepMs(tf) { return CH_STEP[tf || chTf] || 2629746e3; }
+  function chAddSteps(t, k, tf) { tf = tf || chTf; if (tf !== "1M") return t + k * chStepMs(tf); var d = new Date(t); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + k, 1); }
+  function chPatchTime(c, tfOf) { /* c and tfOf: a mini chart and its timeframe; without them the big chart */
+    c = c || chChart; tfOf = tfOf || function () { return chTf; };
+    var ts; try { ts = c.getChartStore().getTimeScaleStore(); } catch (e) { return; } if (!ts || ts.caPatched) return; ts.caPatched = true;
     var t2i = ts.timestampToDataIndex, i2t = ts.dataIndexToTimestamp;
-    ts.timestampToDataIndex = function (t) { var l = this._chartStore.getDataList(), n = l.length; if (n && t > l[n - 1].timestamp) return n - 1 + Math.round((t - l[n - 1].timestamp) / chStepMs()); if (n && t < l[0].timestamp) return -Math.round((l[0].timestamp - t) / chStepMs()); return t2i.call(this, t); };
-    ts.dataIndexToTimestamp = function (i) { var l = this._chartStore.getDataList(), n = l.length; if (n && i > n - 1) return chAddSteps(l[n - 1].timestamp, i - n + 1); if (n && i < 0) return chAddSteps(l[0].timestamp, i); return i2t.call(this, i); };
+    ts.timestampToDataIndex = function (t) { var l = this._chartStore.getDataList(), n = l.length, st = chStepMs(tfOf()); if (n && t > l[n - 1].timestamp) return n - 1 + Math.round((t - l[n - 1].timestamp) / st); if (n && t < l[0].timestamp) return -Math.round((l[0].timestamp - t) / st); return t2i.call(this, t); };
+    ts.dataIndexToTimestamp = function (i) { var l = this._chartStore.getDataList(), n = l.length; if (n && i > n - 1) return chAddSteps(l[n - 1].timestamp, i - n + 1, tfOf()); if (n && i < 0) return chAddSteps(l[0].timestamp, i, tfOf()); return i2t.call(this, i); };
   }
   function chPatchCross() { /* the crosshair's price label in the same units as the axis */
     try { var lv = chChart.getDrawPaneById("candle_pane").getYAxisWidget()._crosshairHorizontalLabelView, og = lv.getText;
@@ -3182,7 +3215,7 @@
     if (ov.name === "caRect") { var b = chBounds(P); return [[b.L, b.T], [b.R, b.B]]; }
     return P.map(function (p) { return [p.timestamp, p.value]; });
   }
-  function chInPts(r) { return r.n === "caRect" ? chRectPts(Math.min(r.p[0][0], r.p[1][0]), Math.max(r.p[0][0], r.p[1][0]), Math.max(r.p[0][1], r.p[1][1]), Math.min(r.p[0][1], r.p[1][1])) : r.p.map(function (x) { return { timestamp: x[0], value: x[1] }; }); }
+  function chInPts(r, c) { return r.n === "caRect" ? chRectPts(Math.min(r.p[0][0], r.p[1][0]), Math.max(r.p[0][0], r.p[1][0]), Math.max(r.p[0][1], r.p[1][1]), Math.min(r.p[0][1], r.p[1][1]), c) : r.p.map(function (x) { return { timestamp: x[0], value: x[1] }; }); }
   function chOv(r) { /* puts one drawing on the chart; r is null for a new one that is drawn now */
     var n = r ? r.n : chTool, rec = r || { n: n, o: chDef(n) }, isNew = !!rec.o, noDot = { point: { color: "rgba(0,0,0,0)", borderColor: "rgba(0,0,0,0)", activeColor: "rgba(0,0,0,0)", activeBorderColor: "rgba(0,0,0,0)" } };
     return chChart.createOverlay({ name: n, groupId: "ca", points: r ? chInPts(r) : undefined, extendData: isNew ? rec.o : rec.x, lock: chLockAll || !!rec.l, visible: !chHideAll,
@@ -3199,7 +3232,26 @@
       onDeselected: function (e) { if (chSel === e.overlay.id) { chSel = null; chDbar.hidden = true; chDset.hidden = true; } return false; },
       onRemoved: function (e) { delete chSquares[e.overlay.id]; chCursor(""); if (chDrawBusy) return false; if (chSel === e.overlay.id) { chSel = null; chDbar.hidden = true; chDset.hidden = true; } if (chDrawRec[e.overlay.id]) { delete chDrawRec[e.overlay.id]; chDrawSave(); } return false; } });
   }
-  function chMode() { return chS.mag || chCtrl ? "weak_magnet" : "normal"; }
+  function chMode() { return "normal"; } /* the magnet is done here (chSnap), with a pull like a real magnet */
+  /* magnet: within 18 px of the open, high, low or close the crosshair and the drawing point jump onto it, and only let go after 30 px */
+  var chSnapState = null;
+  function chMagOn() { return !!(chS.mag || chCtrl); }
+  function chSnap(idx, y) {
+    var dl = chChart.getDataList(), k = dl[idx]; if (!k) { chSnapState = null; return null; }
+    var py = function (v) { return chChart.convertToPixel({ value: v }, { paneId: "candle_pane" }).y; };
+    if (chSnapState && chSnapState.idx === idx) { var ys = py(chSnapState.v); if (Math.abs(ys - y) < 30) return { v: chSnapState.v, y: ys }; }
+    var best = null; [k.open, k.high, k.low, k.close].forEach(function (v) { var yy = py(v), d = Math.abs(yy - y); if (!best || d < best.d) best = { v: v, y: yy, d: d }; });
+    if (best && best.d < 18) { chSnapState = { idx: idx, v: best.v }; return best; }
+    chSnapState = null; return null;
+  }
+  function chSnapPt(p) { if (!chMagOn() || !chChart || p == null || p.dataIndex == null || p.value == null) return; var s = chSnap(p.dataIndex, chChart.convertToPixel({ value: p.value }, { paneId: "candle_pane" }).y); if (s) p.value = s.v; }
+  function chPatchSnap() {
+    try { var tt = chChart.getChartStore().getTooltipStore(), og = tt.setCrosshair;
+      tt.setCrosshair = function (t, o) {
+        if (t && t.paneId === "candle_pane" && t.x != null && t.y != null && chMagOn()) { var n = chChart.getDataList().length, i = chChart.getChartStore().getTimeScaleStore().coordinateToDataIndex(t.x); i = Math.max(0, Math.min(n - 1, i)); var s = chSnap(i, t.y); if (s) t = Object.assign({}, t, { y: s.y }); }
+        return og.call(this, t, o);
+      }; } catch (e) {}
+  }
   function chModeAll() { if (!chChart) return; Object.keys(chDrawRec).concat(chPending ? [chPending] : []).forEach(function (id) { chChart.overrideOverlay({ id: id, mode: chMode() }); }); chToolsHtml(); }
   function chCursor(c) { var m = chEl.chart.querySelector(":scope > div > div > div"); if (m) m.style.cursor = c || "crosshair"; }
   function chDrawClear() { if (!chChart) return; chSquares = {}; chDrawBusy = true; try { chChart.removeOverlay({ groupId: "ca" }); } catch (e) {} chDrawBusy = false; chDrawRec = {}; chPending = null; chSel = null; chDbar.hidden = true; chDset.hidden = true; }
@@ -3226,9 +3278,10 @@
       if (r.n === "caRange") h += '<input type="color" data-o="down" value="' + o.down + '" title="Falling">';
       if ("width" in o) h += '<select data-o="width" title="Line width">' + chOpts([[1, "1px"], [2, "2px"], [3, "3px"], [4, "4px"]], o.width) + '</select>';
       if ("style" in o) h += '<select data-o="style" title="Line style">' + chOpts(CH_STY, o.style) + '</select>';
-      h += '<button type="button" data-db="set" title="Settings">⚙</button>';
+      h += '<button type="button" data-db="set" title="Settings" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>';
     }
-    h += '<button type="button" data-db="l"' + (r.l ? ' class="on"' : '') + ' title="Lock">' + (r.l ? 'Locked' : 'Lock') + '</button><button type="button" data-db="del" title="Remove">Remove</button>';
+    h += '<button type="button" data-db="l"' + (r.l ? ' class="on"' : '') + ' title="' + (r.l ? 'Unlock' : 'Lock') + '" aria-label="Lock"><svg viewBox="0 0 24 24">' + (r.l ? CH_ICON.lock : '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 017.5-2"/>') + '</svg></button>' +
+      '<button type="button" data-db="del" title="Remove (Delete)" aria-label="Remove"><svg viewBox="0 0 24 24">' + CH_ICON.trash + '</svg></button>';
     chDbar.innerHTML = h; chDbar.hidden = false;
   }
   /* the settings of one drawing, laid out like TradingView's dialog. Changes show at once; "Save as default" uses them for the next drawings of that tool */
@@ -3301,12 +3354,62 @@
     if (chScreen.hidden || !chChart) return;
     if ((e.key === "Control" || e.key === "Meta") && !chCtrl) { chCtrl = true; chModeAll(); return; } /* hold Ctrl for the magnet */
     if (/INPUT|SELECT|TEXTAREA/.test((e.target && e.target.tagName) || "")) return;
+    var hk = !e.ctrlKey && !e.metaKey && !e.altKey && /^[1-9]$/.test(e.key) ? CH_HOT[+e.key - 1] : null;
+    if (hk && chAsset && chEl.pick.hidden) { e.preventDefault(); chSetTool(hk); return; }
     if ((e.key === "Delete" || e.key === "Backspace") && chSel) { e.preventDefault(); chChart.removeOverlay(chSel); }
     else if (e.key === "Escape" && !chDset.hidden) { e.stopImmediatePropagation(); chDset.hidden = true; }
     else if (e.key === "Escape" && chTool !== "cursor") { e.stopImmediatePropagation(); chSetTool("cursor"); }
   }, true);
   document.addEventListener("keyup", function (e) { if ((e.key === "Control" || e.key === "Meta") && chCtrl) { chCtrl = false; chModeAll(); } });
   window.addEventListener("blur", function () { if (chCtrl) { chCtrl = false; chModeAll(); } });
+
+  /* ---------- MINI CHARTS: "Move to Landing Area" puts the open chart into the Landing Area, small and live, with its drawings. A click opens it full screen again ---------- */
+  var CH_MKEY = "coinatlas-minicharts", chMinis = [], chMiniLive = [];
+  try { chMinis = JSON.parse(localStorage.getItem(CH_MKEY) || "[]") || []; } catch (e) {}
+  var chMiniBox = document.createElement("div"); chMiniBox.id = "mini-container"; chMiniBox.hidden = true;
+  document.getElementById("pinned-col").insertBefore(chMiniBox, document.getElementById("fg-chart-container"));
+  function chMiniSave() { try { localStorage.setItem(CH_MKEY, JSON.stringify(chMinis)); } catch (e) {} }
+  function chFindAsset(id) { return CH_ASSETS.filter(function (x) { return x.id === id; })[0]; }
+  function chMiniStyles(a) { var line = a.src === "snap" || a.src === "fred", st = chStyles(line); st.candle.tooltip = { showRule: "none" }; st.candle.priceMark.last = { show: false }; st.crosshair = { show: false }; return st; }
+  function chMiniRender() {
+    chMiniLive.forEach(function (m) { clearInterval(m.poll); try { klinecharts.dispose(m.el); } catch (e) {} }); chMiniLive = [];
+    chMinis = chMinis.filter(function (m) { return chFindAsset(m.id); });
+    chMiniBox.hidden = !chMinis.length; updatePinnedColVisibility();
+    chMiniBox.innerHTML = chMinis.map(function (m, i) { return '<div class="pinned-card mini-card dev-target" data-dev-name="Mini Chart" data-dev-color="#38bdf8"><div class="mini-head"><b>' + m.id + '</b><span>' + m.tf + '</span><span class="mini-info" data-mi="' + i + '">Loading…</span>' +
+      '<button type="button" data-mopen="' + i + '" title="Open full screen" aria-label="Open full screen">⤢</button><button type="button" data-mdel="' + i + '" title="Remove from the Landing Area" aria-label="Remove">✕</button></div><div class="mini-chart" data-mopen="' + i + '"></div></div>'; }).join("");
+    if (!window.klinecharts) return;
+    chMinis.forEach(function (m, i) {
+      var a = chFindAsset(m.id), el = chMiniBox.querySelector('.mini-chart[data-mopen="' + i + '"]'), info = chMiniBox.querySelector('[data-mi="' + i + '"]'), line = a.src === "snap" || a.src === "fred";
+      el.style.background = chS.bg;
+      var c = klinecharts.init(el, { customApi: { formatDate: chDate }, layout: [{ type: "candle", options: { axisOptions: { name: "tvm" + (a.unit || "") } } }, { type: "xAxis" }] }), live = { el: el, c: c, a: a };
+      chMiniLive.push(live); c.setStyles(chMiniStyles(a)); c.setScrollEnabled(false); c.setZoomEnabled(false); chPatchTime(c, function () { return m.tf; });
+      var show = function (l) { var x = l[l.length - 1]; info.textContent = chVal(x.close, a.unit || null) || x.close.toLocaleString("en-US", { minimumFractionDigits: chPrec(Math.abs(x.close)), maximumFractionDigits: chPrec(Math.abs(x.close)) }); };
+      chLoad(a, m.tf).then(function (l) {
+        if (!l.length) { info.textContent = "No data yet"; return; }
+        c.setPriceVolumePrecision(chPrec(Math.abs(l[l.length - 1].close)), 2);
+        c.setBarSpace(Math.max(3, Math.min(40, (el.clientWidth - 70) / Math.min(l.length, 90))));
+        if (a.unit) c.setStyles({ yAxis: { size: Math.ceil(chMeasure(chVal(Math.max.apply(null, l.map(function (x) { return Math.abs(x.high); })) * 1.5, a.unit), 12) + 26) } });
+        c.applyNewData(l, false, function () {
+          (chDraw[a.id] || []).map(chMigrate).forEach(function (r) { c.createOverlay({ name: r.n, points: chInPts(r, c), extendData: r.o || r.x, lock: true, styles: r.o ? chHandle(r.o.color) : chOvStyle(r) }); });
+        });
+        show(l);
+        if (!line) live.poll = setInterval(function () { if (document.hidden) return; chLoad(a, m.tf).then(function (n) { n.slice(-2).forEach(function (x) { c.updateData(x); }); if (n.length) show(n); }, function () {}); }, 10000);
+      }, function () { info.textContent = "Could not load"; });
+    });
+  }
+  function chMiniRestyle() { chMiniLive.forEach(function (m) { m.el.style.background = chS.bg; m.c.setStyles(chMiniStyles(m.a)); }); }
+  chMiniBox.addEventListener("click", function (e) {
+    var d = e.target.closest("[data-mdel]"), o = e.target.closest("[data-mopen]");
+    if (d) { chMinis.splice(+d.dataset.mdel, 1); chMiniSave(); chMiniRender(); return; }
+    if (o) { var m = chMinis[+o.dataset.mopen]; chOpen(); chAsset = chFindAsset(m.id); chTf = m.tf; chPick(false); chShow(); }
+  });
+  document.getElementById("cs-land").addEventListener("click", function () {
+    if (!chAsset) return; var m = { id: chAsset.id, tf: chTf };
+    if (!chMinis.some(function (x) { return x.id === m.id && x.tf === m.tf; })) chMinis.push(m);
+    chMiniSave(); chClose(); chMiniBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+  setTimeout(chMiniRender, 0);
+  window.addEventListener("resize", function () { chMiniLive.forEach(function (m) { m.c.resize(); }); });
 
   var chShown = null, chWide = false; window.coinAtlasChart = function () { return chChart; }; /* lets the tests read the chart */
   function chAnchor() { /* the time at the right edge of what is on screen, when the chart was moved away from the newest candle; null while it shows the newest */
@@ -3319,7 +3422,7 @@
     chTfs(); chEl.asset.textContent = a.id; clearInterval(chPoll);
     chEl.info.textContent = "Loading…";
     if (!window.klinecharts) { chEl.info.textContent = "The chart library could not be loaded."; return; }
-    if (!chChart) { chChart = klinecharts.init(chEl.chart, { customApi: { formatDate: chDate }, layout: [{ type: "candle", options: { axisOptions: { name: "tv" } } }, { type: "xAxis" }] }); chPatchTime(); chPatchCross(); }
+    if (!chChart) { chChart = klinecharts.init(chEl.chart, { customApi: { formatDate: chDate }, layout: [{ type: "candle", options: { axisOptions: { name: "tv" } } }, { type: "xAxis" }] }); chPatchTime(); chPatchCross(); chPatchSnap(); }
     chTool = "cursor"; chDrawClear(); chToolsHtml();
     var line = a.src === "snap" || a.src === "fred"; chEl.chart.style.background = chS.bg; chChart.setStyles(chStyles(line));
     chChart.setLoadDataCallback(function (p) {
@@ -3339,6 +3442,9 @@
         chFree(false);
         if (line) { var w = (chChart.getSize("candle_pane", "main") || {}).width || 800; chChart.setBarSpace(Math.max(8, Math.min(40, w * 0.75 / Math.max(1, list.length)))); chWide = true; }
         else if (chWide) { chChart.setBarSpace(8); chWide = false; }
+        /* the library sizes the price axis by the raw number; with 2.142T or 59.09% it is set here to what the labels need */
+        if (a.unit) { var hi = Math.max.apply(null, list.map(function (x) { return Math.abs(x.high); })), tw = Math.max(chMeasure(chVal(hi * 1.5), 12), chMeasure(chVal(-hi * 1.5), 12)); chChart.setStyles({ yAxis: { size: Math.ceil(tw + 26) } }); }
+        else chChart.setStyles({ yAxis: { size: "auto" } });
         chChart.applyNewData(list, !line, function () { chFree(true); if (anchor) chChart.scrollToTimestamp(anchor); chDrawLoad(); });
       };
       if (!anchor || line || l[0].timestamp <= anchor) go(l);
@@ -3355,7 +3461,7 @@
   }
   function chPick(show) { chEl.pick.hidden = !show; chScreen.classList.toggle("picking", !!show); }
   function chOpen() { chScreen.hidden = false; document.body.classList.add("cs-open"); chPick(true); chTfs(); if (chChart) chChart.resize(); }
-  function chClose() { chScreen.hidden = true; document.body.classList.remove("cs-open"); clearInterval(chPoll); }
+  function chClose() { chScreen.hidden = true; document.body.classList.remove("cs-open"); clearInterval(chPoll); chMiniRender(); }
   document.getElementById("charts-btn").addEventListener("click", chOpen);
   document.getElementById("cs-close").addEventListener("click", chClose);
   document.getElementById("cs-gear").addEventListener("click", function () { chSettings(chSet.hidden); });
@@ -4946,9 +5052,9 @@
   var RT = { data: null, med: null, at: 0, loading: false, failed: false, view: "YEAR", year: new Date().getFullYear(), fair: "365", hist: "all", cmp: false, cmpYear: null, cur: {}, expandedYear: 0, expandedMo: null, yfv: {}, dom: {} };
   var RT_TIPS_KEY = "top200-rt-tips", rtTipsText = "", rtTipsVisible = false, rtCalcSwapped = false;
   try { rtTipsText = localStorage.getItem(RT_TIPS_KEY) || ""; } catch(e) {}
-  var RT_LINK_KEY = "top200-rt-link", rtLink = true; try { rtLink = localStorage.getItem(RT_LINK_KEY) !== "0"; } catch (e) {}
-  var RT_TINT_KEY = "top200-rt-tint", rtTint = false; try { rtTint = localStorage.getItem(RT_TINT_KEY) === "1"; } catch (e) {}
-  var RT_DOM_KEY = "top200-rt-dom-alts", rtDomAlts = false; try { rtDomAlts = localStorage.getItem(RT_DOM_KEY) === "1"; } catch (e) {}
+  var RT_LINK_KEY = "top200-rt-link", rtLink = true; /* always on: Linked Hover, Tint Strongest Months and the Altcoin Dominance Line are no longer settings */
+  var RT_TINT_KEY = "top200-rt-tint", rtTint = true;
+  var RT_DOM_KEY = "top200-rt-dom-alts", rtDomAlts = true;
   var RT_LV = ["Neutral", "Mild", "Strong", "Extreme"], RT_ADV = ["", "Mildly", "Strongly", "Extremely"], RT_EDGES = [0.10, 0.35, 0.70], RT_TH = 10, RT_A = { score: 4, lead: 40, fg: 44 }, RT_B = { score: 2, lead: 20 }, RT_BACK = 10, RT_NZ = 10, RT_BIG = 17; /* the swap rules of the Reading, see docs/reading-spec.md. RT_A: Stage A needs this score, the Year Line this many % above the All Time Line, and Fear & Greed at fg or lower. RT_B: Stage B needs this score while the Year Line stands this many % below the All Time Line. RT_BACK: the swap into ETH completes once the Ratio is this many % below the Year Line. RT_NZ: the Neutral zone between the two lines. RT_BIG: a missed swap counts in the dev Hindsight from this many % */
   var RT_WIN = { "Bridge Year": [[0, 1]], "Bear Year": [[5, 6], [8, 9]], "Bull Year": [[2, 3]] }, RT_MO_L = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]; /* Extreme Windows, two months each (0 = January): every earlier year of the type had a Formula extreme inside */
   var BTC_C = "#f7931a", ETH_C = "#3b82f6", ETH_D = "#2563eb", GREY_C = "#9ca3af", CMP_C = "#e879f9", RT_MO = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -5906,7 +6012,7 @@
   }
   function setUiMoving(on) {
     if (on === uiMoving) return;
-    uiMoving = on; document.body.classList.toggle("ui-moving", on);
+    uiMoving = on; document.body.classList.toggle("ui-moving", on); uiBtn.classList.toggle("active", on);
     clearTimeout(uiNoteT);
     if (on) {
       if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
@@ -5917,7 +6023,16 @@
       uiNoteT = setTimeout(function () { uiNote.hidden = true; uiNoteOn = false; updatePinnedColVisibility(); }, 450);
     }
   }
-  uiBtn.addEventListener("click", function () { setUiMoving(true); });
+  uiBtn.addEventListener("click", function () { setUiMoving(!uiMoving); });
+
+  /* ---------- HEADER BUTTONS: each one can be switched off in the settings ---------- */
+  var HB_KEY = "coinatlas-header-hidden", hbHidden = []; try { hbHidden = JSON.parse(localStorage.getItem(HB_KEY) || "[]") || []; } catch (e) {}
+  function hbEl(k) { var el = k === "search" ? document.querySelector("header .search") : document.getElementById(k); return el && (el.closest(".ago-wrap, .filters-wrap") || (k === "filters-btn" ? el.parentNode : el)); }
+  function hbApply() {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-hb]"), function (t) { var k = t.dataset.hb, off = hbHidden.indexOf(k) >= 0, el = hbEl(k); t.setAttribute("aria-checked", off ? "false" : "true"); if (el) el.classList.toggle("hb-off", off); });
+  }
+  document.addEventListener("click", function (e) { var t = e.target.closest("[data-hb]"); if (!t) return; var k = t.dataset.hb, i = hbHidden.indexOf(k); if (i >= 0) hbHidden.splice(i, 1); else hbHidden.push(k); try { localStorage.setItem(HB_KEY, JSON.stringify(hbHidden)); } catch (x) {} hbApply(); });
+  hbApply();
   window.addEventListener("keydown", function (e) { if (e.key === "Escape" && uiMoving) { e.stopPropagation(); setUiMoving(false); } }, true);
   actionsEl.addEventListener("pointerdown", function (e) {
     if (!uiMoving || e.button !== 0) return;

@@ -182,6 +182,7 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   Oben rechts steht die Quelle, z. B. "CoinAtlas · Bitstamp BTC/USD × ECB EUR rate". Nur mit Nachbildungen getestet.
 - Einheiten (20.11.2026): BTC.D und USDT.D zeigen auf Achse, Fadenkreuz, Preisschild und Kopfzeile "59.09%", TOTAL200 und WALCL in US-Dollar
   mit T/B/M ("2.142T"). Die Werte sind dafür in Dollar gespeichert (TOTAL200 roh, WALCL aus Millionen umgerechnet).
+  Die Preisachse wird dort selbst auf die Breite der Beschriftung gesetzt, weil die Bibliothek sie an der rohen Zahl misst.
 - CoinAtlas-Charts (TOTAL200, BTC.D, USDT.D, WALCL) als Kerzen statt blauer Fläche: jede Kerze öffnet beim Wert davor und schließt beim eigenen.
   In den Chart settings umschaltbar auf "Line" (schlichte Linie ohne Punkte, Farbe wählbar). Bei wenigen Werten werden die Kerzen breiter.
 - Zeichenwerkzeuge (20.11.2026, zweite Fassung nach TradingView-Vorbild, Qualität vor Menge). Leiste links:
@@ -197,6 +198,12 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   Bedienung: Hand-Zeiger über einer Zeichnung; Box-Griffe an den Ecken rund, an den Kantenmitten eckig. Im Platzier-Modus wird das Fadenkreuz blau
   und es gibt keinen Punkt am Zeiger. Rechtsklick bricht das Platzieren ab. Strg (Mac: Cmd) gedrückt halten schaltet den Magneten zu.
   Das Preisachsen-Menü öffnet sich nur bei Rechtsklick auf die Preisachse.
+  Magnet (Knopf oder Strg): fängt Fadenkreuz und Zeichnungspunkt im Umkreis von 18 px um Open/High/Low/Close ein und lässt erst nach 30 px los,
+  eigene Umsetzung statt des Bibliotheks-Magneten. Tasten 1–6 wählen die Werkzeuge (Nummer klein unten rechts am Symbol).
+  Leiste über einer ausgewählten Zeichnung mit Symbolen: Zahnrad (Einstellungen), Schloss (Lock), Mülleimer (Remove).
+- Move to Landing Area (20.11.2026): Knopf in der Chart-Leiste links vom Zahnrad. Legt Asset + Zeiteinheit als Mini-Chart in die Landing Area
+  (localStorage "coinatlas-minicharts"), mit den Zeichnungen des Assets (gesperrt), Live-Update alle 10 s, ohne Zoomen und Scrollen.
+  Klick auf den Mini-Chart oder ⤢ öffnet ihn im Vollbild, ✕ entfernt ihn.
   Dazu Magnet, alle sperren, alle ausblenden, alle löschen. Ausgewählt: Leiste oben mit Farbe, Breite, Stil, ⚙, Lock, Remove.
   Doppelklick oder ⚙ öffnet die Einstellungen; Änderungen wirken sofort, "Save as default" gilt für neue Zeichnungen des Werkzeugs (chS.tdef).
   Entf/Backspace löscht, Esc schließt die Einstellungen oder bricht ein Werkzeug ab.
@@ -204,8 +211,17 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   Die Zeitachse rechnet über die erste und neueste Kerze hinaus in Schritten der Zeiteinheit weiter, damit Zeichnungen in die Zukunft ihr Datum behalten.
   Zeichnungen der ersten Fassung werden beim Laden übernommen; Ray, Extended line, Parallel channel, Arrow und Text gibt es nicht mehr als Werkzeug.
   Noch nicht synchronisiert zwischen Geräten: kommt mit dem Account-System.
-- Nächste Etappen: Long/Short mit RR, Date and Price Range, Rotated Rectangle, Account-System (Zeichnungen und Einstellungen geräteübergreifend),
-  Mini-Version in der Landing Area.
+- Nächste Etappen: Long/Short mit RR, Rotated Rectangle, Account-System (Zeichnungen und Einstellungen geräteübergreifend).
+
+## Settings (20.11.2026)
+
+- Reihenfolge: Header, Asset List, Locked Hovercharts, Fear & Greed Index, BTC|ETH Ratio (nur im Dev Mode, enthält Formula Date), Experimental.
+- Header: Simple Market Sentiment Counter, je ein Schalter pro Header-Knopf (localStorage "coinatlas-header-hidden"), darunter breiter Knopf UI Moving Mode.
+- Asset List: Main Source, Fallback Chart, List Range, Rank Change Arrows, Auto Update, Update Interval. Pulse Tint ist kein Schalter mehr
+  (bleibt wie gespeichert, Standard an).
+- Locked Hovercharts: Advanced Time Display ist standardmäßig an; darunter die Öffnungszeiten von London und New York (New Yorker und eigene Zeit).
+- Linked Hover, Tint Strongest Months und Altcoin Dominance Line sind immer an und keine Schalter mehr.
+- Experimental: Dev Mode, Party Mode.
 
 ## Offene Punkte
 
