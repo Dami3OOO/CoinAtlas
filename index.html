@@ -3618,8 +3618,9 @@
     var html = '<div class="pinned-card chart-container roadmap-card">';
     html += '<div class="roadmap-header"><div class="roadmap-title">Roadmap</div></div>';
     html += '<div class="roadmap-timeline">';
-    /* finished points first, folded to their title; a click on the title opens them */
-    ROADMAP_FEATURES.filter(function (f) { return f.st === "done"; }).concat(ROADMAP_FEATURES.filter(function (f) { return f.st !== "done"; })).forEach(function(f) {
+    /* finished points first, folded to their title (a click opens them), then the ones in progress, then the rest */
+    var rank = function (f) { return f.st === "done" ? 0 : f.st === "wip" ? 1 : 2; }; /* green, then orange, then the rest, each in its own order */
+    ROADMAP_FEATURES.map(function (f, i) { return [f, i]; }).sort(function (x, y) { return rank(x[0]) - rank(y[0]) || x[1] - y[1]; }).map(function (x) { return x[0]; }).forEach(function(f) {
       var fold = f.st === "done", open = !fold || roadmapOpen[f.title];
       html += '<div class="roadmap-item' + (f.st ? ' ' + f.st : '') + (fold ? ' fold' + (open ? ' open' : '') : '') + '">';
       html += fold ? '<button type="button" class="roadmap-item-title roadmap-fold" data-rm="' + esc(f.title) + '" aria-expanded="' + (open ? 'true' : 'false') + '">' + esc(f.title) + '<span class="roadmap-chev" aria-hidden="true">›</span></button>' : '<div class="roadmap-item-title">' + esc(f.title) + '</div>';
