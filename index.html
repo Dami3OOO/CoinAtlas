@@ -2710,10 +2710,10 @@
     { g: "CoinAtlas Currency Pairs", id: "BTCUSD", name: "Bitcoin / U.S. Dollar", d: "Bitcoin in US dollars from Bitstamp, since 2018 (Binance BTC/USDT if Bitstamp does not answer). The base of the two pairs next to it.", src: "fiat", cur: "USD", tf: CH_ALL },
     { g: "CoinAtlas Currency Pairs", id: "BTCEUR", name: "Bitcoin / Euro", d: "Calculated by CoinAtlas: BTCUSD times the euro rate of the European Central Bank of the same day.", src: "fiat", cur: "EUR", tf: CH_ALL },
     { g: "CoinAtlas Currency Pairs", id: "BTCCHF", name: "Bitcoin / Swiss Franc", d: "Calculated by CoinAtlas: BTCUSD times the Swiss franc rate of the European Central Bank of the same day.", src: "fiat", cur: "CHF", tf: CH_ALL },
-    { g: "CoinAtlas", id: "TOTAL200", name: "Top 200 Market Cap", d: "House-made: the market cap of the top 200 coins added up, in billions of US dollars, recorded by CoinAtlas once a day. Only our own recordings exist so far, since 12 Nov 2026; the history before that will follow.", src: "snap", k: 2, scale: 1e-9, unit: "bn $", tf: CH_DAY },
+    { g: "CoinAtlas", id: "TOTAL200", name: "Top 200 Market Cap", d: "House-made: the market cap of the top 200 coins added up, in US dollars, recorded by CoinAtlas once a day. Only our own recordings exist so far, since 12 Nov 2026; the history before that will follow.", src: "snap", k: 2, scale: 1, unit: "$", tf: CH_DAY },
     { g: "CoinAtlas", id: "BTC.D", name: "Bitcoin Dominance", d: "House-made: Bitcoin's share of the top 200 market cap, in %, recorded once a day. Only our own recordings exist so far, since 12 Nov 2026; the history before that will follow.", src: "snap", k: 0, scale: 1, unit: "%", tf: CH_DAY },
     { g: "CoinAtlas", id: "USDT.D", name: "Tether Dominance", d: "House-made: Tether's share of the top 200 market cap, in %, recorded once a day. Only our own recordings exist so far, since 12 Nov 2026; the history before that will follow.", src: "snap", k: 5, scale: 1, unit: "%", tf: CH_DAY },
-    { g: "Economy", id: "WALCL", name: "Fed Balance Sheet", d: "Total assets of the US Federal Reserve, in trillions of US dollars. The Fed publishes it once a week (FRED, series WALCL).", src: "fred", scale: 1e-6, unit: "tn $", tf: CH_WEEK }
+    { g: "Economy", id: "WALCL", name: "Fed Balance Sheet", d: "Total assets of the US Federal Reserve, in US dollars. The Fed publishes it once a week (FRED, series WALCL).", src: "fred", scale: 1e6, unit: "$", tf: CH_WEEK }
   ];
   var CH_KEY = "coinatlas-chart-tf", chTf = "15m", chAsset = null, chChart = null, chPoll = null, chSeq = 0;
   try { chTf = localStorage.getItem(CH_KEY) || "15m"; } catch (e) {}
@@ -2824,6 +2824,10 @@
       return { l: all, built: add.length, left: miss.length - add.length };
     });
   }
+  function chVal(v) { /* the CoinAtlas charts on the axis, crosshair, badge and legend: 59.09% or 2.142T instead of plain numbers */
+    var u = chAsset && chAsset.unit; if (!u || v == null || !isFinite(v)) return null; if (u === "%") return v.toFixed(2) + "%";
+    var a = Math.abs(v); return a >= 1e12 ? (v / 1e12).toFixed(3) + "T" : a >= 1e9 ? (v / 1e9).toFixed(2) + "B" : a >= 1e6 ? (v / 1e6).toFixed(2) + "M" : Math.round(v).toLocaleString("en-US");
+  }
   function chPrec(v) { return v >= 1000 ? 1 : v >= 10 ? 2 : v >= 1 ? 3 : v >= 0.01 ? 5 : 7; }
   var CH_SKEY = "coinatlas-chart-style", CH_DEF = { bg: "#FFE0B2", gridV: false, gridH: false, gridVc: "#d9c3a0", gridHc: "#d9c3a0", cross: "#000000", crossStyle: "dashed",
     body: true, up: "#43b147", dn: "#F23645", border: true, bUp: "#000000", bDn: "#000000", wick: true, wUp: "#000000", wDn: "#000000",
@@ -2840,7 +2844,8 @@
           upWickColor: S.wick ? S.wUp : tr, downWickColor: S.wick ? S.wDn : tr, noChangeWickColor: S.wick ? S.wUp : tr },
         area: { lineSize: 2, lineColor: S.caLine, value: "close", backgroundColor: [{ offset: 0, color: tr }, { offset: 1, color: tr }], point: { show: false } },
         priceMark: { high: { show: false }, low: { show: false }, last: { show: false, line: { show: S.last } } },
-        tooltip: { text: { color: "#3f3a33", family: FF, size: 12 }, custom: [{ title: "time", value: "{time}" }, { title: "open", value: "{open}" }, { title: "high", value: "{high}" }, { title: "low", value: "{low}" }, { title: "close", value: "{close}" }].concat(line ? [] : [{ title: "volume", value: "{volume}" }]) } },
+        tooltip: { text: { color: "#3f3a33", family: FF, size: 12 }, custom: line ? function (d) { return [{ title: "time", value: "{time}" }].concat(["open", "high", "low", "close"].map(function (k) { return { title: k, value: chVal(d.current[k]) || "{" + k + "}" }; })); }
+          : [{ title: "time", value: "{time}" }, { title: "open", value: "{open}" }, { title: "high", value: "{high}" }, { title: "low", value: "{low}" }, { title: "close", value: "{close}" }, { title: "volume", value: "{volume}" }] } },
       xAxis: { axisLine: { color: "#000000" }, tickLine: { show: false }, tickText: { color: tx, family: FF, size: 12 } },
       yAxis: { axisLine: { color: "#000000" }, tickLine: { show: false }, tickText: { color: tx, family: FF, size: 12 }, type: S.type, reverse: S.invert, position: S.pos },
       separator: { color: ln }, crosshair: { horizontal: cr(), vertical: cr() } };
@@ -2873,7 +2878,11 @@
     else if (a === "more") { chMenu.hidden = true; chSettings(true); return; }
     chSave(); chApply(); chMenu.hidden = true;
   }
-  chEl.chart.addEventListener("contextmenu", function (e) { if (!chChart) return; e.preventDefault(); chMenu.innerHTML = chMenuHtml(); chMenu.hidden = false; var w = 260, h = chMenu.offsetHeight; chMenu.style.left = Math.min(e.clientX, innerWidth - w - 8) + "px"; chMenu.style.top = Math.min(e.clientY, innerHeight - h - 8) + "px"; });
+  chEl.chart.addEventListener("contextmenu", function (e) {
+    if (!chChart) return; e.preventDefault();
+    if (chTool !== "cursor") { chSetTool("cursor"); return; } /* a right click while placing a drawing stops it */
+    var ax = chChart.getSize("candle_pane", "yAxis"), cr = chEl.chart.getBoundingClientRect(), cx = e.clientX - cr.left; if (!ax || cx < ax.left || cx > ax.left + ax.width) return; /* the menu belongs to the price axis */
+    chMenu.innerHTML = chMenuHtml(); chMenu.hidden = false; var w = 260, h = chMenu.offsetHeight; chMenu.style.left = Math.min(e.clientX, innerWidth - w - 8) + "px"; chMenu.style.top = Math.min(e.clientY, innerHeight - h - 8) + "px"; });
   chMenu.addEventListener("click", function (e) { var b = e.target.closest("[data-cm]"); if (b) chMenuDo(b.dataset.cm); });
   document.addEventListener("mousedown", function (e) { if (!chMenu.hidden && !e.target.closest(".cs-menu")) chMenu.hidden = true; });
   document.addEventListener("keydown", function (e) { if (chScreen.hidden || !e.altKey || !chChart) return; var m = { r: "reset", i: "invert", p: "percentage", l: "log" }[e.key.toLowerCase()]; if (!m) return; e.preventDefault(); if ((m === "percentage" || m === "log") && chS.type === m) m = "normal"; chMenuDo(m); });
@@ -2924,7 +2933,7 @@
       var R = p.range, H = p.bounding.height; if (chS.type !== "normal" || !(R.range > 0) || !(H > 0)) return p.defaultTicks;
       var raw = R.range / Math.max(2, H / 30), m = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10)), step = [1, 2, 2.5, 5, 10].map(function (k) { return k * m; }).filter(function (s) { return s >= raw; })[0];
       var out = [], v, prec = chPrecNow;
-      for (v = Math.ceil(R.from / step) * step; v <= R.to; v += step) { var y = H - (v - R.from) / R.range * H; out.push({ coord: chS.invert ? H - y : y, value: v, text: v.toLocaleString("en-US", { minimumFractionDigits: prec, maximumFractionDigits: prec }) }); }
+      for (v = Math.ceil(R.from / step) * step; v <= R.to; v += step) { var y = H - (v - R.from) / R.range * H; out.push({ coord: chS.invert ? H - y : y, value: v, text: chVal(v) || v.toLocaleString("en-US", { minimumFractionDigits: prec, maximumFractionDigits: prec }) }); }
       return out;
     } });
   })();
@@ -2957,7 +2966,7 @@
     if (!x || !ax || !mn) { chBadge.hidden = true; return; }
     var y = chChart.convertToPixel({ value: x.close }, { paneId: "candle_pane" }).y;
     if (!(y >= 0 && y <= mn.height)) { chBadge.hidden = true; return; }
-    var line = chAsset.src === "snap" || chAsset.src === "fred", txt = x.close.toLocaleString("en-US", { minimumFractionDigits: chPrecNow, maximumFractionDigits: chPrecNow }), left = "";
+    var line = chAsset.src === "snap" || chAsset.src === "fred", txt = chVal(x.close) || x.close.toLocaleString("en-US", { minimumFractionDigits: chPrecNow, maximumFractionDigits: chPrecNow }), left = "";
     if (!line) {
       var now = Date.now(), end;
       if (CH_MS[chTf]) end = x.timestamp + CH_MS[chTf]; else { var d = new Date(x.timestamp); end = chTf === "1W" ? x.timestamp + 6048e5 : Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1); }
@@ -2984,7 +2993,7 @@
   /* ---------- DRAWING TOOLS, modelled on TradingView's: trend line, horizontal line, vertical line, rectangle, Fib retracement and price label.
      Each has the settings of its TradingView counterpart (double click or the gear in the bar that appears when one is selected).
      Stored per asset in this browser as time and price, so a drawing stays in place on every timeframe ---------- */
-  var CH_DKEY = "coinatlas-drawings", chDraw = {}, chDrawRec = {}, chDrawBusy = false, chPending = null, chSel = null, chTool = "cursor", chLockAll = false, chHideAll = false;
+  var chCtrl = false, CH_PLACE = "#2962FF", CH_DKEY = "coinatlas-drawings", chDraw = {}, chDrawRec = {}, chDrawBusy = false, chPending = null, chSel = null, chTool = "cursor", chLockAll = false, chHideAll = false;
   try { chDraw = JSON.parse(localStorage.getItem(CH_DKEY) || "{}") || {}; } catch (e) {}
   var CH_FF = "-apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif";
   /* TradingView's Fib levels and colours: the first eleven are on, the others can be switched on in the settings */
@@ -2996,7 +3005,8 @@
     caVLine: { color: "#2962FF", width: 1, style: "solid", extend: "both", label: true },
     caRect: { color: "#9C27B0", width: 1, style: "solid", fillOn: true, fill: "#9C27B0", fillOp: 20, extendL: false, extendR: false, middle: false },
     caFib: { trendOn: true, color: "#787B86", trendStyle: "dashed", width: 1, style: "solid", extendL: false, extendR: false, reverse: false, prices: true, levels: true, percent: false, pos: "left", fillOn: true, fillOp: 15, lv: CH_FIBL },
-    caPrice: { color: "#2962FF", border: "#2962FF", text: "#FFFFFF", size: 14 } };
+    caPrice: { color: "#2962FF", border: "#2962FF", text: "#FFFFFF", size: 14 },
+    caRange: { color: "#2962FF", down: "#F23645", fillOn: true, fillOp: 20, label: true, size: 13 } };
   function chCopy(o) { return JSON.parse(JSON.stringify(o)); }
   function chDef(n) { var d = chCopy(CH_TDEF[n] || {}), u = (chS.tdef || {})[n] || {}; Object.keys(u).forEach(function (k) { d[k] = chCopy(u[k]); }); return d; }
   function chFmtP(v) { return (+v).toLocaleString("en-US", { minimumFractionDigits: chPrecNow, maximumFractionDigits: chPrecNow }); }
@@ -3023,8 +3033,40 @@
     return [[L, T], [R, T], [R, B], [L, B], [M, T], [R, V], [M, B], [L, V]].map(function (q) { return { timestamp: q[0], value: q[1], dataIndex: ts.timestampToDataIndex(q[0]) }; });
   }
   function chBounds(P) { var t = P.map(function (p) { return p.timestamp; }), v = P.map(function (p) { return p.value; }); return { L: Math.min.apply(null, t), R: Math.max.apply(null, t), T: Math.max.apply(null, v), B: Math.min.apply(null, v) }; }
+  /* the handles in the middle of a rectangle's edges are squares, the corners stay circles */
+  var chSquares = {};
+  function chIsSquare(x, y) { for (var k in chSquares) { var l = chSquares[k]; for (var i = 0; i < l.length; i++) if (Math.abs(l[i].x - x) < 0.01 && Math.abs(l[i].y - y) < 0.01) return true; } return false; }
+  if (window.klinecharts) (function () {
+    var Circle = klinecharts.getFigureClass("circle");
+    klinecharts.registerFigure({ name: "circle",
+      checkEventOn: function (p, a) { return [].concat(a).some(function (c) { return Math.pow(p.x - c.x, 2) + Math.pow(p.y - c.y, 2) <= c.r * c.r; }); },
+      draw: function (ctx, attrs, styles) {
+        if (![].concat(attrs).some(function (c) { return chIsSquare(c.x, c.y); })) return new Circle({ name: "circle", attrs: attrs, styles: styles }).draw(ctx);
+        [].concat(attrs).forEach(function (c) { var r = c.r * 0.9; ctx.fillStyle = styles.color; ctx.fillRect(c.x - r, c.y - r, 2 * r, 2 * r); });
+      } });
+  })();
+  function chDur(ms) { var m = Math.round(Math.abs(ms) / 6e4), d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mi = m % 60; return d ? d + "d" + (h ? " " + h + "h" : "") : h ? h + "h" + (mi ? " " + mi + "m" : "") : mi + "m"; }
   if (window.klinecharts) (function () {
     var reg = function (o) { o.needDefaultPointFigure = o.needDefaultPointFigure !== false; klinecharts.registerOverlay(o); };
+    /* Date and price range: a box from the first to the second point with the move in price and %, the bars and the time between them */
+    reg({ name: "caRange", totalStep: 3,
+      createPointFigures: function (e) {
+        var c = e.coordinates, P = e.overlay.points, o = e.overlay.extendData || CH_TDEF.caRange; if (c.length < 2) return [];
+        var d = P[1].value - P[0].value, col = d >= 0 ? o.color : o.down, x0 = Math.min(c[0].x, c[1].x), x1 = Math.max(c[0].x, c[1].x), y0 = Math.min(c[0].y, c[1].y), y1 = Math.max(c[0].y, c[1].y), mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+        var ln = chLn(col, 1, "solid"), f = [{ type: "polygon", attrs: { coordinates: [{ x: x0, y: y0 }, { x: x1, y: y0 }, { x: x1, y: y1 }, { x: x0, y: y1 }] }, styles: { style: "fill", color: chRgba(col, o.fillOn ? o.fillOp / 100 : 0) } },
+          { type: "line", attrs: { coordinates: [{ x: mx, y: c[0].y }, { x: mx, y: c[1].y }] }, styles: ln }, { type: "line", attrs: { coordinates: [{ x: c[0].x, y: my }, { x: c[1].x, y: my }] }, styles: ln }];
+        if (Math.abs(c[1].y - c[0].y) > 8) f.push(chHead({ x: mx, y: c[0].y }, { x: mx, y: c[1].y }, 7, ln)); if (Math.abs(c[1].x - c[0].x) > 8) f.push(chHead({ x: c[0].x, y: my }, { x: c[1].x, y: my }, 7, ln));
+        if (o.label) {
+          var sg = d >= 0 ? "+" : "", t1 = sg + (chVal(d) || chFmtP(d)) + " (" + sg + (P[0].value ? (d / P[0].value * 100).toFixed(2) : "0.00") + "%)", bars = Math.round((c[1].x - c[0].x) / e.barSpace.bar);
+          var t2 = bars + (Math.abs(bars) === 1 ? " bar, " : " bars, ") + chDur(P[1].timestamp - P[0].timestamp), sz = +o.size || 13, w = Math.max(chMeasure(t1, sz), chMeasure(t2, sz)) + 20, h = 2 * (sz + 5) + 10, top = d >= 0 ? y0 - 8 - h : y1 + 8;
+          f.push({ type: "rect", ignoreEvent: true, attrs: { x: mx - w / 2, y: top, width: w, height: h }, styles: { style: "fill", color: col, borderRadius: 4 } },
+            { type: "text", ignoreEvent: true, attrs: { x: mx, y: top + 5 + (sz + 5) / 2, text: t1, align: "center", baseline: "middle" }, styles: chTxt("#FFFFFF", sz, 600) },
+            { type: "text", ignoreEvent: true, attrs: { x: mx, y: top + 5 + (sz + 5) * 1.5, text: t2, align: "center", baseline: "middle" }, styles: chTxt("#FFFFFF", sz) });
+        }
+        return f;
+      },
+      createYAxisFigures: function (e) { var c = e.coordinates, P = e.overlay.points; if (c.length < 2 || !chIsSel(e)) return []; var o = e.overlay.extendData || {}, col = P[1].value >= P[0].value ? o.color : o.down; return [chYTag(e, c[0].y, P[0].value, col), chYTag(e, c[1].y, P[1].value, col)]; },
+      createXAxisFigures: function (e) { var c = e.coordinates, P = e.overlay.points; if (c.length < 2 || !chIsSel(e)) return []; var o = e.overlay.extendData || {}, col = P[1].value >= P[0].value ? o.color : o.down; return [chXTag(e, c[0].x, P[0].timestamp, col), chXTag(e, c[1].x, P[1].timestamp, col)]; } });
     reg({ name: "caTrend", totalStep: 3,
       createPointFigures: function (e) {
         var c = e.coordinates, o = e.overlay.extendData || CH_TDEF.caTrend; if (c.length < 2) return [];
@@ -3052,6 +3094,7 @@
         var ln = chLn(o.color, o.width, o.style), f = [{ type: "polygon", attrs: { coordinates: [{ x: x0, y: y0 }, { x: x1, y: y0 }, { x: x1, y: y1 }, { x: x0, y: y1 }] },
           styles: { style: o.fillOn ? "stroke_fill" : "stroke", color: chRgba(o.fill, o.fillOp / 100), borderColor: o.color, borderSize: o.width, borderStyle: ln.style, borderDashedValue: ln.dashedValue } }];
         if (o.middle) f.push({ type: "line", ignoreEvent: true, attrs: { coordinates: [{ x: x0, y: (y0 + y1) / 2 }, { x: x1, y: (y0 + y1) / 2 }] }, styles: chLn(o.color, 1, "dashed") });
+        if (c.length === 8) chSquares[e.overlay.id] = c.slice(4);
         return f;
       },
       performEventPressedMove: function (e) {
@@ -3093,14 +3136,14 @@
   })();
   var CH_ICON = { cursor: '<path d="M12 3v18M3 12h18"/>', caTrend: '<circle cx="5" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><path d="M6.5 17.5l11-11"/>', caHLine: '<path d="M2 12h20"/><circle cx="12" cy="12" r="2"/>',
     caVLine: '<path d="M12 2v20"/><circle cx="12" cy="12" r="2"/>', caRect: '<rect x="4" y="6" width="16" height="12" rx="1"/><circle cx="4" cy="6" r="1.6"/><circle cx="20" cy="18" r="1.6"/>', caFib: '<path d="M3 4h18M3 9h18M3 14h18M3 20h18"/>',
-    caPrice: '<path d="M4 4h16v11h-9l-3 5v-5H4z"/>', mag: '<path d="M6 3v8a6 6 0 0012 0V3h-4v8a2 2 0 01-4 0V3zM6 7h4M14 7h4"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/>',
+    caPrice: '<path d="M4 4h16v11h-9l-3 5v-5H4z"/>', caRange: '<rect x="3" y="4" width="18" height="16" rx="1"/><path d="M12 8v8M9.5 10.5L12 8l2.5 2.5M7 12h10M14.5 9.5L17 12l-2.5 2.5"/>', mag: '<path d="M6 3v8a6 6 0 0012 0V3h-4v8a2 2 0 01-4 0V3zM6 7h4M14 7h4"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/>',
     hide: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>', trash: '<path d="M4 7h16M10 7V4h4v3M6 7l1 13h10l1-13"/>' };
-  var CH_TOOLS = [["cursor", "Cursor"], ["caTrend", "Trend line"], ["caHLine", "Horizontal line"], ["caVLine", "Vertical line"], ["caRect", "Rectangle"], ["caFib", "Fib retracement"], ["caPrice", "Price label"], 0,
-    ["mag", "Magnet: drawings snap to open, high, low and close"], ["lock", "Lock all drawings"], ["hide", "Hide all drawings"], ["trash", "Remove all drawings of this asset"]];
+  var CH_TOOLS = [["cursor", "Cursor"], ["caTrend", "Trend line"], ["caHLine", "Horizontal line"], ["caVLine", "Vertical line"], ["caRect", "Rectangle"], ["caFib", "Fib retracement"], ["caRange", "Date and price range: move in price and %, bars and time"], 0,
+    ["mag", "Magnet: drawings snap to open, high, low and close (or hold Ctrl)"], ["lock", "Lock all drawings"], ["hide", "Hide all drawings"], ["trash", "Remove all drawings of this asset"]];
   var chTools = document.getElementById("cs-tools"), chDbar = document.getElementById("cs-dbar");
   var chDset = document.createElement("div"); chDset.className = "cs-set cs-dset"; chDset.hidden = true; document.querySelector("#chart-screen .cs-body").appendChild(chDset);
   function chToolsHtml() {
-    var on = { mag: chS.mag, lock: chLockAll, hide: chHideAll };
+    var on = { mag: chS.mag || chCtrl, lock: chLockAll, hide: chHideAll };
     chTools.innerHTML = CH_TOOLS.map(function (t) { if (!t) return "<hr>"; var a = t[0] in on ? on[t[0]] : chTool === t[0]; return '<button type="button" data-dt="' + t[0] + '" title="' + t[1] + '" aria-label="' + t[1] + '"' + (a ? ' class="on"' : '') + '><svg viewBox="0 0 24 24">' + CH_ICON[t[0]] + '</svg></button>'; }).join("");
   }
   chToolsHtml();
@@ -3125,6 +3168,10 @@
     ts.timestampToDataIndex = function (t) { var l = this._chartStore.getDataList(), n = l.length; if (n && t > l[n - 1].timestamp) return n - 1 + Math.round((t - l[n - 1].timestamp) / chStepMs()); if (n && t < l[0].timestamp) return -Math.round((l[0].timestamp - t) / chStepMs()); return t2i.call(this, t); };
     ts.dataIndexToTimestamp = function (i) { var l = this._chartStore.getDataList(), n = l.length; if (n && i > n - 1) return chAddSteps(l[n - 1].timestamp, i - n + 1); if (n && i < 0) return chAddSteps(l[0].timestamp, i); return i2t.call(this, i); };
   }
+  function chPatchCross() { /* the crosshair's price label in the same units as the axis */
+    try { var lv = chChart.getDrawPaneById("candle_pane").getYAxisWidget()._crosshairHorizontalLabelView, og = lv.getText;
+      lv.getText = function (e, i, n) { var t = n.getType() !== "percentage" && chVal(n.convertFromPixel(e.y)); return t || og.call(this, e, i, n); }; } catch (e) {}
+  }
   function chDrawSave() {
     if (!chAsset) return; var l = Object.keys(chDrawRec).map(function (k) { return chDrawRec[k]; });
     if (l.length) chDraw[chAsset.id] = l; else delete chDraw[chAsset.id];
@@ -3137,10 +3184,12 @@
   }
   function chInPts(r) { return r.n === "caRect" ? chRectPts(Math.min(r.p[0][0], r.p[1][0]), Math.max(r.p[0][0], r.p[1][0]), Math.max(r.p[0][1], r.p[1][1]), Math.min(r.p[0][1], r.p[1][1])) : r.p.map(function (x) { return { timestamp: x[0], value: x[1] }; }); }
   function chOv(r) { /* puts one drawing on the chart; r is null for a new one that is drawn now */
-    var n = r ? r.n : chTool, rec = r || { n: n, o: chDef(n) }, isNew = !!rec.o;
+    var n = r ? r.n : chTool, rec = r || { n: n, o: chDef(n) }, isNew = !!rec.o, noDot = { point: { color: "rgba(0,0,0,0)", borderColor: "rgba(0,0,0,0)", activeColor: "rgba(0,0,0,0)", activeBorderColor: "rgba(0,0,0,0)" } };
     return chChart.createOverlay({ name: n, groupId: "ca", points: r ? chInPts(r) : undefined, extendData: isNew ? rec.o : rec.x, lock: chLockAll || !!rec.l, visible: !chHideAll,
-      mode: chS.mag ? "weak_magnet" : "normal", styles: isNew ? chHandle(rec.o.color) : chOvStyle(rec),
+      mode: chMode(), styles: !r ? noDot : isNew ? chHandle(rec.o.color) : chOvStyle(rec), /* while placing, no dot at the cursor: the crosshair turns blue instead */
+      onMouseEnter: function () { if (chTool === "cursor") chCursor("pointer"); return false; }, onMouseLeave: function () { chCursor(""); return false; },
       onDrawEnd: function (e) { chPending = null; rec.p = chPts(e.overlay); chDrawRec[e.overlay.id] = rec; chSetTool("cursor");
+        chChart.overrideOverlay({ id: e.overlay.id, styles: isNew ? chHandle(rec.o.color) : chOvStyle(rec) });
         if (n === "caRect") chChart.overrideOverlay({ id: e.overlay.id, points: chInPts(rec) });
         chDrawSave(); return false; },
       onPressedMoveEnd: function (e) { var q = chDrawRec[e.overlay.id]; if (q) { q.p = chPts(e.overlay); chDrawSave(); if (chSel === e.overlay.id && !chDset.hidden) chDsetShow(); } return false; },
@@ -3148,16 +3197,21 @@
         if (q.o) chDsetShow(); else if (q.n === "caText") { var t = window.prompt("Text", q.x || ""); if (t) { q.x = t; chChart.overrideOverlay({ id: e.overlay.id, extendData: t }); chDrawSave(); } } return false; },
       onSelected: function (e) { chSel = e.overlay.id; chDbarShow(); return false; },
       onDeselected: function (e) { if (chSel === e.overlay.id) { chSel = null; chDbar.hidden = true; chDset.hidden = true; } return false; },
-      onRemoved: function (e) { if (chDrawBusy) return false; if (chSel === e.overlay.id) { chSel = null; chDbar.hidden = true; chDset.hidden = true; } if (chDrawRec[e.overlay.id]) { delete chDrawRec[e.overlay.id]; chDrawSave(); } return false; } });
+      onRemoved: function (e) { delete chSquares[e.overlay.id]; chCursor(""); if (chDrawBusy) return false; if (chSel === e.overlay.id) { chSel = null; chDbar.hidden = true; chDset.hidden = true; } if (chDrawRec[e.overlay.id]) { delete chDrawRec[e.overlay.id]; chDrawSave(); } return false; } });
   }
-  function chDrawClear() { if (!chChart) return; chDrawBusy = true; try { chChart.removeOverlay({ groupId: "ca" }); } catch (e) {} chDrawBusy = false; chDrawRec = {}; chPending = null; chSel = null; chDbar.hidden = true; chDset.hidden = true; }
+  function chMode() { return chS.mag || chCtrl ? "weak_magnet" : "normal"; }
+  function chModeAll() { if (!chChart) return; Object.keys(chDrawRec).concat(chPending ? [chPending] : []).forEach(function (id) { chChart.overrideOverlay({ id: id, mode: chMode() }); }); chToolsHtml(); }
+  function chCursor(c) { var m = chEl.chart.querySelector(":scope > div > div > div"); if (m) m.style.cursor = c || "crosshair"; }
+  function chDrawClear() { if (!chChart) return; chSquares = {}; chDrawBusy = true; try { chChart.removeOverlay({ groupId: "ca" }); } catch (e) {} chDrawBusy = false; chDrawRec = {}; chPending = null; chSel = null; chDbar.hidden = true; chDset.hidden = true; }
   function chDrawLoad() {
     if (!chChart || !chAsset) return; chDrawClear(); var l = (chDraw[chAsset.id] || []).map(chMigrate);
     l.forEach(function (r) { var id = chOv(r); if (id) chDrawRec[id] = r; });
   }
   function chSetTool(t) {
     if (chPending) { chDrawBusy = true; chChart.removeOverlay(chPending); chDrawBusy = false; chPending = null; }
-    chTool = t; chToolsHtml(); if (t !== "cursor" && chChart && chAsset) chPending = chOv(null);
+    chTool = t; chToolsHtml(); if (!chChart) return; chCursor("");
+    var cc = t !== "cursor" ? CH_PLACE : chS.cross; chChart.setStyles({ crosshair: { horizontal: { line: { color: cc } }, vertical: { line: { color: cc } } } });
+    if (t !== "cursor" && chAsset) chPending = chOv(null);
   }
   function chOvUpdate(id) { var r = chDrawRec[id]; if (!r) return; r.o = chCopy(r.o); chChart.overrideOverlay({ id: id, extendData: r.o, styles: chHandle(r.o.color), lock: chLockAll || !!r.l }); chDrawSave(); }
   /* the bar above a selected drawing: colour, width, style, settings, lock, remove */
@@ -3166,9 +3220,10 @@
   function chDbarShow() {
     var r = chDrawRec[chSel]; if (!r) { chDbar.hidden = true; return; } var o = r.o, h = "";
     if (o) {
-      h += '<input type="color" data-o="color" value="' + o.color + '" title="' + (r.n === "caPrice" ? "Background" : r.n === "caFib" ? "Trend line" : r.n === "caRect" ? "Border" : "Line colour") + '">';
+      h += '<input type="color" data-o="color" value="' + o.color + '" title="' + (r.n === "caPrice" ? "Background" : r.n === "caRange" ? "Rising" : r.n === "caFib" ? "Trend line" : r.n === "caRect" ? "Border" : "Line colour") + '">';
       if (r.n === "caRect") h += '<input type="color" data-o="fill" value="' + o.fill + '" title="Background">';
       if (r.n === "caPrice") h += '<input type="color" data-o="text" value="' + o.text + '" title="Text">';
+      if (r.n === "caRange") h += '<input type="color" data-o="down" value="' + o.down + '" title="Falling">';
       if ("width" in o) h += '<select data-o="width" title="Line width">' + chOpts([[1, "1px"], [2, "2px"], [3, "3px"], [4, "4px"]], o.width) + '</select>';
       if ("style" in o) h += '<select data-o="style" title="Line style">' + chOpts(CH_STY, o.style) + '</select>';
       h += '<button type="button" data-db="set" title="Settings">⚙</button>';
@@ -3186,8 +3241,9 @@
     caRect: [["sec", "Border"], ["line"], ["sec", "Background"], ["fill", true], ["sec", "Extend"], ["chk", "extendL", "Extend left"], ["chk", "extendR", "Extend right"], ["chk", "middle", "Middle line"], ["sec", "Coordinates"], ["pc", "top", "Top"], ["pc", "bottom", "Bottom"]],
     caFib: [["sec", "Trend line"], ["trend"], ["sec", "Levels line"], ["lvline"], ["sec", "Style"], ["chk", "extendL", "Extend lines left"], ["chk", "extendR", "Extend lines right"], ["chk", "reverse", "Reverse"],
       ["chk", "prices", "Prices"], ["chk", "levels", "Levels"], ["chk", "percent", "Levels in percent"], ["sel", "pos", "Labels", [["left", "Left"], ["right", "Right"]]], ["fill", false], ["sec", "Levels"], ["fib"]],
+    caRange: [["sec", "Colours"], ["col", "color", "Rising"], ["col", "down", "Falling"], ["fill", false], ["sec", "Label"], ["chk", "label", "Show the label"], ["sel", "size", "Font size", [11, 12, 13, 14, 16, 18]]],
     caPrice: [["sec", "Label"], ["col", "color", "Background"], ["col", "border", "Border"], ["col", "text", "Text"], ["sel", "size", "Font size", [10, 11, 12, 14, 16, 20, 24, 28]], ["sec", "Coordinates"], ["pc", 0, "Price"]] };
-  var CH_TNAME = { caTrend: "Trend line", caHLine: "Horizontal line", caVLine: "Vertical line", caRect: "Rectangle", caFib: "Fib retracement", caPrice: "Price label" };
+  var CH_TNAME = { caTrend: "Trend line", caHLine: "Horizontal line", caVLine: "Vertical line", caRect: "Rectangle", caFib: "Fib retracement", caPrice: "Price label", caRange: "Date and price range" };
   function chDsetShow() {
     var r = chDrawRec[chSel]; if (!r || !r.o) { chDset.hidden = true; return; } var o = r.o;
     var col = function (k) { return '<input type="color" data-o="' + k + '" value="' + o[k] + '">'; }, chk = function (k) { return '<input type="checkbox" data-o="' + k + '"' + (o[k] ? ' checked' : '') + '>'; };
@@ -3235,18 +3291,22 @@
     chDrawSave(); chDbarShow(); });
   chTools.addEventListener("click", function (e) {
     var b = e.target.closest("[data-dt]"); if (!b || !chChart || !chAsset) return; var t = b.dataset.dt, ids = Object.keys(chDrawRec);
-    if (t === "mag") { chS.mag = !chS.mag; chSave(); ids.forEach(function (id) { chChart.overrideOverlay({ id: id, mode: chS.mag ? "weak_magnet" : "normal" }); }); chToolsHtml(); return; }
+    if (t === "mag") { chS.mag = !chS.mag; chSave(); chModeAll(); return; }
     if (t === "lock") { chLockAll = !chLockAll; ids.forEach(function (id) { chChart.overrideOverlay({ id: id, lock: chLockAll || !!chDrawRec[id].l }); }); chToolsHtml(); return; }
     if (t === "hide") { chHideAll = !chHideAll; ids.forEach(function (id) { chChart.overrideOverlay({ id: id, visible: !chHideAll }); }); chToolsHtml(); return; }
     if (t === "trash") { if (ids.length && window.confirm("Remove all " + ids.length + " drawings on " + chAsset.id + "?")) { chDrawClear(); chDrawSave(); } return; }
     chSetTool(t === chTool ? "cursor" : t);
   });
   document.addEventListener("keydown", function (e) {
-    if (chScreen.hidden || !chChart || /INPUT|SELECT|TEXTAREA/.test((e.target && e.target.tagName) || "")) return;
+    if (chScreen.hidden || !chChart) return;
+    if ((e.key === "Control" || e.key === "Meta") && !chCtrl) { chCtrl = true; chModeAll(); return; } /* hold Ctrl for the magnet */
+    if (/INPUT|SELECT|TEXTAREA/.test((e.target && e.target.tagName) || "")) return;
     if ((e.key === "Delete" || e.key === "Backspace") && chSel) { e.preventDefault(); chChart.removeOverlay(chSel); }
     else if (e.key === "Escape" && !chDset.hidden) { e.stopImmediatePropagation(); chDset.hidden = true; }
     else if (e.key === "Escape" && chTool !== "cursor") { e.stopImmediatePropagation(); chSetTool("cursor"); }
   }, true);
+  document.addEventListener("keyup", function (e) { if ((e.key === "Control" || e.key === "Meta") && chCtrl) { chCtrl = false; chModeAll(); } });
+  window.addEventListener("blur", function () { if (chCtrl) { chCtrl = false; chModeAll(); } });
 
   var chShown = null, chWide = false; window.coinAtlasChart = function () { return chChart; }; /* lets the tests read the chart */
   function chAnchor() { /* the time at the right edge of what is on screen, when the chart was moved away from the newest candle; null while it shows the newest */
@@ -3259,7 +3319,7 @@
     chTfs(); chEl.asset.textContent = a.id; clearInterval(chPoll);
     chEl.info.textContent = "Loading…";
     if (!window.klinecharts) { chEl.info.textContent = "The chart library could not be loaded."; return; }
-    if (!chChart) { chChart = klinecharts.init(chEl.chart, { customApi: { formatDate: chDate }, layout: [{ type: "candle", options: { axisOptions: { name: "tv" } } }, { type: "xAxis" }] }); chPatchTime(); }
+    if (!chChart) { chChart = klinecharts.init(chEl.chart, { customApi: { formatDate: chDate }, layout: [{ type: "candle", options: { axisOptions: { name: "tv" } } }, { type: "xAxis" }] }); chPatchTime(); chPatchCross(); }
     chTool = "cursor"; chDrawClear(); chToolsHtml();
     var line = a.src === "snap" || a.src === "fred"; chEl.chart.style.background = chS.bg; chChart.setStyles(chStyles(line));
     chChart.setLoadDataCallback(function (p) {
@@ -3286,7 +3346,7 @@
         if (n >= 25 || list[0].timestamp <= anchor) return go(list);
         chLoad(a, tf, list[0].timestamp).then(function (o) { if (seq !== chSeq) return; if (!o.length) return go(list); back(o.filter(function (x) { return x.timestamp < list[0].timestamp; }).concat(list), n + 1); }, function () { go(list); });
       })(l, 0);
-      chEl.info.textContent = (F.built ? F.built + (F.built === 1 ? " missing candle" : " missing candles") + " built from " + CH_LOWER[tf] + " · " : "") + (F.left ? F.left + (F.left === 1 ? " candle" : " candles") + " missing from the exchange · " : "") + (a.unit ? a.unit + " · " : "") + (a.src === "perp" || a.src === "inv" ? "Bitget" : a.src === "binance" ? "Binance" : a.src === "fiat" ? "CoinAtlas · " + chUsdUsed + (a.cur === "USD" ? "" : " × ECB " + a.cur + " rate") : a.src === "snap" ? "CoinAtlas snapshots, " + l.length + (l.length === 1 ? " point" : " points") : "FRED") + (line ? "" : " · live");
+      chEl.info.textContent = (F.built ? F.built + (F.built === 1 ? " missing candle" : " missing candles") + " built from " + CH_LOWER[tf] + " · " : "") + (F.left ? F.left + (F.left === 1 ? " candle" : " candles") + " missing from the exchange · " : "") + (a.unit === "%" ? "% · " : a.unit ? "US$ · " : "") + (a.src === "perp" || a.src === "inv" ? "Bitget" : a.src === "binance" ? "Binance" : a.src === "fiat" ? "CoinAtlas · " + chUsdUsed + (a.cur === "USD" ? "" : " × ECB " + a.cur + " rate") : a.src === "snap" ? "CoinAtlas snapshots, " + l.length + (l.length === 1 ? " point" : " points") : "FRED") + (line ? "" : " · live");
       if (!line) chPoll = setInterval(function () { /* live: the newest candles every 5 seconds while the screen is open */
         if (chScreen.hidden || document.hidden) return;
         chLoad(a, tf).then(function (n) { if (seq === chSeq) n.slice(-2).forEach(function (x) { chChart.updateData(x); }); }, function () {});

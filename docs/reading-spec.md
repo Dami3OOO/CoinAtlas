@@ -180,6 +180,8 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   ab 01.01.2018. BTCEUR und BTCCHF rechnet die Seite selbst: jede BTCUSD-Kerze mal EZB-Kurs USD→EUR bzw. USD→CHF desselben Tages
   (Frankfurter, an Wochenenden und Feiertagen der letzte bekannte). 1W und 1M werden aus den umgerechneten Tageskerzen gebaut.
   Oben rechts steht die Quelle, z. B. "CoinAtlas · Bitstamp BTC/USD × ECB EUR rate". Nur mit Nachbildungen getestet.
+- Einheiten (20.11.2026): BTC.D und USDT.D zeigen auf Achse, Fadenkreuz, Preisschild und Kopfzeile "59.09%", TOTAL200 und WALCL in US-Dollar
+  mit T/B/M ("2.142T"). Die Werte sind dafür in Dollar gespeichert (TOTAL200 roh, WALCL aus Millionen umgerechnet).
 - CoinAtlas-Charts (TOTAL200, BTC.D, USDT.D, WALCL) als Kerzen statt blauer Fläche: jede Kerze öffnet beim Wert davor und schließt beim eigenen.
   In den Chart settings umschaltbar auf "Line" (schlichte Linie ohne Punkte, Farbe wählbar). Bei wenigen Werten werden die Kerzen breiter.
 - Zeichenwerkzeuge (20.11.2026, zweite Fassung nach TradingView-Vorbild, Qualität vor Menge). Leiste links:
@@ -190,7 +192,11 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   Middle line, Oben/Unten als Koordinaten; ausgewählt zeigt es Preis- und Zeitbereich auf den Achsen; Standardfarbe #9C27B0, 20 %),
   Fib retracement (TradingView-Stufen und Farben, 11 an und 12 zuschaltbar; Level 0 am zweiten Punkt; Trendlinie gestrichelt,
   Extend left/right, Reverse, Prices, Levels, Prozent, Labels links/rechts, Hintergrund mit Deckkraft; Fläche ist anklickbar),
-  Price label (Sprechblase mit dem Preis, Spitze am Punkt; Hintergrund, Rand, Text, Schriftgröße).
+  Date and price range (ersetzt Price label im Werkzeug-Menü): Box vom ersten zum zweiten Punkt mit Pfeilen, Label mit Änderung in Preis und %,
+  Anzahl Kerzen und vergangener Zeit; blau steigend, rot fallend, Farben, Deckkraft, Label und Schriftgröße einstellbar. Alte Price labels bleiben sichtbar.
+  Bedienung: Hand-Zeiger über einer Zeichnung; Box-Griffe an den Ecken rund, an den Kantenmitten eckig. Im Platzier-Modus wird das Fadenkreuz blau
+  und es gibt keinen Punkt am Zeiger. Rechtsklick bricht das Platzieren ab. Strg (Mac: Cmd) gedrückt halten schaltet den Magneten zu.
+  Das Preisachsen-Menü öffnet sich nur bei Rechtsklick auf die Preisachse.
   Dazu Magnet, alle sperren, alle ausblenden, alle löschen. Ausgewählt: Leiste oben mit Farbe, Breite, Stil, ⚙, Lock, Remove.
   Doppelklick oder ⚙ öffnet die Einstellungen; Änderungen wirken sofort, "Save as default" gilt für neue Zeichnungen des Werkzeugs (chS.tdef).
   Entf/Backspace löscht, Esc schließt die Einstellungen oder bricht ein Werkzeug ab.
