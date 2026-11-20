@@ -151,7 +151,7 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Knopf "Charts" im Header öffnet ein Vollbild. Zuerst wählt man das Asset aus einer gruppierten Liste mit Kurzbeschreibung, erst dann erscheint der Chart.
 - Zeiteinheiten 1m, 3m, 5m, 15m, 1h, 4h, 1D, 1W, 1M (die zuletzt gewählte wird gemerkt). Live-Update alle 5 Sekunden, ältere Kerzen beim Scrollen nach links.
 - Assets: BTCUSDT.P, ETHUSDT.P, TRXUSDT.P, POLUSDT.P, RENDERUSDT.P, SANDUSDT.P (Bitget USDT-Futures), BTCETH (Bitget Spot ETHBTC, umgedreht),
-  BTCUSD (Binance BTCUSDT Spot), TOTAL200 / BTC.D / USDT.D (hauseigen aus den Snapshots, nur 1D/1W/1M, Daten ab 12.11.2026),
+  Gruppe "Currencies" (früher "Binance"): BTCUSD, BTCEUR, BTCCHF (siehe unten), TOTAL200 / BTC.D / USDT.D (hauseigen aus den Snapshots, nur 1D/1W/1M, Daten ab 12.11.2026),
   WALCL (FRED, wöchentlich, 1W/1M, vom Snapshot-Job geholt nach data/fred-walcl.json).
 - dominance.json hat als 6. Wert den USDT-Anteil an der Top-200-Marktkapitalisierung.
 - Aussehen (Standard, über das Zahnrad "Chart settings" änderbar und im Browser gespeichert): Hintergrund #FFE0B2, keine Gitterlinien,
@@ -176,8 +176,22 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Bibliothek: KLineChart 9.8.12 (Apache 2.0), unverändert in index.html eingebettet, mit NOTICE als Kommentar.
 - Bitget-Zeiteinheiten werden mit Ausweich-Namen versucht (1Dutc, dann 1D usw.), weil die genauen Namen nicht getestet werden konnten.
 - Weggelassen: DXY, JXY, BTC1!, NQ1! (lizenzpflichtige Börsendaten), kein TradingView-Embed, keine geschätzte Historie.
-- Nächste Etappen: Zeichenwerkzeuge (Linie, waagrecht/senkrecht unendlich, Box, Pfeile, Long/Short mit RR, Date and Price Range,
-  Rotated Rectangle), Mini-Version in der Landing Area, Zeichnungen pro Asset speichern.
+- Currencies (20.11.2026): Jedes Asset hat eine Reihenfolge von Börsen, die erste antwortende wird pro Zeiteinheit gemerkt
+  (Zurückscrollen bleibt auf derselben Quelle). Oben rechts steht, welche geantwortet hat.
+  BTCUSD: Bitstamp btcusd, Kraken XBTUSD, Binance BTCUSDT. BTCEUR: Bitstamp btceur, Kraken XBTEUR, Binance BTCEUR.
+  BTCCHF: Kraken XBTCHF, Bitstamp btcchf, zuletzt Binance BTCUSDT × Tageskurs USD/CHF der EZB (Frankfurter).
+  Bitstamp hat kein 1W/1M (aus 1D gebaut), Kraken kein 3m (aus 1m) und kein Zurückscrollen (nur die neuesten 720 Kerzen).
+  Nicht getestet mit echten Daten (Börsen aus der Claude-Umgebung gesperrt), nur mit Nachbildungen der Antworten.
+- CoinAtlas-Charts (TOTAL200, BTC.D, USDT.D, WALCL) als Kerzen statt blauer Fläche: jede Kerze öffnet beim Wert davor und schließt beim eigenen.
+  In den Chart settings umschaltbar auf "Line" (schlichte Linie ohne Punkte, Farbe wählbar). Bei wenigen Werten werden die Kerzen breiter.
+- Zeichenwerkzeuge (20.11.2026), Leiste links: Trend line, Ray, Extended line, Horizontal line, Horizontal ray, Vertical line, Parallel channel,
+  Fib retracement, Rectangle, Arrow, Text, Price label; dazu Magnet, alle sperren, alle ausblenden, alle löschen.
+  Ausgewählte Zeichnung: Leiste oben mit Farbe, Linienbreite, Lock, Remove; Entf/Backspace löscht, Esc bricht ein Werkzeug ab, Doppelklick ändert Text.
+  Gespeichert pro Asset im Browser (localStorage "coinatlas-drawings") als Zeitpunkt + Preis, deshalb auf allen Zeiteinheiten an derselben Stelle.
+  Die Zeitachse rechnet über die erste und neueste Kerze hinaus in Schritten der Zeiteinheit weiter, damit Zeichnungen in die Zukunft ihr Datum behalten.
+  Noch nicht synchronisiert zwischen Geräten: kommt mit dem Account-System.
+- Nächste Etappen: Long/Short mit RR, Date and Price Range, Rotated Rectangle, Account-System (Zeichnungen und Einstellungen geräteübergreifend),
+  Mini-Version in der Landing Area.
 
 ## Offene Punkte
 

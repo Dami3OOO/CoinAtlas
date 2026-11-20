@@ -458,8 +458,15 @@
   .cs-badge { position: absolute; z-index: 2; transform: translateY(-50%); display: flex; flex-direction: column; align-items: flex-start; padding: 2px 6px; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif; font-size: 12px; line-height: 1.3; pointer-events: none; box-sizing: border-box; } .cs-badge[hidden] { display: none; } .cs-badge b { font-weight: normal; }
   .cs-set-f { margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px; } .cs-set-f button { font: inherit; font-size: 12px; color: #e8e2da; background: transparent; border: 1px solid #4a3d33; border-radius: 6px; padding: 5px 10px; cursor: pointer; }
   .cs-close { font: inherit; font-size: 15px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 8px; width: 32px; height: 30px; cursor: pointer; } .cs-close:hover { color: var(--fg); background: var(--hover); }
-  .cs-body { position: relative; flex: 1; min-height: 0; } .cs-chart { position: absolute; inset: 0; background: #FFE0B2; }
-  #chart-screen.picking .cs-chart { filter: blur(4px) grayscale(1); opacity: .25; pointer-events: none; }
+  .cs-body { position: relative; flex: 1; min-height: 0; } .cs-chart { position: absolute; inset: 0 0 0 44px; background: #FFE0B2; }
+  #chart-screen.picking .cs-chart, #chart-screen.picking .cs-tools { filter: blur(4px) grayscale(1); opacity: .25; pointer-events: none; }
+  .cs-tools { position: absolute; left: 0; top: 0; bottom: 0; width: 44px; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0; overflow-y: auto; border-right: 1px solid var(--line); box-sizing: border-box; scrollbar-width: none; }
+  .cs-tools button { flex: none; width: 34px; height: 34px; display: grid; place-items: center; color: var(--muted); background: transparent; border: 0; border-radius: 6px; cursor: pointer; padding: 0; }
+  .cs-tools button:hover { color: var(--fg); background: var(--hover); } .cs-tools button.on { color: #111; background: var(--fg); }
+  .cs-tools svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; } .cs-tools hr { flex: none; width: 24px; border: 0; border-top: 1px solid var(--line); margin: 4px 0; }
+  .cs-dbar { position: absolute; z-index: 4; top: 10px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 6px; padding: 5px 8px; background: #1e1e1e; border: 1px solid #333; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.35); } .cs-dbar[hidden] { display: none; }
+  .cs-dbar input[type=color] { width: 30px; height: 26px; padding: 2px; background: #111; border: 1px solid #444; border-radius: 5px; cursor: pointer; }
+  .cs-dbar select, .cs-dbar button { font: inherit; font-size: 12px; color: #e5e5e5; background: #111; border: 1px solid #444; border-radius: 5px; padding: 4px 8px; cursor: pointer; } .cs-dbar button:hover { background: #2c2c2c; } .cs-dbar button.on { color: #111; background: #e5e5e5; }
   .cs-pick { position: absolute; inset: 0; z-index: 3; overflow-y: auto; animation: rtAskIn .35s ease both; } .cs-pick[hidden] { display: none; }
   .cs-pick-in { max-width: 1100px; margin: 0 auto; padding: 24px 16px 40px; } .cs-pick-h { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 18px; }
   .cs-grp { margin-bottom: 18px; } .cs-grp-h { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
@@ -2695,7 +2702,9 @@
     { g: "Alts", id: "POLUSDT.P", name: "Polygon Perpetual", d: "Polygon (POL) against USDT, the perpetual futures contract on Bitget.", src: "perp", sym: "POLUSDT", tf: CH_ALL },
     { g: "Alts", id: "RENDERUSDT.P", name: "Render Perpetual", d: "Render against USDT, the perpetual futures contract on Bitget.", src: "perp", sym: "RENDERUSDT", tf: CH_ALL },
     { g: "Alts", id: "SANDUSDT.P", name: "The Sandbox Perpetual", d: "The Sandbox (SAND) against USDT, the perpetual futures contract on Bitget.", src: "perp", sym: "SANDUSDT", tf: CH_ALL },
-    { g: "Binance", id: "BTCUSD", name: "Bitcoin / U.S. Dollar", d: "Bitcoin in US dollars, from Binance's BTC/USDT spot market.", src: "binance", sym: "BTCUSDT", tf: CH_ALL },
+    { g: "Currencies", id: "BTCUSD", name: "Bitcoin / U.S. Dollar", d: "Bitcoin in real US dollars, from Bitstamp. If Bitstamp does not answer: Kraken, then Binance's BTC/USDT.", src: "fiat", via: [["bitstamp", "btcusd"], ["kraken", "XBTUSD"], ["binance", "BTCUSDT"]], tf: CH_ALL },
+    { g: "Currencies", id: "BTCEUR", name: "Bitcoin / Euro", d: "Bitcoin in euros, from Bitstamp. If Bitstamp does not answer: Kraken, then Binance's BTC/EUR.", src: "fiat", via: [["bitstamp", "btceur"], ["kraken", "XBTEUR"], ["binance", "BTCEUR"]], tf: CH_ALL },
+    { g: "Currencies", id: "BTCCHF", name: "Bitcoin / Swiss Franc", d: "Bitcoin in Swiss francs, from Kraken. If Kraken does not answer: Bitstamp, then Binance's BTC/USDT converted with the daily ECB rate.", src: "fiat", via: [["kraken", "XBTCHF"], ["bitstamp", "btcchf"], ["fx", "BTCUSDT", "CHF"]], tf: CH_ALL },
     { g: "CoinAtlas", id: "TOTAL200", name: "Top 200 Market Cap", d: "House-made: the market cap of the top 200 coins added up, in billions of US dollars, recorded by CoinAtlas once a day. Only our own recordings exist so far, since 12 Nov 2026; the history before that will follow.", src: "snap", k: 2, scale: 1e-9, unit: "bn $", tf: CH_DAY },
     { g: "CoinAtlas", id: "BTC.D", name: "Bitcoin Dominance", d: "House-made: Bitcoin's share of the top 200 market cap, in %, recorded once a day. Only our own recordings exist so far, since 12 Nov 2026; the history before that will follow.", src: "snap", k: 0, scale: 1, unit: "%", tf: CH_DAY },
     { g: "CoinAtlas", id: "USDT.D", name: "Tether Dominance", d: "House-made: Tether's share of the top 200 market cap, in %, recorded once a day. Only our own recordings exist so far, since 12 Nov 2026; the history before that will follow.", src: "snap", k: 5, scale: 1, unit: "%", tf: CH_DAY },
@@ -2705,7 +2714,7 @@
   try { chTf = localStorage.getItem(CH_KEY) || "15m"; } catch (e) {}
   var chScreen = document.createElement("div"); chScreen.id = "chart-screen"; chScreen.hidden = true;
   chScreen.innerHTML = '<div class="cs-bar"><b class="cs-title">Charts</b><button type="button" class="cs-asset" id="cs-asset">Choose Asset</button><div class="cs-tfs" id="cs-tfs"></div><span class="cs-info" id="cs-info"></span><button type="button" class="cs-gear" id="cs-gear" aria-label="Chart settings" title="Chart settings">⚙</button><button type="button" class="cs-close" id="cs-close" aria-label="Close the charts">✕</button></div>' +
-    '<div class="cs-body"><div class="cs-chart" id="cs-chart"></div><div class="cs-pick" id="cs-pick"></div></div>';
+    '<div class="cs-body"><div class="cs-tools" id="cs-tools"></div><div class="cs-chart" id="cs-chart"></div><div class="cs-dbar" id="cs-dbar" hidden></div><div class="cs-pick" id="cs-pick"></div></div>';
   document.body.appendChild(chScreen);
   var chEl = { chart: document.getElementById("cs-chart"), pick: document.getElementById("cs-pick"), tfs: document.getElementById("cs-tfs"), info: document.getElementById("cs-info"), asset: document.getElementById("cs-asset") };
   (function () { /* the list to choose from, grouped, every asset with a short description */
@@ -2735,9 +2744,66 @@
     if (a.src === "perp") return chBitget("https://api.bitget.com/api/v2/mix/market/" + (end ? "history-candles" : "candles") + "?symbol=" + a.sym + "&productType=USDT-FUTURES&granularity=GRAN&limit=" + lim + e, CH_PERP[tf]);
     if (a.src === "inv") return chBitget("https://api.bitget.com/api/v2/spot/market/" + (end ? "history-candles" : "candles") + "?symbol=" + a.sym + "&granularity=GRAN&limit=" + lim + e, CH_SPOT[tf]).then(function (l) { return l.map(function (x) { return { timestamp: x.timestamp, open: 1 / x.open, high: 1 / x.low, low: 1 / x.high, close: 1 / x.close, volume: x.volume }; }); });
     if (a.src === "binance") return getJson("https://data-api.binance.vision/api/v3/klines?symbol=" + a.sym + "&interval=" + CH_BIN[tf] + "&limit=" + lim + e, 12000).then(chRows);
+    if (a.src === "fiat") return chFiat(a, tf, end);
     if (end) return Promise.resolve([]);
-    if (a.src === "snap") return repoJson("data/dominance.json").then(function (j) { return chAgg(Object.keys(j || {}).sort().map(function (k) { var v = j[k][a.k]; return v == null ? null : { timestamp: Date.parse(k + "T00:00:00Z"), open: v * a.scale, high: v * a.scale, low: v * a.scale, close: v * a.scale, volume: 0 }; }).filter(Boolean), tf); });
-    return repoJson("data/fred-walcl.json").catch(function () { return null; }).then(function (j) { /* missing until the first weekly import */ return chAgg(((j && j.days) || []).map(function (r) { var v = r[1] * a.scale; return { timestamp: Date.parse(r[0] + "T00:00:00Z"), open: v, high: v, low: v, close: v, volume: 0 }; }), tf); });
+    if (a.src === "snap") return repoJson("data/dominance.json").then(function (j) { return chAgg(chSteps(Object.keys(j || {}).sort().map(function (k) { var v = j[k][a.k]; return v == null ? null : { timestamp: Date.parse(k + "T00:00:00Z"), open: v * a.scale, high: v * a.scale, low: v * a.scale, close: v * a.scale, volume: 0 }; }).filter(Boolean)), tf); });
+    return repoJson("data/fred-walcl.json").catch(function () { return null; }).then(function (j) { /* missing until the first weekly import */ return chAgg(chSteps(((j && j.days) || []).map(function (r) { var v = r[1] * a.scale; return { timestamp: Date.parse(r[0] + "T00:00:00Z"), open: v, high: v, low: v, close: v, volume: 0 }; })), tf); });
+  }
+  function chSteps(l) { /* one value per day or week into candles: each one opens at the value before it and closes at its own */
+    return l.map(function (x, i) { var o = i ? l[i - 1].close : x.close; return { timestamp: x.timestamp, open: o, high: Math.max(o, x.close), low: Math.min(o, x.close), close: x.close, volume: 0 }; });
+  }
+  /* Currencies: several exchanges one after another; the first that answers is kept for that timeframe, so scrolling back stays on the same source */
+  var CH_VIA = { bitstamp: "Bitstamp", kraken: "Kraken", binance: "Binance", fx: "Binance BTC/USDT × ECB rate" };
+  var CH_BS = { "1m": 60, "3m": 180, "5m": 300, "15m": 900, "1h": 3600, "4h": 14400, "1D": 86400 }, CH_KR = { "1m": 1, "5m": 5, "15m": 15, "1h": 60, "4h": 240, "1D": 1440 }, CH_BASE = { "3m": "1m", "1W": "1D", "1M": "1D" };
+  function chBucket(tf, t) { var d = new Date(t); if (tf === "1M") return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1); if (tf === "1W") { var day = t - t % 864e5; return day - ((new Date(day).getUTCDay() + 6) % 7) * 864e5; } return t - t % CH_STEP[tf]; }
+  function chMerge(list, tf, cut) { /* smaller candles into candles of tf; cut: drop the oldest one, which is usually only partly covered */
+    var out = []; list.forEach(function (x) { var k = chBucket(tf, x.timestamp), o = out[out.length - 1]; if (o && o.timestamp === k) { o.high = Math.max(o.high, x.high); o.low = Math.min(o.low, x.low); o.close = x.close; o.volume += x.volume || 0; } else out.push({ timestamp: k, open: x.open, high: x.high, low: x.low, close: x.close, volume: x.volume || 0 }); });
+    return cut && out.length > 1 ? out.slice(1) : out;
+  }
+  function chOne(v, tf, end) { /* one exchange: resolves to the candles, the newest last */
+    var ex = v[0], sym = v[1];
+    if (ex === "binance") return getJson("https://data-api.binance.vision/api/v3/klines?symbol=" + sym + "&interval=" + CH_BIN[tf] + "&limit=" + (end ? 200 : 1000) + (end ? "&endTime=" + (end - 1) : ""), 12000).then(chRows);
+    if (ex === "bitstamp") {
+      if (!CH_BS[tf]) return chOne(v, CH_BASE[tf], end).then(function (l) { return chMerge(l, tf, l.length >= 1000); });
+      return getJson("https://www.bitstamp.net/api/v2/ohlc/" + sym + "/?step=" + CH_BS[tf] + "&limit=1000" + (end ? "&end=" + Math.floor((end - 1) / 1000) : ""), 12000).then(function (j) {
+        var o = j && j.data && j.data.ohlc; if (!o || !o.length) throw new Error("Bitstamp answered without data");
+        return o.map(function (r) { return { timestamp: r.timestamp * 1000, open: +r.open, high: +r.high, low: +r.low, close: +r.close, volume: +r.volume || 0 }; }).sort(function (x, y) { return x.timestamp - y.timestamp; });
+      });
+    }
+    if (ex === "kraken") {
+      if (end) return Promise.resolve([]); /* Kraken only gives the newest 720 candles */
+      if (!CH_KR[tf]) return chOne(v, CH_BASE[tf], end).then(function (l) { return chMerge(l, tf, true); });
+      return getJson("https://api.kraken.com/0/public/OHLC?pair=" + sym + "&interval=" + CH_KR[tf], 12000).then(function (j) {
+        var r = j && j.result, k = r && Object.keys(r).filter(function (x) { return x !== "last"; })[0]; if (!k || !r[k].length) throw new Error((j && j.error && j.error[0]) || "Kraken answered without data");
+        return r[k].map(function (x) { return { timestamp: x[0] * 1000, open: +x[1], high: +x[2], low: +x[3], close: +x[4], volume: +x[6] || 0 }; });
+      });
+    }
+    /* fx: BTC/USDT from Binance, every candle times the ECB rate of its day (the last known one on weekends and holidays) */
+    return chOne(["binance", sym], tf, end).then(function (l) {
+      if (!l.length) return l;
+      var iso = function (t) { return new Date(t).toISOString().slice(0, 10); };
+      return chFx(v[2], iso(l[0].timestamp - 10 * 864e5)).then(function (R) {
+        var days = Object.keys(R).sort(), k = 0;
+        return l.map(function (x) { var d = iso(x.timestamp); while (k + 1 < days.length && days[k + 1] <= d) k++; var f = R[days[k]]; return { timestamp: x.timestamp, open: x.open * f, high: x.high * f, low: x.low * f, close: x.close * f, volume: x.volume }; });
+      });
+    });
+  }
+  var chFxCache = {};
+  function chFx(cur, from) { /* daily USD rates of the ECB from Frankfurter, as { "2026-11-20": 0.79, ... } */
+    var c = chFxCache[cur]; if (c && c.from <= from && Date.now() - c.at < 36e5) return Promise.resolve(c.r);
+    return getJson("https://api.frankfurter.app/" + from + "..?from=USD&to=" + cur, 12000).then(function (j) {
+      var r = {}; Object.keys((j && j.rates) || {}).forEach(function (d) { r[d] = j.rates[d][cur]; }); if (!Object.keys(r).length) throw new Error("no exchange rate");
+      if (c && c.from < from) Object.keys(c.r).forEach(function (d) { if (!(d in r)) r[d] = c.r[d]; });
+      chFxCache[cur] = { from: c && c.from < from ? c.from : from, r: r, at: Date.now() }; return r;
+    });
+  }
+  function chFiat(a, tf, end) {
+    a.ok = a.ok || {}; var i0 = a.ok[tf] || 0;
+    var tryAt = function (i) {
+      if (i >= a.via.length) return Promise.reject(new Error("none of " + a.via.map(function (v) { return CH_VIA[v[0]]; }).join(", ") + " answered"));
+      return chOne(a.via[i], tf, end).then(function (l) { if (!l.length && !end) throw new Error("empty"); a.ok[tf] = i; a.used = a.via[i][0]; return l; }).catch(function (e) { if (end && i === i0) return []; return tryAt(i + 1); });
+    };
+    return tryAt(i0);
   }
   var CH_LOWER = { "3m": "1m", "5m": "1m", "15m": "5m", "1h": "15m", "4h": "1h", "1D": "1h", "1W": "1D", "1M": "1D" }, CH_STEP = { "1m": 6e4, "3m": 18e4, "5m": 3e5, "15m": 9e5, "1h": 36e5, "4h": 144e5, "1D": 864e5, "1W": 6048e5 };
   function chNext(tf, ts) { if (tf !== "1M") return ts + CH_STEP[tf]; var d = new Date(ts); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1); }
@@ -2762,19 +2828,20 @@
   function chPrec(v) { return v >= 1000 ? 1 : v >= 10 ? 2 : v >= 1 ? 3 : v >= 0.01 ? 5 : 7; }
   var CH_SKEY = "coinatlas-chart-style", CH_DEF = { bg: "#FFE0B2", gridV: false, gridH: false, gridVc: "#d9c3a0", gridHc: "#d9c3a0", cross: "#000000", crossStyle: "dashed",
     body: true, up: "#43b147", dn: "#F23645", border: true, bUp: "#000000", bDn: "#000000", wick: true, wUp: "#000000", wDn: "#000000",
-    auto: false, invert: false, type: "normal", pos: "right", last: false };
+    auto: false, invert: false, type: "normal", pos: "right", last: false, caView: "candles", caLine: "#000000", draw: "#2962FF", mag: false };
   var chS = {}; (function () { var x = {}; try { x = JSON.parse(localStorage.getItem(CH_SKEY) || "{}") || {}; } catch (e) {} Object.keys(CH_DEF).forEach(function (k) { chS[k] = k in x ? x[k] : CH_DEF[k]; }); })();
   function chSave() { try { localStorage.setItem(CH_SKEY, JSON.stringify(chS)); } catch (e) {} }
   function chStyles(line) { /* built from the chart settings: clean by default, no grid lines, black dashed crosshair, green and red bodies with black borders and wicks */
     var S = chS, tx = "#787B86", ln = "rgba(0,0,0,0.25)", tr = "rgba(0,0,0,0)", FF = "-apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif";
     var cr = function () { return { line: { color: S.cross, style: S.crossStyle, dashedValue: [4, 4], size: 1 }, text: { color: "#ffffff", backgroundColor: "#000000", borderColor: "#000000", family: FF, size: 12, weight: "normal", borderRadius: 2, paddingLeft: 8, paddingRight: 8, paddingTop: 4, paddingBottom: 4 } }; };
     return { grid: { show: S.gridV || S.gridH, horizontal: { show: S.gridH, color: S.gridHc, style: "solid" }, vertical: { show: S.gridV, color: S.gridVc, style: "solid" } },
-      candle: { type: line ? "area" : "candle_solid",
+      candle: { type: line && S.caView === "line" ? "area" : "candle_solid",
         bar: { upColor: S.body ? S.up : tr, downColor: S.body ? S.dn : tr, noChangeColor: S.body ? "#888" : tr,
           upBorderColor: S.border ? S.bUp : (S.body ? S.up : tr), downBorderColor: S.border ? S.bDn : (S.body ? S.dn : tr), noChangeBorderColor: S.border ? S.bUp : "#888",
           upWickColor: S.wick ? S.wUp : tr, downWickColor: S.wick ? S.wDn : tr, noChangeWickColor: S.wick ? S.wUp : tr },
-        area: { lineColor: "#2962FF", value: "close", backgroundColor: [{ offset: 0, color: "rgba(41,98,255,0.22)" }, { offset: 1, color: "rgba(41,98,255,0.02)" }] },
-        priceMark: { high: { show: false }, low: { show: false }, last: { show: false, line: { show: S.last } } }, tooltip: { text: { color: "#3f3a33", family: FF, size: 12 } } },
+        area: { lineSize: 2, lineColor: S.caLine, value: "close", backgroundColor: [{ offset: 0, color: tr }, { offset: 1, color: tr }], point: { show: false } },
+        priceMark: { high: { show: false }, low: { show: false }, last: { show: false, line: { show: S.last } } },
+        tooltip: { text: { color: "#3f3a33", family: FF, size: 12 }, custom: [{ title: "time", value: "{time}" }, { title: "open", value: "{open}" }, { title: "high", value: "{high}" }, { title: "low", value: "{low}" }, { title: "close", value: "{close}" }].concat(line ? [] : [{ title: "volume", value: "{volume}" }]) } },
       xAxis: { axisLine: { color: "#000000" }, tickLine: { show: false }, tickText: { color: tx, family: FF, size: 12 } },
       yAxis: { axisLine: { color: "#000000" }, tickLine: { show: false }, tickText: { color: tx, family: FF, size: 12 }, type: S.type, reverse: S.invert, position: S.pos },
       separator: { color: ln }, crosshair: { horizontal: cr(), vertical: cr() } };
@@ -2821,6 +2888,9 @@
       '<label>' + box("body") + '<span>Body</span>' + col("up") + col("dn") + '</label>' +
       '<label>' + box("border") + '<span>Borders</span>' + col("bUp") + col("bDn") + '</label>' +
       '<label>' + box("wick") + '<span>Wick</span>' + col("wUp") + col("wDn") + '</label>' +
+      '<div class="cs-set-t">CoinAtlas charts (TOTAL200, BTC.D, USDT.D, WALCL)</div>' +
+      '<label><i></i><span>View</span><select data-cs="caView"><option value="candles"' + (S.caView === "candles" ? " selected" : "") + '>Candles</option><option value="line"' + (S.caView === "line" ? " selected" : "") + '>Line</option></select></label>' +
+      '<label><i></i><span>Line colour</span>' + col("caLine") + '</label>' +
       '<div class="cs-set-t">Chart basic styles</div>' +
       '<label><i></i><span>Background</span>' + col("bg") + '</label>' +
       '<label>' + box("gridV") + '<span>Vertical grid lines</span>' + col("gridVc") + '</label>' +
@@ -2859,6 +2929,17 @@
       return out;
     } });
   })();
+  /* drawing tools that KLineChart does not have: rectangle, arrow and text */
+  if (window.klinecharts) (function () {
+    var D = { needDefaultPointFigure: true, needDefaultXAxisFigure: true, needDefaultYAxisFigure: true };
+    var reg = function (o) { Object.keys(D).forEach(function (k) { o[k] = D[k]; }); klinecharts.registerOverlay(o); };
+    reg({ name: "caRect", totalStep: 3, createPointFigures: function (o) { var c = o.coordinates; if (c.length < 2) return []; return [{ type: "polygon", attrs: { coordinates: [c[0], { x: c[1].x, y: c[0].y }, c[1], { x: c[0].x, y: c[1].y }] }, styles: { style: "stroke_fill" } }]; } });
+    reg({ name: "caArrow", totalStep: 3, createPointFigures: function (o) {
+      var c = o.coordinates; if (c.length < 2) return []; var a = c[0], b = c[1], g = Math.atan2(b.y - a.y, b.x - a.x), L = 12, w = Math.PI / 7;
+      return [{ type: "line", attrs: { coordinates: [a, b] } }, { type: "line", attrs: { coordinates: [{ x: b.x - L * Math.cos(g - w), y: b.y - L * Math.sin(g - w) }, b, { x: b.x - L * Math.cos(g + w), y: b.y - L * Math.sin(g + w) }] } }];
+    } });
+    reg({ name: "caText", totalStep: 2, needDefaultPointFigure: false, createPointFigures: function (o) { var c = o.coordinates[0]; if (!c) return []; return [{ type: "text", attrs: { x: c.x, y: c.y, text: o.overlay.extendData || "Text", align: "left", baseline: "bottom" } }]; } });
+  })();
   var chPrecNow = 2, CH_MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], CH_WD = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   function chDate(dtf, ts, format, type) { /* dates like TradingView: day numbers and month names on the time axis, "Mon Nov 16, 2026   03:00" on the crosshair */
     var d = new Date(ts), p2 = function (n) { return (n < 10 ? "0" : "") + n; }, hm = p2(d.getHours()) + ":" + p2(d.getMinutes()), day = chTf === "1D" || chTf === "1W" || chTf === "1M";
@@ -2886,7 +2967,7 @@
       left = dd ? dd + "d " + p2(Math.floor(s % 86400 / 3600)) + "h" : (s >= 3600 ? p2(Math.floor(s / 3600)) + ":" : "") + p2(Math.floor(s % 3600 / 60)) + ":" + p2(s % 60);
     }
     chBadge.innerHTML = '<b>' + txt + '</b>' + (left ? '<span>' + left + '</span>' : '');
-    chBadge.style.background = line ? "#2962FF" : x.close >= x.open ? chS.up : chS.dn;
+    chBadge.style.background = line && chS.caView === "line" ? chS.caLine : x.close >= x.open ? chS.up : chS.dn;
     chBadge.style.left = ax.left + "px"; chBadge.style.width = ax.width + "px"; chBadge.style.top = y + "px"; chBadge.hidden = false;
   }
   (function loop() { chBadgeTick(); setTimeout(function () { requestAnimationFrame(loop); }, 80); })();
@@ -2898,7 +2979,89 @@
   });
 
 
-  var chShown = null; window.coinAtlasChart = function () { return chChart; }; /* lets the tests read the chart */
+  /* ---------- DRAWING TOOLS: a bar on the left like TradingView's. The drawings are stored per asset in this browser and shown on every timeframe ---------- */
+  var CH_DKEY = "coinatlas-drawings", chDraw = {}, chDrawRec = {}, chDrawBusy = false, chPending = null, chSel = null, chTool = "cursor", chLockAll = false, chHideAll = false;
+  try { chDraw = JSON.parse(localStorage.getItem(CH_DKEY) || "{}") || {}; } catch (e) {}
+  var CH_ICON = { cursor: '<path d="M12 3v18M3 12h18"/>', segment: '<circle cx="5" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><path d="M6.5 17.5l11-11"/>', rayLine: '<circle cx="5" cy="19" r="2"/><path d="M6.5 17.5L21 3"/>',
+    straightLine: '<path d="M2 22L22 2"/><circle cx="9" cy="15" r="1.8"/><circle cx="15" cy="9" r="1.8"/>', horizontalStraightLine: '<path d="M2 12h20"/><circle cx="12" cy="12" r="2"/>', horizontalRayLine: '<circle cx="5" cy="12" r="2"/><path d="M7 12h15"/>',
+    verticalStraightLine: '<path d="M12 2v20"/><circle cx="12" cy="12" r="2"/>', parallelStraightLine: '<path d="M3 15L15 3M9 21L21 9"/>', fibonacciLine: '<path d="M3 4h18M3 9h18M3 14h18M3 20h18"/>',
+    caRect: '<rect x="4" y="6" width="16" height="12" rx="1"/>', caArrow: '<path d="M5 19L19 5M10 5h9v9"/>', caText: '<path d="M5 7V4h14v3M12 4v16M9 20h6"/>', priceLine: '<path d="M3 12h11"/><path d="M14 8h7v8h-7z"/>',
+    mag: '<path d="M6 3v8a6 6 0 0012 0V3h-4v8a2 2 0 01-4 0V3zM6 7h4M14 7h4"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/>', hide: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>', trash: '<path d="M4 7h16M10 7V4h4v3M6 7l1 13h10l1-13"/>' };
+  var CH_TOOLS = [["cursor", "Cursor"], ["segment", "Trend line"], ["rayLine", "Ray"], ["straightLine", "Extended line"], ["horizontalStraightLine", "Horizontal line"], ["horizontalRayLine", "Horizontal ray"], ["verticalStraightLine", "Vertical line"],
+    ["parallelStraightLine", "Parallel channel"], ["fibonacciLine", "Fib retracement"], ["caRect", "Rectangle"], ["caArrow", "Arrow"], ["caText", "Text"], ["priceLine", "Price label"], 0,
+    ["mag", "Magnet: drawings snap to open, high, low and close"], ["lock", "Lock all drawings"], ["hide", "Hide all drawings"], ["trash", "Remove all drawings of this asset"]];
+  var chTools = document.getElementById("cs-tools"), chDbar = document.getElementById("cs-dbar");
+  function chToolsHtml() {
+    var on = { mag: chS.mag, lock: chLockAll, hide: chHideAll };
+    chTools.innerHTML = CH_TOOLS.map(function (t) { if (!t) return "<hr>"; var a = t[0] in on ? on[t[0]] : chTool === t[0]; return '<button type="button" data-dt="' + t[0] + '" title="' + t[1] + '" aria-label="' + t[1] + '"' + (a ? ' class="on"' : '') + '><svg viewBox="0 0 24 24">' + CH_ICON[t[0]] + '</svg></button>'; }).join("");
+  }
+  chToolsHtml();
+  function chRgba(h, a) { var n = parseInt(h.slice(1), 16); return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")"; }
+  function chOvStyle(r) { var c = r.c || chS.draw, w = r.w || 2, FF = "-apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif";
+    return { point: { color: c, borderColor: chRgba(c, .35), activeColor: c, activeBorderColor: chRgba(c, .35) }, line: { color: c, size: w }, polygon: { color: chRgba(c, .12), borderColor: c, borderSize: w },
+      text: { color: c, size: r.n === "caText" ? 15 : 12, family: FF, weight: r.n === "caText" ? 600 : "normal", backgroundColor: "transparent", borderSize: 0, paddingLeft: 2, paddingRight: 2, paddingTop: 2, paddingBottom: 2 } }; }
+  /* the chart counts candles; past the first and the newest one it now continues in steps of the timeframe, so a drawing into the future keeps its date */
+  function chStepMs() { return CH_STEP[chTf] || 2629746e3; }
+  function chAddSteps(t, k) { if (chTf !== "1M") return t + k * chStepMs(); var d = new Date(t); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + k, 1); }
+  function chPatchTime() {
+    var ts; try { ts = chChart.getChartStore().getTimeScaleStore(); } catch (e) { return; } if (!ts || ts.caPatched) return; ts.caPatched = true;
+    var t2i = ts.timestampToDataIndex, i2t = ts.dataIndexToTimestamp;
+    ts.timestampToDataIndex = function (t) { var l = this._chartStore.getDataList(), n = l.length; if (n && t > l[n - 1].timestamp) return n - 1 + Math.round((t - l[n - 1].timestamp) / chStepMs()); if (n && t < l[0].timestamp) return -Math.round((l[0].timestamp - t) / chStepMs()); return t2i.call(this, t); };
+    ts.dataIndexToTimestamp = function (i) { var l = this._chartStore.getDataList(), n = l.length; if (n && i > n - 1) return chAddSteps(l[n - 1].timestamp, i - n + 1); if (n && i < 0) return chAddSteps(l[0].timestamp, i); return i2t.call(this, i); };
+  }
+  function chDrawSave() {
+    if (!chAsset) return; var l = Object.keys(chDrawRec).map(function (k) { return chDrawRec[k]; });
+    if (l.length) chDraw[chAsset.id] = l; else delete chDraw[chAsset.id];
+    try { localStorage.setItem(CH_DKEY, JSON.stringify(chDraw)); } catch (e) {}
+  }
+  function chPts(o) { var ts = chChart.getChartStore().getTimeScaleStore(); return o.points.map(function (p) { var t = p.timestamp != null ? p.timestamp : ts.dataIndexToTimestamp(p.dataIndex); return [t, p.value]; }); }
+  function chOv(r) { /* puts one drawing on the chart; r is null for a new one that is drawn now */
+    var n = r ? r.n : chTool, rec = r || { n: n, c: chS.draw, w: 2 };
+    var id = chChart.createOverlay({ name: n, groupId: "ca", points: r ? r.p.map(function (x) { return { timestamp: x[0], value: x[1] }; }) : undefined, extendData: rec.x, lock: chLockAll || !!rec.l, visible: !chHideAll,
+      mode: chS.mag ? "weak_magnet" : "normal", styles: chOvStyle(rec),
+      onDrawEnd: function (e) { chPending = null; rec.p = chPts(e.overlay); chDrawRec[e.overlay.id] = rec; chSetTool("cursor");
+        if (n === "caText") { var t = window.prompt("Text", ""); if (!t) { chChart.removeOverlay(e.overlay.id); return false; } rec.x = t; chChart.overrideOverlay({ id: e.overlay.id, extendData: t }); }
+        chDrawSave(); return false; },
+      onPressedMoveEnd: function (e) { var q = chDrawRec[e.overlay.id]; if (q) { q.p = chPts(e.overlay); chDrawSave(); } return false; },
+      onDoubleClick: function (e) { var q = chDrawRec[e.overlay.id]; if (q && q.n === "caText") { var t = window.prompt("Text", q.x || ""); if (t) { q.x = t; chChart.overrideOverlay({ id: e.overlay.id, extendData: t }); chDrawSave(); } } return false; },
+      onSelected: function (e) { chSel = e.overlay.id; chDbarShow(); return false; },
+      onDeselected: function (e) { if (chSel === e.overlay.id) { chSel = null; chDbar.hidden = true; } return false; },
+      onRemoved: function (e) { if (chDrawBusy) return false; if (chSel === e.overlay.id) { chSel = null; chDbar.hidden = true; } if (chDrawRec[e.overlay.id]) { delete chDrawRec[e.overlay.id]; chDrawSave(); } return false; } });
+    return id;
+  }
+  function chDrawClear() { if (!chChart) return; chDrawBusy = true; try { chChart.removeOverlay({ groupId: "ca" }); } catch (e) {} chDrawBusy = false; chDrawRec = {}; chPending = null; chSel = null; chDbar.hidden = true; }
+  function chDrawLoad() { if (!chChart || !chAsset) return; chDrawClear(); (chDraw[chAsset.id] || []).forEach(function (r) { var id = chOv(r); if (id) chDrawRec[id] = r; }); }
+  function chSetTool(t) {
+    if (chPending) { chDrawBusy = true; chChart.removeOverlay(chPending); chDrawBusy = false; chPending = null; }
+    chTool = t; chToolsHtml(); if (t !== "cursor" && chChart && chAsset) chPending = chOv(null);
+  }
+  function chDbarShow() {
+    var r = chDrawRec[chSel]; if (!r) { chDbar.hidden = true; return; }
+    chDbar.innerHTML = '<input type="color" data-db="c" value="' + (r.c || chS.draw) + '" title="Colour">' + (r.n === "caText" ? '<button type="button" data-db="x">Edit text</button>' : '<select data-db="w" title="Line width">' + [1, 2, 3, 4].map(function (w) { return '<option value="' + w + '"' + ((r.w || 2) === w ? ' selected' : '') + '>' + w + ' px</option>'; }).join("") + '</select>') +
+      '<button type="button" data-db="l"' + (r.l ? ' class="on"' : '') + '>' + (r.l ? 'Locked' : 'Lock') + '</button><button type="button" data-db="del">Remove</button>';
+    chDbar.hidden = false;
+  }
+  chDbar.addEventListener("input", function (e) { var r = chDrawRec[chSel], k = e.target.dataset.db; if (!r) return; if (k === "c") { r.c = chS.draw = e.target.value; chSave(); } else if (k === "w") r.w = +e.target.value; chChart.overrideOverlay({ id: chSel, styles: chOvStyle(r) }); chDrawSave(); });
+  chDbar.addEventListener("click", function (e) { var b = e.target.closest("button[data-db]"), r = chDrawRec[chSel]; if (!b || !r) return;
+    if (b.dataset.db === "del") { chChart.removeOverlay(chSel); return; }
+    if (b.dataset.db === "l") { r.l = !r.l; chChart.overrideOverlay({ id: chSel, lock: chLockAll || r.l }); }
+    if (b.dataset.db === "x") { var t = window.prompt("Text", r.x || ""); if (t) { r.x = t; chChart.overrideOverlay({ id: chSel, extendData: t }); } }
+    chDrawSave(); chDbarShow(); });
+  chTools.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-dt]"); if (!b || !chChart || !chAsset) return; var t = b.dataset.dt, ids = Object.keys(chDrawRec);
+    if (t === "mag") { chS.mag = !chS.mag; chSave(); ids.forEach(function (id) { chChart.overrideOverlay({ id: id, mode: chS.mag ? "weak_magnet" : "normal" }); }); chToolsHtml(); return; }
+    if (t === "lock") { chLockAll = !chLockAll; ids.forEach(function (id) { chChart.overrideOverlay({ id: id, lock: chLockAll || !!chDrawRec[id].l }); }); chToolsHtml(); return; }
+    if (t === "hide") { chHideAll = !chHideAll; ids.forEach(function (id) { chChart.overrideOverlay({ id: id, visible: !chHideAll }); }); chToolsHtml(); return; }
+    if (t === "trash") { if (ids.length && window.confirm("Remove all " + ids.length + " drawings on " + chAsset.id + "?")) { chDrawClear(); chDrawSave(); } return; }
+    chSetTool(t === chTool ? "cursor" : t);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (chScreen.hidden || !chChart || /INPUT|SELECT|TEXTAREA/.test((e.target && e.target.tagName) || "")) return;
+    if ((e.key === "Delete" || e.key === "Backspace") && chSel) { e.preventDefault(); chChart.removeOverlay(chSel); }
+    else if (e.key === "Escape" && chTool !== "cursor") { e.stopImmediatePropagation(); chSetTool("cursor"); }
+  }, true);
+
+  var chShown = null, chWide = false; window.coinAtlasChart = function () { return chChart; }; /* lets the tests read the chart */
   function chAnchor() { /* the time at the right edge of what is on screen, when the chart was moved away from the newest candle; null while it shows the newest */
     try { var dl = chChart.getDataList(), vr = chChart.getVisibleRange(); if (!dl.length || vr.realTo >= dl.length) return null; return dl[Math.max(0, Math.min(dl.length - 1, Math.floor(vr.realTo) - 1))].timestamp; } catch (e) { return null; }
   }
@@ -2909,7 +3072,8 @@
     chTfs(); chEl.asset.textContent = a.id; clearInterval(chPoll);
     chEl.info.textContent = "Loading…";
     if (!window.klinecharts) { chEl.info.textContent = "The chart library could not be loaded."; return; }
-    if (!chChart) chChart = klinecharts.init(chEl.chart, { customApi: { formatDate: chDate }, layout: [{ type: "candle", options: { axisOptions: { name: "tv" } } }, { type: "xAxis" }] });
+    if (!chChart) { chChart = klinecharts.init(chEl.chart, { customApi: { formatDate: chDate }, layout: [{ type: "candle", options: { axisOptions: { name: "tv" } } }, { type: "xAxis" }] }); chPatchTime(); }
+    chTool = "cursor"; chDrawClear(); chToolsHtml();
     var line = a.src === "snap" || a.src === "fred"; chEl.chart.style.background = chS.bg; chChart.setStyles(chStyles(line));
     chChart.setLoadDataCallback(function (p) {
       if (p.type !== "forward" || line || !p.data) return p.callback([], false);
@@ -2924,13 +3088,18 @@
       if (seq !== chSeq) return;
       if (!l.length) { chChart.clearData(); chEl.info.textContent = a.src === "fred" ? "No data yet: the first import runs with the next snapshot job." : "No data yet."; return; }
       var last = l[l.length - 1]; chPrecNow = chPrec(Math.abs(last.close)); chChart.setPriceVolumePrecision(chPrecNow, 2);
-      var go = function (list) { chFree(false); chChart.applyNewData(list, !line, function () { chFree(true); if (anchor) chChart.scrollToTimestamp(anchor); }); };
+      var go = function (list) {
+        chFree(false);
+        if (line) { var w = (chChart.getSize("candle_pane", "main") || {}).width || 800; chChart.setBarSpace(Math.max(8, Math.min(40, w * 0.75 / Math.max(1, list.length)))); chWide = true; }
+        else if (chWide) { chChart.setBarSpace(8); chWide = false; }
+        chChart.applyNewData(list, !line, function () { chFree(true); if (anchor) chChart.scrollToTimestamp(anchor); chDrawLoad(); });
+      };
       if (!anchor || line || l[0].timestamp <= anchor) go(l);
       else (function back(list, n) { /* the place on screen lies further back: fetch older candles until it is covered */
         if (n >= 25 || list[0].timestamp <= anchor) return go(list);
         chLoad(a, tf, list[0].timestamp).then(function (o) { if (seq !== chSeq) return; if (!o.length) return go(list); back(o.filter(function (x) { return x.timestamp < list[0].timestamp; }).concat(list), n + 1); }, function () { go(list); });
       })(l, 0);
-      chEl.info.textContent = (F.built ? F.built + (F.built === 1 ? " missing candle" : " missing candles") + " built from " + CH_LOWER[tf] + " · " : "") + (F.left ? F.left + (F.left === 1 ? " candle" : " candles") + " missing from the exchange · " : "") + (a.unit ? a.unit + " · " : "") + (a.src === "perp" || a.src === "inv" ? "Bitget" : a.src === "binance" ? "Binance" : a.src === "snap" ? "CoinAtlas snapshots, " + l.length + (l.length === 1 ? " point" : " points") : "FRED") + (line ? "" : " · live");
+      chEl.info.textContent = (F.built ? F.built + (F.built === 1 ? " missing candle" : " missing candles") + " built from " + CH_LOWER[tf] + " · " : "") + (F.left ? F.left + (F.left === 1 ? " candle" : " candles") + " missing from the exchange · " : "") + (a.unit ? a.unit + " · " : "") + (a.src === "perp" || a.src === "inv" ? "Bitget" : a.src === "binance" ? "Binance" : a.src === "fiat" ? CH_VIA[a.used] || "" : a.src === "snap" ? "CoinAtlas snapshots, " + l.length + (l.length === 1 ? " point" : " points") : "FRED") + (line ? "" : " · live");
       if (!line) chPoll = setInterval(function () { /* live: the newest candles every 5 seconds while the screen is open */
         if (chScreen.hidden || document.hidden) return;
         chLoad(a, tf).then(function (n) { if (seq === chSeq) n.slice(-2).forEach(function (x) { chChart.updateData(x); }); }, function () {});
