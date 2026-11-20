@@ -102,6 +102,15 @@
   .settings-section { display: flex; flex-direction: column; gap: 10px; }
   .settings-card { display: block !important; column-width: 300px; column-gap: 28px; width: min(980px, calc(100vw - 32px)); max-height: calc(100vh - 120px); overflow-y: auto; }
   .settings-card > .settings-section { break-inside: avoid; margin-bottom: 18px; }
+  /* settings as tabs: the sections on the left, the settings of the chosen one on the right, so the window fits the screen */
+  .settings-card.set-tabs { display: grid !important; grid-template-columns: 180px minmax(0, 1fr); column-width: auto; gap: 0; padding: 0; width: min(660px, calc(100vw - 32px)); min-width: 0; height: min(560px, calc(100vh - 120px)); overflow: hidden; }
+  .set-nav { display: flex; flex-direction: column; gap: 2px; padding: 10px; border-right: 1px solid var(--line); overflow-y: auto; }
+  .set-nav button { text-align: left; font: inherit; font-size: 13px; color: var(--muted); background: transparent; border: 0; border-radius: 6px; padding: 9px 12px; cursor: pointer; white-space: nowrap; }
+  .set-nav button:hover { color: var(--fg); background: var(--hover); } .set-nav button.on { color: var(--fg); background: var(--hover); font-weight: 600; }
+  body:not(.dev-mode) .set-nav [data-dev] { display: none; }
+  .set-panel { padding: 16px 18px; overflow-y: auto; white-space: normal; } .set-panel > .settings-section { display: none; margin: 0; } .set-panel > .settings-section.on { display: flex; }
+  .set-panel .section-title { text-align: left; font-size: 11px; } .set-panel .lbl { white-space: nowrap; }
+  @media (max-width: 760px) { .settings-card.set-tabs { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); } .set-nav { flex-direction: row; flex-wrap: wrap; border-right: 0; border-bottom: 1px solid var(--line); } .set-nav button { padding: 7px 10px; } }
   .section-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); text-align: center; margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
 
   .filter-options { display: flex; flex-direction: column; gap: 6px; }
@@ -6024,6 +6033,29 @@
     }
   }
   uiBtn.addEventListener("click", function () { setUiMoving(!uiMoving); });
+
+  /* ---------- SETTINGS AS TABS: the section titles become a list on the left, only the chosen section shows on the right ---------- */
+  (function () {
+    var card = document.querySelector(".settings-card"); if (!card) return;
+    var SKEY = "coinatlas-settings-tab", secs = Array.prototype.slice.call(card.querySelectorAll(".settings-section")), nav = document.createElement("div"), panel = document.createElement("div");
+    nav.className = "set-nav"; nav.setAttribute("role", "tablist"); panel.className = "set-panel";
+    var hot = document.getElementById("dev-hotkeys"), exp = secs[secs.length - 1];
+    secs.forEach(function (sec, i) {
+      var dev = !!sec.closest(".dev-only-sec"), t = sec.querySelector(".section-title");
+      nav.insertAdjacentHTML("beforeend", '<button type="button" role="tab" data-tab="' + i + '"' + (dev ? ' data-dev="1"' : '') + '>' + t.innerHTML + '</button>'); panel.appendChild(sec);
+    });
+    if (hot && exp) exp.appendChild(hot);
+    card.innerHTML = ""; card.appendChild(nav); card.appendChild(panel); card.classList.add("set-tabs");
+    var cur = 0; try { cur = +localStorage.getItem(SKEY) || 0; } catch (e) {}
+    function show(i) {
+      if (!secs[i] || (secs[i].closest && nav.children[i].dataset.dev && !document.body.classList.contains("dev-mode"))) i = 0;
+      cur = i; secs.forEach(function (sec, k) { sec.classList.toggle("on", k === i); nav.children[k].classList.toggle("on", k === i); nav.children[k].setAttribute("aria-selected", k === i ? "true" : "false"); });
+      try { localStorage.setItem(SKEY, String(i)); } catch (e) {}
+    }
+    nav.addEventListener("click", function (e) { var b = e.target.closest("[data-tab]"); if (b) show(+b.dataset.tab); });
+    document.querySelector("header .settings:not(#filters-dropdown)").addEventListener("mouseenter", function () { show(cur); }); /* falls back to the first tab when Dev Mode was turned off */
+    show(cur);
+  })();
 
   /* ---------- HEADER BUTTONS: each one can be switched off in the settings ---------- */
   var HB_KEY = "coinatlas-header-hidden", hbHidden = []; try { hbHidden = JSON.parse(localStorage.getItem(HB_KEY) || "[]") || []; } catch (e) {}

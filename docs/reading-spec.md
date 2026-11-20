@@ -215,6 +215,8 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 
 ## Settings (20.11.2026)
 
+- Aufbau als Tabs (20.11.2026): links die Bereiche, rechts nur die Einstellungen des gewählten Bereichs; feste Größe 660 × 560 px,
+  passt ohne Scrollen auf den Bildschirm; der zuletzt gewählte Bereich wird gemerkt. Auf schmalen Bildschirmen stehen die Bereiche oben.
 - Reihenfolge: Header, Asset List, Locked Hovercharts, Fear & Greed Index, BTC|ETH Ratio (nur im Dev Mode, enthält Formula Date), Experimental.
 - Header: Simple Market Sentiment Counter, je ein Schalter pro Header-Knopf (localStorage "coinatlas-header-hidden"), darunter breiter Knopf UI Moving Mode.
 - Asset List: Main Source, Fallback Chart, List Range, Rank Change Arrows, Auto Update, Update Interval. Pulse Tint ist kein Schalter mehr
