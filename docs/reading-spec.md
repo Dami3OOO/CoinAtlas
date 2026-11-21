@@ -227,14 +227,17 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 
 ## Sentiment Squares (21.11.2026, Rework)
 
-- Jede Kachel ein Coin, nur mit Logo (Name und % im Hover), Fläche nach Bewegung (|%|^0,8 plus kleiner Sockel, damit ruhige Coins sichtbar bleiben),
+- Jede Kachel ein Coin: Logo, darunter die Prozente (bei sehr kleinen Kacheln nur das Logo; Name im Hover), Fläche nach Bewegung (|%|^0,8 plus kleiner Sockel, damit ruhige Coins sichtbar bleiben),
   Farbe in 5 Stufen je Zeitraum (Grenzen z. B. 24H: 1/3/6/10 %). Grün links verankert, Rot rechts, jeweils als Squarified Treemap, der Stärkste außen.
 - Sentiment Front: steht automatisch beim Flächenanteil der Gewinner. Beide Seiten sind fest angeordnet, die kleinere auf mindestens halber Breite.
   Die Front ist ein Fenster: Ziehen deckt Kacheln der einen Seite auf und die der anderen zu, ohne dass sich eine Kachel bewegt; sie hält dort an,
   wo eine Seite endet. "Auto" oder Doppelklick setzt sie zurück. "x% up" ist immer der echte Anteil der Coins.
 - Animation: Kacheln gleiten bei jedem Update (alle 3 s) und Zeitraumwechsel an ihren Platz (0,6 s); Sprung >= 1/4 der ersten Farbstufe: kurzes Aufleuchten.
-- Klick auf eine Kachel: Coin als Locked Hoverchart in die Landing Area (wie ein Klick in der Liste).
-- Zeiträume: Today (seit Tagesbeginn wie bisher), 1H, 24H, 7D, 30D, 1Y aus Coinpaprika tickers (eine Anfrage, einmal pro Minute). Top 50/100/200.
+- Klick auf eine Kachel: die Liste scrollt zur Zeile des Coins und hebt sie hervor. Wird er dort festgehalten, öffnet der Locked Hoverchart im passenden
+  Zeitraum (Today 1D, 1H und 4H 4H, 7D 1W, 30D 1M, 365D 365D).
+- Bedienung: links "Top [1–200]" als Eingabefeld (Standard 200), rechts derselbe Zeitraum-Wähler wie bei den Locked Hovercharts:
+  Today (seit Tagesbeginn), 1H, 7D, 30D, 365D aus Coinpaprika tickers (eine Anfrage pro Minute), 4H aus Binance-5m-Kerzen (je Coin, alle 2 Minuten).
+  Kein 24H (Today ersetzt es). Hand-Zeiger über den Kacheln.
   Stablecoins ausgelassen. Nur in der Landing Area (Vollbild verworfen, kommt eher mit der Mobile-Version). Einstellungen in localStorage "coinatlas-squares".
 
 ## Fear & Greed Index: Past Years (21.11.2026)
