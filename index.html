@@ -438,6 +438,8 @@
   .badge-new { background: rgba(250, 204, 21, 0.12); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.35); margin-left: auto; }
   .badge-stake { background: rgba(196, 181, 253, 0.12); color: #c4b5fd; border: 1px solid rgba(196, 181, 253, 0.35); margin-left: auto; white-space: nowrap; }
   .badge-new ~ .badge-stake, .badge-stake ~ .badge-new { margin-left: 6px; }
+  body.tags-off #rows .badge, body.tag-off-stake #rows .badge-stake, body.tag-off-gain #rows .badge-gain, body.tag-off-loss #rows .badge-loss, body.tag-off-new #rows .badge-new { display: none; }
+  body.tag-off-stake #rows .badge-new { margin-left: auto; }
   .chart-stake-section { margin-top: 16px; font-size: 12px; text-align: center; border-top: 1px solid var(--line); padding-top: 12px; }
   .stake-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 13px; text-align: left; }
   .stake-row:last-of-type { border-bottom: none; }
@@ -1058,6 +1060,13 @@
               <label class="grp"><span class="lbl">Main Source</span><select id="source" aria-label="Data source"></select></label>
               <div class="grp"><span class="lbl">Fallback Chart</span><select id="fallback-chart-select" aria-label="Fallback data source"></select></div>
               <div class="grp"><span class="lbl">List range</span><span class="pair"><input class="fix" value="1" readonly tabindex="-1" aria-label="First rank, fixed"><span class="to">to</span><input id="range" type="number" min="2" max="200" step="1" inputmode="numeric" placeholder="200" aria-label="Last rank to show, 2 to 200"></span></div>
+              <div class="grp"><span class="lbl">Tags</span><button class="toggle" type="button" id="tags-toggle" role="switch" aria-checked="true" aria-label="Show tags in the Asset List"><span></span></button></div>
+              <div class="sub-grp on" id="tags-sub">
+                <div class="grp"><span class="lbl" style="color: #c4b5fd;">Staking</span><button class="toggle" type="button" data-tagv="stake" role="switch" aria-checked="true" aria-label="Show Staking tags"><span></span></button></div>
+                <div class="grp"><span class="lbl" style="color: var(--up);">Highest Gain</span><button class="toggle" type="button" data-tagv="gain" role="switch" aria-checked="true" aria-label="Show the Highest Gain tag"><span></span></button></div>
+                <div class="grp"><span class="lbl" style="color: var(--down);">Highest Loss</span><button class="toggle" type="button" data-tagv="loss" role="switch" aria-checked="true" aria-label="Show the Highest Loss tag"><span></span></button></div>
+                <div class="grp"><span class="lbl" style="color: #facc15;">New in Top 200</span><button class="toggle" type="button" data-tagv="new" role="switch" aria-checked="true" aria-label="Show New in Top 200 tags"><span></span></button></div>
+              </div>
               <div class="grp"><span class="lbl">Rank Change Arrows</span><button class="toggle" type="button" id="rank-toggle" role="switch" aria-checked="true" aria-label="Show an arrow next to the rank when a coin moved up or down since yesterday's snapshot"><span></span></button></div>
               <div class="grp"><span class="lbl">Auto Update</span><button class="toggle" type="button" id="auto-update-toggle" role="switch" aria-checked="true" aria-label="Enable Auto Update"><span></span></button></div>
               <div class="grp" id="interval-grp"><span class="lbl">Update Interval (s)</span><input id="update-interval" type="number" min="1" max="60" step="1" value="10"></div>
@@ -2706,6 +2715,20 @@
   var socialsToggle = document.getElementById("socials-toggle"); socialsToggle.setAttribute("aria-checked", socialsOn ? "true" : "false");
   socialsToggle.addEventListener("click", function () { socialsOn = !socialsOn; socialsToggle.setAttribute("aria-checked", socialsOn ? "true" : "false"); try { localStorage.setItem(SOCIALS_KEY, socialsOn ? "1" : "0"); } catch (e) {} renderPinned(); });
   
+  /* ---- Asset List tags: all on/off, and each kind on its own ---- */
+  (function () {
+    var KEY = "coinatlas-list-tags", st = { on: true, stake: true, gain: true, loss: true, new: true };
+    try { var o = JSON.parse(localStorage.getItem(KEY) || "{}"); Object.keys(st).forEach(function (k) { if (o[k] === false) st[k] = false; }); } catch (e) {}
+    var main = document.getElementById("tags-toggle"), sub = document.getElementById("tags-sub");
+    function apply() {
+      main.setAttribute("aria-checked", st.on ? "true" : "false"); sub.classList.toggle("on", st.on); document.body.classList.toggle("tags-off", !st.on);
+      ["stake", "gain", "loss", "new"].forEach(function (k) { document.body.classList.toggle("tag-off-" + k, !st[k]); var b = sub.querySelector('[data-tagv="' + k + '"]'); if (b) b.setAttribute("aria-checked", st[k] ? "true" : "false"); });
+      try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {}
+    }
+    main.addEventListener("click", function () { st.on = !st.on; apply(); });
+    sub.addEventListener("click", function (e) { var b = e.target.closest("[data-tagv]"); if (b) { st[b.dataset.tagv] = !st[b.dataset.tagv]; apply(); } });
+    apply();
+  })();
   var stakeToggle = document.getElementById("staking-toggle"); stakeToggle.setAttribute("aria-checked", stakeOn ? "true" : "false");
   stakeToggle.addEventListener("click", function () { stakeOn = !stakeOn; stakeToggle.setAttribute("aria-checked", stakeOn ? "true" : "false"); try { localStorage.setItem(STAKE_KEY, stakeOn ? "1" : "0"); } catch (e) {} renderPinned(); });
   var tknToggle = document.getElementById("tokenomics-toggle"); tknToggle.setAttribute("aria-checked", tknOn ? "true" : "false");

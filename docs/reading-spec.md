@@ -421,3 +421,6 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   CoinAtlas verbindet sich nie mit der Wallet, "CoinAtlas is not sponsored by any of these Staking Providers" (fällt bei Partnerschaften weg).
 - Verlauf: jede Nacht mit echten Raten wird zusätzlich in data/staking-history.json gespeichert (eine Zeile pro Tag:
   {"YYYY-MM-DD": {"ETH": {"Lido": 2.9, …}, …}}), nur Optionen mit Rate; ein erneut aufgenommener Tag wird ersetzt.
+- Einstellungen, Asset List: "Tags" (an/aus) mit Unter-Schaltern Staking, Highest Gain, Highest Loss, New in Top 200
+  (gespeichert in "coinatlas-list-tags"; umgesetzt über Klassen am body, die die Badges in der Liste ausblenden).
+  Der Staking-Abschnitt der Locked Hovercharts hat seinen eigenen Schalter "Show Staking" (Hovercharts → Locked Hovercharts).
