@@ -701,6 +701,11 @@
   .fg-py-head { display: flex; align-items: center; gap: 12px; width: 100%; font: inherit; color: var(--fg); background: transparent; border: 0; padding: 10px 14px; cursor: pointer; text-align: left; } .fg-py-head:hover { background: var(--hover); border-radius: 8px; }
   .fg-py-l { flex: 1; display: flex; flex-direction: column; gap: 2px; } .fg-py-l b { font-size: 15px; } .fg-py-r { display: flex; flex-direction: column; align-items: flex-end; }
   .fg-py-avg { font-size: 24px; font-weight: 700; line-height: 1.1; } .fg-py-avg.extreme-fear { color: var(--down); } .fg-py-avg.fear { color: var(--down-tier-2); } .fg-py-avg.neutral { color: #eab308; } .fg-py-avg.greed { color: var(--up-tier-2); } .fg-py-avg.extreme-greed { color: var(--up); }
+  .fg-py-l b.bull { color: var(--up); } .fg-py-l b.bear { color: var(--down); } .fg-py-l b.bridge { color: #fb923c; }
+  .fg-py.upcoming { border-style: dashed; border-left-style: solid; opacity: .75; } .fg-py.upcoming .fg-py-head { cursor: default; } .fg-py.upcoming .fg-py-head:hover { background: transparent; }
+  .fg-annual-grid.fg-py-grid { grid-auto-rows: 1fr; align-items: stretch; } .fg-annual-grid.fg-py-grid .fg-annual-card { min-height: 0; height: 100%; box-sizing: border-box; }
+  .fg-py-grid .fg-annual-card.fg-hi { border-color: var(--up); background-image: linear-gradient(rgba(34,197,94,.12), rgba(34,197,94,.12)); }
+  .fg-py-grid .fg-annual-card.fg-lo { border-color: var(--down); background-image: linear-gradient(rgba(239,68,68,.12), rgba(239,68,68,.12)); }
   .fg-py-chev { color: var(--muted); font-size: 18px; transition: transform .15s ease; } .fg-py.open .fg-py-chev { transform: rotate(90deg); } .fg-py-body { padding: 0 12px 12px; }
   .fg-annual-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap; }
   .fg-annual-head .fg-annual-title { margin: 0; }
@@ -4128,30 +4133,36 @@
       (by[yr] = by[yr] || []).push(d.value); ((mon[yr] = mon[yr] || {})[mo] = mon[yr][mo] || []).push(d.value); all[mo].push(d.value);
     });
     var mean = function (v) { return v.reduce(function (a, b) { return a + b; }, 0) / v.length; }, cls = function (r) { return classifyFG(r).toLowerCase().replace(" ", "-"); };
-    var grid = function (yr) { /* the twelve months of a year, or of all years together (yr null) */
-      var h = '<div class="fg-annual-grid">';
+    var grid = function (yr) { /* the twelve months of a year, or of all years together (yr null); the greediest month tinted green, the most fearful red */
+      var h = '<div class="fg-annual-grid fg-py-grid">', mv = [], hiM = -1, loM = -1;
+      for (var q = 0; q < 12; q++) { var w = yr === null ? all[q] : (mon[yr] || {})[q] || []; mv.push(w.length && !(yr === cy && q > cm) ? mean(w) : null); }
+      mv.forEach(function (x, q) { if (x === null) return; if (hiM < 0 || x > mv[hiM]) hiM = q; if (loM < 0 || x < mv[loM]) loM = q; });
+      if (hiM === loM) hiM = loM = -1;
       for (var m = 0; m < 12; m++) {
-        var v = yr === null ? all[m] : (mon[yr] || {})[m] || [], avg = v.length ? Math.round(mean(v)) : null, sub = "", show = true, cur = (yr === null || yr === cy) && m === cm;
-        if (yr === cy && m > cm) { sub = "Not reached yet"; show = false; } else if (yr === cy && m === cm) sub = "Still collecting this Months Data"; else if (avg === null) sub = "No data";
-        h += '<div class="fg-annual-card' + (cur ? ' current' : '') + '"' + (yr === cy && m > cm ? ' title="We haven\'t been in ' + mf[m] + ' ' + cy + ' yet"' : '') + '><span class="lbl">' + mn[m] + '</span>' + (show ? '<span class="val ' + (avg !== null ? cls(avg) : '') + '">' + (avg !== null ? avg : '–') + '</span>' : '') + '<span class="fg-sub">' + (sub || (avg !== null ? classifyFG(avg) : '')) + '</span></div>';
+        var v = yr === null ? all[m] : (mon[yr] || {})[m] || [], avg = v.length ? Math.round(mean(v)) : null, sub = "", show = true, cur = (yr === null || yr === cy) && m === cm, ext = m === hiM ? " fg-hi" : m === loM ? " fg-lo" : "";
+        if (yr === cy && m > cm) { sub = "Not reached yet"; show = false; } else if (yr === cy && m === cm) sub = "In progress"; else if (avg === null) sub = "No data";
+        h += '<div class="fg-annual-card' + (cur ? ' current' : '') + ext + '"' + (ext ? ' title="' + (ext === " fg-hi" ? "Highest" : "Lowest") + ' month of ' + (yr === null ? "the average year" : yr) + '"' : yr === cy && m > cm ? ' title="We haven\'t been in ' + mf[m] + ' ' + cy + ' yet"' : '') + '><span class="lbl">' + mn[m] + '</span>' + (show ? '<span class="val ' + (avg !== null ? cls(avg) : '') + '">' + (avg !== null ? avg : '–') + '</span>' : '') + '<span class="fg-sub">' + (sub || (avg !== null ? classifyFG(avg) : '')) + '</span></div>';
       }
       return h + '</div>';
     };
     var card = function (key, title, tag, sub, avg) {
-      var open = !!fgPastOpen[key], r = Math.round(avg);
-      return '<div class="fg-py' + (open ? ' open' : '') + (tag ? ' ' + tag[1] : '') + (key == cy ? ' current' : '') + '"><button type="button" class="fg-py-head" data-fgy="' + key + '" aria-expanded="' + open + '">' +
-        '<span class="fg-py-l"><b>' + title + '</b>' + (tag ? ' <span class="fg-cyc ' + tag[1] + '">[4 Year Cycle ' + tag[0] + ' Year]</span>' : '') + '<span class="fg-sub">' + sub + '</span></span>' +
-        '<span class="fg-py-r"><span class="fg-py-avg ' + cls(r) + '">' + r + '</span><span class="fg-sub">' + classifyFG(r) + '</span></span><span class="fg-py-chev" aria-hidden="true">›</span></button>' +
+      var up = avg === null, open = !up && !!fgPastOpen[key], r = up ? null : Math.round(avg);
+      return '<div class="fg-py' + (open ? ' open' : '') + (tag ? ' ' + tag[1] : '') + (key == cy ? ' current' : '') + (up ? ' upcoming' : '') + '">' + (up ? '<div class="fg-py-head">' : '<button type="button" class="fg-py-head" data-fgy="' + key + '" aria-expanded="' + open + '">') +
+        '<span class="fg-py-l"><b class="' + (tag ? tag[1] : '') + '">' + title + '</b>' + (tag ? ' <span class="fg-cyc ' + tag[1] + '">[4 Year Cycle ' + tag[0] + ' Year]</span>' : '') + '<span class="fg-sub">' + sub + '</span></span>' +
+        (up ? '<span class="fg-py-r"><span class="fg-py-avg">–</span><span class="fg-sub">Upcoming</span></span></div>' : '<span class="fg-py-r"><span class="fg-py-avg ' + cls(r) + '">' + r + '</span><span class="fg-sub">' + classifyFG(r) + '</span></span><span class="fg-py-chev" aria-hidden="true">›</span></button>') +
         (open ? '<div class="fg-py-body">' + grid(key === "all" ? null : +key) + '</div>' : '') + '</div>';
     };
     var years = Object.keys(by).map(Number).sort(function (a, b) { return b - a; }).filter(function (yr) { var st = cycleStage(yr); return yearlyFilter === "all" || (yearlyFilter === "bull" && st === "Bull Year") || (yearlyFilter === "bear" && st === "Bear Year") || (yearlyFilter === "bridge" && st === "Bridge Year"); });
-    var flat = [].concat.apply([], all), cards = flat.length ? card("all", "All Years", null, "Each month averaged over every year since 2018", mean(flat)) : "";
+    var flat = [].concat.apply([], all), stOf = function (yr) { var st = cycleStage(yr); return [st.split(" ")[0], st.split(" ")[0].toLowerCase()]; }, cards = "";
+    var nx = cy + 1, nst = cycleStage(nx); /* the coming year: its place in the 4 year cycle is already known */
+    if (yearlyFilter === "all" || nst.toLowerCase().indexOf(yearlyFilter) === 0) cards += card(nx, nx, stOf(nx), "Starts on 1 Jan " + nx, null);
     years.forEach(function (yr) {
       var st = cycleStage(yr), tag = st ? [st.split(" ")[0], st.split(" ")[0].toLowerCase()] : null, n = Object.keys(mon[yr]).length;
       cards += card(yr, yr, tag, yr === cy ? "Average so far · year in progress · " + n + "/12 months" : "Average of every day" + (n < 12 ? " · " + n + "/12 months" : ""), mean(by[yr]));
     });
+    if (flat.length) cards += card("all", "All Years", null, "Each month averaged over every year since 2018", mean(flat));
     el.innerHTML = '<div class="fg-annual-head"><div class="fg-annual-title">Past Years</div><div class="fg-timeframes">' + [["bull", "Bull Years"], ["bear", "Bear Years"], ["bridge", "Bridge Years"], ["all", "All"]].map(function (r) { return '<button type="button"' + (yearlyFilter === r[0] ? ' class="active"' : '') + ' onclick="window.setYearlyFilter(\'' + r[0] + '\')">' + r[1] + '</button>'; }).join("") + '</div></div>' +
-      '<div class="fg-py-list">' + cards + '</div><div class="fg-sub" style="text-align:center;margin-top:8px">A year\'s value is the average of all its days. Click a year to see its months.</div>';
+      '<div class="fg-py-list">' + cards + '</div><div class="fg-sub" style="text-align:center;margin-top:8px">A year\'s value is the average of all its days. Click a year to see its months: the greediest month has a green border, the most fearful a red one.</div>';
   }
   document.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("[data-fgy]"); if (!b) return; var k = b.dataset.fgy; fgPastOpen[k] = !fgPastOpen[k]; renderFGYearly(); });
 
