@@ -225,7 +225,7 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Linked Hover, Tint Strongest Months und Altcoin Dominance Line sind immer an und keine Schalter mehr.
 - Experimental: Dev Mode, Party Mode.
 
-## Sentiment Squares (21.11.2026, Rework)
+## Sentiment Squares (21.11.2026, Rework, fertig)
 
 - Jede Kachel ein Coin: Logo, darunter die Prozente; die Schrift schrumpft mit der Kachel (ab 6 px). Passt beides nicht, bleibt nur das Logo,
   damit man den Coin erkennt; die Zahl steht dann im Hover (Name immer im Hover), Fläche nach Bewegung (|%|^0,8 plus kleiner Sockel, damit ruhige Coins sichtbar bleiben),
@@ -236,6 +236,8 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Animation: Kacheln, Front und Fenster gleiten bei jedem Update (alle 3 s) und Zeitraumwechsel an ihren Platz (1,1 s, weich auslaufend);
   Sprung >= 1/4 der ersten Farbstufe: kurzes Aufleuchten (1,6 s). Neuer Zeitraum oder neues Top: die Front geht zurück auf Auto,
   also genau ans Ende der dominanten Seite, die damit immer ganz sichtbar ist.
+- Zeitraumwechsel: das alte Bild bleibt stehen ("Loading 7D…"), bis 90 % der Coins ihren neuen Wert haben (Coinpaprika: sobald geladen; höchstens 10 s),
+  dann gleiten alle Kacheln ins neue Bild. Wechselt ein Coin die Seite, gleitet er von seiner alten Position über die Front, die Farbe blendet über (1,4 s).
 - Klick auf eine Kachel: die Liste scrollt zur Zeile des Coins und hebt sie hellgrau hervor wie die Suche. Locked Hovercharts öffnen von dort wie immer auf Today (1D).
 - Bedienung: links "Top [1–200]" als Eingabefeld (Standard 200), rechts derselbe Zeitraum-Wähler wie bei den Locked Hovercharts:
   "grün / rot / blau" (steigende, fallende Coins, Stablecoins; wie der Simple Market Sentiment Counter) steht in der Zeile mit Top-Feld und
