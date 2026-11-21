@@ -438,6 +438,34 @@
   .badge-new { background: rgba(250, 204, 21, 0.12); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.35); margin-left: auto; }
   .badge-stake { background: rgba(196, 181, 253, 0.12); color: #c4b5fd; border: 1px solid rgba(196, 181, 253, 0.35); margin-left: auto; white-space: nowrap; }
   .badge-new ~ .badge-stake, .badge-stake ~ .badge-new { margin-left: 6px; }
+  #rows .badge-stake { cursor: pointer; } #rows .badge-stake:hover { background: rgba(196, 181, 253, 0.24); }
+  #stake-container { margin-bottom: 20px; } #stake-container[hidden] { display: none !important; }
+  .stk-search { width: 100%; box-sizing: border-box; height: 36px; padding: 0 12px; font: inherit; font-size: 13px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; outline: none; } .stk-search:focus { border-color: var(--muted); }
+  .stk-pf-btn { width: 100%; height: 36px; margin: 8px 0 12px; font-size: 12px; font-weight: 600; }
+  .stk-head, .stk-row { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto 76px; gap: 10px; align-items: center; }
+  .stk-head { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 0 8px 6px; border-bottom: 1px solid var(--line); }
+  .stk-head.p { grid-template-columns: minmax(0, 1fr) auto 76px 150px; margin-top: 10px; }
+  .stk-row, .stk-prow { padding: 7px 8px; border-bottom: 1px solid var(--line); font-size: 13px; cursor: pointer; border-radius: 6px; } .stk-row:hover, .stk-prow:hover { background: var(--hover); }
+  .stk-prow { display: grid; grid-template-columns: minmax(0, 1fr) auto 76px 150px; gap: 10px; align-items: center; }
+  .stk-n { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .stk-a { display: flex; align-items: center; gap: 8px; min-width: 0; } .stk-a .logo { width: 20px; height: 20px; flex: none; } .stk-a b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .stk-a i { font-style: normal; color: var(--muted); font-size: 11px; white-space: nowrap; }
+  .stk-r { font-weight: 700; color: #c4b5fd; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; } .stk-r.na { color: var(--muted); font-weight: 400; font-size: 12px; }
+  .stk-card .lk { font-size: 11px; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); text-align: center; } .stk-card .lk.un { color: var(--up); border-color: rgba(76, 194, 122, 0.3); }
+  .stk-pg { text-align: right; font-variant-numeric: tabular-nums; } .stk-pg b { display: block; color: #c4b5fd; font-size: 12px; } .stk-pg em { display: block; font-style: normal; color: var(--muted); font-size: 11px; }
+  .stk-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; } .stk-back { height: 28px; padding: 0 10px; font-size: 12px; flex: none; }
+  .stk-asset { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1; } .stk-asset .logo { width: 22px; height: 22px; } .stk-asset i { font-style: normal; color: var(--muted); font-size: 12px; }
+  .stk-tfw { margin: 0; flex: none; } .stk-tfm { grid-template-columns: 110px; } .stk-tfw .fg-yr-btn { min-width: 110px; }
+  .stk-in { display: flex; gap: 8px; } .stk-in input { flex: 1; min-width: 0; height: 40px; padding: 0 12px; font: inherit; font-size: 16px; font-weight: 600; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; outline: none; } .stk-in input:focus { border-color: #c4b5fd; }
+  .stk-unit { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; } .stk-unit button { font: inherit; font-size: 12px; font-weight: 600; min-width: 52px; color: var(--muted); background: transparent; border: 0; cursor: pointer; } .stk-unit button.on { color: var(--fg); background: #2a2a28; }
+  .stk-eq { font-size: 12px; color: var(--muted); margin: 6px 2px 12px; }
+  .stk-res { padding: 10px 12px; margin-bottom: 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; }
+  .stk-res-h { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: center; } .stk-res-h a { color: var(--fg); font-weight: 600; text-decoration: none; border-bottom: 1px dotted var(--muted); } .stk-res-h a:hover { color: #c4b5fd; border-bottom-color: #c4b5fd; } .stk-res-h .k { display: block; font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .stk-res-v { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: baseline; margin-top: 8px; font-size: 12px; } .stk-res-v span { color: var(--muted); } .stk-res-v b { color: #c4b5fd; font-variant-numeric: tabular-nums; } .stk-res-v em { font-style: normal; color: var(--muted); min-width: 90px; text-align: right; font-variant-numeric: tabular-nums; } .stk-res-v + .stk-res-v b { color: var(--fg); } .stk-res-v.na { display: block; color: var(--muted); }
+  .stk-pot { text-align: center; padding: 14px 12px; background: rgba(196, 181, 253, 0.07); border: 1px solid rgba(196, 181, 253, 0.3); border-radius: 12px; font-size: 13px; line-height: 1.5; } .stk-pot b { color: #c4b5fd; }
+  .stk-pot-big { font-size: 28px; font-weight: 800; color: #c4b5fd; letter-spacing: -0.02em; } .stk-pot-s { margin-top: 4px; font-size: 11px; color: var(--muted); }
+  .stk-ch { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); } .stk-ch-h { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; } .stk-ch-s { font-size: 12px; color: #c4b5fd; }
+  .stk-ch-empty { padding: 34px 12px; text-align: center; font-size: 12px; color: var(--muted); border: 1px dashed var(--line); border-radius: 8px; }
+  .stk-svg { width: 100%; height: 150px; display: block; } .stk-ch-ax { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
   body.tags-off #rows .badge, body.tag-off-stake #rows .badge-stake, body.tag-off-gain #rows .badge-gain, body.tag-off-loss #rows .badge-loss, body.tag-off-new #rows .badge-new { display: none; }
   body.tag-off-stake #rows .badge-new { margin-left: auto; }
   .chart-stake-section { margin-top: 16px; font-size: 12px; text-align: center; border-top: 1px solid var(--line); padding-top: 12px; }
@@ -1020,6 +1048,7 @@
       <button class="gear" type="button" id="charts-btn">Charts</button>
       <button class="gear" type="button" id="pf-btn">Portfolio Manager</button>
       <button class="gear" type="button" id="sq-btn">Sentiment Squares</button>
+      <button class="gear" type="button" id="stake-btn">Staking</button>
       <button class="gear" type="button" id="roadmap-btn">Roadmap</button>
       <button class="gear" type="button" id="snap-btn">Snapshots</button>
       <div class="ago-wrap"><button class="gear" type="button" id="ago-btn" aria-haspopup="true" aria-expanded="false">Years Ago</button><div class="ago-menu" id="ago-menu" hidden><button type="button" data-ago="0">Live</button><button type="button" data-ago="1">Exactly 1 Year Ago</button><button type="button" data-ago="2">Exactly 2 Years Ago</button><button type="button" data-ago="3">Exactly 3 Years Ago</button><button type="button" data-ago="4">Exactly 4 Years Ago</button><button type="button" data-ago="5">Exactly 5 Years Ago</button><button type="button" data-ago="6">Exactly 6 Years Ago</button><button type="button" data-ago="7">Exactly 7 Years Ago</button><button type="button" data-ago="8">Exactly 8 Years Ago</button></div></div>
@@ -1047,6 +1076,7 @@
               <div class="grp"><span class="lbl">BTC|ETH Ratio</span><button class="toggle" type="button" data-hb="ratio-btn" role="switch" aria-checked="true" aria-label="Show BTC|ETH Ratio in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Charts</span><button class="toggle" type="button" data-hb="charts-btn" role="switch" aria-checked="true" aria-label="Show Charts in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Portfolio Manager</span><button class="toggle" type="button" data-hb="pf-btn" role="switch" aria-checked="true" aria-label="Show Portfolio Manager in the header"><span></span></button></div>
+              <div class="grp"><span class="lbl">Staking</span><button class="toggle" type="button" data-hb="stake-btn" role="switch" aria-checked="true" aria-label="Show Staking in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Sentiment Squares</span><button class="toggle" type="button" data-hb="sq-btn" role="switch" aria-checked="true" aria-label="Show Sentiment Squares in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Roadmap</span><button class="toggle" type="button" data-hb="roadmap-btn" role="switch" aria-checked="true" aria-label="Show Roadmap in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Snapshots</span><button class="toggle" type="button" data-hb="snap-btn" role="switch" aria-checked="true" aria-label="Show Snapshots in the header"><span></span></button></div>
@@ -1162,6 +1192,7 @@
       </div>
       <div id="fg-chart-container"></div>
       <div id="ui-mode-note" class="pinned-card ui-note" hidden>UI Moving Mode is turned on, Press ESC to Turn it off</div>
+      <div id="stake-container" hidden></div>
       <div id="sq-container" hidden></div>
       <div id="roadmap-container" hidden></div>
       <div id="snap-container" hidden></div>
@@ -1368,7 +1399,7 @@
     Array.prototype.forEach.call(rowsEl.children, function (row, i) {
       var c = displayCoins[i], w = row.querySelector(".name-wrap"), old = row.querySelector(".badge-stake"), st = stakeOf(c);
       if (old) old.remove();
-      if (st && w) { var b = document.createElement("span"); b.className = "badge badge-stake"; b.textContent = stakeBadgeText(st); b.title = "Where to stake: open its Locked Hoverchart"; var nw = w.querySelector(".badge-new"); if (nw) w.insertBefore(b, nw); else w.appendChild(b); }
+      if (st && w) { var b = document.createElement("span"); b.className = "badge badge-stake"; b.textContent = stakeBadgeText(st); b.title = "Click to calculate your staking rewards"; var nw = w.querySelector(".badge-new"); if (nw) w.insertBefore(b, nw); else w.appendChild(b); }
     });
   }
   var fgaOn = true; try { fgaOn = localStorage.getItem(FGA_KEY) !== "0"; } catch (e) {}
@@ -2380,7 +2411,7 @@
   function updatePinnedColVisibility() {
     var col = document.getElementById("pinned-col");
     if (!col) return;
-    if (pinnedCoins.length > 0 || (typeof chMinis !== "undefined" && chMinis.length) || roadmapVisible || portfolioVisible || ratioVisible || uiNoteOn || sqVisible || (snapVisible && devActive)) col.classList.add("on");
+    if (pinnedCoins.length > 0 || (typeof chMinis !== "undefined" && chMinis.length) || roadmapVisible || portfolioVisible || ratioVisible || uiNoteOn || sqVisible || (typeof stkVisible !== "undefined" && stkVisible) || (snapVisible && devActive)) col.classList.add("on");
     else col.classList.remove("on");
   }
 
@@ -2509,6 +2540,7 @@
   var lastClickTime = 0, lastClickSymbol = null;
   rowsEl.addEventListener("click", function (e) {
     if (devFrozen) return;
+    var sb = e.target.closest(".badge-stake"); if (sb) { var sbr = e.target.closest("tr"), sbc = sbr && displayCoins[+sbr.dataset.i]; if (sbc) { popEl.classList.remove("on"); stkOpen(String(sbc.symbol).toUpperCase()); } return; } /* a Staking badge opens the Staking calculator */
     var tr = e.target.closest("tr"); if (!tr) return; var i = +tr.dataset.i; var c = displayCoins[i];
     var now = Date.now(); if (c.symbol === lastClickSymbol && now - lastClickTime < 100) return;
     lastClickTime = now; lastClickSymbol = c.symbol; popEl.classList.remove("on"); current = -1;
@@ -4013,6 +4045,143 @@
   var sqFxSel = document.getElementById("sq-fx"); if (sqFxSel) { sqFxSel.value = sqFx;
     sqFxSel.addEventListener("change", function () { sqFx = sqFxSel.value; try { localStorage.setItem(SQ_FX_KEY, sqFx); } catch (e) {} sqDraw(); }); }
   sqBtn.addEventListener("click", function () { sqVisible = !sqVisible; sqBtn.classList.toggle("active", sqVisible); renderSquares(); });
+
+  /* ---------- STAKING: a window of its own. A list of every coin with trusted staking, a calculator per coin (Token or $, 1 to 12 months, the top 3 providers),
+     the Staking Potential of the Portfolio Manager's holdings, and the rate history (from 30 recorded days on) ---------- */
+  var stkVisible = false, stkBtn = document.getElementById("stake-btn"), stkBox = document.getElementById("stake-container");
+  var STK_DUR = [["1M", "1 Month", 30], ["3M", "3 Months", 91], ["6M", "6 Months", 182], ["1Y", "1 Year", 365]];
+  var stk = { view: "list", sym: null, q: "", amt: "", unit: "token", dur: "1Y", fromPf: false }, stkHist = null, stkHistBusy = false;
+  try { var stko = JSON.parse(localStorage.getItem("coinatlas-stake-ui") || "{}"); if (stko.dur) stk.dur = stko.dur; if (stko.unit) stk.unit = stko.unit; } catch (e) {}
+  function stkSave() { try { localStorage.setItem("coinatlas-stake-ui", JSON.stringify({ dur: stk.dur, unit: stk.unit })); } catch (e) {} }
+  function stkDays() { for (var i = 0; i < STK_DUR.length; i++) if (STK_DUR[i][0] === stk.dur) return STK_DUR[i][2]; return 365; }
+  function stkDurName() { for (var i = 0; i < STK_DUR.length; i++) if (STK_DUR[i][0] === stk.dur) return STK_DUR[i][1]; return "1 Year"; }
+  function stkCoin(sym) { for (var i = 0; i < coins.length; i++) if (String(coins[i].symbol).toUpperCase() === sym) return coins[i]; return null; }
+  function stkTop(st) { return st.list.filter(function (x) { return x.apy != null; })[0] || st.list[0]; } /* the best option (the list is sorted by rate) */
+  function stkGain(x, tokens, days) { /* Liquid Staking and Lending grow by themselves (compounding, APY); Native Staking pays out without compounding (APR) */
+    if (x.apy == null || !(tokens > 0)) return null; var r = x.apy / 100;
+    return x.kind === "Native Staking" ? tokens * r * days / 365 : tokens * (Math.pow(1 + r, days / 365) - 1);
+  }
+  function stkNum(n) { if (!(n > 0)) return "0"; return n >= 1000 ? n.toLocaleString("en-US", { maximumFractionDigits: 0 }) : n >= 1 ? n.toLocaleString("en-US", { maximumFractionDigits: 4 }) : String(parseFloat(n.toPrecision(4))); }
+  function stkRateTxt(x) { return x.apy == null ? "Rate on site" : stakeRate(x) + " " + x.apy.toFixed(2) + "%"; }
+  function stkLock(x) { return '<span class="lk' + (x.locked ? '' : ' un') + '" title="' + (x.locked ? 'Getting out takes a waiting time' : 'Can be withdrawn or swapped any time') + '">' + (x.locked ? 'Locked' : 'Unlocked') + '</span>'; }
+  function stkPicker() {
+    return '<div class="fg-yr-wrap tf-row stk-tfw"><div class="fg-yr-pick"><button type="button" class="fg-yr-btn">' + stkDurName() + ' ▾</button><div class="fg-tf-menu stk-tfm"><div class="fg-tf-col">' +
+      STK_DUR.map(function (d) { return '<button type="button" data-stkdur="' + d[0] + '"' + (d[0] === stk.dur ? ' class="active"' : '') + '>' + d[1] + '</button>'; }).join("") + '</div></div></div></div>';
+  }
+  var STK_NOTE = '<div class="stake-note">Only the real staking rate, no bonus tokens. Assuming today\'s rate stays the same; rates change daily. Not financial advice. CoinAtlas never connects to your wallet.<br>CoinAtlas is not sponsored by any of these Staking Providers.</div>';
+
+  function stkListHtml() {
+    var q = stk.q.trim().toLowerCase(), n = 0, rows = "";
+    coins.forEach(function (c, i) {
+      var st = stakeOf(c); if (!st) return;
+      if (q && String(c.name).toLowerCase().indexOf(q) < 0 && String(c.symbol).toLowerCase().indexOf(q) < 0) return;
+      var t = stkTop(st); n++;
+      rows += '<div class="stk-row" data-stksym="' + esc(String(c.symbol).toUpperCase()) + '"><span class="stk-n">' + (c.market_cap_rank || i + 1) + '</span><span class="stk-a">' + logoHtml(c) + '<b>' + esc(c.name) + '</b><i>' + esc(String(c.symbol).toUpperCase()) + '</i></span>' +
+        '<span class="stk-r' + (t.apy == null ? ' na' : '') + '">' + stkRateTxt(t) + '</span>' + stkLock(t) + '</div>';
+    });
+    return '<input class="stk-search" id="stk-q" type="search" placeholder="Search an asset to stake" value="' + esc(stk.q) + '" autocomplete="off">' +
+      '<button type="button" class="gear stk-pf-btn" data-stkpf="1">Use Portfolio Manager Holdings</button>' +
+      '<div class="stk-head"><span>#</span><span>Asset</span><span>Best Rate</span><span></span></div>' +
+      (n ? rows : '<div class="pf-msg">' + (Object.keys(stakeData).length ? 'No stakeable asset matches "' + esc(stk.q) + '".' : 'Loading staking data…') + '</div>');
+  }
+
+  function stkAssetHtml() {
+    var sym = stk.sym, st = stakeData[sym], c = stkCoin(sym);
+    if (!st || !c) return '<div class="pf-msg">No staking data for this asset.</div>';
+    var px = c.current_price || 0, a = parseFloat(String(stk.amt).replace(",", ".")) || 0, tokens = stk.unit === "usd" ? (px > 0 ? a / px : 0) : a, days = stkDays();
+    var res = st.list.map(function (x) {
+      var host = ""; try { host = new URL(x.url).hostname.replace(/^www\./, ""); } catch (e) {}
+      var g = stkGain(x, tokens, days);
+      return '<div class="stk-res"><div class="stk-res-h"><div><a href="' + esc(x.url) + '" target="_blank" rel="noopener noreferrer" title="' + esc(host) + '">' + esc(x.name) + '</a><span class="k">' + esc(x.kind) + (x.note ? ' · ' + esc(x.note) : '') + '</span></div>' + stkLock(x) +
+        '<span class="stk-r' + (x.apy == null ? ' na' : '') + '">' + stkRateTxt(x) + '</span></div>' +
+        (g == null ? '<div class="stk-res-v na">' + (tokens > 0 ? 'No public rate, see the provider\'s site.' : '') + '</div>' :
+          '<div class="stk-res-v"><span>Rewards in ' + stkDurName() + '</span><b>+' + stkNum(g) + ' ' + esc(sym) + '</b><em>+' + price(g * px) + '</em></div>' +
+          '<div class="stk-res-v"><span>You would hold</span><b>' + stkNum(tokens + g) + ' ' + esc(sym) + '</b><em>' + price((tokens + g) * px) + '</em></div>') + '</div>';
+    }).join("");
+    return '<div class="stk-bar"><button type="button" class="gear stk-back" data-stkback="1">‹ ' + (stk.fromPf ? 'Portfolio' : 'All Assets') + '</button><span class="stk-asset">' + logoHtml(c) + '<b>' + esc(c.name) + '</b><i>' + esc(sym) + '</i></span>' + stkPicker() + '</div>' +
+      '<div class="stk-in"><input id="stk-amt" inputmode="decimal" placeholder="' + (stk.unit === "usd" ? 'Amount in $' : 'Amount of ' + esc(sym)) + '" value="' + esc(stk.amt) + '" autocomplete="off">' +
+      '<div class="stk-unit"><button type="button" data-stkunit="token"' + (stk.unit === "token" ? ' class="on"' : '') + '>' + esc(sym) + '</button><button type="button" data-stkunit="usd"' + (stk.unit === "usd" ? ' class="on"' : '') + '>$</button></div></div>' +
+      '<div class="stk-eq" id="stk-eq">' + (a > 0 ? (stk.unit === "usd" ? '≈ ' + stkNum(tokens) + ' ' + esc(sym) : '≈ ' + price(tokens * px)) : 'Enter how much you want to stake') + '</div>' +
+      '<div class="stk-list">' + res + '</div>' + STK_NOTE + stkChartHtml(sym, st);
+  }
+
+  function stkChartHtml(sym, st) { /* the best provider's rate over the chosen time, lavender, from 30 recorded days on */
+    var top = stkTop(st), days = stkDays(), pts = [];
+    if (stkHist) Object.keys(stkHist).sort().forEach(function (d) { var v = stkHist[d][sym] && stkHist[d][sym][top.name]; if (v > 0) pts.push([Date.parse(d + "T00:00:00Z"), v]); });
+    var head = '<div class="stk-ch-h"><div><div class="chart-sub-header">Rate History</div><div class="stk-ch-s">' + esc(top.name) + ' · ' + (top.apy == null ? 'no public rate' : stakeRate(top)) + '</div></div>' + stkPicker() + '</div>';
+    if (pts.length < 30) return '<div class="stk-ch">' + head + '<div class="stk-ch-empty">The rate history shows from 30 recorded days on' + (stkHist ? ' (' + pts.length + ' of 30 so far).' : '.') + ' The rate is recorded every night.</div></div>';
+    var cut = Date.now() - days * 864e5; pts = pts.filter(function (p) { return p[0] >= cut; }); if (pts.length < 2) pts = pts.slice(-2);
+    var W = 520, H = 150, mn = Math.min.apply(null, pts.map(function (p) { return p[1]; })), mx = Math.max.apply(null, pts.map(function (p) { return p[1]; })); if (mx - mn < 0.2) { mn -= 0.1; mx += 0.1; }
+    var t0 = pts[0][0], t1 = pts[pts.length - 1][0] || t0 + 1, X = function (t) { return ((t - t0) / Math.max(1, t1 - t0) * W).toFixed(1); }, Y = function (v) { return (H - 6 - (v - mn) / (mx - mn) * (H - 12)).toFixed(1); };
+    var line = pts.map(function (p, i) { return (i ? "L" : "M") + X(p[0]) + " " + Y(p[1]); }).join(" ");
+    var fd = function (t) { return new Date(t).toLocaleDateString("en-US", { day: "numeric", month: "short" }); };
+    return '<div class="stk-ch">' + head + '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" class="stk-svg"><path d="' + line + ' L' + W + ' ' + H + ' L0 ' + H + ' Z" fill="rgba(196,181,253,.12)"/><path d="' + line + '" fill="none" stroke="#c4b5fd" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>' +
+      '<div class="stk-ch-ax"><span>' + fd(t0) + '</span><span>low ' + mn.toFixed(2) + '% · now ' + pts[pts.length - 1][1].toFixed(2) + '% · high ' + mx.toFixed(2) + '%</span><span>' + fd(t1) + '</span></div></div>';
+  }
+
+  function stkPfRows() { /* the Portfolio Manager's holdings that can be staked, with their best option */
+    return pfRows().map(function (r) { var sym = String(r.c.symbol).toUpperCase(), st = stakeData[sym]; return st ? { r: r, sym: sym, st: st, top: stkTop(st) } : null; }).filter(Boolean);
+  }
+  function stkPfHtml() {
+    var bar = '<div class="stk-bar"><button type="button" class="gear stk-back" data-stkback="1">‹ All Assets</button><span class="stk-asset"><b>Your Portfolio\'s Staking Potential</b></span>' + stkPicker() + '</div>';
+    if (pfState.status === "loading" || stk.pfWait) return bar + '<div class="pf-msg">Loading your Portfolio…</div>';
+    var all = pfState.status === "ok" ? pfRows() : [];
+    if (!all.length) return bar + '<div class="pf-msg">Your Portfolio is empty. Save a wallet address or add a Manual Wallet in the Portfolio Manager first.</div>';
+    var list = stkPfRows(), days = stkDays(), totAll = 0, gainUsd = 0, stakeVal = 0;
+    all.forEach(function (r) { totAll += r.val; });
+    var rows = list.map(function (x) {
+      var g = stkGain(x.top, x.r.amt, days), px = x.r.c.current_price || 0; stakeVal += x.r.val; if (g != null) gainUsd += g * px;
+      return '<div class="stk-prow" data-stksym="' + esc(x.sym) + '" data-stkamt="' + x.r.amt + '"><span class="stk-a">' + logoHtml(x.r.c) + '<b>' + esc(x.r.c.name) + '</b><i>' + stkNum(x.r.amt) + ' ' + esc(x.sym) + '</i></span>' +
+        '<span class="stk-r' + (x.top.apy == null ? ' na' : '') + '">' + stkRateTxt(x.top) + '</span>' + stkLock(x.top) +
+        '<span class="stk-pg">' + (g == null ? '<em>rate on site</em>' : '<b>+' + stkNum(g) + ' ' + esc(x.sym) + '</b><em>then ' + stkNum(x.r.amt + g) + ' · +' + price(g * px) + '</em>') + '</span></div>';
+    }).join("");
+    if (!list.length) return bar + '<div class="pf-msg">None of your Portfolio\'s assets can be staked with the trusted providers yet.</div>';
+    var pc = totAll > 0 ? gainUsd / totAll * 100 : 0;
+    return bar + '<div class="stk-pot"><div class="stk-pot-big">+' + (pc >= 10 ? pc.toFixed(1) : pc.toFixed(2)) + '%</div><div>You could grow your Portfolio\'s token holdings by <b>' + (pc >= 10 ? pc.toFixed(1) : pc.toFixed(2)) + '%</b> if you stake all these assets for <b>' + stkDurName() + '</b>.</div>' +
+      '<div class="stk-pot-s">+' + price(gainUsd) + ' in rewards at today\'s prices · ' + list.length + ' of ' + all.length + ' assets can be staked (' + (totAll > 0 ? (stakeVal / totAll * 100).toFixed(0) : 0) + '% of your Portfolio) · each with its best provider</div></div>' +
+      '<div class="stk-head p"><span>Asset</span><span>Best Rate</span><span></span><span>Rewards</span></div>' + rows + STK_NOTE;
+  }
+
+  function renderStaking() {
+    if (!stkVisible) { stkBox.hidden = true; stkBox.innerHTML = ""; updatePinnedColVisibility(); return; }
+    stkBox.hidden = false; updatePinnedColVisibility();
+    var body = stk.view === "asset" ? stkAssetHtml() : stk.view === "pf" ? stkPfHtml() : stkListHtml();
+    var keepQ = document.activeElement && document.activeElement.id === "stk-q", keepA = document.activeElement && document.activeElement.id === "stk-amt";
+    stkBox.innerHTML = '<div class="pinned-card chart-container pf-card stk-card dev-target" data-dev-name="Staking" data-dev-color="#c4b5fd"><div class="pf-title">CoinAtlas Staking</div>' + body + '</div>';
+    var f = keepQ ? document.getElementById("stk-q") : keepA ? document.getElementById("stk-amt") : null; if (f) { f.focus(); var L = f.value.length; try { f.setSelectionRange(L, L); } catch (e) {} }
+    if (!stkHist && !stkHistBusy) { stkHistBusy = true; repoJson("data/staking-history.json").then(function (j) { stkHist = j || {}; }, function () { stkHist = {}; }).then(function () { stkHistBusy = false; if (stkVisible && stk.view === "asset") renderStaking(); }); }
+  }
+  function stkOpen(sym, amt) { /* from a Staking badge in the list, or a row of the Portfolio view */
+    stk.view = "asset"; stk.sym = sym; if (amt != null) { stk.amt = String(+(+amt).toPrecision(8)); stk.unit = "token"; }
+    if (!stkVisible) { stkVisible = true; stkBtn.classList.add("active"); }
+    renderStaking(); smoothScrollTo(stkBox, "start", 16);
+  }
+  function stkPfStart() { /* the holdings come from the Portfolio Manager: load the saved wallets if that has not happened yet */
+    stk.view = "pf"; stk.fromPf = true;
+    if (pfState.status === "idle" && pfWallets.some(function (w) { return w.on !== false; })) {
+      stk.pfWait = true; pfLoadAll(); var n = 0, t = setInterval(function () { if (pfState.status !== "loading" || ++n > 120) { clearInterval(t); stk.pfWait = false; if (stkVisible) renderStaking(); } }, 500);
+    }
+    renderStaking();
+  }
+  stkBtn.addEventListener("click", function () { stkVisible = !stkVisible; stkBtn.classList.toggle("active", stkVisible); if (stkVisible && stk.view === "pf" && pfState.status !== "ok") stk.view = "list"; renderStaking(); });
+  stkBox.addEventListener("click", function (e) {
+    var t = e.target;
+    var d = t.closest("[data-stkdur]"); if (d) { stk.dur = d.dataset.stkdur; stkSave(); if (document.activeElement) document.activeElement.blur(); renderStaking(); return; }
+    if (t.closest("[data-stkback]")) { stk.view = stk.view === "asset" && stk.fromPf ? "pf" : "list"; if (stk.view === "list") stk.fromPf = false; renderStaking(); return; }
+    if (t.closest("[data-stkpf]")) { stkPfStart(); return; }
+    var u = t.closest("[data-stkunit]"); if (u && u.dataset.stkunit !== stk.unit) {
+      var c = stkCoin(stk.sym), a = parseFloat(String(stk.amt).replace(",", ".")), px = c && c.current_price;
+      if (a > 0 && px > 0) stk.amt = String(+(u.dataset.stkunit === "usd" ? a * px : a / px).toPrecision(6)); /* the same amount in the other unit */
+      stk.unit = u.dataset.stkunit; stkSave(); renderStaking(); return;
+    }
+    if (t.closest("a")) return;
+    var r = t.closest("[data-stksym]"); if (r) { stk.fromPf = stk.view === "pf"; stk.view = "asset"; stk.sym = r.dataset.stksym; if (r.dataset.stkamt) { stk.amt = String(+(+r.dataset.stkamt).toPrecision(8)); stk.unit = "token"; } renderStaking(); }
+  });
+  stkBox.addEventListener("input", function (e) {
+    if (e.target.id === "stk-q") { stk.q = e.target.value; renderStaking(); }
+    else if (e.target.id === "stk-amt") { stk.amt = e.target.value.replace(/[^0-9.,]/g, ""); renderStaking(); }
+  });
+
   setInterval(function () { if (sqVisible && !sqDrag) sqDraw(); }, 3000);
 
   /* ---------- ROADMAP ---------- */
@@ -4061,7 +4230,7 @@
     { title: "Settings Window Overhaul", st: "done", notes: ["Done. The Settings open as Tabs: the Sections on the left, their Settings on the right, so the Window fits the Screen without scrolling. Every Header Button can be switched off."], desc: "A new Settings Window: grouped, searchable and easier to scan, without growing endlessly." },
     { title: "Crypto Investor Cheatsheet", notes: ["Not started. If the owner has published the sheet to the web, it can be embedded as it is instead of copied, so it always stays up to date."], desc: "Bring the Crypto Investor Cheatsheet onto the site as a reference next to the other tools." },
     { title: "X Market Sentiment", notes: ["Not started. Reading posts on X needs the paid X API or a paid social sentiment provider; scraping is against the terms of X and breaks often. The Fear & Greed Index already carries a social component."], desc: "A market sentiment built from what is being posted about Bitcoin and Ethereum on X." },
-    { title: "Where can i stake?", st: "wip", notes: ["Works: Staking section in the Locked Hovercharts (under Tokenomics, switchable in Settings): the top 3 options with a hoverable link, Liquid or Native Staking, Locked or Unlocked, and the real rate only (no bonus tokens).", "Works: lavender Staking tag in the list (\"STAKING APY 7.2%\", the best rate of the top 3) and a Staking filter. Stablecoins on Aave show as Lending.", "Only trusted providers from a hand-picked list (years on the market, audited, never lost user funds), e.g. Lido, Rocket Pool, Coinbase, Jito, Marinade, Benqi, Aave and the chains' own staking pages. Rates from DefiLlama, every night with the snapshot.", "Next: rates for Native Staking (Cosmos chains and Cardano can be read for free), more chains (NEAR, TRX, SUI, APT, TON). With partners: referral links, and the \"not sponsored\" line goes away."], desc: "\"Staking\" Tag like the Highest Loss / Highest Gain Tags and Staking Filter, which displays every assets thats stakeable.\nAdd that into the Description of Tokens. The best Staking rewards and the APY shown on the site. It would in the future also show the Sites or wallets to stake on, and then you could collab with said Staking providers. So, the Goal is to let Users know how much they can get in Staking Rewards from the Top 3 Providers.\nThen theres an easy 3-Click Function where users can just Click on the Link to said Staking Provider, then connect their Wallet, and click Start Stake. Its as easy as that, if implemented Correctly." },
+    { title: "Where can i stake?", st: "wip", notes: ["Works: Staking section in the Locked Hovercharts (under Tokenomics, switchable in Settings): the top 3 options with a hoverable link, Liquid or Native Staking, Locked or Unlocked, and the real rate only (no bonus tokens).", "Works: lavender Staking tag in the list (\"STAKING APY 7.2%\", the best rate of the top 3) and a Staking filter. Stablecoins on Aave show as Lending.", "Only trusted providers from a hand-picked list (years on the market, audited, never lost user funds), e.g. Lido, Rocket Pool, Coinbase, Jito, Marinade, Benqi, Aave and the chains' own staking pages. Rates from DefiLlama, every night with the snapshot.", "Works: Staking button in the Header. A list of every asset with trusted staking (#, Asset, best rate, Locked or Unlocked) with a search, a calculator per asset (Tokens or $, 1, 3, 6 or 12 months, rewards and holdings at the end for the top 3 providers), a lavender Rate History chart (from 30 recorded days on) and \"Use Portfolio Manager Holdings\": the Staking Potential of your Portfolio. A click on a Staking tag in the list opens the calculator.", "Next: rates for Native Staking (Cosmos chains and Cardano can be read for free), more chains (NEAR, TRX, SUI, APT, TON). With partners: referral links, and the \"not sponsored\" line goes away."], desc: "\"Staking\" Tag like the Highest Loss / Highest Gain Tags and Staking Filter, which displays every assets thats stakeable.\nAdd that into the Description of Tokens. The best Staking rewards and the APY shown on the site. It would in the future also show the Sites or wallets to stake on, and then you could collab with said Staking providers. So, the Goal is to let Users know how much they can get in Staking Rewards from the Top 3 Providers.\nThen theres an easy 3-Click Function where users can just Click on the Link to said Staking Provider, then connect their Wallet, and click Start Stake. Its as easy as that, if implemented Correctly." },
     { title: "More Ways to Customize The Asset List", notes: ["Planned. Settings now have a Customization tab with Sub Tabs: Asset List (empty for now), Sentiment Squares (a skin for coins up 50% or more) and Portfolio Tint. Skins: Gold, Silver, Diamond, Emerald, Ruby, Sapphire."], desc: "Let Users make the Asset List their own: Effects like Gold or Diamond for strong movers, Colours, which Columns to show, Highlights for chosen Coins and more." },
     { title: "Portfolio Manager Network Additions", notes: ["Planned. Now: Ethereum, Base, Arbitrum, Optimism, Polygon, BNB Chain, Avalanche and Solana. Next without the Backend: more EVM chains via public RPCs, plus Bitcoin and Tron addresses. Sites like CoinGecko or CoinMarketCap cover 25+ networks through paid indexer APIs (e.g. Zerion, Moralis, Covalent); that needs the Backend for the API key.", "Once the Backend exists: Swaps on Solana, and on BNB Chain and Avalanche (these need an API key that must not sit in the public Site)."], desc: "More Networks for the Portfolio Manager, so Wallets on every common Chain are read, together with their Swaps." },
     { title: "Charts Additions", notes: ["Planned: more Assets on the Charts screen.", "Planned: Drawings saved to the Account. Every time a Drawing is added or changed, its type and position are saved. All Drawings together are encrypted into one string of letters and numbers, tied to the Account ID, and turned back into the Drawings when the site opens. Needs the Backend and Accounts."], desc: "More Assets for the Charts screen, and Drawings that are saved to your Account, so they are still there on the next visit and on every Device." },

@@ -425,3 +425,13 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   (gespeichert in "coinatlas-list-tags"; umgesetzt über Klassen am body, die die Badges in der Liste ausblenden).
   Der Staking-Abschnitt der Locked Hovercharts hat seinen eigenen Schalter "Show Staking" (Hovercharts → Locked Hovercharts).
 - Sentiment Squares haben keine Hovercharts mehr: ein Klick auf ein Quadrat springt zur Zeile in der Liste, dort zeigt sich der Chart.
+- Staking-Fenster (Header-Knopf "Staking", in den Header-Einstellungen abschaltbar; Landing Area):
+  - Liste: Suche, voller Knopf "Use Portfolio Manager Holdings", Zeilen # (Rang), Asset, beste Rate (APR/APY), Locked/Unlocked; nach Marketcap.
+  - Klick auf ein Asset (oder auf ein Staking-Badge in der Liste): Rechner mit Menge in Token oder $ (Umschalten rechnet die Menge um),
+    Dauer 1/3/6 Monate oder 1 Jahr (Dropdown rechts, gemerkt), Ergebnis für die Top 3 Anbieter: Belohnung in Token und $, Bestand am Ende.
+    Liquid Staking und Lending mit Zinseszins (APY), natives Staking ohne (APR). Hinweis: heutige Rate angenommen, kein Finanzrat, nicht gesponsert.
+  - Rate History: Linie der Rate des besten Anbieters in Lavendel aus data/staking-history.json, erst ab 30 aufgezeichneten Tagen
+    (vorher Platzhalter mit "x of 30 so far"); Zeitraum = gewählte Dauer.
+  - Portfolio-Ansicht: alle stakebaren Assets aus dem Portfolio Manager (lädt die gespeicherten Wallets wenn nötig) mit bester Rate,
+    Belohnung und Bestand danach; oben "You could grow your Portfolio's token holdings by X% if you stake all these assets for …"
+    (X = Belohnungen in $ / Wert des ganzen Portfolios). Klick auf eine Zeile öffnet den Rechner mit der gehaltenen Menge.
