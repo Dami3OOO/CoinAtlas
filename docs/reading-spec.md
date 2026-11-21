@@ -424,3 +424,4 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Einstellungen, Asset List: "Tags" (an/aus) mit Unter-Schaltern Staking, Highest Gain, Highest Loss, New in Top 200
   (gespeichert in "coinatlas-list-tags"; umgesetzt über Klassen am body, die die Badges in der Liste ausblenden).
   Der Staking-Abschnitt der Locked Hovercharts hat seinen eigenen Schalter "Show Staking" (Hovercharts → Locked Hovercharts).
+- Sentiment Squares haben keine Hovercharts mehr: ein Klick auf ein Quadrat springt zur Zeile in der Liste, dort zeigt sich der Chart.

@@ -1079,7 +1079,7 @@
               <div class="sub-pane" data-pane="hc">
                 <div class="grp"><span class="lbl">Hovercharts</span><button class="toggle" type="button" id="hc-toggle" role="switch" aria-checked="true" aria-label="Show a chart when hovering a coin"><span></span></button></div>
                 <div class="grp hc-size-grp"><span class="lbl">Size</span><span class="hc-size"><input type="range" id="hc-size" min="25" max="150" step="5" value="100" aria-label="Size of the Hovercharts in percent"><b id="hc-size-v">Default</b></span></div>
-                <div class="set-note">The chart that shows when you hover a coin, a square or a Portfolio asset. Size from 25% to 150%, Default is 100%.</div>
+                <div class="set-note">The chart that shows when you hover a coin in the list or a Portfolio asset. Size from 25% to 150%, Default is 100%.</div>
               </div>
               <div class="sub-pane" data-pane="lhc" hidden>
                 <div class="grp"><span class="lbl">Show Description</span><button class="toggle" type="button" id="desc-toggle" role="switch" aria-checked="true" aria-label="Show descriptions in locked charts"><span></span></button></div>
@@ -4008,19 +4008,8 @@
   sqBox.addEventListener("pointerup", sqUp); sqBox.addEventListener("pointercancel", sqUp);
   sqBox.addEventListener("dblclick", function (e) { if (e.target.closest(".sqm-front")) { sqSplit = null; sqDraw(); } });
   window.addEventListener("resize", function () { if (sqVisible) sqDraw(); });
-  function sqShowPop(c) { /* the same hover chart as in the list */
-    var k = chartCache[c.symbol + "-" + sourceKey];
-    if (k && Date.now() - k.at < CHART_TTL) popEl.innerHTML = k.d ? chart(c, k.d, k.d.tag, false, 'popup') : placeholder(c, "No trading-day chart for this coin", false);
-    else { popEl.innerHTML = placeholder(c, "Loading chart…", false); fetchChart(c).then(function () { if (sqHover === c.symbol) sqShowPop(c); }, function () {}); }
-  }
   function sqHidePop() { if (sqHover !== null) { sqHover = null; popEl.classList.remove("on"); } }
-  sqBox.addEventListener("mousemove", function (e) {
-    if (devFrozen || sqDrag || !hcOn) return;
-    var el = e.target.closest(".sqm-sq"), c = el && coins[+el.dataset.i]; if (!c) { sqHidePop(); return; }
-    if (sqHover !== c.symbol) { sqHover = c.symbol; current = -1; sqShowPop(c); }
-    place(e); popEl.classList.add("on");
-  });
-  sqBox.addEventListener("mouseleave", function () { if (!devFrozen) sqHidePop(); });
+  /* no hover chart over the squares: a click goes to the coin in the list, where its chart is */
   var sqFxSel = document.getElementById("sq-fx"); if (sqFxSel) { sqFxSel.value = sqFx;
     sqFxSel.addEventListener("change", function () { sqFx = sqFxSel.value; try { localStorage.setItem(SQ_FX_KEY, sqFx); } catch (e) {} sqDraw(); }); }
   sqBtn.addEventListener("click", function () { sqVisible = !sqVisible; sqBtn.classList.toggle("active", sqVisible); renderSquares(); });
