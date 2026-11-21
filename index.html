@@ -1727,6 +1727,9 @@
         var total = c.total_supply;
         var maxSup = c.max_supply;
 
+        var mcap = c.market_cap > 0 ? c.market_cap : (circ > 0 && c.current_price > 0 ? circ * c.current_price : null); /* from the list, or circulating supply times price */
+        html += '<div class="tokenomics-row"><span>Market Cap</span><span>' + (mcap ? compact(mcap) : '-') + '</span></div>';
+
         if (maxSup) {
           html += '<div class="tokenomics-row"><span>Max Supply</span><span>' + compactNum(maxSup) + '</span></div>';
         } else {
