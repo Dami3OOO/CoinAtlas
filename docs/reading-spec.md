@@ -441,4 +441,9 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   ADA: Koios, Belohnungen einer abgeschlossenen Epoche ÷ aktiver Stake × 73; BNB: APY der aktiven Validatoren nach Stake gewichtet
   (api.bnbchain.org); HYPE: "predictedApr" der Woche nach Stake gewichtet (api.hyperliquid.xyz). Ohne freie verlässliche Quelle:
   AVAX (Glacier-Zahlen widersprüchlich), DOT (Subscan braucht Schlüssel), POL, OSMO (liefert 0) → "Rate on site".
+- Zweite Runde (21.11.2026): AKT (cosmos.directory), APT (rewards_rate pro Epoche × Epochen pro Jahr), NEAR (max. Inflation ohne
+  Protokoll-Anteil × Gesamtmenge ÷ gestakte Menge), TRX (TronScan annualizedRate der Super Representatives nach Stimmen gewichtet),
+  EGLD (MultiversX /economics apr), HBAR (Hedera Mirror Node reward_rate_start × 365, nach rewarded stake gewichtet).
+  Nicht möglich: SUI (öffentliches JSON-RPC abgeschaltet), TON (tonapi-Werte unrealistisch), XTZ (keine fertige Rate),
+  KAVA, SEI, DYDX (cosmos.directory liefert 0 oder nichts), DOT über den Parity-Sidecar (Fehler).
 - Workflow "Record staking" (record-staking.yml) holt die Raten auch von Hand, ohne Snapshot.
