@@ -1024,8 +1024,8 @@
               <div class="section-title">Experimental</div>
               <div class="grp"><span class="lbl">Dev Mode</span><button class="toggle" type="button" id="dev-toggle" role="switch" aria-checked="false" aria-label="Enable Dev Mode"><span></span></button></div>
               <div class="grp"><span class="lbl">Party Mode</span><button class="toggle" type="button" id="party-toggle" role="switch" aria-checked="false" aria-label="Enable Party Mode"><span></span></button></div>
-              <div class="grp"><span class="lbl">Golden Squares</span><button class="toggle" type="button" id="sq-gold-toggle" role="switch" aria-checked="false" aria-label="Golden glowing squares for coins up 100% or more in the Sentiment Squares"><span></span></button></div>
-              <div class="set-note">Sentiment Squares: coins up 100% or more glow in flowing gold.</div>
+              <div class="grp"><span class="lbl">Golden Squares</span><button class="toggle" type="button" id="sq-gold-toggle" role="switch" aria-checked="false" aria-label="Golden glowing squares for coins up 50% or more in the Sentiment Squares"><span></span></button></div>
+              <div class="set-note">Sentiment Squares: coins up 50% or more glow in flowing gold.</div>
             </div>
             <div id="dev-hotkeys" style="display:none; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line);">
                <div class="section-title" style="border:none; margin-bottom: 8px;">Dev Mode Hotkeys</div>
@@ -3628,7 +3628,7 @@
   var SQ_TIER = { today: [1, 3, 6, 10], "1h": [0.5, 1, 2, 4], "4h": [1, 2, 4, 7], "7d": [3, 8, 15, 25], "30d": [5, 15, 30, 50], "1y": [10, 40, 100, 200] };
   var SQ_UP = ["#1d4a31", "#1f6a3e", "#22864b", "#29a25a", "#31c26a"], SQ_DN = ["#4b1f22", "#6c2228", "#8e272f", "#b02d36", "#d2343e"];
   var SQ_GOLD_KEY = "coinatlas-sq-gold", sqGold = false; try { sqGold = localStorage.getItem(SQ_GOLD_KEY) === "1"; } catch (e) {}
-  var sqShown = null, sqSwitchAt = 0, sqWait = null, sqPap = null, sqPapAt = 0, sqPapBusy = false, sqView = null, sqLastPc = {}, sqSplit = null, sqDrag = null, sqHover = null;
+  var sqSwitchAt = 0, sqPap = null, sqPapAt = 0, sqPapBusy = false, sqView = null, sqLastPc = {}, sqSplit = null, sqDrag = null, sqHover = null;
   function sqLoadPap() { /* 1H to 1Y for every coin in one request, refreshed once a minute while the squares are open */
     if (sqPapBusy || (sqPap && Date.now() - sqPapAt < 60000)) return;
     sqPapBusy = true;
@@ -3649,12 +3649,12 @@
     })(todo.shift());
   }
   function sqPc(c) {
-    if (sqShown === "today") return dayOpenCache[c.symbol] ? changeOf(c) : null;
-    if (sqShown === "4h") { var h = sq4h[String(c.symbol).toUpperCase()]; return h && h.pc != null && isFinite(h.pc) ? h.pc : null; }
-    var p = sqPap && sqPap[String(c.symbol).toUpperCase()], v = p && p.q["percent_change_" + sqShown];
+    if (sqS.tf === "today") return dayOpenCache[c.symbol] ? changeOf(c) : null;
+    if (sqS.tf === "4h") { var h = sq4h[String(c.symbol).toUpperCase()]; return h && h.pc != null && isFinite(h.pc) ? h.pc : null; }
+    var p = sqPap && sqPap[String(c.symbol).toUpperCase()], v = p && p.q["percent_change_" + sqS.tf];
     return v == null || !isFinite(v) ? null : +v;
   }
-  function sqColor(pc) { var t = SQ_TIER[sqShown], a = Math.abs(pc), k = a < t[0] ? 0 : a < t[1] ? 1 : a < t[2] ? 2 : a < t[3] ? 3 : 4; return pc > 0 ? SQ_UP[k] : pc < 0 ? SQ_DN[k] : "#3a3a3a"; }
+  function sqColor(pc, tf) { var t = SQ_TIER[tf || sqS.tf], a = Math.abs(pc), k = a < t[0] ? 0 : a < t[1] ? 1 : a < t[2] ? 2 : a < t[3] ? 3 : 4; return pc > 0 ? SQ_UP[k] : pc < 0 ? SQ_DN[k] : "#3a3a3a"; }
   function sqFmt(pc) { var a = Math.abs(pc); return (pc > 0 ? "+" : pc < 0 ? "−" : "") + (a >= 100 ? Math.round(a) : a.toFixed(a >= 10 ? 1 : 2)) + "%"; }
   /* squarified treemap: rows of squares as close to square as possible, the largest first */
   function sqTree(list, x, y, w, h, out) {
@@ -3668,20 +3668,27 @@
       else { var rh2 = sum / w, xx = x; row.forEach(function (r) { var rw = r.a / rh2; out.push({ n: r.n, x: xx, y: y, w: rw, h: rh2 }); xx += rw; }); y += rh2; h -= rh2; }
     }
   }
+  /* every square shows its own value (sqVal: % and the timeframe it belongs to). New coins and the jump to a new timeframe come a handful at a time */
+  var sqVal = {}, sqTickT = null;
   function sqItems() {
-    var items = [], stable = 0, nod = 0;
+    var items = [], pend = [], stable = 0, nod = 0, tf = sqS.tf, now = Date.now(), loading = false;
     coins.slice(0, sqS.top).forEach(function (c, i) {
-      if (STABLECOINS.indexOf(String(c.symbol).toUpperCase()) > -1) { stable++; return; }
-      var pc = sqPc(c); if (pc === null) { nod++; return; }
-      items.push({ c: c, i: i, sym: String(c.symbol).toUpperCase(), pc: pc });
+      var sym = String(c.symbol).toUpperCase(); if (STABLECOINS.indexOf(sym) > -1) { stable++; return; }
+      var pc = sqPc(c), v = sqVal[sym];
+      if (v && v.tf === tf) { if (pc !== null) v.pc = pc; } /* live update on the current timeframe */
+      else if (pc !== null) pend.push({ c: c, i: i, sym: sym, pc: pc }); /* waits for its turn to come in or to jump */
+      else if (v && now - sqSwitchAt > 10000) { delete sqVal[sym]; v = null; } /* no value in the new timeframe */
+      if (v && v.tf !== tf) loading = true;
+      if (!v) { if (pc === null) nod++; return; }
+      items.push({ c: c, i: i, sym: sym, pc: v.pc, tf: v.tf });
     });
     var cap = function (x) { return Math.pow(Math.min(Math.abs(x.pc), 100), 0.8); }; /* from 100% on a square stops growing, so one big mover does not shrink all the others */
     var mean = items.reduce(function (s, x) { return s + cap(x); }, 0) / Math.max(1, items.length);
     items.forEach(function (x) { x.w = cap(x) + 0.15 * mean + 1e-6; }); /* the small base keeps quiet coins visible */
-    return { items: items, stable: stable, nod: nod };
+    return { items: items, pend: pend, stable: stable, nod: nod, loading: loading || pend.length > 0 };
   }
   function sqHeadHtml(d) { /* just the count of green and red coins, like the Simple Market Sentiment Counter */
-    var all = d.all || d.items, up = all.filter(function (x) { return x.pc > 0; }).length, dn = all.filter(function (x) { return x.pc < 0; }).length;
+    var all = d.items, up = all.filter(function (x) { return x.pc > 0; }).length, dn = all.filter(function (x) { return x.pc < 0; }).length;
     return '<b style="color:var(--up)">' + up + '</b><span>/</span><b style="color:var(--down)">' + dn + '</b><span>/</span><b style="color:var(--stable-blue)" title="Stablecoins, left out of the squares">' + d.stable + '</b>';
   }
   function sqTfLabel() { return SQ_TF.filter(function (t) { return t[0] === sqS.tf; })[0][1]; }
@@ -3707,7 +3714,7 @@
     var v = sqMakeView();
     var cw = v.map.parentNode.querySelector(".sqm-ctrl-w"), sig = sqS.tf + "|" + sqS.top + "|" + (sqSplit != null); if (v.ctrlSig !== sig) { v.ctrlSig = sig; cw.innerHTML = sqCtrlHtml(); } /* not rebuilt while typing in Top */
     var cn = v.map.parentNode.querySelector(".sqm-cnt"); if (cn) cn.innerHTML = sqHeadHtml(d);
-    v.map.parentNode.querySelector(".sqm-foot").textContent = (sqShown !== sqS.tf ? "Loading " + sqTfLabel() + "… · " : d.nod ? d.nod + " coins without data for " + sqTfLabel() + " · " : "") + d.stable + " stablecoins left out · size = how far a coin moved · click a square to find the coin in the list";
+    v.map.parentNode.querySelector(".sqm-foot").textContent = (d.loading ? "Loading " + sqTfLabel() + "… · " : d.nod ? d.nod + " coins without data for " + sqTfLabel() + " · " : "") + d.stable + " stablecoins left out · size = how far a coin moved · click a square to find the coin in the list";
     var W = v.map.clientWidth, H = v.map.clientHeight; if (!(W > 0 && H > 0)) return;
     var up = d.items.filter(function (x) { return x.pc >= 0; }).sort(function (a, b) { return b.w - a.w; }), dn = d.items.filter(function (x) { return x.pc < 0; }).sort(function (a, b) { return b.w - a.w; });
     var su = up.reduce(function (s, x) { return s + x.w; }, 0), sd = dn.reduce(function (s, x) { return s + x.w; }, 0), share = su + sd > 0 ? su / (su + sd) : 1;
@@ -3716,9 +3723,9 @@
     v.gin.style.width = Gw + "px"; v.rin.style.width = Rw + "px";
     var gOut = [], rOut = []; sqTree(up, 0, 0, Gw, H, gOut); sqTree(dn, 0, 0, Rw, H, rOut);
     rOut.forEach(function (r) { r.x = Rw - r.x - r.w; }); /* red mirrored: the strongest at the right edge */
-    var seen = {}, tier = SQ_TIER[sqShown][0];
+    var seen = {};
     var put = function (r, host) {
-      var x = r.n, el = v.els[x.sym], g = 1.5, key = x.sym + "|" + sqShown; seen[x.sym] = 1;
+      var x = r.n, el = v.els[x.sym], g = 1.5, key = x.sym + "|" + x.tf, tier = SQ_TIER[x.tf][0]; seen[x.sym] = 1;
       if (!el) { el = v.els[x.sym] = document.createElement("div"); el.className = "sqm-sq nt"; }
       var fly = host === v.gin ? v.gfly : v.rfly; /* a square changing sides flies in the flight layer of its new window: free in its path, but only visible on its side of the line */
       if (el.parentNode && el.parentNode !== host && !(el.parentNode === fly && el._host === host)) {
@@ -3729,7 +3736,7 @@
       if (el.parentNode === fly) { /* in flight: aim at its place in map coordinates, then settle into its window */
         el._host = host; el._r = r; el.style.left = ((host === v.gin ? 0 : W - Rw) + r.x + g / 2) + "px"; el.style.top = (r.y + g / 2) + "px";
         if (!el._land) el._land = setTimeout(function () { el._land = null; if (!el.parentNode || !el.parentNode.classList.contains("sqm-flyl") || !el._host) return; el.classList.add("nt"); el._host.appendChild(el); el.style.left = (el._r.x + g / 2) + "px"; el.style.top = (el._r.y + g / 2) + "px"; void el.offsetWidth; el.classList.remove("nt"); }, 1250); /* once per flight */
-      } else { el.style.left = (r.x + g / 2) + "px"; el.style.top = (r.y + g / 2) + "px"; } el.style.width = Math.max(0, r.w - g) + "px"; el.style.height = Math.max(0, r.h - g) + "px"; el.style.background = sqColor(x.pc); el.classList.toggle("gold", sqGold && x.pc >= 100);
+      } else { el.style.left = (r.x + g / 2) + "px"; el.style.top = (r.y + g / 2) + "px"; } el.style.width = Math.max(0, r.w - g) + "px"; el.style.height = Math.max(0, r.h - g) + "px"; el.style.background = sqColor(x.pc, x.tf); el.classList.toggle("gold", sqGold && x.pc >= 50); el.dataset.tf = x.tf;
       /* logo and % on every square that fits both, the font shrinking with the square; on the tiniest ones only the logo, so you still see which coin it is */
       var m = Math.min(r.w, r.h), txt = sqFmt(x.pc), tw = function (f) { return chMeasure(txt, f) * 1.08; }, iw = r.w - 4, ih = r.h - 4, ls = 0, fs = Math.max(6, Math.min(16, m / 5.2));
       if (tw(fs) > iw) fs = Math.max(5, fs * iw / tw(fs));
@@ -3742,41 +3749,26 @@
       var last = sqLastPc[key]; if (!v.first && last !== undefined && Math.abs(x.pc - last) >= tier * 0.25) { el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse"); } /* a sudden move flashes */
     };
     gOut.forEach(function (r) { put(r, v.gin); }); rOut.forEach(function (r) { put(r, v.rin); });
-    gOut.concat(rOut).forEach(function (r) { sqLastPc[r.n.sym + "|" + sqShown] = r.n.pc; });
-    Object.keys(v.els).forEach(function (s) { if (!seen[s]) { v.els[s].remove(); delete v.els[s]; delete sqRev[s]; } });
+    gOut.concat(rOut).forEach(function (r) { sqLastPc[r.n.sym + "|" + r.n.tf] = r.n.pc; });
+    Object.keys(v.els).forEach(function (s) { if (!seen[s]) { v.els[s].remove(); delete v.els[s]; } });
     v.front.hidden = !(up.length && dn.length); sqPlaceFront(v); v.first = false;
     requestAnimationFrame(function () { Object.keys(v.els).forEach(function (s) { v.els[s].classList.remove("nt"); }); });
-  }
-  function sqReady(tf) { /* the new timeframe is shown once 90% of the coins have their value */
-    if (tf !== "today" && tf !== "4h") return !!sqPap;
-    var l = coins.slice(0, sqS.top).filter(function (c) { return STABLECOINS.indexOf(String(c.symbol).toUpperCase()) < 0; });
-    var have = l.filter(function (c) { if (tf === "today") return dayOpenCache[c.symbol] !== undefined; var x = sq4h[String(c.symbol).toUpperCase()]; return x && !x.busy; }).length;
-    return have >= l.length * 0.9;
   }
   function sqDraw() {
     if (!sqVisible) return;
     if (sqS.tf === "4h") sqLoad4h(); else if (sqS.tf !== "today") sqLoadPap();
     else { coins.slice(0, sqS.top).forEach(function (c) { if (dayOpenCache[c.symbol] === undefined && !c.__pendingMidnight) { c.__pendingMidnight = true; midnightQueue.push(c); } }); processMidnightQueue(); }
-    clearTimeout(sqWait);
-    if (!sqShown || sqShown === sqS.tf || sqReady(sqS.tf) || Date.now() - sqSwitchAt > 10000) sqShown = sqS.tf; /* until then the old timeframe stays on screen */
-    else sqWait = setTimeout(sqDraw, 400);
-    sqPaint(sqReveal(sqItems()));
+    var d = sqItems(); if (d.pend.length && !sqTickT) sqTickT = setTimeout(sqTick, 220);
+    sqPaint(d);
   }
-  var sqRev = {}, sqRevT = null;
-  function sqReveal(d) { /* only squares already revealed are drawn; the rest follow a handful at a time */
-    d.all = d.items; var pend = d.items.filter(function (x) { return !sqRev[x.sym]; });
-    if (pend.length && !sqRevT) sqRevT = setTimeout(sqRevealTick, 220);
-    d.items = d.items.filter(function (x) { return sqRev[x.sym]; }); return d;
-  }
-  function sqRevealTick() {
-    sqRevT = null; if (!sqVisible) return;
-    var d = sqItems(), pend = d.items.filter(function (x) { return !sqRev[x.sym]; }).sort(function (a, b) { return Math.abs(b.pc) - Math.abs(a.pc); });
-    if (!pend.length) return;
-    pend.slice(0, Math.max(3, Math.ceil(pend.length / 8))).forEach(function (x) { sqRev[x.sym] = 1; });
-    sqPaint(sqReveal(d));
+  function sqTick() { /* a handful of squares come in or jump to the new timeframe, the strongest movers first */
+    sqTickT = null; if (!sqVisible) return;
+    var d = sqItems(); if (!d.pend.length) return;
+    d.pend.sort(function (a, b) { return Math.abs(b.pc) - Math.abs(a.pc); }).slice(0, Math.max(3, Math.ceil(d.pend.length / 8))).forEach(function (x) { sqVal[x.sym] = { pc: x.pc, tf: sqS.tf }; });
+    sqDraw();
   }
   function renderSquares() {
-    if (!sqVisible) { sqBox.hidden = true; sqBox.innerHTML = ""; sqView = null; sqRev = {}; updatePinnedColVisibility(); return; }
+    if (!sqVisible) { sqBox.hidden = true; sqBox.innerHTML = ""; sqView = null; sqVal = {}; updatePinnedColVisibility(); return; }
     sqBox.hidden = false; updatePinnedColVisibility(); sqDraw();
   }
   function sqFind(c) { /* a click on a square: scroll the list to the coin's row and light it up */
@@ -3861,7 +3853,7 @@
       desc: "To Allow Users to save their Settings, Customized Lists, Portfolios and use future features, Personal Accounts have to be introduced. Because i dont believe in Google or Phone Number Accounts, and prioritize Privacy, we're going to be taking a different Approach: an Account is unlocked like a Giftcard, by supporting CoinAtlas with Bitcoin." },
     { title: "Forums", notes: ["Not started. Depends on Accounts."], desc: "Allows Users to communicate via Forums we Provide. Certain Users might also be allowed to create their Own Forums with their own features. This is the main Usecase for Accounts." },
     { title: "Price Alerts & Watchlists", notes: ["Not started. The daily Snapshots could later power Alerts for Coins entering or leaving the Top 200."], desc: "Allows Users to Set Alerts that are going to immediately announce when a Token Reaches a Certain, customizable price threshold. Watchlists are going to be integrated alongside that. users will be able to create and share their own Lists." },
-    { title: "CoinAtlas Sentiment Squares", st: "done", notes: ["Done. Reworked: every coin a square with its logo, sized by how far it moved, colour stronger the bigger the move. Green squares left, red right, the strongest at the outer edges; the glowing Sentiment Front between them shows the share of coins up and can be dragged like a window to reveal the hidden side, without moving a single square.", "Squares glide to their new place on every update, flash on a sudden move and fly into the new picture when the timeframe changes. A click locks the coin's chart in the Landing Area. Today, 1H, 24H, 7D, 30D, 1Y (Coinpaprika), Top 50 / 100 / 200, stablecoins left out.", "On a new timeframe the old picture stays until the new data is in, then every square glides to its new place; a coin that changes sides glides across the front while its colour fades over. Later ideas: a replay of the last 24 hours, and a size option by Market Cap."], desc: "200 Assets, 200 Squares. Every Square is one Asset — green means it's up, red means it's down. No numbers, no noise. One glance and you know exactly where the Market's Head is at." },
+    { title: "CoinAtlas Sentiment Squares", st: "done", notes: ["Done. Reworked: every coin a square with its logo, sized by how far it moved, colour stronger the bigger the move. Green squares left, red right, the strongest at the outer edges; the glowing Sentiment Front between them shows the share of coins up and can be dragged like a window to reveal the hidden side, without moving a single square.", "Squares glide to their new place on every update, flash on a sudden move and fly into the new picture when the timeframe changes. A click locks the coin's chart in the Landing Area. Today, 1H, 24H, 7D, 30D, 1Y (Coinpaprika), Top 50 / 100 / 200, stablecoins left out.", "On a new timeframe and on first load the squares come in a handful at a time, the strongest first, gliding to their place; a coin that changes sides flies across the front while its colour fades over. Golden Squares (Experimental setting) for coins up 50% or more. Later ideas: a replay of the last 24 hours, and a size option by Market Cap."], desc: "200 Assets, 200 Squares. Every Square is one Asset — green means it's up, red means it's down. No numbers, no noise. One glance and you know exactly where the Market's Head is at." },
     { title: "Google Trends", notes: ["A first attempt was removed again: the search data could not be fetched reliably.", "Next idea: Google offers an official embed for every Trends chart. It would show the chart on the site without an API, but its numbers could not feed the Formula."], desc: "The Goal is To Incorporate Google Trends Into Fear and Greed and into the BTC ETH Ratio tab. Our Workflow is as followed: We determine Extreme Situations, because we go by one rule of thumb: The More Extreme a Situation Is, the more Temporary its going to be. And Google Trends is yet another Confirmation. If we see Extreme Explosions of Certain Searches every time we create the High of the Year, than thats another indicator for us to use. And it goes for the Opposite Case as well. If we see Certain Trends Explode once we create the Low of the Year [which means that afterwards we only saw green], so its bullish, then thats also a Indicator.\nStarts on BTC, Maps out to ETH and eventually the entire Top 200." },
     { title: "Charting History", notes: ["Planned. TOTAL200, BTC.D and USDT.D are house-made from the daily snapshots, so their charts start on 12 Nov 2026. Their history before that will be fetched at some point."], desc: "Complete the history of the house-made charts on the Charts screen." },
     { title: "Fear and Greed Index Rework", st: "wip", notes: ["Done: Average Monthly and Average Yearly are one section now, Past Years. Every year shows the average of all its days and opens into its twelve months; All Years on top averages each month over every year. Several years can be open at once to compare.", "Findings from the history since February 2018, as the base for the rest of the rework:", "Periods: Fear lasts a median of 21 days, Greed 31, Neutral only 8. Neutral is mostly a passage, not a state.", "After Greed: 9 of 13 Neutral periods that came out of Greed went on into Fear, the first Fear day a median of 8 days later and within 28 days in three of four cases. The Reading already says \"Prepare your USDC for the next period of Fear\" there.", "After Fear: 17 of 29 Neutral periods that came out of Fear went back into Fear.", "Extremes come in series: after Extreme Fear the next extreme was Extreme Fear again 30 times and Extreme Greed 4 times; after Extreme Greed, Extreme Greed again 9 times and Extreme Fear 4 times.", "Bear Years (2018, 2022, 2026): 72 to 93% of the days in Fear, almost never Extreme Greed. June was the lowest month every time (average 18), in line with the Bear Year Extreme Window of June and July.", "Bull Years (2021, 2025): January in Greed (81 and 72), December in Fear (29 and 22).", "Bridge Years: the second Bridge Year ended in Extreme Greed both times (November and December 2020: 86 and 92, 2024: 80 and 76). The first Bridge Year is mixed: 2019 ended in Fear, 2023 in Greed.", "Every year type rests on only two to four years, so these are patterns to watch, not rules."], desc: "Rework the Fear and Greed Index around how its periods change: show the current period with its length, what usually follows it, and how the year type has behaved month by month, so it can point to the next period of Fear or Greed before it starts." },

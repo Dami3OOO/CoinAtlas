@@ -236,10 +236,10 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Animation: Kacheln, Front und Fenster gleiten bei jedem Update (alle 3 s) und Zeitraumwechsel an ihren Platz (1,1 s, weich auslaufend);
   Sprung >= 1/4 der ersten Farbstufe: kurzes Aufleuchten (1,6 s). Neuer Zeitraum oder neues Top: die Front geht zurück auf Auto,
   also genau ans Ende der dominanten Seite, die damit immer ganz sichtbar ist.
-- Zeitraumwechsel: das alte Bild bleibt stehen ("Loading 7D…"), bis 90 % der Coins ihren neuen Wert haben (Coinpaprika: sobald geladen; höchstens 10 s),
-  dann gleiten alle Kacheln ins neue Bild. Wechselt ein Coin die Seite, gleitet er von seiner alten Position über die Front, die Farbe blendet über (1,4 s).
+- Zeitraumwechsel: jede Kachel zeigt ihren eigenen Wert; sobald der neue da ist, springen die Kacheln gruppenweise (alle 0,22 s eine Handvoll,
+  die stärksten zuerst) in den neuen Zeitraum, ohne auf den Rest zu warten. Wechselt ein Coin die Seite, fliegt er über die Front, die Farbe blendet über (1,4 s).
 - Neue Kacheln erscheinen nicht auf einmal: alle 0,22 s eine Handvoll (mindestens 3, sonst 1/8 der wartenden, die stärksten zuerst), sie wachsen sanft auf.
-- Größe gedeckelt bei 100 %: darüber wird eine Kachel nicht größer. Experimental-Schalter "Golden Squares" (Standard aus): ab +100 % fließendes, pulsierendes Gold.
+- Größe gedeckelt bei 100 %: darüber wird eine Kachel nicht größer. Experimental-Schalter "Golden Squares" (Standard aus): ab +50 % fließendes, pulsierendes Gold.
 - Seitenwechsel: die Kachel fliegt auf der Flug-Ebene ihres neuen Fensters von ihrem alten zum neuen Platz und landet dann darin.
   Die Flug-Ebene läuft exakt mit der Front mit: fliegende Kacheln sind nur auf ihrer Seite der Linie sichtbar, die Linie deckt sie auf oder zu.
 - Klick auf eine Kachel: die Liste scrollt zur Zeile des Coins und hebt sie hellgrau hervor wie die Suche. Locked Hovercharts öffnen von dort wie immer auf Today (1D).
