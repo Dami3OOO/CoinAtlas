@@ -371,7 +371,7 @@
   .pf-share-m button:hover { background: var(--hover); } .pf-share-m b { font-size: 13px; } .pf-share-m span { font-size: 11px; color: var(--muted); }
   .pf-sh { position: fixed; inset: 0; z-index: 9000; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.6); } .pf-sh[hidden] { display: none; }
   .pf-sh-box { width: min(760px, 100%); max-height: calc(100vh - 32px); display: flex; flex-direction: column; background: var(--pop); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,.5); padding: 14px 16px; }
-  .pf-sh-head { position: relative; display: flex; align-items: center; gap: 14px; padding-right: 30px; } .pf-sh-head b { font-size: 15px; } .pf-sh-tabs { margin: 0; } .pf-sh-head .chart-close-btn { margin-left: auto; } .pf-share-w[hidden] { display: none; }
+  .pf-sh-head { position: relative; display: flex; align-items: center; gap: 14px; padding-right: 30px; } .pf-sh-head b { font-size: 15px; } .pf-sh-mode { font-size: 12px; font-weight: 600; color: var(--muted); padding: 3px 8px; border: 1px solid var(--line); border-radius: 6px; } .pf-sh-head .chart-close-btn { margin-left: auto; } .pf-share-w[hidden] { display: none; }
   .pf-sh-note { font-size: 12px; color: var(--muted); margin: 8px 0 10px; }
   .pf-sh-img { flex: 1; min-height: 160px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); } .pf-sh-img img { display: block; width: 100%; height: auto; }
   .pf-sh-wait { padding: 60px 0; text-align: center; color: var(--muted); font-size: 13px; }
@@ -1742,11 +1742,12 @@
 
     var change = (arrV[arrV.length - 1] - arrV[0]) / arrV[0] * 100;
     var changeAbs = arrV[arrV.length - 1] - arrV[0];
+    if (d.pcOver) { change = d.pcOver.pct; changeAbs = d.pcOver.abs; } /* the Portfolio's All Time: the profit you have now, from the Average Costs */
     var isStable = STABLECOINS.indexOf(c.symbol.toUpperCase()) > -1;
     var cls = isStable ? "stable" : (change >= 0 ? "up" : "down");
     var pctColor = isStable ? "var(--stable-blue)" : getTrendColor(change);
     var end = pts[pts.length - 1].split(",");
-    var right = isStable ? '<span class="stable">Stable</span>' : ('<span style="color: ' + pctColor + '">' + pct(change) + ' [' + priceSigned(changeAbs) + ']</span>');
+    var right = isStable ? '<span class="stable">Stable</span>' : d.pcNone ? '<span class="m">' + d.pcNone + '</span>' : ('<span style="color: ' + pctColor + '">' + pct(change) + ' [' + priceSigned(changeAbs) + ']</span>');
     right += ' <span class="m">· ' + (mode === "ALL" ? (d.label || "All Time") : "Today") + (tag ? ' · ' + tag : '') + '</span>';
 
     if (refKey) chartTimesRegistry[refKey] = times;
@@ -2383,13 +2384,20 @@
     }
   });
 
+  /* the hover chart picks its side at once: it reserves the height of a full chart even while "Loading chart…" is shown, so it never starts below and then jumps up */
+  var popFullH = 330, popLastE = null;
   function place(e) {
-    var w = popEl.offsetWidth || 540, h = popEl.offsetHeight || 260, pad = 16;
+    popLastE = { clientX: e.clientX, clientY: e.clientY };
+    var full = popEl.querySelector("svg"), oh = popEl.offsetHeight;
+    if (full && oh > 120) popFullH = oh;
+    var w = popEl.offsetWidth || 540, h = Math.max(oh || 0, popFullH), pad = 16;
     var x = e.clientX + pad, y = e.clientY + pad;
     if (x + w > window.innerWidth - 8) x = e.clientX - w - pad;
     if (y + h > window.innerHeight - 8) y = e.clientY - h - pad;
     popEl.style.left = Math.max(8, x) + "px"; popEl.style.top = Math.max(8, y) + "px";
   }
+
+  if (window.MutationObserver) new MutationObserver(function () { if (popLastE && popEl.classList.contains("on")) place(popLastE); }).observe(popEl, { childList: true, subtree: true });
 
   rowsEl.addEventListener("mousemove", function (e) {
     if (devFrozen) return;
@@ -3902,10 +3910,11 @@
       "Works: \"Don't know your Average Price? Calculate it\": enter your buys as Amount at a Price, or Amount on a Day (the closing price of that day is used), and the weighted Average is filled in.",
       "Works: Swaps from Stablecoins (USDC, USDT, DAI and similar) into a Token are read with Blockscout on Ethereum, Base, Arbitrum, Optimism and Polygon and set the Average Price at the Price the Swap paid. Each Swap can be left out.",
       "Never automatic: Transfers. A Coin sent in from another Wallet or an Exchange may have been bought at 10k and moved at 100k, so its real Price cannot be known.",
-      "Works: Allocation, a pie chart of how much of the Portfolio's value each Asset is (below the Assets). Every Stablecoin gets its own slice in its own shade of blue. The Total Balance chart opens by itself the first time a Portfolio is shown.",
+      "Works: Allocation, a pie chart of how much of the Portfolio's value each Asset is (the button under the top bar, the pie opens below the Assets). All Stablecoins together are one slice, Stablecoins, in the Stablecoin blue. Stablecoins need no Average Price: it is set by itself. The Total Balance chart opens by itself the first time a Portfolio is shown.",
       "Works: several Wallets. Save addresses, name them (pen), hide them from the Portfolio (eye) or remove them (X). Only shown Wallets count and are shared.",
       "Works: Stablecoins in the top bar, next to Total Balance, Average Cost and Profit / Loss.",
-      "Works: Share, top right. Uncensored or Censored (every amount hidden) as a PNG image of the whole Portfolio Manager with the All-Time chart and a CoinAtlas watermark. Download or copy. Addresses never appear.",
+      "Works: Portfolio chart with the usual Time Picker: Today, 7D, 30D, 365D, All Time. All Time shows the Profit you have now (from the Average Costs), not the change since the first price of the graph.",
+      "Works: Share, top right. Uncensored, Light Censor (every amount hidden) or Full Censor (amounts and Average Prices hidden) as a PNG image of the whole Portfolio Manager with the All-Time chart and a CoinAtlas watermark. Download or copy. Addresses never appear.",
       "Planned: an interactive Share Link, a read-only page of the Portfolio with hover charts. Without the Backend the Portfolio sits encoded in the link itself; with it, a short link. On X / Twitter the post shows the image, the click opens the interactive page.",
       "Planned: more Networks. Now: Ethereum, Base, Arbitrum, Optimism, Polygon, BNB Chain, Avalanche and Solana. Next without the Backend: more EVM chains via public RPCs, plus Bitcoin and Tron addresses. Sites like CoinGecko or CoinMarketCap cover 25+ networks through paid indexer APIs (e.g. Zerion, Moralis, Covalent); that needs the Backend for the API key.",
       "Works: Portfolio Tint (Settings, Customization): green or red by Profit, and Extra Tints (Gold, Silver, Diamond, Emerald, Ruby, Sapphire) from a chosen Profit on.",
@@ -5216,8 +5225,12 @@
   }
 
   function pfAmt(n) { if (n >= 1) return n.toLocaleString("en-US", { maximumFractionDigits: n >= 1000 ? 2 : 4 }); return String(parseFloat(n.toPrecision(4))); }
-  function pfAvgOf(sym) { var m = pfAvg[pfKey()]; return m && m[sym] > 0 ? m[sym] : 0; }
-  function pfAvgFor(sym) { if (!portfolioVisible || pfState.status !== "ok") return null; var a = pfAvgOf(sym); return a > 0 ? a : null; }
+  function pfStable(sym) { return STABLECOINS.indexOf(String(sym).toUpperCase()) > -1; }
+  function pfAvgOf(sym) { /* a stablecoin needs no Average Price: it is worth what it cost, so its cost is its price */
+    if (pfStable(sym)) { var sc = pfCoin(String(sym).toUpperCase()); return sc && sc.current_price > 0 ? sc.current_price : 1; }
+    var m = pfAvg[pfKey()]; return m && m[sym] > 0 ? m[sym] : 0;
+  }
+  function pfAvgFor(sym) { if (!portfolioVisible || pfState.status !== "ok" || pfStable(sym)) return null; var a = pfAvgOf(sym); return a > 0 ? a : null; }
   function pfHolding(sym) { return pfState.holdings.filter(function (h) { return h.sym === sym; })[0]; }
   function pfRows() {
     var rows = [];
@@ -5240,7 +5253,7 @@
       '<div><div class="lbl">Profit / Loss</div><div class="big ' + cl + '">' + (ok ? pct(g / cost * 100) : '–') + '</div><div class="sub ' + cl + '">' + (ok ? priceSigned(g) : '') + '</div></div>';
   }
   function pfPlHtml(r) {
-    var a = pfAvgOf(r.h.sym); if (!(a > 0)) return "";
+    var a = pfAvgOf(r.h.sym); if (!(a > 0) || pfStable(r.h.sym)) return "";
     var ch = (r.c.current_price - a) / a * 100, ga = (r.c.current_price - a) * r.amt;
     return '<span class="' + (ch >= 0 ? "up" : "down") + '">' + pct(ch) + ' [' + priceSigned(ga) + ']</span>';
   }
@@ -5266,12 +5279,13 @@
     if (!rows.length) { body.innerHTML = bar + '<div class="pf-msg">' + (pfEdit ? 'Click a coin in the list on the left to add it to your portfolio.' : (s.manual ? 'Your portfolio is empty. Press Edit, then click coins in the list on the left to add them.' : 'No supported assets found in this wallet.')) + '</div>'; return; }
     var foot = '<div class="pf-foot">' + (s.msg ? esc(s.msg) + '<br>' : '') + (pfEdit ? 'Edit mode: click coins in the list on the left to add them. Type an amount and an Average Cost for each asset, then press Done.' : 'Hover an asset or the Total Balance for a value chart, click to lock it. Press Edit to change amounts and Average Costs.') + '</div>';
     var html = '<div class="pf-sum dev-target" id="pf-sum" data-dev-name="Portfolio Amount Header" data-dev-color="#34d399">' + pfSumHtml(rows) + '</div>' +
+      (pfEdit ? '' : '<button type="button" class="gear pf-pie-btn' + (pfPie ? ' active' : '') + '" id="pf-pie-btn" aria-expanded="' + pfPie + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M14 2.5a8 8 0 0 1 7.5 7.5H14z"/></svg>' + (pfPie ? 'Hide Allocation' : 'Show Allocation') + '</button>') +
       bar +
       '<div class="pf-cols"><span>Asset</span><span>Average Cost</span><span>Price</span></div>';
     rows.forEach(function (r, i) {
       var sym = esc(r.h.sym), a = pfAvgOf(r.h.sym);
       var amtHtml = pfEdit ? '<label class="pf-amt-l">Amount <input class="pf-in" data-f="amt" data-sym="' + sym + '" inputmode="decimal" placeholder="0" value="' + (r.amt > 0 ? r.amt : '') + '"></label>' : '<span class="pf-amt">' + pfAmt(r.amt) + '</span>';
-      var avgHtml = pfEdit ? '<span class="pf-avg-ed"><input class="pf-in pf-avg-in" data-f="avg" data-sym="' + sym + '" inputmode="decimal" placeholder="Avg. cost $" value="' + (a > 0 ? a : '') + '"><button type="button" class="pf-calc-b" data-setavg="' + sym + '" title="Calculate the Average Price" aria-label="Calculate the Average Price">⋯</button></span>'
+      var avgHtml = pfStable(r.h.sym) ? '<span class="pf-avg stable" title="Stablecoins need no Average Price, their cost is their price">Stable</span>' : pfEdit ? '<span class="pf-avg-ed"><input class="pf-in pf-avg-in" data-f="avg" data-sym="' + sym + '" inputmode="decimal" placeholder="Avg. cost $" value="' + (a > 0 ? a : '') + '"><button type="button" class="pf-calc-b" data-setavg="' + sym + '" title="Calculate the Average Price" aria-label="Calculate the Average Price">⋯</button></span>'
         : a > 0 ? '<span class="pf-avg" title="' + ({ swaps: "From your stablecoin swaps", calc: "Calculated from your buys" }[pfSrcOf(r.h.sym)] || "Set by hand") + '">' + price5(a) + (pfSrcOf(r.h.sym) === "swaps" ? ' <i class="pf-src">swaps</i>' : '') + '</span>' : '<button type="button" class="pf-setavg" data-setavg="' + sym + '">Set Average Price</button>';
       html += '<div class="pf-row dev-target' + (pfEdit ? ' ed' : '') + (!pfEdit && !(a > 0) ? ' noavg' : '') + '" data-sym="' + sym + '" data-dev-name="Asset #' + (i + 1) + '" data-dev-color="#f59e0b">' +
         '<div class="pf-asset">' + logoHtml(r.c).replace(' loading="lazy"', '') + '<div class="nm"><b>' + esc(r.c.name) + ' <span class="sym">' + esc(r.c.symbol) + '</span></b>' +
@@ -5280,7 +5294,7 @@
         '<div class="pf-price">' + price(r.c.current_price) + '</div>' +
         (pfEdit ? '<button class="pf-x" type="button" data-sym="' + sym + '" title="Remove" aria-label="Remove asset">×</button>' : '') + '</div>';
     });
-    if (!pfEdit) html += '<div class="pf-pie-wrap">' + '<button type="button" class="gear pf-pie-btn' + (pfPie ? ' active' : '') + '" id="pf-pie-btn" aria-expanded="' + pfPie + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M14 2.5a8 8 0 0 1 7.5 7.5H14z"/></svg>' + (pfPie ? 'Hide Allocation' : 'Show Allocation') + '</button>' + (pfPie ? pfPieHtml(rows) : '') + '</div>'; /* the allocation sits below the asset list */
+    if (!pfEdit && pfPie) html += '<div class="pf-pie-wrap">' + pfPieHtml(rows) + '</div>'; /* the button sits under the top bar, the pie opens below the asset list */
     body.innerHTML = html + foot.replace('<div class="pf-foot">', '<div class="pf-foot">' + (pfSwapNote ? esc(pfSwapNote) + '<br>' : '')) + pfApHtml();
     rows.forEach(function (r) { var el = body.querySelector('.pf-row[data-sym="' + r.h.sym + '"]'); if (el) pfTintApply(el, r); });
     if (!pfEdit) pfFirstTotal();
@@ -5291,7 +5305,7 @@
   try { var pto = JSON.parse(localStorage.getItem(PF_TINT_KEY) || "{}"); Object.keys(pfTint).forEach(function (k) { if (k in pto) pfTint[k] = pto[k]; }); } catch (e) {}
   function pfTintSave() { try { localStorage.setItem(PF_TINT_KEY, JSON.stringify(pfTint)); } catch (e) {} }
   function pfTintApply(el, r) { /* el: an asset row; r: its row data */
-    var a = pfAvgOf(r.h.sym), pl = a > 0 ? (r.c.current_price - a) / a * 100 : null, skin = !pfEdit && pfTint.extra && pl !== null && pl >= (+pfTint.at || 0) ? pfTint.skin : "";
+    var a = pfAvgOf(r.h.sym), pl = a > 0 && !pfStable(r.h.sym) ? (r.c.current_price - a) / a * 100 : null, skin = !pfEdit && pfTint.extra && pl !== null && pl >= (+pfTint.at || 0) ? pfTint.skin : "";
     fxSet(el, skin);
     el.classList.toggle("pt-up", !skin && !pfEdit && pfTint.profit && pl !== null && pl > 0); el.classList.toggle("pt-dn", !skin && !pfEdit && pfTint.profit && pl !== null && pl < 0);
   }
@@ -5310,7 +5324,6 @@
   /* ---- ALLOCATION: a pie chart of how much of the portfolio's value each asset is ---- */
   var PF_PIE_KEY = "top200-pf-pie", pfPie = false; try { pfPie = localStorage.getItem(PF_PIE_KEY) === "1"; } catch (e) {}
   var PF_PIE_C = ["#22c55e", "#a855f7", "#ec4899", "#14b8a6", "#eab308", "#f97316", "#06b6d4", "#84cc16", "#8b5cf6", "#f43f5e"];
-  var PF_PIE_BLUE = ["#60a5fa", "#2563eb", "#93c5fd", "#1e40af", "#38bdf8", "#3b5bdb", "#bfdbfe", "#0ea5e9"]; /* stablecoins: blue, but each one its own shade */
   function pfPieHtml(rows) {
     var ps = pfPieSlices(rows); if (!ps) return ""; var tot = ps.tot, sl = ps.sl;
     var R = 78, r0 = 50, cx = 90, cy = 90, a0 = -Math.PI / 2, paths = "";
@@ -5358,10 +5371,17 @@
   }
   function pfPieSlices(rows) { /* the slices of the Allocation, shared by the pie on the page and the one in the image */
     var tot = rows.reduce(function (s, r) { return s + r.val; }, 0); if (!(tot > 0)) return null;
-    var list = rows.filter(function (r) { return r.val > 0; }).sort(function (a, b) { return b.val - a.val; }), sl = [], other = 0, k = 0, sb = 0, big = 0;
-    list.forEach(function (r) { var p = r.val / tot, sy = String(r.c.symbol).toUpperCase(), stb = STABLECOINS.indexOf(sy) > -1; if ((stb && p >= 0.001) || (!stb && big < 8 && p >= 0.02)) { if (!stb) big++; sl.push({ key: r.h.sym, name: r.c.name, sym: sy, stb: stb, val: r.val, p: p }); } else other += r.val; });
+    var list = rows.filter(function (r) { return r.val > 0; }).sort(function (a, b) { return b.val - a.val; }), sl = [], other = 0, k = 0, stv = 0, stn = 0;
+    list.forEach(function (r) { /* all stablecoins together are one slice, "Stablecoins" */
+      var p = r.val / tot, sy = String(r.c.symbol).toUpperCase();
+      if (STABLECOINS.indexOf(sy) > -1) { stv += r.val; stn++; return; }
+      if (sl.length < 8 && p >= 0.02) sl.push({ key: r.h.sym, name: r.c.name, sym: sy, val: r.val, p: p }); else other += r.val;
+    });
+    if (stv > 0) sl.push({ key: "STABLE", name: stn + " stablecoin" + (stn === 1 ? "" : "s"), sym: "Stablecoins", stb: true, val: stv, p: stv / tot });
+    sl.sort(function (a, b) { return b.val - a.val; });
     if (other > 0) sl.push({ key: "OTHER", name: "Other", sym: "Other", val: other, p: other / tot });
-    sl.forEach(function (x) { x.col = x.key === "OTHER" ? "#6b7280" : x.sym === "BTC" ? "#f7931a" : x.sym === "ETH" ? "#627eea" : x.stb ? PF_PIE_BLUE[sb++ % PF_PIE_BLUE.length] : PF_PIE_C[k++ % PF_PIE_C.length]; });
+    var sblue = pfCss("--stable-blue");
+    sl.forEach(function (x) { x.col = x.key === "OTHER" ? "#6b7280" : x.stb ? sblue : x.sym === "BTC" ? "#f7931a" : x.sym === "ETH" ? "#627eea" : PF_PIE_C[k++ % PF_PIE_C.length]; });
     return { tot: tot, sl: sl };
   }
   function pfDrawShare(cz, ser, logos, brand, noLogos) {
@@ -5377,7 +5397,7 @@
     var rr = function (x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
     g.fillStyle = C.pop; g.fillRect(0, 0, W, H); g.textBaseline = "alphabetic";
     var y = P + 22; font("700", 20); txt("Portfolio Manager", W / 2, y, C.fg, "center");
-    font("400", 12); txt(new Date().toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" }) + (cz ? " · amounts hidden" : ""), W / 2, y + 20, C.mu, "center");
+    font("400", 12); txt(new Date().toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" }) + (cz === 2 ? " · amounts and Average Prices hidden" : cz ? " · amounts hidden" : ""), W / 2, y + 20, C.mu, "center");
     y = P + 44 + 12;
     /* the four boxes of the top bar */
     var total = 0, cost = 0, worth = 0, n = 0, st = 0, sn = 0;
@@ -5404,7 +5424,8 @@
       font("600", 14); var nm = fit(r.c.name, 300); txt(nm, P + 46, cyy - 3, C.fg); var nw = g.measureText(nm).width; font("400", 12); txt(String(r.c.symbol).toUpperCase(), P + 52 + nw, cyy - 3, C.mu);
       font("400", 12); txt(fit((cz ? "•••" : pfAmt(r.amt)) + " · " + (cz ? M : price(r.val)) + (r.h.chains && r.h.chains.length ? " · " + r.h.chains.join(", ") : ""), 400), P + 46, cyy + 15, C.mu);
       var a = pfAvgOf(r.h.sym); font("600", 13);
-      if (a > 0) { txt(price5(a), P + 470, cyy - 3, C.fg); var ch = (r.c.current_price - a) / a * 100; font("400", 12); txt(pct(ch) + (cz ? "" : " [" + priceSigned((r.c.current_price - a) * r.amt) + "]"), P + 470, cyy + 15, ch >= 0 ? C.up : C.dn); }
+      if (pfStable(r.h.sym)) { txt("Stable", P + 470, cyy + 4, C.st); }
+      else if (a > 0) { txt(cz === 2 ? "$•••••" : price5(a), P + 470, cyy - 3, C.fg); var ch = (r.c.current_price - a) / a * 100; font("400", 12); txt(pct(ch) + (cz ? "" : " [" + priceSigned((r.c.current_price - a) * r.amt) + "]"), P + 470, cyy + 15, ch >= 0 ? C.up : C.dn); }
       else txt("–", P + 470, cyy + 4, C.mu);
       font("600", 14); txt(price(r.c.current_price), W - P - 8, cyy + 5, C.fg, "right");
       y += RH;
@@ -5431,8 +5452,9 @@
       v = v.slice(i0); T = T.slice(i0);
       rr(P, y, W - 2 * P, 306, 12); g.fillStyle = C.bg; g.fill(); g.strokeStyle = C.line; g.stroke();
       font("600", 10); txt("TOTAL BALANCE · ALL TIME", P + 18, y + 26, C.mu);
-      var chg = v[0] > 0 ? (v[v.length - 1] - v[0]) / v[0] * 100 : 0; font("700", 13); txt(pct(chg), W - P - 18, y + 26, chg >= 0 ? C.up : C.dn, "right");
-      if (ser.missing) { font("400", 11); txt(ser.missing + " asset" + (ser.missing === 1 ? "" : "s") + " without price history left out", W - P - 90, y + 26, C.mu, "right"); }
+      var gnow = pfGainNow("TOTAL"), chg = gnow ? gnow.pct : 0; font("700", 13);
+      if (gnow) txt(pct(chg) + (cz ? "" : " [" + priceSigned(gnow.abs) + "]"), W - P - 18, y + 26, chg >= 0 ? C.up : C.dn, "right"); else { font("400", 11); txt("Set Average Prices to see your gain", W - P - 18, y + 26, C.mu, "right"); }
+      if (ser.missing) { font("400", 11); txt(ser.missing + " asset" + (ser.missing === 1 ? "" : "s") + " without price history left out", P + 200, y + 26, C.mu); }
       var x0 = P + (cz ? 18 : 92), x1 = W - P - 18, y0 = y + 50, y1 = y + 268, mn = Math.min.apply(null, v), mx = Math.max.apply(null, v); if (mx === mn) mx = mn + 1;
       var X = function (i) { return x0 + (x1 - x0) * i / Math.max(1, v.length - 1); }, Y = function (q) { return y1 - (y1 - y0) * (q - mn) / (mx - mn); };
       font("400", 11); g.strokeStyle = C.line; g.lineWidth = 1;
@@ -5451,7 +5473,7 @@
     return cv;
   }
   function pfShareBuild() { /* draws, then shows the image in the share window */
-    var id = ++pfShareId, cz = pfShareMode === "censored", pv = document.getElementById("pf-sh-img"), dl = document.getElementById("pf-sh-dl");
+    var id = ++pfShareId, cz = pfShareMode === "light" ? 1 : pfShareMode === "full" ? 2 : 0, pv = document.getElementById("pf-sh-img"), dl = document.getElementById("pf-sh-dl");
     if (pv) pv.innerHTML = '<div class="pf-sh-wait">Drawing the image…</div>'; if (dl) dl.disabled = true;
     var rows = pfRows();
     Promise.all([pfSeries("TOTAL", "ALL").catch(function () { return null; }), Promise.all(rows.map(function (r) { return pfImg(iconChain(r.c)[0]).then(function (im) { return [r.h.sym, im]; }); })), pfLogoImg()]).then(function (a) {
@@ -5468,9 +5490,9 @@
     var ov = document.getElementById("pf-sh");
     if (!ov) { ov = document.createElement("div"); ov.id = "pf-sh"; ov.className = "pf-sh"; document.body.appendChild(ov); }
     ov.innerHTML = '<div class="pf-sh-box" role="dialog" aria-label="Share your portfolio"><div class="pf-sh-head"><b>Share Portfolio</b>' +
-      '<div class="fg-timeframes pf-sh-tabs"><button type="button" data-shm="uncensored"' + (mode === "uncensored" ? ' class="active"' : '') + '>Uncensored</button><button type="button" data-shm="censored"' + (mode === "censored" ? ' class="active"' : '') + '>Censored</button></div>' +
+      '<span class="pf-sh-mode">' + { uncensored: "Uncensored", light: "Light Censor", full: "Full Censor" }[mode] + '</span>' +
       '<button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
-      '<div class="pf-sh-note">' + (mode === "censored" ? 'Censored: every amount is hidden. Prices, percentages and the shape of the chart stay.' : 'Uncensored: shows your amounts and values.') + ' Wallet addresses are never shown, hidden wallets are left out.</div>' +
+      '<div class="pf-sh-note">' + ({ light: 'Light Censor: every amount is hidden. Prices, Average Prices, percentages and the shape of the chart stay.', full: 'Full Censor: every amount and every Average Price is hidden. Prices, percentages and the shape of the chart stay.' }[mode] || 'Uncensored: shows your amounts and values.') + ' Wallet addresses are never shown, hidden wallets are left out.</div>' +
       '<div class="pf-sh-img" id="pf-sh-img"></div><div class="pf-sh-foot"><button class="gear" type="button" id="pf-sh-cp">Copy Image</button><button class="gear pf-sh-dl" type="button" id="pf-sh-dl">Download PNG</button></div></div>';
     ov.hidden = false; pfShareBuild();
   }
@@ -5481,8 +5503,7 @@
     if (!t.closest("#pf-share-m")) pfShareMenu(false);
     var ov = document.getElementById("pf-sh"); if (!ov || ov.hidden) return;
     if (t === ov || t.closest("#pf-sh-x")) { ov.hidden = true; return; }
-    var tb = t.closest("[data-shm]"); if (tb) { pfShareOpen(tb.dataset.shm); return; }
-    if (t.closest("#pf-sh-dl") && pfShareUrl) { var a = document.createElement("a"); a.href = pfShareUrl; a.download = "coinatlas-portfolio" + (pfShareMode === "censored" ? "-censored" : "") + "-" + new Date().toISOString().slice(0, 10) + ".png"; document.body.appendChild(a); a.click(); a.remove(); return; }
+    if (t.closest("#pf-sh-dl") && pfShareUrl) { var a = document.createElement("a"); a.href = pfShareUrl; a.download = "coinatlas-portfolio" + (pfShareMode === "uncensored" ? "" : "-" + pfShareMode + "-censor") + "-" + new Date().toISOString().slice(0, 10) + ".png"; document.body.appendChild(a); a.click(); a.remove(); return; }
     if (t.closest("#pf-sh-cp") && pfShareUrl) {
       var b = t.closest("#pf-sh-cp");
       fetch(pfShareUrl).then(function (r) { return r.blob(); }).then(function (bl) { return navigator.clipboard.write([new ClipboardItem({ "image/png": bl })]); })
@@ -5505,7 +5526,7 @@
     pfBox.innerHTML = '<div class="pinned-card chart-container pf-card dev-target" data-dev-name="Portfolio Manager" data-dev-color="#38bdf8">' +
       '<div class="pf-title">Portfolio Manager</div>' +
       '<div class="pf-share-w"><button class="gear pf-share" type="button" id="pf-share" aria-haspopup="menu" title="Share your portfolio as an image">' + PF_SHARE_IC + 'Share</button>' +
-      '<div class="pf-share-m" id="pf-share-m" role="menu" hidden><button type="button" role="menuitem" data-share="uncensored"><b>Uncensored</b><span>With all amounts</span></button><button type="button" role="menuitem" data-share="censored"><b>Censored</b><span>Every amount hidden</span></button></div></div>' +
+      '<div class="pf-share-m" id="pf-share-m" role="menu" hidden><button type="button" role="menuitem" data-share="uncensored"><b>Uncensored</b><span>With all amounts</span></button><button type="button" role="menuitem" data-share="light"><b>Light Censor</b><span>Every amount hidden</span></button><button type="button" role="menuitem" data-share="full"><b>Full Censor</b><span>Amounts and Average Prices hidden</span></button></div></div>' +
       '<form class="pf-form" id="pf-form" autocomplete="off"><input id="pf-addr" type="text" placeholder="Wallet address (Solana or EVM, 0x…)" spellcheck="false" aria-label="Wallet address"><button class="gear" type="submit">Save</button></form><div class="pf-wl" id="pf-wl" hidden></div>' +
       '<div id="pf-manual-wrap" class="pf-manual-wrap"><div class="pf-or">or</div><button class="gear pf-manual" type="button" id="pf-manual" hidden>Add Manually</button><div class="pf-explain">No wallet address needed. Pick your coins and amounts by hand. If you do enter a wallet address, CoinAtlas only reads the publicly available blockchain data to see what the wallet holds. Nothing is connected or signed.</div></div>' +
       '<div id="pf-body"></div><div id="pf-lock"></div></div>';
@@ -5556,15 +5577,23 @@
       return { pseudo: { name: "Total Balance", symbol: "TOTAL", current_price: total, market_cap_rank: 0 }, d: pfSumSeries(ok), missing: list.length - ok.length };
     });
   }
-  function pfChartHtml(res, tf, refKey) {
-    var d = tf === "1D" ? res.d : Object.assign({}, res.d, { label: tf });
+  var PF_TF = [["1D", "Today"], ["1W", "7D"], ["1M", "30D"], ["365D", "365D"], ["ALL", "All Time"]];
+  function pfTfName(tf) { for (var i = 0; i < PF_TF.length; i++) if (PF_TF[i][0] === tf) return PF_TF[i][1]; return tf; }
+  function pfGainNow(key) { /* All Time = the gain you have right now: value against what it cost */
+    var cost = 0, worth = 0;
+    pfRows().forEach(function (r) { if (key !== "TOTAL" && r.h.sym !== key) return; var a = pfAvgOf(r.h.sym); if (a > 0 && r.amt > 0) { cost += a * r.amt; worth += r.val; } });
+    return cost > 0 ? { pct: (worth - cost) / cost * 100, abs: worth - cost } : null;
+  }
+  function pfChartHtml(res, tf, refKey, key) {
+    var d = tf === "1D" ? res.d : Object.assign({}, res.d, { label: pfTfName(tf) });
+    if (tf === "ALL") { var gn = pfGainNow(key || "TOTAL"); d = Object.assign({}, d, gn ? { pcOver: gn, label: "All Time · Profit" } : { pcNone: "Set Average Prices to see your gain" }); }
     return chart(res.pseudo, d, d.tag, false, refKey, tf === "1D" ? undefined : "ALL").replace(/<span class="tier-tag"[^>]*>[^<]*<\/span>/, "");
   }
   function pfLockFrame(title, sub, tf, inner) {
     return '<div class="pf-lock dev-target" data-dev-name="Portfolio Chart" data-dev-color="#a78bfa">' +
       '<button class="chart-close-btn pf-lock-x" type="button" aria-label="Close chart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' +
       '<div class="pf-lock-title">' + esc(title) + '</div><div class="pf-lock-sub">' + esc(sub) + '</div>' +
-      '<div class="fg-timeframes tf-row">' + ["1D", "1W", "1M", "1Y", "ALL"].map(function (t) { return '<button type="button" data-pftf="' + t + '"' + (t === tf ? ' class="active"' : '') + '>' + t + '</button>'; }).join("") + '</div>' + inner + '</div>';
+      '<div class="fg-timeframes tf-row">' + PF_TF.map(function (t) { return '<button type="button" data-pftf="' + t[0] + '"' + (t[0] === tf ? ' class="active"' : '') + '>' + t[1] + '</button>'; }).join("") + '</div>' + inner + '</div>';
   }
   function pfRenderLock(soft) {
     var el = document.getElementById("pf-lock"); if (!el) return;
@@ -5577,7 +5606,7 @@
     if (!soft) el.innerHTML = pfLockFrame(title, sub, tf, '<div class="empty">Loading chart…</div>');
     pfSeries(key, tf).then(function (res) {
       if (id !== pfLockId || !pfLock) return;
-      var inner = res ? pfChartHtml(res, tf, "pflock") + (res.missing ? '<div class="pf-foot">' + res.missing + ' asset' + (res.missing === 1 ? '' : 's') + ' without price history left out.</div>' : '') : '<div class="empty">No chart data yet. Check that an amount is set.</div>';
+      var inner = res ? pfChartHtml(res, tf, "pflock", key) + (res.missing ? '<div class="pf-foot">' + res.missing + ' asset' + (res.missing === 1 ? '' : 's') + ' without price history left out.</div>' : '') : '<div class="empty">No chart data yet. Check that an amount is set.</div>';
       el.innerHTML = pfLockFrame(title, sub, tf, inner);
       reapplyHoverAfterRender();
     });

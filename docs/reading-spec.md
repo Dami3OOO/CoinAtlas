@@ -234,8 +234,8 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 
 ## Portfolio Manager: Allocation (21.11.2026)
 
-- Breiter Knopf "Show Allocation" unter der Asset-Liste (nicht im Edit-Modus): Ringdiagramm mit Anteil am Portfolio-Wert, höchstens 8 Nicht-Stablecoin-Stücke ab 2 %,
-  jeder Stablecoin ab 0,1 % bekommt ein eigenes Stück in einem eigenen Blauton (PF_PIE_BLUE), Rest "Other". BTC orange, ETH blau. Legendenzeilen ohne Lücke
+- Breiter Knopf "Show Allocation" direkt unter der oberen Leiste (nicht im Edit-Modus); das Ringdiagramm öffnet sich unter der Asset-Liste.
+  Höchstens 8 Stücke ab 2 %, alle Stablecoins zusammen als ein Stück "Stablecoins" in --stable-blue, Rest "Other". BTC orange, ETH blau. Legendenzeilen ohne Lücke
   (Hover springt direkt von Zeile zu Zeile, leerer Rand der Legende behält die Auswahl); Hover hebt Stück und Legende hervor und zeigt Name, % und Wert in der Mitte. Zustand gemerkt.
 - Obere Leiste mit 4 Feldern: Total Balance, Stablecoins (Wert in Stablecoin-Blau, Anteil in % und Anzahl), Average Cost, Profit / Loss.
 - Der Total-Balance-Chart öffnet sich einmalig von selbst, sobald zum ersten Mal ein Portfolio angezeigt wird (localStorage "top200-pf-total-shown").
@@ -283,9 +283,16 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   Swap-Suche über alle eingeblendeten EVM-Adressen. Durchschnittspreise gelten für alle Wallets zusammen (Schlüssel "wallets").
 - Migration: die alte einzelne Adresse ("top200-pf-addr") wird zur ersten gespeicherten Wallet, ihre Durchschnittspreise/Käufe ziehen mit.
 - Manuelles Portfolio ist nur angeboten, solange keine Wallet gespeichert ist; eine gespeicherte Wallet übernimmt.
-- Share (oben rechts, absolut, Titel bleibt mittig): Menü Uncensored / Censored, Fenster mit Vorschau, "Copy Image" und "Download PNG".
+- Stablecoins brauchen keinen Durchschnittspreis: pfAvgOf liefert ihren aktuellen Preis (Gewinn 0), die Zeile zeigt "Stable", kein Eingabefeld, kein Tint.
+- Portfolio-Chart (Total und einzelne Assets): Zeitauswahl Today, 7D, 30D, 365D, All Time (intern 1D, 1W, 1M, 365D, ALL). Today bis 365D: Wert der
+  heutigen Bestände am Anfang des Zeitraums gegen jetzt. All Time: der aktuelle Gewinn aus den Durchschnittspreisen (wie Profit / Loss), nicht der
+  Anstieg seit dem ersten Kurs des Graphen; ohne Durchschnittspreise steht "Set Average Prices to see your gain".
+- Hover-Charts wählen ihre Seite sofort: place() rechnet mit der Höhe eines vollen Charts (zuletzt gemessen, Start 330 px), auch solange
+  "Loading chart…" angezeigt wird, und ein MutationObserver setzt die Position neu, sobald sich der Inhalt ändert.
+- Share (oben rechts, absolut, Titel bleibt mittig): Menü Uncensored / Light Censor / Full Censor; die Wahl ist im Vorschaufenster fest
+  (kein Umschalten), Fenster mit "Copy Image" und "Download PNG". Full Censor verbirgt zusätzlich die Durchschnittspreise.
   Bild wird selbst auf ein Canvas gezeichnet (2x): Titel + Datum, obere Leiste, alle Assets, Allocation, All-Time-Chart des Total Balance, Wasserzeichen
-  (CoinAtlas-Logo + Name) unten rechts. Censored ersetzt jeden Betrag ($-Werte, Token-Mengen, P/L in $, Achsenwerte) durch Punkte; Preise und % bleiben.
+  (CoinAtlas-Logo + Name) unten rechts. Light Censor ersetzt jeden Betrag ($-Werte, Token-Mengen, P/L in $, Achsenwerte) durch Punkte; Preise und % bleiben.
   Ausgeblendete Wallets fehlen, Adressen erscheinen nie. Logos ohne CORS fallen auf Buchstaben zurück.
 
 ## Portfolio Manager: Durchschnittspreis (21.11.2026)
