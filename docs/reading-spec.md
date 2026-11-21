@@ -257,7 +257,10 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Freischalten: eigene Bitcoin-Adresse pro Account, abgeleitet aus dem xpub einer eigenen Tangem-Wallet nur für CoinAtlas (Dynamic Addresses).
   Jeder Betrag ab 5 $ zählt. Der Server kennt nur den xpub und kann kein Geld bewegen.
 - Erkennen: Backend prüft offene Adressen jede Minute bei mempool.space (Ausweich: Blockstream), aktiv ab 1 Bestätigung.
-  Unbezahlte Adressen laufen nach 24 h ab und werden wiederverwendet, nie mehr als 10 offen (Lückengrenze der Wallet).
+  Nie mehr als 10 offene Adressen (Lückengrenze der Wallet).
+- Zeitlimit (Nutzer, 21.11.2026): Passwort vor der Zahlung; Zahlung muss innerhalb von 15 Minuten abgeschickt sein. Ist sie unbestätigt im Netzwerk
+  sichtbar, wartet die ID auf die Bestätigung. Ohne Zahlung verfallen ID und Passwort. Vorschlag (noch nicht bestätigt): abgelaufene IDs 7 Tage still
+  behalten und bei verspäteter Zahlung trotzdem freischalten; die Adresse erst danach neu vergeben.
 - Speichern: Cloudflare Workers + D1. Passwörter und Wiederherstellungs-Codes nur als Hash (PBKDF2/Argon2 mit Salz).
   Einstellungen und Zeichnungen werden im Browser mit einem Schlüssel aus dem Passwort verschlüsselt (Ende-zu-Ende).
 - Security: xpub und Schlüssel nur in Cloudflare Secrets, nie im öffentlichen Repo; Login-Versuche begrenzt; Turnstile beim Erstellen;
