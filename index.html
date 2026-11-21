@@ -431,6 +431,16 @@
   .sqm-sq.gold { background: linear-gradient(115deg, #7a5410, #d4a017 22%, #fff2a8 38%, #e7b416 52%, #8a6212 70%, #f0c43a 86%, #7a5410) !important; background-size: 300% 300% !important;
     animation: sqGoldFlow 4s linear infinite, sqGoldGlow 2.4s ease-in-out infinite; color: #2a1d00; z-index: 1; }
   .sqm-sq.gold i { text-shadow: 0 1px 1px rgba(255,255,255,.35); color: #2a1d00; }
+  .sqm-sq.diamond { background: linear-gradient(120deg, #8fd3f0, #eafcff 16%, #74c2e6 30%, #ffffff 44%, #a6e2f6 58%, #dff8ff 72%, #5fb2dc 86%, #c6efff) !important; background-size: 300% 300% !important;
+    animation: sqGoldFlow 3.4s linear infinite, sqDiaGlow 2.4s ease-in-out infinite; color: #06324a; z-index: 1; }
+  .sqm-sq.diamond::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .35; mix-blend-mode: soft-light;
+    background: conic-gradient(from 30deg at 30% 35%, #fff 0 12%, transparent 12% 25%, #fff 25% 31%, transparent 31% 52%, #fff 52% 58%, transparent 58% 80%, #fff 80% 86%, transparent 86%); } /* facets */
+  .sqm-sq.diamond::after { content: ""; position: absolute; top: 12%; right: 14%; width: 26%; max-width: 14px; aspect-ratio: 1; pointer-events: none;
+    background: radial-gradient(circle, #fff 0 18%, transparent 20%), linear-gradient(#fff, #fff) center / 12% 100% no-repeat, linear-gradient(#fff, #fff) center / 100% 12% no-repeat;
+    filter: drop-shadow(0 0 3px #fff); animation: sqSparkle 2.4s ease-in-out infinite; } /* a twinkle in the corner */
+  .sqm-sq.diamond i { color: #06324a; text-shadow: 0 1px 1px rgba(255,255,255,.6); } .sqm-sq.diamond .sqm-l { position: relative; z-index: 1; }
+  @keyframes sqDiaGlow { 0%, 100% { box-shadow: 0 0 6px 1px rgba(140,215,255,.55), inset 0 0 8px rgba(255,255,255,.45); } 50% { box-shadow: 0 0 16px 4px rgba(190,235,255,.9), inset 0 0 14px rgba(255,255,255,.7); } }
+  @keyframes sqSparkle { 0%, 60%, 100% { opacity: 0; transform: scale(.4) rotate(0deg); } 75% { opacity: 1; transform: scale(1) rotate(45deg); } 90% { opacity: .2; transform: scale(.6) rotate(90deg); } }
   @keyframes sqGoldFlow { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
   @keyframes sqGoldGlow { 0%, 100% { box-shadow: 0 0 6px 1px rgba(255,200,60,.55), inset 0 0 8px rgba(255,255,255,.25); } 50% { box-shadow: 0 0 16px 4px rgba(255,210,80,.85), inset 0 0 14px rgba(255,255,255,.45); } }
   .sqm-gl, .sqm-rl { position: absolute; top: 0; bottom: 0; overflow: hidden; transition: width 1.1s cubic-bezier(.22,1,.36,1), left 1.1s cubic-bezier(.22,1,.36,1); } .sqm-in { transition: left 1.1s cubic-bezier(.22,1,.36,1), width 1.1s cubic-bezier(.22,1,.36,1); }
@@ -1024,8 +1034,8 @@
               <div class="section-title">Experimental</div>
               <div class="grp"><span class="lbl">Dev Mode</span><button class="toggle" type="button" id="dev-toggle" role="switch" aria-checked="false" aria-label="Enable Dev Mode"><span></span></button></div>
               <div class="grp"><span class="lbl">Party Mode</span><button class="toggle" type="button" id="party-toggle" role="switch" aria-checked="false" aria-label="Enable Party Mode"><span></span></button></div>
-              <div class="grp"><span class="lbl">Golden Squares</span><button class="toggle" type="button" id="sq-gold-toggle" role="switch" aria-checked="false" aria-label="Golden glowing squares for coins up 50% or more in the Sentiment Squares"><span></span></button></div>
-              <div class="set-note">Sentiment Squares: coins up 50% or more glow in flowing gold.</div>
+              <div class="grp"><span class="lbl">Squares from +50%</span><select id="sq-fx" aria-label="Effect for coins up 50% or more in the Sentiment Squares"><option value="off">Off</option><option value="gold">Gold</option><option value="diamond">Diamond</option></select></div>
+              <div class="set-note">Sentiment Squares: coins up 50% or more glow in flowing gold or sparkle like a diamond.</div>
             </div>
             <div id="dev-hotkeys" style="display:none; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line);">
                <div class="section-title" style="border:none; margin-bottom: 8px;">Dev Mode Hotkeys</div>
@@ -3627,7 +3637,9 @@
   var SQ_TF = [["today", "Today"], ["1h", "1H"], ["4h", "4H"], ["7d", "7D"], ["30d", "30D"], ["1y", "365D"]];
   var SQ_TIER = { today: [1, 3, 6, 10], "1h": [0.5, 1, 2, 4], "4h": [1, 2, 4, 7], "7d": [3, 8, 15, 25], "30d": [5, 15, 30, 50], "1y": [10, 40, 100, 200] };
   var SQ_UP = ["#1d4a31", "#1f6a3e", "#22864b", "#29a25a", "#31c26a"], SQ_DN = ["#4b1f22", "#6c2228", "#8e272f", "#b02d36", "#d2343e"];
-  var SQ_GOLD_KEY = "coinatlas-sq-gold", sqGold = false; try { sqGold = localStorage.getItem(SQ_GOLD_KEY) === "1"; } catch (e) {}
+  var SQ_FX_KEY = "coinatlas-sq-fx", sqFx = "off"; /* the effect for coins up 50% or more: off, gold or diamond */
+  try { sqFx = localStorage.getItem(SQ_FX_KEY) || (localStorage.getItem("coinatlas-sq-gold") === "1" ? "gold" : "off"); } catch (e) {} /* the earlier Golden Squares switch carries over */
+  if (["off", "gold", "diamond"].indexOf(sqFx) < 0) sqFx = "off";
   var sqSwitchAt = 0, sqPap = null, sqPapAt = 0, sqPapBusy = false, sqView = null, sqLastPc = {}, sqSplit = null, sqDrag = null, sqHover = null;
   function sqLoadPap() { /* 1H to 1Y for every coin in one request, refreshed once a minute while the squares are open */
     if (sqPapBusy || (sqPap && Date.now() - sqPapAt < 60000)) return;
@@ -3736,7 +3748,7 @@
       if (el.parentNode === fly) { /* in flight: aim at its place in map coordinates, then settle into its window */
         el._host = host; el._r = r; el.style.left = ((host === v.gin ? 0 : W - Rw) + r.x + g / 2) + "px"; el.style.top = (r.y + g / 2) + "px";
         if (!el._land) el._land = setTimeout(function () { el._land = null; if (!el.parentNode || !el.parentNode.classList.contains("sqm-flyl") || !el._host) return; el.classList.add("nt"); el._host.appendChild(el); el.style.left = (el._r.x + g / 2) + "px"; el.style.top = (el._r.y + g / 2) + "px"; void el.offsetWidth; el.classList.remove("nt"); }, 1250); /* once per flight */
-      } else { el.style.left = (r.x + g / 2) + "px"; el.style.top = (r.y + g / 2) + "px"; } el.style.width = Math.max(0, r.w - g) + "px"; el.style.height = Math.max(0, r.h - g) + "px"; el.style.background = sqColor(x.pc, x.tf); el.classList.toggle("gold", sqGold && x.pc >= 50); el.dataset.tf = x.tf;
+      } else { el.style.left = (r.x + g / 2) + "px"; el.style.top = (r.y + g / 2) + "px"; } el.style.width = Math.max(0, r.w - g) + "px"; el.style.height = Math.max(0, r.h - g) + "px"; el.style.background = sqColor(x.pc, x.tf); var big = x.pc >= 50; el.classList.toggle("gold", big && sqFx === "gold"); el.classList.toggle("diamond", big && sqFx === "diamond"); el.dataset.tf = x.tf;
       /* logo and % on every square that fits both, the font shrinking with the square; on the tiniest ones only the logo, so you still see which coin it is */
       var m = Math.min(r.w, r.h), txt = sqFmt(x.pc), tw = function (f) { return chMeasure(txt, f) * 1.08; }, iw = r.w - 4, ih = r.h - 4, ls = 0, fs = Math.max(6, Math.min(16, m / 5.2));
       if (tw(fs) > iw) fs = Math.max(5, fs * iw / tw(fs));
@@ -3814,8 +3826,8 @@
     place(e); popEl.classList.add("on");
   });
   sqBox.addEventListener("mouseleave", function () { if (!devFrozen) sqHidePop(); });
-  var sqGoldToggle = document.getElementById("sq-gold-toggle"); if (sqGoldToggle) { sqGoldToggle.setAttribute("aria-checked", sqGold ? "true" : "false");
-    sqGoldToggle.addEventListener("click", function () { sqGold = !sqGold; sqGoldToggle.setAttribute("aria-checked", sqGold ? "true" : "false"); try { localStorage.setItem(SQ_GOLD_KEY, sqGold ? "1" : "0"); } catch (e) {} sqDraw(); }); }
+  var sqFxSel = document.getElementById("sq-fx"); if (sqFxSel) { sqFxSel.value = sqFx;
+    sqFxSel.addEventListener("change", function () { sqFx = sqFxSel.value; try { localStorage.setItem(SQ_FX_KEY, sqFx); } catch (e) {} sqDraw(); }); }
   sqBtn.addEventListener("click", function () { sqVisible = !sqVisible; sqBtn.classList.toggle("active", sqVisible); renderSquares(); });
   setInterval(function () { if (sqVisible && !sqDrag) sqDraw(); }, 3000);
 
@@ -3861,6 +3873,7 @@
     { title: "Crypto Investor Cheatsheet", notes: ["Not started. If the owner has published the sheet to the web, it can be embedded as it is instead of copied, so it always stays up to date."], desc: "Bring the Crypto Investor Cheatsheet onto the site as a reference next to the other tools." },
     { title: "X Market Sentiment", notes: ["Not started. Reading posts on X needs the paid X API or a paid social sentiment provider; scraping is against the terms of X and breaks often. The Fear & Greed Index already carries a social component."], desc: "A market sentiment built from what is being posted about Bitcoin and Ethereum on X." },
     { title: "Where can i stake?", desc: "\"Staking\" Tag like the Highest Loss / Highest Gain Tags and Staking Filter, which displays every assets thats stakeable.\nAdd that into the Description of Tokens. The best Staking rewards and the APY shown on the site. It would in the future also show the Sites or wallets to stake on, and then you could collab with said Staking providers. So, the Goal is to let Users know how much they can get in Staking Rewards from the Top 3 Providers.\nThen theres an easy 3-Click Function where users can just Click on the Link to said Staking Provider, then connect their Wallet, and click Start Stake. Its as easy as that, if implemented Correctly." },
+    { title: "More Ways to Customize The Asset List", notes: ["Planned. A first taste is in the Sentiment Squares: coins up 50% or more can glow in Gold or sparkle like a Diamond (Settings, Experimental)."], desc: "Let Users make the Asset List their own: Effects like Gold or Diamond for strong movers, Colours, which Columns to show, Highlights for chosen Coins and more." },
     { title: "Mobile Version / Mobile App", notes: ["Planned. The current Site is built for Desktop: on a Phone the Header Buttons run off the Screen and several Windows are too wide.", "Idea: rebuild the Phone Layout from scratch. A first step could be an installable Web App (PWA) from the same Site; a real App for the Stores can follow later."], desc: "A complete Mobile Version of CoinAtlas, made for Phones from the ground up instead of a shrunk Desktop Site, and later a Mobile App." }
   ];
 
