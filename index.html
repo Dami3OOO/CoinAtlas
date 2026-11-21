@@ -2327,7 +2327,7 @@
       var card = pinnedEl.querySelector('.pinned-card[data-sym="' + c.symbol + '"]');
       if (card) { var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; card.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" }); card.classList.add('flash'); setTimeout(function () { card.classList.remove('flash'); }, 350); }
     } else {
-      pinnedCoins.push(c); cardTf[c.symbol] = typeof sqJump !== "undefined" && sqJump && sqJump.sym === c.symbol && Date.now() - sqJump.at < 300000 ? sqJump.tf : "1D"; renderPinned();
+      pinnedCoins.push(c); cardTf[c.symbol] = "1D"; renderPinned();
       var newCard = pinnedEl.querySelector('.pinned-card[data-sym="' + c.symbol + '"]');
       if (newCard) { newCard.classList.add('flash'); setTimeout(function () { newCard.classList.remove('flash'); }, 350); }
     }
@@ -3602,7 +3602,6 @@
   var SQ_KEY = "coinatlas-squares", sqS = { tf: "today", top: 200 }; try { var sqo = JSON.parse(localStorage.getItem(SQ_KEY) || "{}"); if (sqo.tf && sqo.tf !== "24h") sqS.tf = sqo.tf; if (sqo.top) sqS.top = Math.max(1, Math.min(200, +sqo.top || 200)); } catch (e) {}
   function sqSave() { try { localStorage.setItem(SQ_KEY, JSON.stringify(sqS)); } catch (e) {} }
   var SQ_TF = [["today", "Today"], ["1h", "1H"], ["4h", "4H"], ["7d", "7D"], ["30d", "30D"], ["1y", "365D"]];
-  var SQ_CARD = { today: "1D", "1h": "4H", "4h": "4H", "7d": "1W", "30d": "1M", "1y": "365D" }; /* the matching timeframe of a Locked Hoverchart */
   var SQ_TIER = { today: [1, 3, 6, 10], "1h": [0.5, 1, 2, 4], "4h": [1, 2, 4, 7], "7d": [3, 8, 15, 25], "30d": [5, 15, 30, 50], "1y": [10, 40, 100, 200] };
   var SQ_UP = ["#1d4a31", "#1f6a3e", "#22864b", "#29a25a", "#31c26a"], SQ_DN = ["#4b1f22", "#6c2228", "#8e272f", "#b02d36", "#d2343e"];
   var sqPap = null, sqPapAt = 0, sqPapBusy = false, sqView = null, sqLastPc = {}, sqSplit = null, sqDrag = null, sqHover = null;
@@ -3719,12 +3718,10 @@
     if (!sqVisible) { sqBox.hidden = true; sqBox.innerHTML = ""; sqView = null; updatePinnedColVisibility(); return; }
     sqBox.hidden = false; updatePinnedColVisibility(); sqDraw();
   }
-  var sqJump = null;
-  function sqFind(c) { /* a click on a square: scroll the list to the coin's row and light it up; locking it from there opens its chart in the same timeframe */
+  function sqFind(c) { /* a click on a square: scroll the list to the coin's row and light it up */
     sqHidePop(); current = -1;
     var i = displayCoins.findIndex(function (x) { return x.symbol === c.symbol; }), tr = i > -1 && rowsEl.querySelector('tr[data-i="' + i + '"]'), f = sqBox.querySelector(".sqm-foot");
     if (!tr) { if (f) f.textContent = c.name + " is not shown in the list right now (filters or list range)."; return; }
-    sqJump = { sym: c.symbol, tf: SQ_CARD[sqS.tf] || "1D", at: Date.now() };
     tr.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
     var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; /* the same light gray flash as a search */
     Array.prototype.forEach.call(rowsEl.querySelectorAll(".flash"), function (r) { r.classList.remove("flash"); }); clearTimeout(flashTimer);

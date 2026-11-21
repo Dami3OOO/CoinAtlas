@@ -235,8 +235,7 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Animation: Kacheln, Front und Fenster gleiten bei jedem Update (alle 3 s) und Zeitraumwechsel an ihren Platz (1,1 s, weich auslaufend);
   Sprung >= 1/4 der ersten Farbstufe: kurzes Aufleuchten (1,6 s). Neuer Zeitraum oder neues Top: die Front geht zurück auf Auto,
   also genau ans Ende der dominanten Seite, die damit immer ganz sichtbar ist.
-- Klick auf eine Kachel: die Liste scrollt zur Zeile des Coins und hebt sie hellgrau hervor wie die Suche. Wird er dort festgehalten, öffnet der Locked Hoverchart im passenden
-  Zeitraum (Today 1D, 1H und 4H 4H, 7D 1W, 30D 1M, 365D 365D).
+- Klick auf eine Kachel: die Liste scrollt zur Zeile des Coins und hebt sie hellgrau hervor wie die Suche. Locked Hovercharts öffnen von dort wie immer auf Today (1D).
 - Bedienung: links "Top [1–200]" als Eingabefeld (Standard 200), rechts derselbe Zeitraum-Wähler wie bei den Locked Hovercharts:
   Kopf nur noch "grün / rot" (Anzahl steigender und fallender Coins), wie der Simple Market Sentiment Counter.
   Today (seit Tagesbeginn), 1H, 7D, 30D, 365D aus Coinpaprika tickers (eine Anfrage pro Minute), 4H aus Binance-5m-Kerzen (je Coin, alle 2 Minuten).
