@@ -3709,8 +3709,14 @@
       if (!el) { el = v.els[x.sym] = document.createElement("div"); el.className = "sqm-sq nt"; }
       if (el.parentNode !== host) { el.classList.add("nt"); host.appendChild(el); } /* changed sides: no glide across the window */
       el.dataset.i = x.i; el.style.left = (r.x + g / 2) + "px"; el.style.top = (r.y + g / 2) + "px"; el.style.width = Math.max(0, r.w - g) + "px"; el.style.height = Math.max(0, r.h - g) + "px"; el.style.background = sqColor(x.pc);
-      var m = Math.min(r.w, r.h), pcOn = m >= 34, ls = m >= 10 ? Math.round(Math.min(64, m * (pcOn ? 0.5 : 0.62))) : 0, fs = Math.max(9, Math.min(16, m / 5.2)), sig = ls + "|" + (pcOn ? sqFmt(x.pc) + "|" + Math.round(fs) : "");
-      if (el.dataset.sig !== sig) { el.dataset.sig = sig; el.innerHTML = ls ? '<span class="sqm-l"><span class="sqm-lg" style="width:' + ls + 'px;height:' + ls + 'px">' + logoHtml(x.c).replace(' loading="lazy"', '') + '</span>' + (pcOn ? '<i style="font-size:' + fs.toFixed(1) + 'px">' + sqFmt(x.pc) + '</i>' : '') + '</span>' : ''; }
+      /* the % on every square: the font shrinks with the square; when logo and % do not both fit, the % stays and the logo goes */
+      var m = Math.min(r.w, r.h), txt = sqFmt(x.pc), tw = function (f) { return chMeasure(txt, f) * 1.08; }, iw = r.w - 4, ih = r.h - 4, ls = 0, fs = Math.max(6, Math.min(16, m / 5.2));
+      if (tw(fs) > iw) fs = Math.max(5, fs * iw / tw(fs));
+      var both = Math.min(64, m * 0.5);
+      if (fs >= 6 && tw(fs) <= iw && both >= 10 && both + 2 + fs * 1.15 <= ih) ls = Math.round(both);
+      else { fs = Math.min(16, ih * 0.55, fs * iw / Math.max(1, tw(fs)) * 0.98); if (fs < 5 || tw(fs) > iw + 0.5) fs = 0; } /* % only; too tiny even for that: the hover shows it */
+      var sig = ls + "|" + (fs ? txt + "|" + fs.toFixed(1) : "");
+      if (el.dataset.sig !== sig) { el.dataset.sig = sig; el.innerHTML = ls || fs ? '<span class="sqm-l">' + (ls ? '<span class="sqm-lg" style="width:' + ls + 'px;height:' + ls + 'px">' + logoHtml(x.c).replace(' loading="lazy"', '') + '</span>' : '') + (fs ? '<i style="font-size:' + fs.toFixed(1) + 'px">' + txt + '</i>' : '') + '</span>' : ''; }
       el.title = x.c.name + " (" + x.sym + ") · " + sqFmt(x.pc);
       var last = sqLastPc[key]; if (!v.first && last !== undefined && Math.abs(x.pc - last) >= tier * 0.25) { el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse"); } /* a sudden move flashes */
     };

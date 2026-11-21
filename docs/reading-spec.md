@@ -227,7 +227,8 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 
 ## Sentiment Squares (21.11.2026, Rework)
 
-- Jede Kachel ein Coin: Logo, darunter die Prozente (bei sehr kleinen Kacheln nur das Logo; Name im Hover), Fläche nach Bewegung (|%|^0,8 plus kleiner Sockel, damit ruhige Coins sichtbar bleiben),
+- Jede Kachel ein Coin: Logo, darunter die Prozente; die Schrift schrumpft mit der Kachel (bis 5 px), passt beides nicht, bleibt nur die Prozentzahl;
+  nur bei winzigen Kacheln steht die Zahl allein im Hover (Name immer im Hover), Fläche nach Bewegung (|%|^0,8 plus kleiner Sockel, damit ruhige Coins sichtbar bleiben),
   Farbe in 5 Stufen je Zeitraum (Grenzen z. B. 24H: 1/3/6/10 %). Grün links verankert, Rot rechts, jeweils als Squarified Treemap, der Stärkste außen.
 - Sentiment Front: steht automatisch beim Flächenanteil der Gewinner. Beide Seiten sind fest angeordnet, die kleinere auf mindestens halber Breite.
   Die Front ist ein Fenster: Ziehen deckt Kacheln der einen Seite auf und die der anderen zu, ohne dass sich eine Kachel bewegt; sie hält dort an,
