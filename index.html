@@ -329,20 +329,21 @@
   #pf-body { margin-top: 14px; }
   .pf-msg { color: var(--muted); font-size: 12px; text-align: center; padding: 14px 8px; line-height: 1.5; }
   .pf-msg.err { color: var(--down); }
-  .pf-sum { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
+  .pf-sum { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
   .pf-sum > div { background: var(--bg); padding: 12px 14px; min-width: 0; }
   .pf-sum .lbl { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 4px; }
-  .pf-sum .big { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pf-sum .big.stb { color: var(--stable-blue); }
+  .pf-sum .big { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .pf-sum .sub { font-size: 11px; color: var(--muted); margin-top: 2px; min-height: 15px; white-space: nowrap; font-variant-numeric: tabular-nums; }
   .pf-sum .sub.up { color: var(--up); } .pf-sum .sub.down { color: var(--down); }
   .pf-bar { display: flex; justify-content: flex-end; margin-bottom: 8px; }
-  .pf-pie-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 36px; margin: 0 0 12px; font-size: 12px; font-weight: 600; }
+  .pf-pie-wrap { margin-top: 12px; } .pf-pie-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 36px; margin: 0 0 12px; font-size: 12px; font-weight: 600; }
   .pf-pie-btn svg { width: 16px; height: 16px; fill: currentColor; } .pf-pie-btn.active { color: var(--bg); background: var(--fg); }
-  .pf-pie { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 18px; align-items: center; margin: 0 0 14px; padding: 12px 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; }
+  .pf-pie { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 18px; align-items: center; margin: 0; padding: 12px 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; }
   .pf-pie-svg { width: 180px; height: 180px; } .pf-pie-svg path { stroke: var(--bg); stroke-width: 1.5; cursor: pointer; transition: opacity .2s, transform .2s; transform-origin: 90px 90px; }
   .pf-pie-svg path.off { opacity: .35; } .pf-pie-svg path.on { transform: scale(1.05); }
   .pf-pie-c1 { font-size: 9px; fill: var(--muted); text-anchor: middle; text-transform: uppercase; letter-spacing: .06em; } .pf-pie-c2 { font-size: 14px; font-weight: 700; fill: var(--fg); text-anchor: middle; font-variant-numeric: tabular-nums; }
-  .pf-pie-leg { display: flex; flex-direction: column; gap: 2px; min-width: 0; } .pf-pie-row { display: grid; grid-template-columns: 10px 1fr auto auto; gap: 8px; align-items: center; font-size: 12px; padding: 3px 6px; border-radius: 6px; cursor: default; font-variant-numeric: tabular-nums; }
+  .pf-pie-leg { display: flex; flex-direction: column; gap: 0; min-width: 0; } .pf-pie-row { display: grid; grid-template-columns: 10px 1fr auto auto; gap: 8px; align-items: center; font-size: 12px; padding: 4px 6px; border-radius: 6px; cursor: default; font-variant-numeric: tabular-nums; }
   .pf-pie-row i { width: 10px; height: 10px; border-radius: 3px; } .pf-pie-row span { font-weight: 600; } .pf-pie-row em { font-style: normal; color: var(--muted); min-width: 74px; text-align: right; }
   .pf-pie-row.on { background: var(--hover); } .pf-pie-row.off { opacity: .5; }
   .pf-row.pt-up { background: rgba(34,197,94,.10); } .pf-row.pt-dn { background: rgba(239,68,68,.10); }
@@ -362,7 +363,27 @@
   .pf-avg { display: inline-block; min-width: 52px; border: 1px dashed transparent; border-radius: 6px; padding: 1px 6px; margin-right: -7px; }
   .pf-avg.empty { color: var(--muted); }
   .pf-card { position: relative; }
-  .pf-who { margin: 8px 2px 0; font-size: 12px; color: var(--muted); } .pf-who b { color: var(--fg); font-weight: 600; }
+  .pf-share-w { position: absolute; top: 10px; right: 12px; z-index: 3; }
+  .pf-share { display: flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; font-size: 12px; font-weight: 600; }
+  .pf-share svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; } .pf-share.active { color: var(--bg); background: var(--fg); }
+  .pf-share-m { position: absolute; right: 0; top: 34px; width: 190px; padding: 4px; background: var(--pop); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.45); } .pf-share-m[hidden] { display: none; }
+  .pf-share-m button { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; width: 100%; padding: 7px 10px; background: transparent; border: 0; border-radius: 7px; color: var(--fg); cursor: pointer; text-align: left; font: inherit; }
+  .pf-share-m button:hover { background: var(--hover); } .pf-share-m b { font-size: 13px; } .pf-share-m span { font-size: 11px; color: var(--muted); }
+  .pf-sh { position: fixed; inset: 0; z-index: 9000; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.6); } .pf-sh[hidden] { display: none; }
+  .pf-sh-box { width: min(760px, 100%); max-height: calc(100vh - 32px); display: flex; flex-direction: column; background: var(--pop); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,.5); padding: 14px 16px; }
+  .pf-sh-head { position: relative; display: flex; align-items: center; gap: 14px; padding-right: 30px; } .pf-sh-head b { font-size: 15px; } .pf-sh-tabs { margin: 0; } .pf-sh-head .chart-close-btn { margin-left: auto; } .pf-share-w[hidden] { display: none; }
+  .pf-sh-note { font-size: 12px; color: var(--muted); margin: 8px 0 10px; }
+  .pf-sh-img { flex: 1; min-height: 160px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); } .pf-sh-img img { display: block; width: 100%; height: auto; }
+  .pf-sh-wait { padding: 60px 0; text-align: center; color: var(--muted); font-size: 13px; }
+  .pf-sh-foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; } .pf-sh-foot .gear { height: 32px; padding: 0 14px; font-weight: 600; } .pf-sh-dl { color: var(--bg) !important; background: var(--fg) !important; } .pf-sh-dl:disabled { opacity: .5; }
+  .pf-wl { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; } .pf-wl[hidden] { display: none; }
+  .pf-w { position: relative; display: flex; align-items: center; gap: 8px; min-height: 30px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 12px; }
+  .pf-w-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--up); flex: none; } .pf-w.off .pf-w-dot { background: var(--muted); } .pf-w.off > span:not(.pf-w-act) { opacity: .45; }
+  .pf-w-n { font-weight: 600; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .pf-w-a { color: var(--muted); font-variant-numeric: tabular-nums; } .pf-w-who { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; } .pf-w-who b { color: var(--fg); }
+  .pf-w-act { margin-left: auto; display: flex; gap: 2px; opacity: 0; transition: opacity .15s; } .pf-w:hover .pf-w-act, .pf-w:focus-within .pf-w-act { opacity: 1; }
+  .pf-w-act button { width: 26px; height: 24px; display: grid; place-items: center; padding: 0; color: var(--muted); background: transparent; border: 0; border-radius: 6px; cursor: pointer; } .pf-w-act button:hover { color: var(--fg); background: var(--hover); }
+  .pf-w-act svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .pf-w-in { font: inherit; font-size: 12px; font-weight: 600; color: var(--fg); background: var(--pop); border: 1px solid var(--muted); border-radius: 5px; padding: 2px 6px; width: 170px; outline: none; }
   .pf-row.noavg::after { content: ""; position: absolute; inset: 0; background: rgba(128,128,128,.10); pointer-events: none; } .pf-row.noavg .pf-asset, .pf-row.noavg .pf-price, .pf-row.noavg .pf-pl { opacity: .45; }
   .pf-setavg { position: relative; z-index: 1; font: inherit; font-size: 11px; font-weight: 600; color: var(--fg); background: var(--bg); border: 1px dashed var(--muted); border-radius: 6px; padding: 4px 8px; cursor: pointer; white-space: nowrap; } .pf-setavg:hover { border-style: solid; }
   .pf-src { font-style: normal; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
@@ -3881,7 +3902,12 @@
       "Works: \"Don't know your Average Price? Calculate it\": enter your buys as Amount at a Price, or Amount on a Day (the closing price of that day is used), and the weighted Average is filled in.",
       "Works: Swaps from Stablecoins (USDC, USDT, DAI and similar) into a Token are read with Blockscout on Ethereum, Base, Arbitrum, Optimism and Polygon and set the Average Price at the Price the Swap paid. Each Swap can be left out.",
       "Never automatic: Transfers. A Coin sent in from another Wallet or an Exchange may have been bought at 10k and moved at 100k, so its real Price cannot be known.",
-      "Works: Allocation, a pie chart of how much of the Portfolio's value each Asset is (button above the Assets). The Total Balance chart opens by itself the first time a Portfolio is shown.",
+      "Works: Allocation, a pie chart of how much of the Portfolio's value each Asset is (below the Assets). Every Stablecoin gets its own slice in its own shade of blue. The Total Balance chart opens by itself the first time a Portfolio is shown.",
+      "Works: several Wallets. Save addresses, name them (pen), hide them from the Portfolio (eye) or remove them (X). Only shown Wallets count and are shared.",
+      "Works: Stablecoins in the top bar, next to Total Balance, Average Cost and Profit / Loss.",
+      "Works: Share, top right. Uncensored or Censored (every amount hidden) as a PNG image of the whole Portfolio Manager with the All-Time chart and a CoinAtlas watermark. Download or copy. Addresses never appear.",
+      "Planned: an interactive Share Link, a read-only page of the Portfolio with hover charts. Without the Backend the Portfolio sits encoded in the link itself; with it, a short link. On X / Twitter the post shows the image, the click opens the interactive page.",
+      "Planned: more Networks. Now: Ethereum, Base, Arbitrum, Optimism, Polygon, BNB Chain, Avalanche and Solana. Next without the Backend: more EVM chains via public RPCs, plus Bitcoin and Tron addresses. Sites like CoinGecko or CoinMarketCap cover 25+ networks through paid indexer APIs (e.g. Zerion, Moralis, Covalent); that needs the Backend for the API key.",
       "Works: Portfolio Tint (Settings, Customization): green or red by Profit, and Extra Tints (Gold, Silver, Diamond, Emerald, Ruby, Sapphire) from a chosen Profit on.",
       "Once the Backend exists: Swaps on Solana, and on BNB Chain and Avalanche (these need an API key that must not sit in the public Site)."],
       desc: "Allows Users to enter their Wallet address to Immediately see their Portfolio value, or to build a Portfolio by hand. Assets in said Portfolio are then displayed in the Landing Area as a Locked Window.\nThe Average Price of each Token, and with it the Profit / Drawdown at current Prices, is filled in by a Calculator from your own buys and automatically from Stablecoin Swaps.\nOrange = it exists, but it's not perfect yet." },
@@ -4965,7 +4991,7 @@
   try { pfAvg = JSON.parse(localStorage.getItem(PF_AVG_KEY) || "{}") || {}; } catch (e) { pfAvg = {}; }
   try {
     if (localStorage.getItem(PF_MODE_KEY) === "manual") { pfState.manual = true; pfState.status = "ok"; pfState.holdings = JSON.parse(localStorage.getItem(PF_MAN_KEY) || "[]") || []; }
-    else pfState.addr = localStorage.getItem(PF_ADDR_KEY) || "";
+    /* wallets: see SAVED WALLETS */
   } catch (e) {}
   var pfBtn = document.getElementById("pf-btn"), pfBox = document.getElementById("portfolio-container");
 
@@ -5004,7 +5030,7 @@
     if (/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(a)) return "sol";
     return null;
   }
-  function pfKey() { return pfState.manual ? "manual" : (/^0x/i.test(pfState.addr) ? pfState.addr.toLowerCase() : pfState.addr); }
+  function pfKey() { return pfState.manual ? "manual" : "wallets"; } /* average prices and buys: one set for the manual portfolio, one for all saved wallets together */
   function pfHex(hex, dec) { try { return Number(BigInt(hex)) / Math.pow(10, dec); } catch (e) { return 0; } }
   function pfCoin(sym) { for (var i = 0; i < coins.length; i++) if (coins[i].symbol.toUpperCase() === sym) return coins[i]; return null; }
   function pfAdd(agg, c, amt, label) {
@@ -5114,39 +5140,77 @@
     return v === "" ? 0 : parseFloat(v);
   }
 
-  function pfLoad(addr) {
-    addr = String(addr || "").trim();
-    var kind = pfKind(addr), id = ++pfLoadId;
-    pfEdit = false; pfLock = null; pfAP = null; pfSwaps = {}; pfSwapNote = ""; pfWhoSet("");
-    if (!kind) { pfSet({ addr: addr, status: "error", msg: "That doesn't look like a valid wallet address. Solana and EVM (0x…) addresses are supported." }); pfRenderBody(); pfRenderLock(); return; }
-    try { localStorage.setItem(PF_ADDR_KEY, addr); localStorage.removeItem(PF_MODE_KEY); } catch (e) {}
-    pfSet({ addr: addr, status: "loading", msg: "Loading token list…" }); pfRenderBody(); pfRenderLock();
+  /* ---- SAVED WALLETS: several addresses, each with a name, shown or hidden on its own; the portfolio adds up the ones that are shown ---- */
+  var PF_WALLETS_KEY = "top200-pf-wallets", pfWallets = [];
+  try { pfWallets = JSON.parse(localStorage.getItem(PF_WALLETS_KEY) || "null") || []; } catch (e) { pfWallets = []; }
+  function pfMigrate() { /* the single address of before becomes the first saved wallet, with its average prices */
+    var old = ""; try { old = localStorage.getItem(PF_ADDR_KEY) || ""; } catch (e) {}
+    if (!old || pfWallets.length) return;
+    pfWallets = [{ addr: old, name: "", on: true }]; var k = /^0x/i.test(old) ? old.toLowerCase() : old;
+    [pfAvg, pfBuys, pfSrc].forEach(function (m) { if (m[k] && !m.wallets) m.wallets = m[k]; });
+    try { localStorage.setItem(PF_WALLETS_KEY, JSON.stringify(pfWallets)); localStorage.removeItem(PF_ADDR_KEY); } catch (e) {}
+    pfSaveAvg(); pfSaveBuys();
+  }
+  function pfWalletsSave() { try { localStorage.setItem(PF_WALLETS_KEY, JSON.stringify(pfWallets.map(function (w) { return { addr: w.addr, name: w.name || "", on: w.on !== false, who: w.who || "" }; }))); } catch (e) {} }
+  function pfShort(a) { return a.length > 14 ? a.slice(0, 6) + "…" + a.slice(-4) : a; }
+  var PF_EYE = '<svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>', PF_EYE_OFF = '<svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6 0 10 7 10 7a17 17 0 0 1-3.2 3.9M6.6 6.6C3.9 8.3 2 12 2 12s4 7 10 7a9.7 9.7 0 0 0 5.4-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+  var PF_PEN = '<svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"/></svg>', PF_XS = '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+  function pfWlRender() {
+    var el = document.getElementById("pf-wl"); if (!el) return;
+    el.hidden = !pfWallets.length;
+    el.innerHTML = pfWallets.map(function (w, i) {
+      var on = w.on !== false;
+      return '<div class="pf-w' + (on ? '' : ' off') + '" data-wi="' + i + '"><span class="pf-w-dot"></span><span class="pf-w-n" title="' + esc(w.addr) + '">' + esc(w.name || pfShort(w.addr)) + '</span>' +
+        (w.name ? '<span class="pf-w-a">' + esc(pfShort(w.addr)) + '</span>' : '') + (w.who ? '<span class="pf-w-who">' + w.who + '</span>' : '') +
+        '<span class="pf-w-act"><button type="button" data-wact="eye" title="' + (on ? 'Hide this wallet from the portfolio' : 'Show this wallet in the portfolio') + '" aria-label="Show or hide">' + (on ? PF_EYE : PF_EYE_OFF) + '</button>' +
+        '<button type="button" data-wact="pen" title="Name this wallet" aria-label="Rename">' + PF_PEN + '</button><button type="button" data-wact="x" title="Remove this wallet" aria-label="Remove">' + PF_XS + '</button></span></div>';
+    }).join("");
+  }
+  function pfSaveWallet(addr) {
+    addr = String(addr || "").trim(); if (!addr) return;
+    if (!pfKind(addr)) { var m = document.getElementById("pf-body"); if (m) m.innerHTML = '<div class="pf-msg err">That doesn\'t look like a valid wallet address. Solana and EVM (0x…) addresses are supported.</div>'; return; }
+    var low = addr.toLowerCase(), have = pfWallets.filter(function (w) { return w.addr.toLowerCase() === low; })[0];
+    if (have) have.on = true; else pfWallets.push({ addr: addr, name: "", on: true });
+    pfWalletsSave(); var i = document.getElementById("pf-addr"); if (i) i.value = "";
+    if (pfState.manual) { pfState.manual = false; try { localStorage.removeItem(PF_MODE_KEY); } catch (e) {} }
+    pfWlRender(); pfLoadAll();
+  }
+  pfBox.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-wact]"); if (!b) return; var row = b.closest("[data-wi]"), w = pfWallets[+row.dataset.wi]; if (!w) return;
+    if (b.dataset.wact === "eye") { w.on = w.on === false; pfWalletsSave(); pfWlRender(); pfLoadAll(); }
+    else if (b.dataset.wact === "x") { pfWallets.splice(+row.dataset.wi, 1); pfWalletsSave(); pfWlRender(); pfLoadAll(); }
+    else if (b.dataset.wact === "pen") { /* the name is typed right in place */
+      var n = row.querySelector(".pf-w-n"); n.outerHTML = '<input class="pf-w-in" maxlength="40" placeholder="Name, e.g. Main Wallet" value="' + esc(w.name || "") + '">'; var inp = row.querySelector(".pf-w-in"); inp.focus(); inp.select();
+      var done = function () { if (!inp.isConnected) return; w.name = inp.value.trim(); pfWalletsSave(); pfWlRender(); };
+      inp.addEventListener("keydown", function (k) { if (k.key === "Enter") { k.preventDefault(); done(); } else if (k.key === "Escape") pfWlRender(); }); inp.addEventListener("blur", done);
+    }
+  });
+  function pfLoadAll() { /* scans every shown wallet and adds their holdings up */
+    var id = ++pfLoadId, shown = pfWallets.filter(function (w) { return w.on !== false; });
+    pfEdit = false; pfLock = null; pfAP = null; pfSwaps = {}; pfSwapNote = "";
+    if (pfState.manual) { try { localStorage.removeItem(PF_MODE_KEY); } catch (e) {} } /* a saved wallet takes over from the hand-built portfolio */
+    if (!shown.length) { pfSet({ status: "idle", msg: pfWallets.length ? "All saved wallets are hidden. Click the eye of a wallet to show it." : "" }); pfRenderBody(); pfRenderLock(); return; }
+    pfSet({ status: "loading", msg: "Loading token list…" }); pfRenderBody(); pfRenderLock();
     pfReady().then(function () {
       if (id !== pfLoadId) return null;
-      pfState.msg = "Scanning wallet…"; pfRenderBody();
-      return kind === "evm" ? pfScanAllEvm(addr) : pfScanSolana(addr);
-    }).then(function (r) {
-      if (!r || id !== pfLoadId) return;
+      pfState.msg = "Scanning " + (shown.length === 1 ? "wallet" : shown.length + " wallets") + "…"; pfRenderBody();
+      return Promise.all(shown.map(function (w) { var k = pfKind(w.addr); return (k === "evm" ? pfScanAllEvm(w.addr) : k === "sol" ? pfScanSolana(w.addr) : Promise.reject()).then(function (r) { return { w: w, r: r }; }, function () { return { w: w, err: true }; }); }));
+    }).then(function (list) {
+      if (!list || id !== pfLoadId) return;
+      var agg = {}, notes = [], bad = list.filter(function (x) { return x.err; }).map(function (x) { return x.w.name || pfShort(x.w.addr); });
+      list.forEach(function (x) { if (x.err) return; if (x.r.note) notes.push(x.r.note); x.r.holdings.forEach(function (h) { var a = agg[h.sym] || (agg[h.sym] = { sym: h.sym, amount: 0, chains: [] }); a.amount += h.amount; (h.chains || []).forEach(function (c) { if (a.chains.indexOf(c) < 0) a.chains.push(c); }); }); });
+      if (bad.length === list.length) { pfSet({ status: "error", msg: "Couldn't read " + (list.length === 1 ? "this wallet" : "these wallets") + " right now. The public RPC may be busy, try again in a moment." }); pfRenderBody(); return; }
       var hasCt = coins.some(function (c) { return c.contracts && (c.contracts.ethereum || c.contracts.solana); });
-      var note = r.note || "";
-      if (!hasCt) note = "Token contract data isn't available yet, so only native coins were checked. Press Load again in a minute.";
-      pfSet({ addr: addr, status: "ok", msg: note, holdings: r.holdings });
-      pfRenderBody(); pfSwapScan(addr, id); pfWho(addr, id);
-    }).catch(function () {
-      if (id !== pfLoadId) return;
-      pfSet({ addr: addr, status: "error", msg: "Couldn't read this wallet right now. The public RPC may be busy, try again in a moment." });
-      pfRenderBody();
+      var note = (bad.length ? "Couldn't read: " + bad.join(", ") + ". " : "") + notes.filter(function (n, i, l) { return l.indexOf(n) === i; }).join(" ");
+      if (!hasCt) note = "Token contract data isn't available yet, so only native coins were checked. Save the address again in a minute.";
+      pfSet({ status: "ok", msg: note, holdings: Object.keys(agg).map(function (k) { return agg[k]; }) });
+      pfRenderBody(); pfSwapScan(shown.map(function (w) { return w.addr; }), id);
+      shown.forEach(function (w) { if (!w.who) pfWho(w.addr, function (t) { w.who = t; pfWalletsSave(); pfWlRender(); }); });
     });
   }
-  function pfClear() {
-    ++pfLoadId; pfWhoSet(""); pfSet({}); pfEdit = false; pfLock = null; delete pfAvg.manual;
-    try { localStorage.removeItem(PF_ADDR_KEY); localStorage.removeItem(PF_MODE_KEY); localStorage.removeItem(PF_MAN_KEY); } catch (e) {}
-    pfSaveAvg();
-    var i = document.getElementById("pf-addr"); if (i) i.value = "";
-    pfHideHover(); pfRenderBody(); pfRenderLock(); if (pinnedCoins.length) renderPinned();
-  }
+
   function pfStartManual() {
-    ++pfLoadId; pfWhoSet(""); pfSet({ manual: true, status: "ok" }); pfEdit = true; pfLock = null; pfSaveManual();
+    ++pfLoadId; pfSet({ manual: true, status: "ok" }); pfEdit = true; pfLock = null; pfSaveManual();
     var i = document.getElementById("pf-addr"); if (i) i.value = "";
     pfRenderBody();
   }
@@ -5167,10 +5231,11 @@
     return rows;
   }
   function pfSumHtml(rows) {
-    var total = 0, cost = 0, worth = 0, n = 0;
-    rows.forEach(function (r) { total += r.val; var a = pfAvgOf(r.h.sym); if (a > 0) { cost += a * r.amt; worth += r.val; n++; } });
+    var total = 0, cost = 0, worth = 0, n = 0, st = 0, sn = 0;
+    rows.forEach(function (r) { total += r.val; if (STABLECOINS.indexOf(String(r.c.symbol).toUpperCase()) > -1) { st += r.val; sn++; } var a = pfAvgOf(r.h.sym); if (a > 0) { cost += a * r.amt; worth += r.val; n++; } });
     var ok = cost > 0, g = worth - cost, cl = ok ? (g >= 0 ? "up" : "down") : "";
-    return '<div class="pf-tot" title="Hover for a value chart, click to lock it"><div class="lbl">Total Balance</div><div class="big">' + price(total) + '</div><div class="sub">' + rows.length + ' asset' + (rows.length === 1 ? '' : 's') + ' · hover for chart</div></div>' +
+    return '<div class="pf-tot" title="Hover for a value chart, click to lock it"><div class="lbl">Total Balance</div><div class="big">' + price(total) + '</div><div class="sub">' + rows.length + ' asset' + (rows.length === 1 ? '' : 's') + '</div></div>' +
+      '<div><div class="lbl">Stablecoins</div><div class="big stb">' + (sn ? price(st) : '–') + '</div><div class="sub">' + (sn ? (total > 0 ? (st / total * 100).toFixed(1) + '% · ' : '') + sn + ' coin' + (sn === 1 ? '' : 's') : 'none held') + '</div></div>' +
       '<div><div class="lbl">Average Cost</div><div class="big">' + (ok ? price(cost) : '–') + '</div><div class="sub">' + (ok ? n + ' with a cost set' : 'Set it in Edit mode') + '</div></div>' +
       '<div><div class="lbl">Profit / Loss</div><div class="big ' + cl + '">' + (ok ? pct(g / cost * 100) : '–') + '</div><div class="sub ' + cl + '">' + (ok ? priceSigned(g) : '') + '</div></div>';
   }
@@ -5191,9 +5256,9 @@
 
   function pfRenderBody() {
     var body = document.getElementById("pf-body"); if (!body) return;
-    var s = pfState, mb = document.getElementById("pf-manual");
-    var showMan = !s.manual && (s.status === "idle" || s.status === "error"); if (mb) mb.hidden = !showMan; var mw = document.getElementById("pf-manual-wrap"); if (mw) mw.hidden = !showMan;
-    if (s.status === "idle") { body.innerHTML = '<div class="pf-msg">Enter a wallet address above, or build a portfolio by hand.</div>'; return; }
+    var s = pfState, mb = document.getElementById("pf-manual"), sw = pfBox.querySelector(".pf-share-w"); if (sw) sw.hidden = !pfShareOk();
+    var showMan = !s.manual && !pfWallets.length && (s.status === "idle" || s.status === "error"); if (mb) mb.hidden = !showMan; var mw = document.getElementById("pf-manual-wrap"); if (mw) mw.hidden = !showMan;
+    if (s.status === "idle") { body.innerHTML = '<div class="pf-msg">' + esc(s.msg || "Enter a wallet address above and press Save, or build a portfolio by hand. You can save several wallets.") + '</div>'; return; }
     if (s.status === "loading") { body.innerHTML = '<div class="pf-msg">' + esc(s.msg || "Loading…") + '</div>'; return; }
     if (s.status === "error") { body.innerHTML = '<div class="pf-msg err">' + esc(s.msg) + '</div>'; return; }
     var rows = pfRows();
@@ -5201,8 +5266,7 @@
     if (!rows.length) { body.innerHTML = bar + '<div class="pf-msg">' + (pfEdit ? 'Click a coin in the list on the left to add it to your portfolio.' : (s.manual ? 'Your portfolio is empty. Press Edit, then click coins in the list on the left to add them.' : 'No supported assets found in this wallet.')) + '</div>'; return; }
     var foot = '<div class="pf-foot">' + (s.msg ? esc(s.msg) + '<br>' : '') + (pfEdit ? 'Edit mode: click coins in the list on the left to add them. Type an amount and an Average Cost for each asset, then press Done.' : 'Hover an asset or the Total Balance for a value chart, click to lock it. Press Edit to change amounts and Average Costs.') + '</div>';
     var html = '<div class="pf-sum dev-target" id="pf-sum" data-dev-name="Portfolio Amount Header" data-dev-color="#34d399">' + pfSumHtml(rows) + '</div>' +
-      '<button type="button" class="gear pf-pie-btn' + (pfPie ? ' active' : '') + '" id="pf-pie-btn" aria-expanded="' + pfPie + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M14 2.5a8 8 0 0 1 7.5 7.5H14z"/></svg>' + (pfPie ? 'Hide Allocation' : 'Show Allocation') + '</button>' +
-      (pfPie ? pfPieHtml(rows) : '') + bar +
+      bar +
       '<div class="pf-cols"><span>Asset</span><span>Average Cost</span><span>Price</span></div>';
     rows.forEach(function (r, i) {
       var sym = esc(r.h.sym), a = pfAvgOf(r.h.sym);
@@ -5216,6 +5280,7 @@
         '<div class="pf-price">' + price(r.c.current_price) + '</div>' +
         (pfEdit ? '<button class="pf-x" type="button" data-sym="' + sym + '" title="Remove" aria-label="Remove asset">×</button>' : '') + '</div>';
     });
+    if (!pfEdit) html += '<div class="pf-pie-wrap">' + '<button type="button" class="gear pf-pie-btn' + (pfPie ? ' active' : '') + '" id="pf-pie-btn" aria-expanded="' + pfPie + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M14 2.5a8 8 0 0 1 7.5 7.5H14z"/></svg>' + (pfPie ? 'Hide Allocation' : 'Show Allocation') + '</button>' + (pfPie ? pfPieHtml(rows) : '') + '</div>'; /* the allocation sits below the asset list */
     body.innerHTML = html + foot.replace('<div class="pf-foot">', '<div class="pf-foot">' + (pfSwapNote ? esc(pfSwapNote) + '<br>' : '')) + pfApHtml();
     rows.forEach(function (r) { var el = body.querySelector('.pf-row[data-sym="' + r.h.sym + '"]'); if (el) pfTintApply(el, r); });
     if (!pfEdit) pfFirstTotal();
@@ -5245,12 +5310,9 @@
   /* ---- ALLOCATION: a pie chart of how much of the portfolio's value each asset is ---- */
   var PF_PIE_KEY = "top200-pf-pie", pfPie = false; try { pfPie = localStorage.getItem(PF_PIE_KEY) === "1"; } catch (e) {}
   var PF_PIE_C = ["#22c55e", "#a855f7", "#ec4899", "#14b8a6", "#eab308", "#f97316", "#06b6d4", "#84cc16", "#8b5cf6", "#f43f5e"];
+  var PF_PIE_BLUE = ["#60a5fa", "#2563eb", "#93c5fd", "#1e40af", "#38bdf8", "#3b5bdb", "#bfdbfe", "#0ea5e9"]; /* stablecoins: blue, but each one its own shade */
   function pfPieHtml(rows) {
-    var tot = rows.reduce(function (s, r) { return s + r.val; }, 0); if (!(tot > 0)) return "";
-    var list = rows.filter(function (r) { return r.val > 0; }).sort(function (a, b) { return b.val - a.val; }), sl = [], other = 0, k = 0;
-    list.forEach(function (r, i) { var p = r.val / tot; if (i < 8 && p >= 0.02) sl.push({ key: r.h.sym, name: r.c.name, sym: String(r.c.symbol).toUpperCase(), val: r.val, p: p }); else other += r.val; });
-    if (other > 0) sl.push({ key: "OTHER", name: "Other", sym: "Other", val: other, p: other / tot });
-    sl.forEach(function (x) { x.col = x.key === "OTHER" ? "#6b7280" : x.sym === "BTC" ? "#f7931a" : x.sym === "ETH" ? "#627eea" : STABLECOINS.indexOf(x.sym) > -1 ? "var(--stable-blue)" : PF_PIE_C[k++ % PF_PIE_C.length]; });
+    var ps = pfPieSlices(rows); if (!ps) return ""; var tot = ps.tot, sl = ps.sl;
     var R = 78, r0 = 50, cx = 90, cy = 90, a0 = -Math.PI / 2, paths = "";
     var pt = function (a, rad) { return (cx + rad * Math.cos(a)).toFixed(2) + " " + (cy + rad * Math.sin(a)).toFixed(2); };
     sl.forEach(function (x) {
@@ -5270,8 +5332,164 @@
     var t1 = pie.querySelector(".pf-pie-c1"), t2 = pie.querySelector(".pf-pie-c2");
     if (k) { t1.textContent = el.dataset.pl + " · " + el.dataset.pp; t2.textContent = el.dataset.pv; } else { t1.textContent = "Total"; t2.textContent = pie.dataset.tot || t2.textContent; }
   }
-  pfBox.addEventListener("mouseover", function (e) { var el = e.target.closest && e.target.closest("#pf-pie [data-pk]"); var pie = document.getElementById("pf-pie"); if (!pie) return; if (!pie.dataset.tot) pie.dataset.tot = pie.querySelector(".pf-pie-c2").textContent; pfPieFocus(el); });
+  pfBox.addEventListener("mouseover", function (e) { var el = e.target.closest && e.target.closest("#pf-pie [data-pk]"); var pie = document.getElementById("pf-pie"); if (!pie) return; if (!el && e.target.closest(".pf-pie-leg")) return; if (!pie.dataset.tot) pie.dataset.tot = pie.querySelector(".pf-pie-c2").textContent; pfPieFocus(el); });
   pfBox.addEventListener("click", function (e) { if (!e.target.closest("#pf-pie-btn")) return; pfPie = !pfPie; try { localStorage.setItem(PF_PIE_KEY, pfPie ? "1" : "0"); } catch (x) {} pfRenderBody(); });
+
+  /* ---- SHARE: the whole Portfolio Manager as one PNG image, drawn on a canvas. Censored hides every amount, prices and percentages stay ---- */
+  var PF_SHARE_IC = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>';
+  var pfShareMode = "uncensored", pfShareUrl = "", pfShareId = 0;
+  function pfShareMenu(open) { var m = document.getElementById("pf-share-m"), b = document.getElementById("pf-share"); if (!m) return; m.hidden = !open; if (b) b.classList.toggle("active", open); }
+  function pfShareOk() { return portfolioVisible && pfState.status === "ok" && pfRows().length > 0; }
+  function pfCss(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim() || "#888"; }
+  function pfImg(src, ms) { /* an image the canvas may read: needs CORS, otherwise the letter stands in */
+    return new Promise(function (res) {
+      if (!src) { res(null); return; }
+      var im = new Image(), done = false, fin = function (v) { if (!done) { done = true; res(v); } };
+      im.crossOrigin = "anonymous"; im.onload = function () { fin(im); }; im.onerror = function () { fin(null); }; setTimeout(function () { fin(null); }, ms || 4000); im.src = src;
+    });
+  }
+  function pfLogoImg() { /* the CoinAtlas logo of the header, with its colors written in */
+    var sv = document.getElementById("logo-svg"); if (!sv) return Promise.resolve(null);
+    var cl = sv.cloneNode(true), cs = getComputedStyle(sv), col = pfCss("--fg");
+    cl.setAttribute("xmlns", "http://www.w3.org/2000/svg"); cl.setAttribute("width", "96"); cl.setAttribute("height", "96");
+    cl.setAttribute("stroke", col); cl.setAttribute("fill", "none"); cl.setAttribute("stroke-width", cs.strokeWidth || "1.5"); cl.setAttribute("stroke-linecap", "round"); cl.setAttribute("stroke-linejoin", "round");
+    var src = new XMLSerializer().serializeToString(cl).replace(/currentColor/g, col).replace(/var\(--([\w-]+)\)/g, function (m, v) { return pfCss("--" + v); });
+    return pfImg("data:image/svg+xml;charset=utf-8," + encodeURIComponent(src), 2000);
+  }
+  function pfPieSlices(rows) { /* the slices of the Allocation, shared by the pie on the page and the one in the image */
+    var tot = rows.reduce(function (s, r) { return s + r.val; }, 0); if (!(tot > 0)) return null;
+    var list = rows.filter(function (r) { return r.val > 0; }).sort(function (a, b) { return b.val - a.val; }), sl = [], other = 0, k = 0, sb = 0, big = 0;
+    list.forEach(function (r) { var p = r.val / tot, sy = String(r.c.symbol).toUpperCase(), stb = STABLECOINS.indexOf(sy) > -1; if ((stb && p >= 0.001) || (!stb && big < 8 && p >= 0.02)) { if (!stb) big++; sl.push({ key: r.h.sym, name: r.c.name, sym: sy, stb: stb, val: r.val, p: p }); } else other += r.val; });
+    if (other > 0) sl.push({ key: "OTHER", name: "Other", sym: "Other", val: other, p: other / tot });
+    sl.forEach(function (x) { x.col = x.key === "OTHER" ? "#6b7280" : x.sym === "BTC" ? "#f7931a" : x.sym === "ETH" ? "#627eea" : x.stb ? PF_PIE_BLUE[sb++ % PF_PIE_BLUE.length] : PF_PIE_C[k++ % PF_PIE_C.length]; });
+    return { tot: tot, sl: sl };
+  }
+  function pfDrawShare(cz, ser, logos, brand, noLogos) {
+    var C = { bg: pfCss("--bg"), pop: pfCss("--pop"), fg: pfCss("--fg"), mu: pfCss("--muted"), line: pfCss("--line"), up: pfCss("--up"), dn: pfCss("--down"), st: pfCss("--stable-blue") };
+    var F = getComputedStyle(document.body).fontFamily || "sans-serif", rows = pfRows().sort(function (a, b) { return b.val - a.val; });
+    var M = "$•••••", W = 960, P = 32, RH = 56, pie = pfPieSlices(rows);
+    var hRows = 30 + rows.length * RH, hPie = pie ? 40 + Math.max(232, pie.sl.length * 30 + 20) : 0, hCh = ser ? 330 : 0;
+    var H = P + 44 + 96 + 24 + hRows + 24 + hPie + (hPie ? 24 : 0) + hCh + 64;
+    var cv = document.createElement("canvas"), S = 2; cv.width = W * S; cv.height = H * S;
+    var g = cv.getContext("2d"); g.scale(S, S);
+    var font = function (w, s) { g.font = w + " " + s + "px " + F; }, txt = function (t, x, y, col, al) { g.fillStyle = col; g.textAlign = al || "left"; g.fillText(t, x, y); };
+    var fit = function (t, w) { if (g.measureText(t).width <= w) return t; while (t.length > 1 && g.measureText(t + "…").width > w) t = t.slice(0, -1); return t + "…"; };
+    var rr = function (x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
+    g.fillStyle = C.pop; g.fillRect(0, 0, W, H); g.textBaseline = "alphabetic";
+    var y = P + 22; font("700", 20); txt("Portfolio Manager", W / 2, y, C.fg, "center");
+    font("400", 12); txt(new Date().toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" }) + (cz ? " · amounts hidden" : ""), W / 2, y + 20, C.mu, "center");
+    y = P + 44 + 12;
+    /* the four boxes of the top bar */
+    var total = 0, cost = 0, worth = 0, n = 0, st = 0, sn = 0;
+    rows.forEach(function (r) { total += r.val; if (STABLECOINS.indexOf(String(r.c.symbol).toUpperCase()) > -1) { st += r.val; sn++; } var a = pfAvgOf(r.h.sym); if (a > 0) { cost += a * r.amt; worth += r.val; n++; } });
+    var ok = cost > 0, gn = worth - cost, bw = (W - 2 * P) / 4;
+    var box = [["Total Balance", cz ? M : price(total), rows.length + " asset" + (rows.length === 1 ? "" : "s"), C.fg, C.mu],
+      ["Stablecoins", sn ? (cz ? M : price(st)) : "–", sn ? (total > 0 ? (st / total * 100).toFixed(1) + "% · " : "") + sn + " coin" + (sn === 1 ? "" : "s") : "none held", C.st, C.mu],
+      ["Average Cost", ok ? (cz ? M : price(cost)) : "–", ok ? n + " with a cost set" : "", C.fg, C.mu],
+      ["Profit / Loss", ok ? pct(gn / cost * 100) : "–", ok ? (cz ? "" : priceSigned(gn)) : "", ok ? (gn >= 0 ? C.up : C.dn) : C.fg, ok ? (gn >= 0 ? C.up : C.dn) : C.mu]];
+    rr(P, y, W - 2 * P, 84, 12); g.fillStyle = C.bg; g.fill(); g.strokeStyle = C.line; g.lineWidth = 1; g.stroke();
+    box.forEach(function (b, i) {
+      var x = P + i * bw + 16; if (i) { g.fillStyle = C.line; g.fillRect(P + i * bw, y, 1, 84); }
+      font("600", 10); txt(b[0].toUpperCase(), x, y + 24, C.mu); font("700", 21); txt(fit(b[1], bw - 28), x, y + 52, b[3]); font("400", 11); txt(fit(b[2], bw - 28), x, y + 70, b[4]);
+    });
+    y += 84 + 24;
+    /* the assets */
+    font("600", 10); txt("ASSET", P + 8, y + 12, C.mu); txt("AVERAGE COST", P + 470, y + 12, C.mu); txt("PRICE", W - P - 8, y + 12, C.mu, "right"); y += 30;
+    rows.forEach(function (r, i) {
+      if (i) { g.fillStyle = C.line; g.fillRect(P, y, W - 2 * P, 1); }
+      var cyy = y + RH / 2, im = !noLogos && logos[r.h.sym];
+      g.save(); g.beginPath(); g.arc(P + 22, cyy, 14, 0, Math.PI * 2); g.closePath(); g.clip();
+      if (im) g.drawImage(im, P + 8, cyy - 14, 28, 28); else { g.fillStyle = C.line; g.fillRect(P + 8, cyy - 14, 28, 28); font("700", 13); g.textBaseline = "middle"; txt(String(r.c.symbol[0] || "?").toUpperCase(), P + 22, cyy + 1, C.fg, "center"); g.textBaseline = "alphabetic"; }
+      g.restore();
+      font("600", 14); var nm = fit(r.c.name, 300); txt(nm, P + 46, cyy - 3, C.fg); var nw = g.measureText(nm).width; font("400", 12); txt(String(r.c.symbol).toUpperCase(), P + 52 + nw, cyy - 3, C.mu);
+      font("400", 12); txt(fit((cz ? "•••" : pfAmt(r.amt)) + " · " + (cz ? M : price(r.val)) + (r.h.chains && r.h.chains.length ? " · " + r.h.chains.join(", ") : ""), 400), P + 46, cyy + 15, C.mu);
+      var a = pfAvgOf(r.h.sym); font("600", 13);
+      if (a > 0) { txt(price5(a), P + 470, cyy - 3, C.fg); var ch = (r.c.current_price - a) / a * 100; font("400", 12); txt(pct(ch) + (cz ? "" : " [" + priceSigned((r.c.current_price - a) * r.amt) + "]"), P + 470, cyy + 15, ch >= 0 ? C.up : C.dn); }
+      else txt("–", P + 470, cyy + 4, C.mu);
+      font("600", 14); txt(price(r.c.current_price), W - P - 8, cyy + 5, C.fg, "right");
+      y += RH;
+    });
+    y += 24;
+    /* the allocation */
+    if (pie) {
+      rr(P, y, W - 2 * P, hPie - 16, 12); g.fillStyle = C.bg; g.fill(); g.strokeStyle = C.line; g.stroke();
+      font("600", 10); txt("ALLOCATION", P + 18, y + 26, C.mu);
+      var cx = P + 150, cyp = y + 40 + (hPie - 56) / 2, R = 104, r0 = 68, a0 = -Math.PI / 2;
+      pie.sl.forEach(function (x) { var a1 = a0 + x.p * Math.PI * 2; g.beginPath(); g.arc(cx, cyp, R, a0, a1); g.arc(cx, cyp, r0, a1, a0, true); g.closePath(); g.fillStyle = x.col; g.fill(); g.strokeStyle = C.bg; g.lineWidth = 2; g.stroke(); a0 = a1; });
+      font("600", 10); txt("TOTAL", cx, cyp - 6, C.mu, "center"); font("700", 16); txt(cz ? M : price(pie.tot), cx, cyp + 16, C.fg, "center");
+      var lx = P + 300, ly = cyp - pie.sl.length * 15 + 15;
+      pie.sl.forEach(function (x, i) {
+        var yy = ly + i * 30; rr(lx, yy - 11, 12, 12, 3); g.fillStyle = x.col; g.fill();
+        font("600", 13); txt(x.sym, lx + 22, yy, C.fg); font("400", 12); txt(fit(x.name, 200), lx + 110, yy, C.mu);
+        font("700", 13); txt((x.p * 100).toFixed(1) + "%", W - P - 150, yy, C.fg, "right"); font("400", 13); txt(cz ? M : price(x.val), W - P - 18, yy, C.mu, "right");
+      });
+      y += hPie;
+    }
+    /* the all-time chart of the portfolio's value */
+    if (ser) {
+      var v = ser.d.v, T = ser.d.times, i0 = 0; while (i0 < v.length - 1 && !(v[i0] > 0)) i0++;
+      v = v.slice(i0); T = T.slice(i0);
+      rr(P, y, W - 2 * P, 306, 12); g.fillStyle = C.bg; g.fill(); g.strokeStyle = C.line; g.stroke();
+      font("600", 10); txt("TOTAL BALANCE · ALL TIME", P + 18, y + 26, C.mu);
+      var chg = v[0] > 0 ? (v[v.length - 1] - v[0]) / v[0] * 100 : 0; font("700", 13); txt(pct(chg), W - P - 18, y + 26, chg >= 0 ? C.up : C.dn, "right");
+      if (ser.missing) { font("400", 11); txt(ser.missing + " asset" + (ser.missing === 1 ? "" : "s") + " without price history left out", W - P - 90, y + 26, C.mu, "right"); }
+      var x0 = P + (cz ? 18 : 92), x1 = W - P - 18, y0 = y + 50, y1 = y + 268, mn = Math.min.apply(null, v), mx = Math.max.apply(null, v); if (mx === mn) mx = mn + 1;
+      var X = function (i) { return x0 + (x1 - x0) * i / Math.max(1, v.length - 1); }, Y = function (q) { return y1 - (y1 - y0) * (q - mn) / (mx - mn); };
+      font("400", 11); g.strokeStyle = C.line; g.lineWidth = 1;
+      for (var k = 0; k <= 4; k++) { var q = mn + (mx - mn) * k / 4, yy = Y(q); g.beginPath(); g.moveTo(x0, yy); g.lineTo(x1, yy); g.stroke(); if (!cz) { g.textBaseline = "middle"; txt(q >= 1e6 ? "$" + (q / 1e6).toFixed(2) + "M" : q >= 1e4 ? "$" + (q / 1e3).toFixed(1) + "K" : price(q), x0 - 8, yy, C.mu, "right"); g.textBaseline = "alphabetic"; } }
+      var col = chg >= 0 ? C.up : C.dn, gr = g.createLinearGradient(0, y0, 0, y1); gr.addColorStop(0, col); gr.addColorStop(1, "rgba(0,0,0,0)");
+      g.beginPath(); v.forEach(function (q, i) { if (i) g.lineTo(X(i), Y(q)); else g.moveTo(X(i), Y(q)); }); g.lineTo(X(v.length - 1), y1); g.lineTo(X(0), y1); g.closePath(); g.globalAlpha = 0.18; g.fillStyle = gr; g.fill(); g.globalAlpha = 1;
+      g.beginPath(); v.forEach(function (q, i) { if (i) g.lineTo(X(i), Y(q)); else g.moveTo(X(i), Y(q)); }); g.strokeStyle = col; g.lineWidth = 2; g.lineJoin = "round"; g.stroke();
+      var fy = new Date(T[0]).getUTCFullYear(), ly2 = new Date(T[T.length - 1]).getUTCFullYear(), step = Math.max(1, Math.ceil((ly2 - fy + 1) / 9));
+      for (var yr = fy + 1; yr <= ly2; yr += step) { var t = Date.UTC(yr, 0, 1), ix = 0; while (ix < T.length - 1 && T[ix] < t) ix++; txt(String(yr), X(ix), y1 + 22, C.mu, "center"); }
+      y += 306 + 24;
+    }
+    /* the watermark */
+    var wy = H - 28; font("700", 16); var tw = g.measureText("CoinAtlas").width;
+    txt("CoinAtlas", W - P, wy, C.fg, "right"); if (brand) g.drawImage(brand, W - P - tw - 30, wy - 17, 22, 22);
+    font("400", 11); txt("Prices and amounts as of the moment of export.", P, wy, C.mu);
+    return cv;
+  }
+  function pfShareBuild() { /* draws, then shows the image in the share window */
+    var id = ++pfShareId, cz = pfShareMode === "censored", pv = document.getElementById("pf-sh-img"), dl = document.getElementById("pf-sh-dl");
+    if (pv) pv.innerHTML = '<div class="pf-sh-wait">Drawing the image…</div>'; if (dl) dl.disabled = true;
+    var rows = pfRows();
+    Promise.all([pfSeries("TOTAL", "ALL").catch(function () { return null; }), Promise.all(rows.map(function (r) { return pfImg(iconChain(r.c)[0]).then(function (im) { return [r.h.sym, im]; }); })), pfLogoImg()]).then(function (a) {
+      if (id !== pfShareId) return;
+      var logos = {}; a[1].forEach(function (x) { logos[x[0]] = x[1]; });
+      var cv = pfDrawShare(cz, a[0], logos, a[2], false), url;
+      try { url = cv.toDataURL("image/png"); } catch (e) { cv = pfDrawShare(cz, a[0], {}, a[2], true); url = cv.toDataURL("image/png"); } /* a logo without CORS: draw letters instead */
+      pfShareUrl = url;
+      if (pv) pv.innerHTML = '<img src="' + url + '" alt="Your Portfolio Manager as an image">'; if (dl) dl.disabled = false;
+    });
+  }
+  function pfShareOpen(mode) {
+    pfShareMenu(false); if (!pfShareOk()) return; pfShareMode = mode;
+    var ov = document.getElementById("pf-sh");
+    if (!ov) { ov = document.createElement("div"); ov.id = "pf-sh"; ov.className = "pf-sh"; document.body.appendChild(ov); }
+    ov.innerHTML = '<div class="pf-sh-box" role="dialog" aria-label="Share your portfolio"><div class="pf-sh-head"><b>Share Portfolio</b>' +
+      '<div class="fg-timeframes pf-sh-tabs"><button type="button" data-shm="uncensored"' + (mode === "uncensored" ? ' class="active"' : '') + '>Uncensored</button><button type="button" data-shm="censored"' + (mode === "censored" ? ' class="active"' : '') + '>Censored</button></div>' +
+      '<button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
+      '<div class="pf-sh-note">' + (mode === "censored" ? 'Censored: every amount is hidden. Prices, percentages and the shape of the chart stay.' : 'Uncensored: shows your amounts and values.') + ' Wallet addresses are never shown, hidden wallets are left out.</div>' +
+      '<div class="pf-sh-img" id="pf-sh-img"></div><div class="pf-sh-foot"><button class="gear" type="button" id="pf-sh-cp">Copy Image</button><button class="gear pf-sh-dl" type="button" id="pf-sh-dl">Download PNG</button></div></div>';
+    ov.hidden = false; pfShareBuild();
+  }
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (t.closest("#pf-share")) { pfShareMenu(document.getElementById("pf-share-m").hidden); return; }
+    var m = t.closest("[data-share]"); if (m) { pfShareOpen(m.dataset.share); return; }
+    if (!t.closest("#pf-share-m")) pfShareMenu(false);
+    var ov = document.getElementById("pf-sh"); if (!ov || ov.hidden) return;
+    if (t === ov || t.closest("#pf-sh-x")) { ov.hidden = true; return; }
+    var tb = t.closest("[data-shm]"); if (tb) { pfShareOpen(tb.dataset.shm); return; }
+    if (t.closest("#pf-sh-dl") && pfShareUrl) { var a = document.createElement("a"); a.href = pfShareUrl; a.download = "coinatlas-portfolio" + (pfShareMode === "censored" ? "-censored" : "") + "-" + new Date().toISOString().slice(0, 10) + ".png"; document.body.appendChild(a); a.click(); a.remove(); return; }
+    if (t.closest("#pf-sh-cp") && pfShareUrl) {
+      var b = t.closest("#pf-sh-cp");
+      fetch(pfShareUrl).then(function (r) { return r.blob(); }).then(function (bl) { return navigator.clipboard.write([new ClipboardItem({ "image/png": bl })]); })
+        .then(function () { b.textContent = "Copied"; }, function () { b.textContent = "Copy not supported here"; }).then(function () { setTimeout(function () { b.textContent = "Copy Image"; }, 1600); });
+    }
+  });
+  document.addEventListener("keydown", function (e) { if (e.key !== "Escape") return; var ov = document.getElementById("pf-sh"); if (ov && !ov.hidden) ov.hidden = true; pfShareMenu(false); });
 
   /* ---- the Total Balance chart opens by itself the first time a portfolio is shown, so nobody misses it ---- */
   var PF_FIRST_KEY = "top200-pf-total-shown";
@@ -5286,13 +5504,15 @@
     pfBox.hidden = false;
     pfBox.innerHTML = '<div class="pinned-card chart-container pf-card dev-target" data-dev-name="Portfolio Manager" data-dev-color="#38bdf8">' +
       '<div class="pf-title">Portfolio Manager</div>' +
-      '<form class="pf-form" id="pf-form" autocomplete="off"><input id="pf-addr" type="text" placeholder="Wallet address (Solana or EVM, 0x…)" spellcheck="false" aria-label="Wallet address"><button class="gear" type="button" id="pf-clear">Clear</button><button class="gear" type="submit">Load</button></form><div class="pf-who" id="pf-who" hidden></div>' +
+      '<div class="pf-share-w"><button class="gear pf-share" type="button" id="pf-share" aria-haspopup="menu" title="Share your portfolio as an image">' + PF_SHARE_IC + 'Share</button>' +
+      '<div class="pf-share-m" id="pf-share-m" role="menu" hidden><button type="button" role="menuitem" data-share="uncensored"><b>Uncensored</b><span>With all amounts</span></button><button type="button" role="menuitem" data-share="censored"><b>Censored</b><span>Every amount hidden</span></button></div></div>' +
+      '<form class="pf-form" id="pf-form" autocomplete="off"><input id="pf-addr" type="text" placeholder="Wallet address (Solana or EVM, 0x…)" spellcheck="false" aria-label="Wallet address"><button class="gear" type="submit">Save</button></form><div class="pf-wl" id="pf-wl" hidden></div>' +
       '<div id="pf-manual-wrap" class="pf-manual-wrap"><div class="pf-or">or</div><button class="gear pf-manual" type="button" id="pf-manual" hidden>Add Manually</button><div class="pf-explain">No wallet address needed. Pick your coins and amounts by hand. If you do enter a wallet address, CoinAtlas only reads the publicly available blockchain data to see what the wallet holds. Nothing is connected or signed.</div></div>' +
       '<div id="pf-body"></div><div id="pf-lock"></div></div>';
-    document.getElementById("pf-addr").value = pfState.addr; pfWhoSet(pfWhoText);
+    pfMigrate(); pfWlRender();
     updatePinnedColVisibility();
     pfRenderBody(); pfRenderLock();
-    if (pfState.addr && pfState.status === "idle" && !pfState.manual) pfLoad(pfState.addr);
+    if (!pfState.manual && pfState.status === "idle" && pfWallets.some(function (w) { return w.on !== false; })) pfLoadAll();
   }
 
   /* ---- value charts: what the amounts you hold were worth over time ---- */
@@ -5514,13 +5734,10 @@
   }
   /* what can be told about an address: its ENS name or Basename, a public label (e.g. an exchange wallet), and whether it is a normal wallet or a smart contract wallet.
      Which app someone uses (MetaMask, Tangem, Rabby…) cannot be read from an address: they all make the same kind of address */
-  var pfWhoText = "";
-  function pfWhoSet(t) { pfWhoText = t; var el = document.getElementById("pf-who"); if (el) { el.innerHTML = t; el.hidden = !t; } }
-  function pfWho(addr, id) {
-    if (pfKind(addr) !== "evm") { pfWhoSet("Solana wallet"); return; }
+  function pfWho(addr, cb) {
+    if (pfKind(addr) !== "evm") { cb("Solana wallet"); return; }
     var one = function (base) { return getJson(base + "/api/v2/addresses/" + addr, 12000).catch(function () { return null; }); };
     Promise.all([one(PF_BS.ethereum), one(PF_BS.base)]).then(function (r) {
-      if (id !== pfLoadId) return;
       var a = r[0] || {}, b = r[1] || {}, parts = [];
       var names = [a.ens_domain_name, b.ens_domain_name].filter(function (x, i, l) { return x && l.indexOf(x) === i; }); if (names.length) parts.push("<b>" + esc(names.join(" · ")) + "</b>");
       var tags = [].concat((a.metadata && a.metadata.tags) || [], (b.metadata && b.metadata.tags) || []).map(function (t) { return t && t.name; }).concat([a.name, b.name]).filter(function (x, i, l) { return x && l.indexOf(x) === i; });
@@ -5529,14 +5746,16 @@
       if (c) { var impl = ((c.implementations || [])[0] || {}).name || c.name || "", kind = /safe/i.test(impl) ? "Safe" : /coinbase/i.test(impl) ? "Coinbase Smart Wallet" : /argent/i.test(impl) ? "Argent" : /ambire/i.test(impl) ? "Ambire" : "";
         parts.push(kind ? kind + " (smart contract wallet)" : "Smart contract" + (impl ? " · " + esc(impl) : "")); }
       else if (r[0] || r[1]) parts.push("Regular wallet");
-      pfWhoSet(parts.join(" · "));
+      cb(parts.join(" · "));
     });
   }
-  function pfSwapScan(addr, id) {
-    if (pfKind(addr) !== "evm") { pfSwaps = {}; pfSwapNote = ""; return; }
+  function pfSwapScan(addrs, id) {
+    addrs = [].concat(addrs).filter(function (a) { return pfKind(a) === "evm"; });
+    if (!addrs.length) { pfSwaps = {}; pfSwapNote = ""; return; }
     pfSwapNote = "Looking for stablecoin swaps…"; pfRenderBody();
-    var chains = PF_EVM.filter(function (c) { return PF_BS[c.id]; }), failed = [];
-    Promise.all(chains.map(function (ch) { return pfSwapChain(ch, addr).catch(function () { failed.push(ch.label); return []; }); })).then(function (lists) {
+    var chains = PF_EVM.filter(function (c) { return PF_BS[c.id]; }), failed = [], jobs = [];
+    addrs.forEach(function (a) { chains.forEach(function (ch) { jobs.push(pfSwapChain(ch, a).catch(function () { if (failed.indexOf(ch.label) < 0) failed.push(ch.label); return []; })); }); });
+    Promise.all(jobs).then(function (lists) {
       if (id !== pfLoadId) return;
       var all = [].concat.apply([], lists), by = {}; all.sort(function (a, b) { return a.t - b.t; }).forEach(function (b) { (by[b.sym] = by[b.sym] || []).push(b); });
       pfSwaps = by;
@@ -5551,7 +5770,7 @@
   pfBox.addEventListener("click", function (e) {
     var t = e.target;
     if (pfApClick(e)) return;
-    if (t.closest("#pf-clear")) { pfClear(); return; }
+
     if (t.closest("#pf-manual")) { pfStartManual(); return; }
     if (t.closest("#pf-edit")) { pfEdit = !pfEdit; pfHideHover(); pfRenderBody(); pfRenderLock(true); return; }
     if (t.closest(".pf-lock-x")) { pfLock = null; pfRenderLock(); return; }
@@ -5586,7 +5805,7 @@
   });
   pfBox.addEventListener("submit", function (e) {
     if (e.target.id !== "pf-form") return;
-    e.preventDefault(); pfLoad(document.getElementById("pf-addr").value);
+    e.preventDefault(); pfSaveWallet(document.getElementById("pf-addr").value);
   });
   pfBox.addEventListener("mousemove", function (e) {
     if (devFrozen) return;
@@ -5619,7 +5838,7 @@
     pfBtn.classList.toggle("active", portfolioVisible);
     pfRenderShell();
     if (pinnedCoins.length) renderPinned();
-    if (portfolioVisible && !pfState.addr && !pfState.manual) { var el = document.getElementById("pf-addr"); if (el) el.focus(); }
+    if (portfolioVisible && !pfWallets.length && !pfState.manual) { var el = document.getElementById("pf-addr"); if (el) el.focus(); }
   });
   setInterval(function () {
     if (!portfolioVisible || devFrozen || pfState.status !== "ok") return;

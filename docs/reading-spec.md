@@ -234,8 +234,10 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 
 ## Portfolio Manager: Allocation (21.11.2026)
 
-- Breiter Knopf "Show Allocation" über der Asset-Liste: Ringdiagramm mit Anteil am Portfolio-Wert, höchstens 8 Stücke plus "Other" (< 2 %),
-  BTC orange, ETH blau, Stablecoins Stablecoin-Blau; Hover hebt Stück und Legende hervor und zeigt Name, % und Wert in der Mitte. Zustand gemerkt.
+- Breiter Knopf "Show Allocation" unter der Asset-Liste (nicht im Edit-Modus): Ringdiagramm mit Anteil am Portfolio-Wert, höchstens 8 Nicht-Stablecoin-Stücke ab 2 %,
+  jeder Stablecoin ab 0,1 % bekommt ein eigenes Stück in einem eigenen Blauton (PF_PIE_BLUE), Rest "Other". BTC orange, ETH blau. Legendenzeilen ohne Lücke
+  (Hover springt direkt von Zeile zu Zeile, leerer Rand der Legende behält die Auswahl); Hover hebt Stück und Legende hervor und zeigt Name, % und Wert in der Mitte. Zustand gemerkt.
+- Obere Leiste mit 4 Feldern: Total Balance, Stablecoins (Wert in Stablecoin-Blau, Anteil in % und Anzahl), Average Cost, Profit / Loss.
 - Der Total-Balance-Chart öffnet sich einmalig von selbst, sobald zum ersten Mal ein Portfolio angezeigt wird (localStorage "top200-pf-total-shown").
 
 ## Sentiment Squares (21.11.2026, Rework, fertig)
@@ -272,6 +274,19 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   Filter Bull / Bear / Bridge / All bleiben. Settings: ein Schalter "Show Past Years".
   Jahreszahl in der Farbe ihres Zyklus (Bull grün, Bear rot, Bridge orange). Oben das kommende Jahr (gestrichelt, "Upcoming", Zyklus schon bekannt),
   "All Years" ganz unten. In den Monaten (4 pro Reihe, 3 Reihen, wie im Ratio-Tab): der höchste Monat grün umrandet und getönt, der niedrigste rot; alle Monatsboxen gleich hoch.
+
+## Portfolio Manager: Mehrere Wallets und Share (21.11.2026)
+
+- Eingabe + "Save" (statt Load/Clear): Adresse wird in "top200-pf-wallets" gespeichert ([{addr, name, on, who}]), Eingabe wird geleert.
+  Liste unter der Eingabe; beim Hover drei Knöpfe: Auge (ein-/ausblenden), Stift (Namen direkt in der Zeile tippen, Enter/Blur speichert, Esc bricht ab), X (entfernen).
+- Alle eingeblendeten Wallets werden gescannt und zusammengezählt (gleiche Coins addiert, Chains vereinigt). Wallets, die nicht lesbar sind, stehen in der Fußnote.
+  Swap-Suche über alle eingeblendeten EVM-Adressen. Durchschnittspreise gelten für alle Wallets zusammen (Schlüssel "wallets").
+- Migration: die alte einzelne Adresse ("top200-pf-addr") wird zur ersten gespeicherten Wallet, ihre Durchschnittspreise/Käufe ziehen mit.
+- Manuelles Portfolio ist nur angeboten, solange keine Wallet gespeichert ist; eine gespeicherte Wallet übernimmt.
+- Share (oben rechts, absolut, Titel bleibt mittig): Menü Uncensored / Censored, Fenster mit Vorschau, "Copy Image" und "Download PNG".
+  Bild wird selbst auf ein Canvas gezeichnet (2x): Titel + Datum, obere Leiste, alle Assets, Allocation, All-Time-Chart des Total Balance, Wasserzeichen
+  (CoinAtlas-Logo + Name) unten rechts. Censored ersetzt jeden Betrag ($-Werte, Token-Mengen, P/L in $, Achsenwerte) durch Punkte; Preise und % bleiben.
+  Ausgeblendete Wallets fehlen, Adressen erscheinen nie. Logos ohne CORS fallen auf Buchstaben zurück.
 
 ## Portfolio Manager: Durchschnittspreis (21.11.2026)
 
