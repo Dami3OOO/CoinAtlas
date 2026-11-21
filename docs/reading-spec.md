@@ -225,6 +225,19 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Linked Hover, Tint Strongest Months und Altcoin Dominance Line sind immer an und keine Schalter mehr.
 - Experimental: Dev Mode, Party Mode.
 
+## Customization (21.11.2026)
+
+- Neuer Settings-Bereich "Customization" (vor Experimental) mit Unter-Tabs: Asset List (noch leer), Sentiment Squares (Skin ab +50 %, vorher unter
+  Experimental), Portfolio Tint (Profit Tint grün/rot; Extra Tints ab "Starting at x % Profit" mit gewähltem Skin). Letzter Unter-Tab wird gemerkt.
+- Skins als gemeinsame CSS-Klassen .fx .fx-<name>: Gold, Silver, Diamond, Emerald, Ruby, Sapphire (fließender Glanz, leichter Puls; Edelsteine mit Facetten,
+  Diamond und Sapphire mit Funkeln). localStorage: "coinatlas-sq-fx", "coinatlas-pf-tint".
+
+## Portfolio Manager: Allocation (21.11.2026)
+
+- Breiter Knopf "Show Allocation" über der Asset-Liste: Ringdiagramm mit Anteil am Portfolio-Wert, höchstens 8 Stücke plus "Other" (< 2 %),
+  BTC orange, ETH blau, Stablecoins Stablecoin-Blau; Hover hebt Stück und Legende hervor und zeigt Name, % und Wert in der Mitte. Zustand gemerkt.
+- Der Total-Balance-Chart öffnet sich einmalig von selbst, sobald zum ersten Mal ein Portfolio angezeigt wird (localStorage "top200-pf-total-shown").
+
 ## Sentiment Squares (21.11.2026, Rework, fertig)
 
 - Jede Kachel ein Coin: Logo, darunter die Prozente; die Schrift schrumpft mit der Kachel (ab 6 px). Passt beides nicht, bleibt nur das Logo,
@@ -239,7 +252,7 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Zeitraumwechsel: jede Kachel zeigt ihren eigenen Wert; sobald der neue da ist, springen die Kacheln gruppenweise (alle 0,22 s eine Handvoll,
   die stärksten zuerst) in den neuen Zeitraum, ohne auf den Rest zu warten. Wechselt ein Coin die Seite, fliegt er über die Front, die Farbe blendet über (1,4 s).
 - Neue Kacheln erscheinen nicht auf einmal: alle 0,22 s eine Handvoll (mindestens 3, sonst 1/8 der wartenden, die stärksten zuerst), sie wachsen sanft auf.
-- Größe gedeckelt bei 100 %: darüber wird eine Kachel nicht größer. Experimental-Auswahl "Squares from +50%" (Off / Gold / Diamond, Standard Off; der frühere Gold-Schalter wird übernommen):
+- Größe gedeckelt bei 100 %: darüber wird eine Kachel nicht größer. Auswahl "Squares from +50%" (Settings > Customization > Sentiment Squares; Off oder ein Skin, Standard Off):
   Gold fließt und pulsiert golden, Diamond fließt eisig hellblau mit Facetten, Puls und einem Funkeln in der Ecke.
 - Seitenwechsel: die Kachel fliegt auf der Flug-Ebene ihres neuen Fensters von ihrem alten zum neuen Platz und landet dann darin.
   Die Flug-Ebene läuft exakt mit der Front mit: fliegende Kacheln sind nur auf ihrer Seite der Linie sichtbar, die Linie deckt sie auf oder zu.
