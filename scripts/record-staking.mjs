@@ -38,6 +38,12 @@ export const PROVIDERS = {
   POL: [{ name: "Polygon Staking", kind: "Native Staking", url: "https://staking.polygon.technology", locked: true }],
   BNB: [{ name: "BNB Chain Staking", kind: "Native Staking", url: "https://www.bnbchain.org/en/bnb-staking", locked: true }],
   HYPE: [{ name: "Hyperliquid", kind: "Native Staking", url: "https://app.hyperliquid.xyz/staking", locked: true }],
+  TRX: [{ name: "TronLink", kind: "Native Staking", url: "https://www.tronlink.org", locked: true }],
+  APT: [{ name: "Petra Wallet", kind: "Native Staking", url: "https://petra.app", locked: true }],
+  NEAR: [{ name: "MyNearWallet", kind: "Native Staking", url: "https://app.mynearwallet.com/staking", locked: true }],
+  EGLD: [{ name: "xPortal", kind: "Native Staking", url: "https://xportal.com", locked: true }],
+  AKT: [{ name: "Keplr", kind: "Native Staking", url: "https://wallet.keplr.app/chains/akash", locked: true }],
+  HBAR: [{ name: "HashPack", kind: "Native Staking", url: "https://www.hashpack.app", locked: false }],
   USDC: [{ name: "Aave", kind: "Lending", url: "https://app.aave.com", locked: false, pools: { project: ["aave-v3"], symbol: "USDC", chain: "Ethereum" } }],
   USDT: [{ name: "Aave", kind: "Lending", url: "https://app.aave.com", locked: false, pools: { project: ["aave-v3"], symbol: "USDT", chain: "Ethereum" } }],
   DAI: [{ name: "Aave", kind: "Lending", url: "https://app.aave.com", locked: false, pools: { project: ["aave-v3"], symbol: "DAI", chain: "Ethereum" } }]
@@ -46,7 +52,7 @@ const MAX_APY = 30; /* a base rate above this is not real staking: left out */
 
 /* pools: DefiLlama's list. Each option gets the base rate of its biggest matching pool; the 3 best per coin are kept (options without a rate last) */
 /* native staking: the network's rate from free official sources (tested: probe of 21.11.2026). Before the validator's commission.
-   Each returns the APR in %, or null. Avalanche, Polkadot, Polygon and Osmosis have no reliable free source: they keep "Rate on site" */
+   Each returns the APR in %, or null. Avalanche, Polkadot, Polygon, Osmosis, Sui (public JSON-RPC switched off), TON and Tezos have no reliable free source: they keep "Rate on site" */
 const NATIVE_NOTE = "network average, before validator fee";
 async function jget(url, body) {
   const r = await fetch(url, { method: body ? "POST" : "GET", headers: { accept: "application/json", "content-type": "application/json" }, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(60000) });
@@ -71,6 +77,29 @@ export const NATIVE_RATES = {
   BNB: { "BNB Chain Staking": async () => { /* the validators' APY, weighted by their stake */
     const v = (await jget("https://api.bnbchain.org/bnb-staking/v1/validator/all?offset=0&limit=100")).data.validators.filter(x => x.status === "ACTIVE" && x.apy > 0);
     const w = v.reduce((s, x) => s + +x.totalStaked, 0); return w > 0 ? v.reduce((s, x) => s + x.apy * +x.totalStaked, 0) / w * 100 : null;
+  } },
+  AKT: { "Keplr": cosmos("akash") },
+  APT: { "Petra Wallet": async () => { /* the reward rate per epoch, times the epochs in a year */
+    const c = (await jget("https://api.mainnet.aptoslabs.com/v1/accounts/0x1/resource/0x1::staking_config::StakingConfig")).data, b = (await jget("https://api.mainnet.aptoslabs.com/v1/accounts/0x1/resource/0x1::block::BlockResource")).data;
+    return +c.rewards_rate / +c.rewards_rate_denominator * (365 * 24 * 3600e6 / +b.epoch_interval) * 100;
+  } },
+  NEAR: { "MyNearWallet": async () => { /* the yearly inflation (minus the protocol's part), shared by the staked NEAR */
+    const call = (method, params) => jget("https://rpc.mainnet.near.org", { jsonrpc: "2.0", id: 1, method, params });
+    const cfg = (await call("EXPERIMENTAL_protocol_config", { finality: "final" })).result, v = (await call("validators", [null])).result, blk = (await call("block", { finality: "final" })).result;
+    const inf = cfg.max_inflation_rate[0] / cfg.max_inflation_rate[1] * (1 - cfg.protocol_reward_rate[0] / cfg.protocol_reward_rate[1]);
+    const staked = v.current_validators.reduce((s, x) => s + Number(x.stake), 0), sup = Number(blk.header.total_supply);
+    return staked > 0 ? inf * sup / staked * 100 : null;
+  } },
+  TRX: { "TronLink": async () => { /* the voters' yearly rate of each Super Representative, weighted by its votes */
+    const d = (await jget("https://apilist.tronscanapi.com/api/vote/witness")).data || [];
+    let w = 0, s = 0; d.forEach(x => { const r = +x.annualizedRate, v = +x.realTimeVotes; if (r > 0 && v > 0) { w += v; s += r * v; } });
+    return w > 0 ? s / w : null;
+  } },
+  EGLD: { "xPortal": async () => { const e = await jget("https://api.multiversx.com/economics"); return +e.apr > 0 ? +e.apr * 100 : null; } },
+  HBAR: { "HashPack": async () => { /* each node's reward rate (tinybars per HBAR per day), weighted by the rewarded stake */
+    let url = "https://mainnet-public.mirrornode.hedera.com/api/v1/network/nodes?limit=25", w = 0, s = 0, n = 0;
+    while (url && n++ < 6) { const j = await jget(url); (j.nodes || []).forEach(x => { const r = +x.reward_rate_start, k = +x.stake_rewarded; if (r > 0 && k > 0) { w += k; s += r * k; } }); url = j.links && j.links.next ? "https://mainnet-public.mirrornode.hedera.com" + j.links.next : null; }
+    return w > 0 ? s / w * 365 / 1e8 * 100 : null;
   } },
   HYPE: { "Hyperliquid": async () => { /* the validators' predicted APR of the week, weighted by their stake */
     const v = (await jget("https://api.hyperliquid.xyz/info", { type: "validatorSummaries" })).filter(x => x.isActive && !x.isJailed);
