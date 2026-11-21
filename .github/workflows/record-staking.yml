@@ -1,0 +1,31 @@
+name: Record staking
+
+# Fetches the staking rates (scripts/record-staking.mjs) on its own, without a snapshot.
+# Normally this runs every night as a step of record-snapshot.yml; this one is for starting it by hand.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: record-snapshot
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Record staking
+        run: node scripts/record-staking.mjs
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/staking.json data/staking-history.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Record staking rates"
+          git pull --rebase
+          git push
