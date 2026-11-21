@@ -227,8 +227,8 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 
 ## Sentiment Squares (21.11.2026, Rework)
 
-- Jede Kachel ein Coin: Logo, darunter die Prozente; die Schrift schrumpft mit der Kachel (bis 5 px), passt beides nicht, bleibt nur die Prozentzahl;
-  nur bei winzigen Kacheln steht die Zahl allein im Hover (Name immer im Hover), Fläche nach Bewegung (|%|^0,8 plus kleiner Sockel, damit ruhige Coins sichtbar bleiben),
+- Jede Kachel ein Coin: Logo, darunter die Prozente; die Schrift schrumpft mit der Kachel (ab 6 px). Passt beides nicht, bleibt nur das Logo,
+  damit man den Coin erkennt; die Zahl steht dann im Hover (Name immer im Hover), Fläche nach Bewegung (|%|^0,8 plus kleiner Sockel, damit ruhige Coins sichtbar bleiben),
   Farbe in 5 Stufen je Zeitraum (Grenzen z. B. 24H: 1/3/6/10 %). Grün links verankert, Rot rechts, jeweils als Squarified Treemap, der Stärkste außen.
 - Sentiment Front: steht automatisch beim Flächenanteil der Gewinner. Beide Seiten sind fest angeordnet, die kleinere auf mindestens halber Breite.
   Die Front ist ein Fenster: Ziehen deckt Kacheln der einen Seite auf und die der anderen zu, ohne dass sich eine Kachel bewegt; sie hält dort an,
@@ -238,7 +238,7 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   also genau ans Ende der dominanten Seite, die damit immer ganz sichtbar ist.
 - Klick auf eine Kachel: die Liste scrollt zur Zeile des Coins und hebt sie hellgrau hervor wie die Suche. Locked Hovercharts öffnen von dort wie immer auf Today (1D).
 - Bedienung: links "Top [1–200]" als Eingabefeld (Standard 200), rechts derselbe Zeitraum-Wähler wie bei den Locked Hovercharts:
-  Kopf nur noch "grün / rot" (Anzahl steigender und fallender Coins), wie der Simple Market Sentiment Counter.
+  "grün / rot" (Anzahl steigender und fallender Coins, wie der Simple Market Sentiment Counter) steht in der Mitte der Zeile mit Top-Feld und Zeitraum-Wähler.
   Today (seit Tagesbeginn), 1H, 7D, 30D, 365D aus Coinpaprika tickers (eine Anfrage pro Minute), 4H aus Binance-5m-Kerzen (je Coin, alle 2 Minuten).
   Kein 24H (Today ersetzt es). Hand-Zeiger über den Kacheln.
   Stablecoins ausgelassen. Nur in der Landing Area (Vollbild verworfen, kommt eher mit der Mobile-Version). Einstellungen in localStorage "coinatlas-squares".
