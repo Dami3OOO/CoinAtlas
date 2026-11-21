@@ -347,6 +347,22 @@
   .pf-sub { color: var(--muted); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .pf-avg { display: inline-block; min-width: 52px; border: 1px dashed transparent; border-radius: 6px; padding: 1px 6px; margin-right: -7px; }
   .pf-avg.empty { color: var(--muted); }
+  .pf-card { position: relative; }
+  .pf-row.noavg::after { content: ""; position: absolute; inset: 0; background: rgba(128,128,128,.10); pointer-events: none; } .pf-row.noavg .pf-asset, .pf-row.noavg .pf-price, .pf-row.noavg .pf-pl { opacity: .45; }
+  .pf-setavg { position: relative; z-index: 1; font: inherit; font-size: 11px; font-weight: 600; color: var(--fg); background: var(--bg); border: 1px dashed var(--muted); border-radius: 6px; padding: 4px 8px; cursor: pointer; white-space: nowrap; } .pf-setavg:hover { border-style: solid; }
+  .pf-src { font-style: normal; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  .pf-avg-ed { display: inline-flex; align-items: center; gap: 4px; } .pf-calc-b { font: inherit; font-size: 12px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 5px; height: 22px; width: 24px; cursor: pointer; padding: 0; } .pf-calc-b:hover { color: var(--fg); }
+  .pf-ap { position: absolute; inset: 0; z-index: 6; display: flex; align-items: flex-start; justify-content: center; padding: 56px 12px 12px; background: rgba(0,0,0,.45); border-radius: inherit; }
+  .pf-ap-in { width: 100%; max-height: 100%; overflow-y: auto; background: var(--pop); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; box-shadow: 0 12px 32px rgba(0,0,0,.5); text-align: left; }
+  .pf-ap-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; font-size: 14px; } .pf-ap-x { font: inherit; color: var(--muted); background: transparent; border: 0; cursor: pointer; font-size: 15px; }
+  .pf-ap-set { display: flex; gap: 8px; align-items: center; } .pf-ap-set .pf-in { flex: 1; height: 30px; font-size: 13px; text-align: left; } .pf-ap-set .gear { height: 30px; }
+  .pf-ap-calc { display: block; width: 100%; margin-top: 12px; font: inherit; font-size: 12px; font-weight: 600; color: var(--fg); background: transparent; border: 1px dashed var(--muted); border-radius: 8px; padding: 9px; cursor: pointer; } .pf-ap-calc:hover { background: var(--hover); border-style: solid; }
+  .pf-ap-t { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 16px 0 4px; } .pf-ap-note { font-size: 11px; line-height: 1.5; color: var(--muted); margin-bottom: 8px; }
+  .pf-ap-line { display: grid; grid-template-columns: 1fr auto 1.2fr 24px; gap: 6px; align-items: center; margin-bottom: 6px; } .pf-ap-line .pf-in { width: 100%; height: 28px; text-align: left; box-sizing: border-box; }
+  .pf-ap-line select { font: inherit; font-size: 12px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 5px; height: 28px; } .pf-ap-del { font: inherit; color: var(--muted); background: transparent; border: 0; cursor: pointer; }
+  .pf-ap-info { grid-column: 1 / -1; font-size: 11px; color: var(--muted); margin-top: -2px; } .pf-ap-info:empty { display: none; }
+  .pf-ap-add { height: 28px; font-size: 12px; } .pf-ap-swap { display: grid; grid-template-columns: 16px 1fr; column-gap: 8px; font-size: 12px; padding: 4px 0; cursor: pointer; } .pf-ap-swap em { grid-column: 2; font-style: normal; font-size: 11px; color: var(--muted); } .pf-ap-swap.off span { opacity: .5; text-decoration: line-through; }
+  .pf-ap-res { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 14px 0 8px; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; } .pf-ap-res .gear { height: 30px; }
   .pf-row.ed .pf-avg, .pf-row.ed .pf-amt { cursor: text; }
   .pf-row.ed .pf-avg:hover { border-color: var(--muted); background: var(--bg); }
   .pf-row.ed .pf-amt { border-bottom: 1px dashed var(--muted); }
@@ -3588,15 +3604,17 @@
     { title: "Customizable Locked Hoverchart Timeframes", st: "done", notes: ["Complete. 4H, 1D, 1W, 1M, 1Y, ALL and the Year Selector all exist. 90D and 365D were added on top."], desc: "Allows Users to choose the Timeframes inside the Locked Hovercharts [4H, 1D, 1W, 1M, 1Y, ALL] plus a Year Selector to jump to any single Year. 1Y always shows the current Calendar Year, January to December." },
     { title: "Portfolio Manager", st: "wip", notes: [
       "Works: load a Wallet address or build a Portfolio by hand, shown as a Locked Window.",
-      "Next: an Asset without an Average Price stays visible under a gray, low opacity layer with the label \"Set Average Price\", so the Manager tells you what is missing instead of hiding it.",
-      "Next: when setting the Price, a button \"Don't know your Average Price? Calculate it\". Enter your buys as Amount and Price (50 at 92,000), or as Amount and Date (50 on 20 Nov 2026); a Date takes the closing price of that day. The weighted Average is filled in for you.",
-      "Next: Swaps from a Stablecoin (USDC, USDT, DAI and similar) into a Token are read from the Wallet and added as buys automatically, at the Price the Swap actually paid.",
-      "Never automatic: Transfers. A Coin sent in from another Wallet or an Exchange may have been bought at 10k and moved at 100k, so its real Price cannot be known. Those stay for you to enter."],
+      "Works: an Asset without an Average Price stays visible under a gray layer with a \"Set Average Price\" button.",
+      "Works: \"Don't know your Average Price? Calculate it\": enter your buys as Amount at a Price, or Amount on a Day (the closing price of that day is used), and the weighted Average is filled in.",
+      "Works: Swaps from Stablecoins (USDC, USDT, DAI and similar) into a Token are read with Blockscout on Ethereum, Base, Arbitrum, Optimism and Polygon and set the Average Price at the Price the Swap paid. Each Swap can be left out.",
+      "Never automatic: Transfers. A Coin sent in from another Wallet or an Exchange may have been bought at 10k and moved at 100k, so its real Price cannot be known.",
+      "Once the Backend exists: Swaps on Solana, and on BNB Chain and Avalanche (these need an API key that must not sit in the public Site)."],
       desc: "Allows Users to enter their Wallet address to Immediately see their Portfolio value, or to build a Portfolio by hand. Assets in said Portfolio are then displayed in the Landing Area as a Locked Window.\nThe Average Price of each Token, and with it the Profit / Drawdown at current Prices, is filled in by a Calculator from your own buys and automatically from Stablecoin Swaps.\nOrange = it exists, but it's not perfect yet." },
     { title: "BTC|ETH Ratio", st: "done", notes: ["Grew far past the original scope: Converter with Swap, Ratio, Season and Dominance Graphs with both Fair Value Lines and their distance, Past Years with monthly Fear & Greed, phases and Extreme Months, the CoinAtlas Formula with Uncertainty Marks, and the Usage Tips.", "New: the Reading recommends a swap only at its two Stages, a purchase during Fear, and otherwise nothing. Replayed since 2019 it made six swaps into ETH and back, every one ahead. Dev Mode can set any past day as live, and the Hindsight judges the Reading.", "Swaps stay rare by design, a few a year at most. The buttons for the asset you hold (BTC or ETH) let the Reading speak to BTC and ETH holders on every day."], desc: "The Gold / Silver Ratio idea in Crypto Terms: how many ETH does 1 BTC buy right now. Swap into the cheaper Asset, wait for the Ratio to swing back, swap again, and the Stack of BTC and ETH grows without adding a single Dollar.\nLive: Converter, own Ratio Chart [BTC divided by ETH, 90D / 1Y / Year Selector / ALL], a recency-weighted Median as Fair Value with Neutral, Mild, Strong and Extreme Zones, and a first Season Readout." },
     { title: "BTC & ETH Dominance", st: "done", notes: ["Works: Dominance Graph, today's value from the real Top 200, and a daily Snapshot that records real Dominance since November 2026.", "Open: history before the recording is an estimate from the Ratio, so the Formula compares real with real only after 90 recorded days. The comparison against each Asset's own Average is not built, the Formula uses the 90 day change instead."], desc: "Market Cap Share of BTC, ETH and all other Coins [Altcoins = everything except BTC and ETH] in the Top 200. Each Asset is compared against its own Average: higher than usual ETH Dominance means lower than usual BTC Dominance. The third Signal for the Ratio." },
     { title: "Bitcoin Season & Ethereum Season", st: "done", notes: ["Works: the dedicated Season Graph exists and feeds the CoinAtlas Formula.", "Open: only the 90 day window is used. 30D and All Time cannot be selected."], desc: "Compares the % Gain of BTC and ETH against each other over 30D, 90D or All Time. The bigger Gainer is in Season, a small Gap is Neutral. Already shown inside the BTC|ETH Ratio, a dedicated Chart is next." },
     { title: "Season x Fear & Greed", st: "wip", notes: ["Partly there in another form: Past Years shows every month's Fear & Greed average next to its Formula score, which includes Season and Dominance.", "Open: the Toggle inside the Fear & Greed Index itself is not built."], desc: "Optional Toggle that overlays the Season and Dominance Data on the Fear & Greed Monthly Averages, to show which Asset dominated during Greed and Extreme Greed Phases [e.g. every Bridge Year]. Kept separate from the main Index, but hand in hand with it." },
+    { title: "Backend", notes: ["Planned. A small server at Cloudflare (Workers + D1 database), free tier. Needed for: Accounts and their Bitcoin Payments, saving Settings and Drawings across Devices, API keys that must not sit in the public Site, and the Swap reading on Solana, BNB Chain and Avalanche."], desc: "The Site itself stays a single public File. Everything that needs Secrets or saved Data moves into a small Backend." },
     { title: "Accounts", notes: [
       "Planned. No Email, no Phone Number, no Name. Supporting CoinAtlas unlocks an Account: the full Site stays free and ad-free for everyone, Supporters can save their Data.",
       "Create: a click creates a random Account ID (like CA-7K4M-92QX-HT3P) and the Password is set right there, plus a Recovery Code to download.",
@@ -4794,7 +4812,7 @@
   function pfLoad(addr) {
     addr = String(addr || "").trim();
     var kind = pfKind(addr), id = ++pfLoadId;
-    pfEdit = false; pfLock = null;
+    pfEdit = false; pfLock = null; pfAP = null; pfSwaps = {}; pfSwapNote = "";
     if (!kind) { pfSet({ addr: addr, status: "error", msg: "That doesn't look like a valid wallet address. Solana and EVM (0x…) addresses are supported." }); pfRenderBody(); pfRenderLock(); return; }
     try { localStorage.setItem(PF_ADDR_KEY, addr); localStorage.removeItem(PF_MODE_KEY); } catch (e) {}
     pfSet({ addr: addr, status: "loading", msg: "Loading token list…" }); pfRenderBody(); pfRenderLock();
@@ -4808,7 +4826,7 @@
       var note = r.note || "";
       if (!hasCt) note = "Token contract data isn't available yet, so only native coins were checked. Press Load again in a minute.";
       pfSet({ addr: addr, status: "ok", msg: note, holdings: r.holdings });
-      pfRenderBody();
+      pfRenderBody(); pfSwapScan(addr, id);
     }).catch(function () {
       if (id !== pfLoadId) return;
       pfSet({ addr: addr, status: "error", msg: "Couldn't read this wallet right now. The public RPC may be busy, try again in a moment." });
@@ -4882,15 +4900,16 @@
     rows.forEach(function (r, i) {
       var sym = esc(r.h.sym), a = pfAvgOf(r.h.sym);
       var amtHtml = pfEdit ? '<label class="pf-amt-l">Amount <input class="pf-in" data-f="amt" data-sym="' + sym + '" inputmode="decimal" placeholder="0" value="' + (r.amt > 0 ? r.amt : '') + '"></label>' : '<span class="pf-amt">' + pfAmt(r.amt) + '</span>';
-      var avgHtml = pfEdit ? '<input class="pf-in pf-avg-in" data-f="avg" data-sym="' + sym + '" inputmode="decimal" placeholder="Avg. cost $" value="' + (a > 0 ? a : '') + '">' : '<span class="pf-avg' + (a > 0 ? '' : ' empty') + '">' + (a > 0 ? price5(a) : '–') + '</span>';
-      html += '<div class="pf-row dev-target' + (pfEdit ? ' ed' : '') + '" data-sym="' + sym + '" data-dev-name="Asset #' + (i + 1) + '" data-dev-color="#f59e0b">' +
+      var avgHtml = pfEdit ? '<span class="pf-avg-ed"><input class="pf-in pf-avg-in" data-f="avg" data-sym="' + sym + '" inputmode="decimal" placeholder="Avg. cost $" value="' + (a > 0 ? a : '') + '"><button type="button" class="pf-calc-b" data-setavg="' + sym + '" title="Calculate the Average Price" aria-label="Calculate the Average Price">⋯</button></span>'
+        : a > 0 ? '<span class="pf-avg" title="' + ({ swaps: "From your stablecoin swaps", calc: "Calculated from your buys" }[pfSrcOf(r.h.sym)] || "Set by hand") + '">' + price5(a) + (pfSrcOf(r.h.sym) === "swaps" ? ' <i class="pf-src">swaps</i>' : '') + '</span>' : '<button type="button" class="pf-setavg" data-setavg="' + sym + '">Set Average Price</button>';
+      html += '<div class="pf-row dev-target' + (pfEdit ? ' ed' : '') + (!pfEdit && !(a > 0) ? ' noavg' : '') + '" data-sym="' + sym + '" data-dev-name="Asset #' + (i + 1) + '" data-dev-color="#f59e0b">' +
         '<div class="pf-asset">' + logoHtml(r.c).replace(' loading="lazy"', '') + '<div class="nm"><b>' + esc(r.c.name) + ' <span class="sym">' + esc(r.c.symbol) + '</span></b>' +
         '<span class="pf-sub">' + amtHtml + ' · <span class="pf-val">' + price(r.val) + '</span>' + (!pfEdit && r.h.chains && r.h.chains.length ? ' · ' + esc(r.h.chains.join(", ")) : '') + '</span></div></div>' +
         '<div>' + avgHtml + '<div class="pf-pl">' + pfPlHtml(r) + '</div></div>' +
         '<div class="pf-price">' + price(r.c.current_price) + '</div>' +
         (pfEdit ? '<button class="pf-x" type="button" data-sym="' + sym + '" title="Remove" aria-label="Remove asset">×</button>' : '') + '</div>';
     });
-    body.innerHTML = html + foot;
+    body.innerHTML = html + foot.replace('<div class="pf-foot">', '<div class="pf-foot">' + (pfSwapNote ? esc(pfSwapNote) + '<br>' : '')) + pfApHtml();
   }
 
   function pfRenderShell() {
@@ -5004,8 +5023,146 @@
     return '<div class="avg-tag" style="top:' + Math.max(16, avgY(a, min, max, H)).toFixed(1) + 'px">Avg ' + price5(a) + '</div>';
   }
 
+  /* ---- AVERAGE PRICE: set it by hand, calculate it from your buys (amount at a price or on a date), or take it from stablecoin swaps in the wallet ---- */
+  var PF_BUYS_KEY = "top200-pf-buys", PF_SRC_KEY = "top200-pf-avgsrc", pfBuys = {}, pfSrc = {}, pfSwaps = {}, pfSwapNote = "", pfAP = null, pfDayCache = {};
+  try { pfBuys = JSON.parse(localStorage.getItem(PF_BUYS_KEY) || "{}") || {}; pfSrc = JSON.parse(localStorage.getItem(PF_SRC_KEY) || "{}") || {}; } catch (e) {}
+  function pfSaveBuys() { try { localStorage.setItem(PF_BUYS_KEY, JSON.stringify(pfBuys)); localStorage.setItem(PF_SRC_KEY, JSON.stringify(pfSrc)); } catch (e) {} }
+  function pfBuyRec(sym) { var k = pfKey(), m = pfBuys[k] || (pfBuys[k] = {}); return m[sym] || (m[sym] = { lines: [], skip: [] }); }
+  function pfSetAvg(sym, v, src) { var k = pfKey(), m = pfAvg[k] || (pfAvg[k] = {}), s = pfSrc[k] || (pfSrc[k] = {}); if (v > 0) { m[sym] = v; s[sym] = src || "hand"; } else { delete m[sym]; delete s[sym]; } pfSaveAvg(); pfSaveBuys(); }
+  function pfSrcOf(sym) { var s = pfSrc[pfKey()]; return s ? s[sym] : ""; }
+  function pfDay(t) { return new Date(t).toISOString().slice(0, 10); }
+  function pfFmtDay(d) { return new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }); }
+  /* the closing price of a day, from Binance's daily candles */
+  function pfDayPrice(sym, d) {
+    var k = sym + "|" + d; if (pfDayCache[k]) return pfDayCache[k];
+    var t = Date.parse(d + "T00:00:00Z");
+    return (pfDayCache[k] = getJson("https://data-api.binance.vision/api/v3/klines?symbol=" + sym + "USDT&interval=1d&startTime=" + t + "&limit=1", 12000).then(function (j) {
+      if (!j || !j[0] || j[0][0] !== t) throw new Error("no price for that day"); return +j[0][4];
+    }).catch(function (e) { delete pfDayCache[k]; throw e; }));
+  }
+  /* every buy that counts: your own lines (with a price, or a date whose price has been found) and the swaps you did not leave out */
+  function pfCalcList(sym) {
+    var r = pfBuyRec(sym), out = [];
+    r.lines.forEach(function (l) { var p = l.m === "date" ? l.dp : l.p; if (l.a > 0 && p > 0) out.push({ a: l.a, p: p }); });
+    (pfSwaps[sym] || []).forEach(function (s) { if (r.skip.indexOf(s.tx) < 0) out.push({ a: s.a, p: s.p }); });
+    return out;
+  }
+  function pfCalcAvg(list) { var a = 0, c = 0; list.forEach(function (x) { a += x.a; c += x.a * x.p; }); return a > 0 ? { avg: c / a, amt: a } : null; }
+
+  function pfApHtml() {
+    var sym = pfAP && pfAP.sym, c = sym && pfCoin(sym); if (!c) return "";
+    var cur = pfAvgOf(sym), r = pfBuyRec(sym), sw = pfSwaps[sym] || [], res = pfCalcAvg(pfCalcList(sym));
+    var h = '<div class="pf-ap" role="dialog" aria-label="Average Price"><div class="pf-ap-in">' +
+      '<div class="pf-ap-h"><b>Average Price · ' + esc(c.name) + ' <span class="sym">' + esc(c.symbol) + '</span></b><button type="button" class="pf-ap-x" data-ap="close" aria-label="Close">✕</button></div>' +
+      '<div class="pf-ap-set"><input class="pf-in" id="pf-ap-val" inputmode="decimal" placeholder="Average price in $" value="' + (cur > 0 ? +cur.toPrecision(8) : '') + '"><button class="gear" type="button" data-ap="save">Save</button>' + (cur > 0 ? '<button class="gear" type="button" data-ap="unset">Remove</button>' : '') + '</div>';
+    if (!pfAP.calc) return h + '<button type="button" class="pf-ap-calc" data-ap="calc">Don\'t know your Average Price? Calculate it</button></div></div>';
+    h += '<div class="pf-ap-t">Your buys</div><div class="pf-ap-note">Enter how many you bought and at what price, or on which day. With a day, the closing price of that day is used.</div>';
+    r.lines.forEach(function (l, i) {
+      var v = l.m === "date" ? '<input class="pf-in" type="date" data-apl="' + i + ':d" value="' + (l.d || '') + '" max="' + pfDay(Date.now()) + '">' : '<input class="pf-in" inputmode="decimal" data-apl="' + i + ':p" placeholder="Price $" value="' + (l.p > 0 ? l.p : '') + '">';
+      var info = l.m === "date" ? (l.dp > 0 ? 'Close ' + price5(l.dp) : l.err ? '<span class="down">' + esc(l.err) + '</span>' : l.d ? 'Loading…' : '') : '';
+      h += '<div class="pf-ap-line"><input class="pf-in" inputmode="decimal" data-apl="' + i + ':a" placeholder="Amount" value="' + (l.a > 0 ? l.a : '') + '">' +
+        '<select data-apl="' + i + ':m"><option value="price"' + (l.m !== "date" ? ' selected' : '') + '>at price</option><option value="date"' + (l.m === "date" ? ' selected' : '') + '>on day</option></select>' + v +
+        '<button type="button" class="pf-ap-del" data-ap="del:' + i + '" aria-label="Remove this buy">✕</button><span class="pf-ap-info">' + info + '</span></div>';
+    });
+    h += '<button type="button" class="gear pf-ap-add" data-ap="add">+ Add a buy</button>';
+    if (sw.length) {
+      h += '<div class="pf-ap-t">Swaps from stablecoins in this wallet</div>';
+      sw.forEach(function (s) { var off = r.skip.indexOf(s.tx) >= 0;
+        h += '<label class="pf-ap-swap' + (off ? ' off' : '') + '"><input type="checkbox" data-apsw="' + esc(s.tx) + '"' + (off ? '' : ' checked') + '><span>' + pfAmt(s.a) + ' ' + esc(sym) + ' for ' + price(s.cost) + ' ' + esc(s.st) + '</span><em>' + price5(s.p) + ' · ' + esc(s.ch) + ' · ' + pfFmtDay(pfDay(s.t)) + '</em></label>'; });
+    }
+    h += '<div class="pf-ap-res" id="pf-ap-res">' + pfApResHtml(res) + '</div>' +
+      '<div class="pf-ap-note">Coins that came in by transfer are never counted: they may have been bought long before at a different price.</div></div></div>';
+    return h;
+  }
+  function pfApResHtml(res) { return res ? '<span>Average <b>' + price5(res.avg) + '</b> from ' + pfAmt(res.amt) + ' ' + esc(pfAP.sym) + '</span><button class="gear" type="button" data-ap="use">Use this price</button>' : '<span class="pf-ap-note">Add a buy to see the average.</span>'; }
+  function pfApRefresh(full) { if (!pfAP) return; if (full) { var old = pfBox.querySelector(".pf-ap"); if (old) old.outerHTML = pfApHtml(); return; } var el = document.getElementById("pf-ap-res"); if (el) el.innerHTML = pfApResHtml(pfCalcAvg(pfCalcList(pfAP.sym))); }
+  function pfApDate(i) { /* fetches the closing price for a dated line */
+    var sym = pfAP.sym, l = pfBuyRec(sym).lines[i]; if (!l || !l.d) return;
+    l.dp = 0; l.err = ""; var d = l.d;
+    pfDayPrice(sym, d).then(function (p) { if (l.d === d) { l.dp = p; pfSaveBuys(); pfApRefresh(true); } }, function () { if (l.d === d) { l.err = "No price for that day"; pfApRefresh(true); } });
+  }
+  function pfApClick(e) {
+    var b = e.target.closest("[data-setavg]"); if (b) { pfHideHover(); pfAP = { sym: b.dataset.setavg, calc: false }; pfRenderBody(); return true; }
+    var a = e.target.closest("[data-ap]"); if (!a) return !!e.target.closest(".pf-ap");
+    var act = a.dataset.ap, sym = pfAP && pfAP.sym, r = sym && pfBuyRec(sym);
+    if (act === "close") { pfAP = null; pfRenderBody(); return true; }
+    if (act === "calc") { pfAP.calc = true; if (!r.lines.length && !(pfSwaps[sym] || []).length) r.lines.push({ a: 0, m: "price" }); pfApRefresh(true); return true; }
+    if (act === "add") { r.lines.push({ a: 0, m: "price" }); pfSaveBuys(); pfApRefresh(true); return true; }
+    if (/^del:/.test(act)) { r.lines.splice(+act.slice(4), 1); pfSaveBuys(); pfApRefresh(true); return true; }
+    if (act === "save" || act === "use" || act === "unset") {
+      var v = act === "unset" ? 0 : act === "use" ? (pfCalcAvg(pfCalcList(sym)) || {}).avg : pfParse(document.getElementById("pf-ap-val").value);
+      if (act !== "unset" && !(v > 0)) return true;
+      pfSetAvg(sym, v, act === "use" ? "calc" : "hand"); pfAP = null; pfRenderBody(); if (pinnedCoins.length) renderPinned(); pfRenderLock(true); return true;
+    }
+    return true;
+  }
+  pfBox.addEventListener("input", function (e) {
+    var t = e.target; if (!pfAP) return;
+    if (t.dataset.apl) { var q = t.dataset.apl.split(":"), l = pfBuyRec(pfAP.sym).lines[+q[0]]; if (!l) return;
+      if (q[1] === "a") l.a = pfParse(t.value); else if (q[1] === "p") l.p = pfParse(t.value); else if (q[1] === "d") { l.d = t.value; pfApDate(+q[0]); } else if (q[1] === "m") { l.m = t.value; if (l.m === "date" && l.d) pfApDate(+q[0]); pfSaveBuys(); pfApRefresh(true); return; }
+      pfSaveBuys(); pfApRefresh(); }
+    else if (t.dataset.apsw) { var r = pfBuyRec(pfAP.sym), i = r.skip.indexOf(t.dataset.apsw); if (t.checked && i >= 0) r.skip.splice(i, 1); if (!t.checked && i < 0) r.skip.push(t.dataset.apsw); pfSaveBuys(); pfApRefresh(true); }
+  });
+  pfBox.addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target.id === "pf-ap-val") { e.preventDefault(); pfBox.querySelector('[data-ap="save"]').click(); } });
+
+  /* ---- swaps from stablecoins, read with Blockscout (public, no key): a transaction where stablecoins leave the wallet and exactly one token comes in is a buy at the price paid.
+     Transfers in from elsewhere are never counted. BNB Chain, Avalanche and Solana follow once the backend exists ---- */
+  var PF_BS = { "ethereum": "https://eth.blockscout.com", "base": "https://base.blockscout.com", "arbitrum-one": "https://arbitrum.blockscout.com", "optimistic-ethereum": "https://optimism.blockscout.com", "polygon-pos": "https://polygon.blockscout.com" };
+  var PF_STABLE = ["USDC", "USDT", "DAI", "USDS", "USDE", "FDUSD", "TUSD", "PYUSD", "FRAX", "LUSD", "GHO", "CRVUSD", "BUSD", "USDP", "USD1", "RLUSD"];
+  function pfBsAll(url, max) { /* follows Blockscout's pages, at most max of them */
+    var items = [];
+    var page = function (params, n) {
+      var q = params ? Object.keys(params).map(function (k) { return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); }).join("&") : "";
+      return getJson(url + (q ? (url.indexOf("?") > -1 ? "&" : "?") + q : ""), 15000).then(function (j) {
+        items = items.concat((j && j.items) || []); return j && j.next_page_params && n + 1 < max ? page(j.next_page_params, n + 1) : items;
+      });
+    };
+    return page(null, 0);
+  }
+  function pfBig(v, dec) { try { var s = String(v || "0"), b = BigInt(s.split(".")[0]); return Number(b) / Math.pow(10, dec); } catch (e) { return +v / Math.pow(10, dec) || 0; } }
+  function pfSwapChain(ch, addr) {
+    var base = PF_BS[ch.id], me = addr.toLowerCase(), coinOf = {}, stable = {};
+    coins.forEach(function (c) { var a = c.contracts && c.contracts[ch.id]; if (!a || !/^0x[0-9a-fA-F]{40}$/.test(a)) return; a = a.toLowerCase(); if (PF_STABLE.indexOf(c.symbol.toUpperCase()) >= 0) stable[a] = c.symbol.toUpperCase(); else coinOf[a] = c; });
+    return Promise.all([pfBsAll(base + "/api/v2/addresses/" + addr + "/token-transfers?type=ERC-20", 10), pfBsAll(base + "/api/v2/addresses/" + addr + "/internal-transactions", 4).catch(function () { return []; })]).then(function (r) {
+      var tx = {}, get = function (h, t) { return tx[h] || (tx[h] = { t: t, out: 0, inn: 0, st: "", net: {} }); };
+      r[0].forEach(function (it) {
+        var h = it.transaction_hash || it.tx_hash, tok = it.token || {}, ct = String(tok.address_hash || tok.address || "").toLowerCase(), from = String((it.from || {}).hash || "").toLowerCase(), to = String((it.to || {}).hash || "").toLowerCase();
+        if (!h || (from !== me && to !== me)) return;
+        var dec = +((it.total && it.total.decimals) || tok.decimals || 18), v = pfBig(it.total && it.total.value, dec), x = get(h, Date.parse(it.timestamp));
+        if (stable[ct]) { if (from === me) { x.out += v; x.st = stable[ct]; } if (to === me) x.inn += v; }
+        else if (coinOf[ct]) { var s = coinOf[ct].symbol.toUpperCase(); x.net[s] = (x.net[s] || 0) + (to === me ? v : 0) - (from === me ? v : 0); }
+      });
+      r[1].forEach(function (it) { /* native coin paid out to the wallet by a swap contract, e.g. USDC into ETH */
+        var h = it.transaction_hash || it.tx_hash, to = String((it.to || {}).hash || "").toLowerCase(); if (!h || to !== me || it.success === false || !tx[h]) return;
+        var s = ch.native; tx[h].net[s] = (tx[h].net[s] || 0) + pfBig(it.value, 18);
+      });
+      var buys = [];
+      Object.keys(tx).forEach(function (h) {
+        var x = tx[h], cost = x.out - x.inn, got = Object.keys(x.net).filter(function (s) { return x.net[s] > 0; });
+        if (cost > 0.5 && got.length === 1) { var s = got[0], a = x.net[s]; if (a > 0 && isFinite(cost / a)) buys.push({ sym: s, a: a, p: cost / a, cost: cost, st: x.st, t: x.t, tx: h, ch: ch.label }); }
+      });
+      return buys;
+    });
+  }
+  function pfSwapScan(addr, id) {
+    if (pfKind(addr) !== "evm") { pfSwaps = {}; pfSwapNote = ""; return; }
+    pfSwapNote = "Looking for stablecoin swaps…"; pfRenderBody();
+    var chains = PF_EVM.filter(function (c) { return PF_BS[c.id]; }), failed = [];
+    Promise.all(chains.map(function (ch) { return pfSwapChain(ch, addr).catch(function () { failed.push(ch.label); return []; }); })).then(function (lists) {
+      if (id !== pfLoadId) return;
+      var all = [].concat.apply([], lists), by = {}; all.sort(function (a, b) { return a.t - b.t; }).forEach(function (b) { (by[b.sym] = by[b.sym] || []).push(b); });
+      pfSwaps = by;
+      /* an asset without a price, or whose price came from swaps before, takes the average of its swaps */
+      Object.keys(by).forEach(function (s) { if (!pfHolding(s)) return; var src = pfSrcOf(s); if (pfAvgOf(s) > 0 && src !== "swaps") return; var res = pfCalcAvg(pfCalcList(s)); if (res) pfSetAvg(s, res.avg, "swaps"); });
+      var n = all.length;
+      pfSwapNote = (n ? n + " stablecoin swap" + (n === 1 ? "" : "s") + " found and used for the Average Price." : "No stablecoin swaps found.") + (failed.length ? " Couldn't check: " + failed.join(", ") + "." : "") + " BNB Chain, Avalanche and Solana are not checked yet.";
+      pfRenderBody(); if (pinnedCoins.length) renderPinned();
+    });
+  }
+
   pfBox.addEventListener("click", function (e) {
     var t = e.target;
+    if (pfApClick(e)) return;
     if (t.closest("#pf-clear")) { pfClear(); return; }
     if (t.closest("#pf-manual")) { pfStartManual(); return; }
     if (t.closest("#pf-edit")) { pfEdit = !pfEdit; pfHideHover(); pfRenderBody(); pfRenderLock(true); return; }
@@ -5045,6 +5202,7 @@
   });
   pfBox.addEventListener("mousemove", function (e) {
     if (devFrozen) return;
+    if (pfAP || (e.target.closest && e.target.closest(".pf-setavg, .pf-calc-b"))) { pfHideHover(); return; } /* no value chart while the Average Price window is open or over its button */
     var t = e.target.closest && e.target.closest(".pf-row, .pf-tot");
     if (!t || pfEdit) { pfHideHover(); return; }
     var key = t.classList.contains("pf-tot") ? "TOTAL" : t.dataset.sym;

@@ -225,6 +225,20 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Linked Hover, Tint Strongest Months und Altcoin Dominance Line sind immer an und keine Schalter mehr.
 - Experimental: Dev Mode, Party Mode.
 
+## Portfolio Manager: Durchschnittspreis (21.11.2026)
+
+- Asset ohne Durchschnittspreis: graue Ebene über der Zeile, Knopf "Set Average Price". Vorher waren solche Zeilen unsichtbar:
+  die Regel `.chart-container .empty` (202 px hoch) traf das leere Feld, weil die Karte auch chart-container ist.
+- Preisfenster: Preis eintippen oder "Don't know your Average Price? Calculate it": Käufe als Menge zu Preis oder Menge an Tag
+  (Tagesschlusskurs von Binance, SYMBOLUSDT 1d). Gewichteter Durchschnitt, "Use this price" übernimmt ihn.
+  Gespeichert: localStorage "top200-pf-buys" (Käufe, abgewählte Swaps), "top200-pf-avgsrc" (Herkunft: hand, calc, swaps).
+- Swaps: Blockscout (ohne Schlüssel) auf Ethereum, Base, Arbitrum, Optimism, Polygon; Token-Bewegungen (bis 10 Seiten) und interne
+  Transaktionen (für ETH/POL als Gegenwert). Eine Transaktion, in der Stablecoins die Wallet verlassen und genau ein Token ankommt,
+  ist ein Kauf zu Kosten ÷ Menge. Stablecoins nur über ihre bekannten Vertragsadressen (gegen gefälschte Tokens mit gleichem Namen).
+  Ein Asset ohne Preis oder mit Preis aus Swaps bekommt den Swap-Durchschnitt; von Hand gesetzte Preise bleiben.
+  Überweisungen zählen nie. Nur mit nachgebildeten Antworten getestet.
+- Später mit Backend: Solana, BNB Chain, Avalanche.
+
 ## Accounts (Plan, 20.11.2026, noch nicht gebaut)
 
 - Keine E-Mail, keine Telefonnummer, kein Name. Wer CoinAtlas unterstützt, bekommt einen Account; die Seite bleibt für alle frei und werbefrei.
