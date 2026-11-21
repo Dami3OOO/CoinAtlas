@@ -404,23 +404,23 @@
   .sqm-ctrl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; } .sqm-tfw { margin: 0 0 0 auto; } .sqm-tfm { grid-template-columns: 110px; }
   .sqm-top-in { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
   .sqm-top-in input { width: 56px; height: 26px; font: inherit; font-size: 12px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; text-align: center; }
-  #rows tr.row-find td { animation: rowFind 2.6s ease-out; } @keyframes rowFind { 0%, 30% { background: rgba(250,204,21,.28); } 100% { background: transparent; } } .sqm-x { font: inherit; font-size: 14px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 6px; width: 30px; height: 26px; cursor: pointer; } .sqm-x:hover { color: var(--fg); background: var(--hover); }
+  .sqm-x { font: inherit; font-size: 14px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 6px; width: 30px; height: 26px; cursor: pointer; } .sqm-x:hover { color: var(--fg); background: var(--hover); }
   .sqm-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; font-size: 12px; font-variant-numeric: tabular-nums; } .sqm-front-l { font-weight: 700; }
   .sqm-top { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 16px; font-size: 11px; color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
   .sqm-map { position: relative; height: 480px; margin-top: 10px; border-radius: 8px; overflow: hidden; background: var(--bg); }
-  .sqm-sq { position: absolute; box-sizing: border-box; border-radius: 3px; overflow: hidden; display: grid; place-items: center; cursor: pointer; color: #fff; transition: left .6s ease, top .6s ease, width .6s ease, height .6s ease, background-color .6s ease; }
+  .sqm-sq { position: absolute; box-sizing: border-box; border-radius: 3px; overflow: hidden; display: grid; place-items: center; cursor: pointer; color: #fff; transition: left 1.1s cubic-bezier(.22,1,.36,1), top 1.1s cubic-bezier(.22,1,.36,1), width 1.1s cubic-bezier(.22,1,.36,1), height 1.1s cubic-bezier(.22,1,.36,1), background-color 1.1s ease; }
   .sqm-sq.nt { transition: none; } .sqm-sq:hover { outline: 2px solid rgba(255,255,255,.7); outline-offset: -2px; z-index: 2; }
-  .sqm-sq.pulse { animation: sqPulse 1.1s ease-out; } @keyframes sqPulse { 0% { box-shadow: inset 0 0 0 3px #fff, 0 0 18px rgba(255,255,255,.8); } 100% { box-shadow: inset 0 0 0 0 transparent, 0 0 0 transparent; } }
+  .sqm-sq.pulse { animation: sqPulse 1.6s ease-out; } @keyframes sqPulse { 0% { box-shadow: inset 0 0 0 3px #fff, 0 0 18px rgba(255,255,255,.8); } 100% { box-shadow: inset 0 0 0 0 transparent, 0 0 0 transparent; } }
   .sqm-l { display: flex; flex-direction: column; align-items: center; gap: 1px; line-height: 1.05; text-align: center; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,.45); }
   .sqm-l b { font-weight: 700; } .sqm-l i { font-style: normal; font-weight: 600; opacity: .95; } .sqm-l .logo { width: 26%; max-width: 34px; height: auto; aspect-ratio: 1; margin-bottom: 3px; }
-  .sqm-front { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; z-index: 3; pointer-events: none; background: linear-gradient(#fff, rgba(255,255,255,.55)); box-shadow: 0 0 10px 2px rgba(255,255,255,.55), 0 0 24px 6px rgba(234,179,8,.25); transition: left .6s ease; }
+  .sqm-front { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; z-index: 3; pointer-events: none; background: linear-gradient(#fff, rgba(255,255,255,.55)); box-shadow: 0 0 10px 2px rgba(255,255,255,.55), 0 0 24px 6px rgba(234,179,8,.25); transition: left 1.1s cubic-bezier(.22,1,.36,1); }
   .sqm-front[hidden] { display: none; }
   .sqm-front { pointer-events: auto; cursor: ew-resize; touch-action: none; } .sqm-front::before { content: ""; position: absolute; top: 0; bottom: 0; left: -8px; right: -8px; }
   .sqm-front span { position: absolute; top: 50%; left: 50%; width: 12px; height: 34px; transform: translate(-50%, -50%); background: #fff; border-radius: 6px; box-shadow: 0 0 10px rgba(255,255,255,.7); }
   .sqm-front span::after { content: ""; position: absolute; inset: 9px 4px; border-left: 1px solid #999; border-right: 1px solid #999; }
   .sqm-map.dragging .sqm-sq, .sqm-map.dragging .sqm-front { transition: none; } .sqm-map.dragging { cursor: ew-resize; user-select: none; }
   .sqm-lg { display: grid; place-items: center; flex: none; } .sqm-lg .logo { width: 100%; height: 100%; margin: 0; max-width: none; font-size: 9px; } .sqm-l .sqm-lg { margin-bottom: 3px; } .sqm-auto { width: auto; padding: 0 10px; font-size: 12px; } .sqm-foot { text-align: center; margin-top: 8px; }
-  .sqm-gl, .sqm-rl { position: absolute; top: 0; bottom: 0; overflow: hidden; transition: width .6s ease, left .6s ease; } .sqm-in { transition: left .6s ease, width .6s ease; }
+  .sqm-gl, .sqm-rl { position: absolute; top: 0; bottom: 0; overflow: hidden; transition: width 1.1s cubic-bezier(.22,1,.36,1), left 1.1s cubic-bezier(.22,1,.36,1); } .sqm-in { transition: left 1.1s cubic-bezier(.22,1,.36,1), width 1.1s cubic-bezier(.22,1,.36,1); }
   .sqm-map.dragging .sqm-gl, .sqm-map.dragging .sqm-rl, .sqm-map.dragging .sqm-in { transition: none; } .sqm-gl { left: 0; } .sqm-rl { right: 0; } .sqm-in { position: absolute; top: 0; left: 0; height: 100%; }
   .sqm-sq { cursor: pointer; }
   .sq .logo { width: 60%; height: 60%; font-size: 13px; }
@@ -3680,7 +3680,7 @@
     return (sqView = { map: m, gl: m.querySelector(".sqm-gl"), rl: m.querySelector(".sqm-rl"), gin: m.querySelector(".sqm-gl .sqm-in"), rin: m.querySelector(".sqm-rl .sqm-in"), front: m.querySelector(".sqm-front"), els: {}, first: true, W: 0, Gw: 0, Rw: 0, auto: 0 });
   }
   function sqPlaceFront(v) { /* only the window between the two sides moves */
-    var W = v.W, x = Math.max(0, Math.min(W, sqSplit != null ? sqSplit * W : v.auto));
+    var W = v.W, x = sqSplit != null ? Math.max(W - v.Rw, Math.min(v.Gw, sqSplit * W)) : v.auto; /* auto: exactly where the dominant side ends, so it is always shown whole */
     v.gl.style.width = x + "px"; v.rl.style.left = x + "px"; v.rin.style.left = (W - v.Rw - x) + "px"; v.front.style.left = x + "px";
   }
   function sqPaint(d) {
@@ -3730,14 +3730,16 @@
     if (!tr) { if (f) f.textContent = c.name + " is not shown in the list right now (filters or list range)."; return; }
     sqJump = { sym: c.symbol, tf: SQ_CARD[sqS.tf] || "1D", at: Date.now() };
     tr.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
-    tr.classList.remove("row-find"); void tr.offsetWidth; tr.classList.add("row-find"); setTimeout(function () { tr.classList.remove("row-find"); }, 2600);
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; /* the same light gray flash as a search */
+    Array.prototype.forEach.call(rowsEl.querySelectorAll(".flash"), function (r) { r.classList.remove("flash"); }); clearTimeout(flashTimer);
+    flashTimer = setTimeout(function () { tr.classList.add("flash"); flashTimer = setTimeout(function () { tr.classList.remove("flash"); }, 900); }, reduce ? 0 : 350);
   }
   sqBox.addEventListener("click", function (e) {
     var t = e.target.closest("[data-sqtf],[data-sqauto]");
-    if (t) { if (t.dataset.sqtf) { sqS.tf = t.dataset.sqtf; if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } else sqSplit = null; sqSave(); sqDraw(); return; }
+    if (t) { if (t.dataset.sqtf) { sqS.tf = t.dataset.sqtf; sqSplit = null; if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } else sqSplit = null; sqSave(); sqDraw(); return; }
     var sq = e.target.closest(".sqm-sq"), c = sq && coins[+sq.dataset.i]; if (c) sqFind(c);
   });
-  sqBox.addEventListener("change", function (e) { if (!e.target.dataset.sqtop) return; var n = Math.round(+e.target.value); sqS.top = isFinite(n) && n >= 1 ? Math.min(200, n) : 200; e.target.value = sqS.top; sqSave(); sqDraw(); });
+  sqBox.addEventListener("change", function (e) { if (!e.target.dataset.sqtop) return; var n = Math.round(+e.target.value); sqS.top = isFinite(n) && n >= 1 ? Math.min(200, n) : 200; e.target.value = sqS.top; sqSplit = null; sqSave(); sqDraw(); });
   sqBox.addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target.dataset && e.target.dataset.sqtop) e.target.blur(); });
   /* the Sentiment Front as a window: drag it, double click it to put it back */
   sqBox.addEventListener("pointerdown", function (e) {
