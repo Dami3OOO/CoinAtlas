@@ -295,6 +295,18 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   (CoinAtlas-Logo + Name) unten rechts. Light Censor ersetzt jeden Betrag ($-Werte, Token-Mengen, P/L in $, Achsenwerte) durch Punkte; Preise und % bleiben.
   Ausgeblendete Wallets fehlen, Adressen erscheinen nie. Logos ohne CORS fallen auf Buchstaben zurück.
 
+## Portfolio Manager: Manual Wallets und Feinschliff (21.11.2026)
+
+- Manual Wallets stehen in derselben Liste wie Adressen ({manual, id, def: "Manual Wallet n", name, on, holdings}), gleiche Knöpfe (Auge, Stift, X);
+  ein leerer Name zeigt wieder "Manual Wallet n". "+ Add Manual Wallet" unter der Liste (bei leerer Liste: "Add Manually"). Klick auf eine Manual Wallet
+  öffnet ihre Coins im Edit-Modus ("Editing …"); Edit mit genau einer Manual Wallet bearbeitet diese, sonst nur die Durchschnittspreise.
+  Adresse speichern löscht keine Manual Wallet. Das alte Hand-Portfolio wird zu Manual Wallet 1, seine Durchschnittspreise ziehen nach "wallets".
+- Adress-Scans werden gemerkt (pfScanCache); Auge, X und Bearbeiten rechnen ohne neuen Scan neu zusammen.
+- Total Balance: Klick öffnet/schließt den Chart, das Feld ist bei offenem Chart hellgrau (#2a2a28 wie .gear.active); das X am Chart ist weg.
+  Zeitauswahl als übliches Dropdown (fg-yr-pick). Statistik-Mitte: "Current Portfolio Balance" (Asset: "Current Holdings Value").
+- Show Allocation: aktiv hellgrau statt weiß; öffnen scrollt zum Diagramm. Stablecoin-Zeilen zeigen "Stablecoin".
+- Full Censor verbirgt zusätzlich alle Gewinne in % (Punkte, Vorzeichen und Farbe bleiben), auch oben rechts im All-Time-Chart.
+
 ## Portfolio Manager: Durchschnittspreis (21.11.2026)
 
 - Asset ohne Durchschnittspreis: graue Ebene über der Zeile, Knopf "Set Average Price". Vorher waren solche Zeilen unsichtbar:

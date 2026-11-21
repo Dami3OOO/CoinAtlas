@@ -338,7 +338,7 @@
   .pf-sum .sub.up { color: var(--up); } .pf-sum .sub.down { color: var(--down); }
   .pf-bar { display: flex; justify-content: flex-end; margin-bottom: 8px; }
   .pf-pie-wrap { margin-top: 12px; } .pf-pie-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 36px; margin: 0 0 12px; font-size: 12px; font-weight: 600; }
-  .pf-pie-btn svg { width: 16px; height: 16px; fill: currentColor; } .pf-pie-btn.active { color: var(--bg); background: var(--fg); }
+  .pf-pie-btn svg { width: 16px; height: 16px; fill: currentColor; } 
   .pf-pie { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 18px; align-items: center; margin: 0; padding: 12px 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; }
   .pf-pie-svg { width: 180px; height: 180px; } .pf-pie-svg path { stroke: var(--bg); stroke-width: 1.5; cursor: pointer; transition: opacity .2s, transform .2s; transform-origin: 90px 90px; }
   .pf-pie-svg path.off { opacity: .35; } .pf-pie-svg path.on { transform: scale(1.05); }
@@ -365,7 +365,7 @@
   .pf-card { position: relative; }
   .pf-share-w { position: absolute; top: 10px; right: 12px; z-index: 3; }
   .pf-share { display: flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; font-size: 12px; font-weight: 600; }
-  .pf-share svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; } .pf-share.active { color: var(--bg); background: var(--fg); }
+  .pf-share svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; } 
   .pf-share-m { position: absolute; right: 0; top: 34px; width: 190px; padding: 4px; background: var(--pop); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.45); } .pf-share-m[hidden] { display: none; }
   .pf-share-m button { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; width: 100%; padding: 7px 10px; background: transparent; border: 0; border-radius: 7px; color: var(--fg); cursor: pointer; text-align: left; font: inherit; }
   .pf-share-m button:hover { background: var(--hover); } .pf-share-m b { font-size: 13px; } .pf-share-m span { font-size: 11px; color: var(--muted); }
@@ -376,6 +376,9 @@
   .pf-sh-img { flex: 1; min-height: 160px; overflow: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); } .pf-sh-img img { display: block; width: 100%; height: auto; }
   .pf-sh-wait { padding: 60px 0; text-align: center; color: var(--muted); font-size: 13px; }
   .pf-sh-foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; } .pf-sh-foot .gear { height: 32px; padding: 0 14px; font-weight: 600; } .pf-sh-dl { color: var(--bg) !important; background: var(--fg) !important; } .pf-sh-dl:disabled { opacity: .5; }
+  .pf-w.man { cursor: pointer; } .pf-w.man:hover { background: var(--hover); } .pf-w.ed { border-color: #3a3a36; background: #2a2a28; }
+  .pf-w-add { align-self: flex-start; padding: 4px 8px; font: inherit; font-size: 12px; color: var(--muted); background: transparent; border: 1px dashed var(--line); border-radius: 8px; cursor: pointer; } .pf-w-add:hover { color: var(--fg); border-color: var(--muted); }
+  .pf-ed-who { margin-right: auto; font-size: 12px; color: var(--muted); } .pf-ed-who b { color: var(--fg); }
   .pf-wl { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; } .pf-wl[hidden] { display: none; }
   .pf-w { position: relative; display: flex; align-items: center; gap: 8px; min-height: 30px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 12px; }
   .pf-w-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--up); flex: none; } .pf-w.off .pf-w-dot { background: var(--muted); } .pf-w.off > span:not(.pf-w-act) { opacity: .45; }
@@ -427,6 +430,8 @@
   .pf-in.pf-avg-in { width: 100%; }
   .pf-lock { position: relative; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
   .pf-lock-x { position: absolute; right: 0; top: 12px; }
+  .pf-tfw { display: flex; justify-content: center; margin: 0 0 8px; } .pf-tfm { grid-template-columns: 110px; right: auto; left: 50%; transform: translateX(-50%); }
+  .pf-sum > .pf-tot.on { background: #2a2a28; }
   .pf-lock-title { font-size: 14px; font-weight: 700; text-align: center; padding: 0 28px; }
   .pf-lock-sub { color: var(--muted); font-size: 11px; line-height: 1.5; text-align: center; margin: 4px 0 10px; }
   .avg-tag.off { transform: none; border-style: dashed; }
@@ -1719,7 +1724,7 @@
     return '<div class="t dev-target" data-dev-name="Chart Header" data-dev-color="#60a5fa"><div><div><b>' + esc(c.name) + '</b>' + tierStr + '</div>' + (catLabel(c) ? '<div class="cat-tag">' + catLabel(c) + '</div>' : '') + '</div><div class="chart-h-actions"><span class="' + (cls || "m") + ' v">' + right + '</span>' + closeBtn + '</div></div>' + (showClose ? tfRow(c) : '');
   }
   function stats(c, min, max) {
-    return '<div class="chart-stats dev-target" data-dev-name="Chart Stats" data-dev-color="#f472b6"><div><span>Low</span>' + (min == null ? "–" : price(min)) + '</div><div class="mid"><span>Current price</span>' + price(c.current_price) + '</div><div><span>High</span>' + (max == null ? "–" : price(max)) + "</div></div>";
+    return '<div class="chart-stats dev-target" data-dev-name="Chart Stats" data-dev-color="#f472b6"><div><span>Low</span>' + (min == null ? "–" : price(min)) + '</div><div class="mid"><span>' + (c.pfLbl || 'Current price') + '</span>' + price(c.current_price) + '</div><div><span>High</span>' + (max == null ? "–" : price(max)) + "</div></div>";
   }
 
   function chart(c, d, tag, showClose, refKey, mode) {
@@ -3911,10 +3916,10 @@
       "Works: Swaps from Stablecoins (USDC, USDT, DAI and similar) into a Token are read with Blockscout on Ethereum, Base, Arbitrum, Optimism and Polygon and set the Average Price at the Price the Swap paid. Each Swap can be left out.",
       "Never automatic: Transfers. A Coin sent in from another Wallet or an Exchange may have been bought at 10k and moved at 100k, so its real Price cannot be known.",
       "Works: Allocation, a pie chart of how much of the Portfolio's value each Asset is (the button under the top bar, the pie opens below the Assets). All Stablecoins together are one slice, Stablecoins, in the Stablecoin blue. Stablecoins need no Average Price: it is set by itself. The Total Balance chart opens by itself the first time a Portfolio is shown.",
-      "Works: several Wallets. Save addresses, name them (pen), hide them from the Portfolio (eye) or remove them (X). Only shown Wallets count and are shared.",
+      "Works: several Wallets. Save addresses, name them (pen), hide them from the Portfolio (eye) or remove them (X). Only shown Wallets count and are shared. Manual Wallets (Manual Wallet 1, 2, …) sit in the same list: click one to edit its coins.",
       "Works: Stablecoins in the top bar, next to Total Balance, Average Cost and Profit / Loss.",
-      "Works: Portfolio chart with the usual Time Picker: Today, 7D, 30D, 365D, All Time. All Time shows the Profit you have now (from the Average Costs), not the change since the first price of the graph.",
-      "Works: Share, top right. Uncensored, Light Censor (every amount hidden) or Full Censor (amounts and Average Prices hidden) as a PNG image of the whole Portfolio Manager with the All-Time chart and a CoinAtlas watermark. Download or copy. Addresses never appear.",
+      "Works: Portfolio chart with the usual Time Picker (dropdown): Today, 7D, 30D, 365D, All Time. Click Total Balance again to close it. All Time shows the Profit you have now (from the Average Costs), not the change since the first price of the graph.",
+      "Works: Share, top right. Uncensored, Light Censor (every amount hidden) or Full Censor (amounts, Average Prices and gains in % hidden) as a PNG image of the whole Portfolio Manager with the All-Time chart and a CoinAtlas watermark. Download or copy. Addresses never appear.",
       "Planned: an interactive Share Link, a read-only page of the Portfolio with hover charts. Without the Backend the Portfolio sits encoded in the link itself; with it, a short link. On X / Twitter the post shows the image, the click opens the interactive page.",
       "Planned: more Networks. Now: Ethereum, Base, Arbitrum, Optimism, Polygon, BNB Chain, Avalanche and Solana. Next without the Backend: more EVM chains via public RPCs, plus Bitcoin and Tron addresses. Sites like CoinGecko or CoinMarketCap cover 25+ networks through paid indexer APIs (e.g. Zerion, Moralis, Covalent); that needs the Backend for the API key.",
       "Works: Portfolio Tint (Settings, Customization): green or red by Profit, and Extra Tints (Gold, Silver, Diamond, Emerald, Ruby, Sapphire) from a chosen Profit on.",
@@ -4999,7 +5004,6 @@
   var pfAvg = {};
   try { pfAvg = JSON.parse(localStorage.getItem(PF_AVG_KEY) || "{}") || {}; } catch (e) { pfAvg = {}; }
   try {
-    if (localStorage.getItem(PF_MODE_KEY) === "manual") { pfState.manual = true; pfState.status = "ok"; pfState.holdings = JSON.parse(localStorage.getItem(PF_MAN_KEY) || "[]") || []; }
     /* wallets: see SAVED WALLETS */
   } catch (e) {}
   var pfBtn = document.getElementById("pf-btn"), pfBox = document.getElementById("portfolio-container");
@@ -5039,7 +5043,7 @@
     if (/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(a)) return "sol";
     return null;
   }
-  function pfKey() { return pfState.manual ? "manual" : "wallets"; } /* average prices and buys: one set for the manual portfolio, one for all saved wallets together */
+  function pfKey() { return "wallets"; } /* average prices and buys: one set for all saved wallets together, address and manual */
   function pfHex(hex, dec) { try { return Number(BigInt(hex)) / Math.pow(10, dec); } catch (e) { return 0; } }
   function pfCoin(sym) { for (var i = 0; i < coins.length; i++) if (coins[i].symbol.toUpperCase() === sym) return coins[i]; return null; }
   function pfAdd(agg, c, amt, label) {
@@ -5136,12 +5140,7 @@
 
   var pfLock = null, pfLockId = 0, pfSerCache = {}, pfTick = 0;
   function pfSet(o) { pfState = Object.assign({ addr: "", manual: false, status: "idle", msg: "", holdings: [] }, o); }
-  function pfSaveManual() {
-    try {
-      localStorage.setItem(PF_MODE_KEY, "manual");
-      localStorage.setItem(PF_MAN_KEY, JSON.stringify(pfState.holdings.map(function (h) { return { sym: h.sym, amount: h.amount, chains: [] }; })));
-    } catch (e) {}
-  }
+  function pfSaveManual() { pfWalletsSave(); } /* manual wallets keep their coins inside the saved wallet list */
   function pfSaveAvg() { try { localStorage.setItem(PF_AVG_KEY, JSON.stringify(pfAvg)); } catch (e) {} }
   function pfParse(v) {
     v = String(v).replace(/[\s$]/g, "");
@@ -5152,15 +5151,29 @@
   /* ---- SAVED WALLETS: several addresses, each with a name, shown or hidden on its own; the portfolio adds up the ones that are shown ---- */
   var PF_WALLETS_KEY = "top200-pf-wallets", pfWallets = [];
   try { pfWallets = JSON.parse(localStorage.getItem(PF_WALLETS_KEY) || "null") || []; } catch (e) { pfWallets = []; }
-  function pfMigrate() { /* the single address of before becomes the first saved wallet, with its average prices */
+  function pfMigrate() { /* the single address of before becomes the first saved wallet, with its average prices; the old hand-built portfolio becomes Manual Wallet 1 */
+    try {
+      if (localStorage.getItem(PF_MODE_KEY) === "manual" || localStorage.getItem(PF_MAN_KEY)) {
+        var hs = JSON.parse(localStorage.getItem(PF_MAN_KEY) || "[]") || [];
+        if (hs.length) { pfWallets.push({ manual: true, id: "m" + Date.now(), def: pfNextManual(), name: "", on: true, holdings: hs.map(function (h) { return { sym: h.sym, amount: +h.amount || 0, chains: [] }; }) }); pfWalletsSave(); }
+        var mm = pfAvg.manual; if (mm) { var wv = pfAvg.wallets || (pfAvg.wallets = {}); Object.keys(mm).forEach(function (k) { if (!(wv[k] > 0)) wv[k] = mm[k]; }); delete pfAvg.manual; pfSaveAvg(); }
+        localStorage.removeItem(PF_MODE_KEY); localStorage.removeItem(PF_MAN_KEY);
+      }
+    } catch (e) {}
     var old = ""; try { old = localStorage.getItem(PF_ADDR_KEY) || ""; } catch (e) {}
-    if (!old || pfWallets.length) return;
-    pfWallets = [{ addr: old, name: "", on: true }]; var k = /^0x/i.test(old) ? old.toLowerCase() : old;
+    if (!old || pfWallets.some(function (w) { return !w.manual; })) return;
+    pfWallets.unshift({ addr: old, name: "", on: true }); var k = /^0x/i.test(old) ? old.toLowerCase() : old;
     [pfAvg, pfBuys, pfSrc].forEach(function (m) { if (m[k] && !m.wallets) m.wallets = m[k]; });
-    try { localStorage.setItem(PF_WALLETS_KEY, JSON.stringify(pfWallets)); localStorage.removeItem(PF_ADDR_KEY); } catch (e) {}
+    pfWalletsSave(); try { localStorage.removeItem(PF_ADDR_KEY); } catch (e) {}
     pfSaveAvg(); pfSaveBuys();
   }
-  function pfWalletsSave() { try { localStorage.setItem(PF_WALLETS_KEY, JSON.stringify(pfWallets.map(function (w) { return { addr: w.addr, name: w.name || "", on: w.on !== false, who: w.who || "" }; }))); } catch (e) {} }
+  function pfWalletsSave() { try { localStorage.setItem(PF_WALLETS_KEY, JSON.stringify(pfWallets.map(function (w) {
+    if (w.manual) return { manual: true, id: w.id, def: w.def, name: w.name || "", on: w.on !== false, holdings: (w.holdings || []).map(function (h) { return { sym: h.sym, amount: h.amount }; }) };
+    return { addr: w.addr, name: w.name || "", on: w.on !== false, who: w.who || "" };
+  }))); } catch (e) {} }
+  function pfNextManual() { var n = 0; pfWallets.forEach(function (w) { var m = w.manual && /(\d+)$/.exec(w.def || ""); if (m) n = Math.max(n, +m[1]); }); return "Manual Wallet " + (n + 1); }
+  function pfWName(w) { return w.name || (w.manual ? w.def : pfShort(w.addr)); }
+  var pfEditW = null; /* the manual wallet whose coins are being edited */
   function pfShort(a) { return a.length > 14 ? a.slice(0, 6) + "…" + a.slice(-4) : a; }
   var PF_EYE = '<svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>', PF_EYE_OFF = '<svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6 0 10 7 10 7a17 17 0 0 1-3.2 3.9M6.6 6.6C3.9 8.3 2 12 2 12s4 7 10 7a9.7 9.7 0 0 0 5.4-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
   var PF_PEN = '<svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"/></svg>', PF_XS = '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>';
@@ -5169,60 +5182,77 @@
     el.hidden = !pfWallets.length;
     el.innerHTML = pfWallets.map(function (w, i) {
       var on = w.on !== false;
-      return '<div class="pf-w' + (on ? '' : ' off') + '" data-wi="' + i + '"><span class="pf-w-dot"></span><span class="pf-w-n" title="' + esc(w.addr) + '">' + esc(w.name || pfShort(w.addr)) + '</span>' +
+      if (w.manual) { var nc = (w.holdings || []).filter(function (h) { return h.amount > 0; }).length;
+        return '<div class="pf-w man' + (on ? '' : ' off') + (pfEdit && pfEditW === w ? ' ed' : '') + '" data-wi="' + i + '" title="Click to edit its coins"><span class="pf-w-dot"></span><span class="pf-w-n">' + esc(pfWName(w)) + '</span>' +
+          '<span class="pf-w-who">Manual · ' + nc + ' coin' + (nc === 1 ? '' : 's') + (pfEdit && pfEditW === w ? ' · editing' : '') + '</span>' + pfWActs(on) + '</div>'; }
+      return '<div class="pf-w' + (on ? '' : ' off') + '" data-wi="' + i + '"><span class="pf-w-dot"></span><span class="pf-w-n" title="' + esc(w.addr) + '">' + esc(pfWName(w)) + '</span>' +
         (w.name ? '<span class="pf-w-a">' + esc(pfShort(w.addr)) + '</span>' : '') + (w.who ? '<span class="pf-w-who">' + w.who + '</span>' : '') +
         '<span class="pf-w-act"><button type="button" data-wact="eye" title="' + (on ? 'Hide this wallet from the portfolio' : 'Show this wallet in the portfolio') + '" aria-label="Show or hide">' + (on ? PF_EYE : PF_EYE_OFF) + '</button>' +
         '<button type="button" data-wact="pen" title="Name this wallet" aria-label="Rename">' + PF_PEN + '</button><button type="button" data-wact="x" title="Remove this wallet" aria-label="Remove">' + PF_XS + '</button></span></div>';
-    }).join("");
+    }).join("") + (pfWallets.length ? '<button type="button" class="pf-w-add" id="pf-add-man">+ Add Manual Wallet</button>' : '');
+  }
+  function pfWActs(on) { return '<span class="pf-w-act"><button type="button" data-wact="eye" title="' + (on ? 'Hide this wallet from the portfolio' : 'Show this wallet in the portfolio') + '" aria-label="Show or hide">' + (on ? PF_EYE : PF_EYE_OFF) + '</button><button type="button" data-wact="pen" title="Name this wallet" aria-label="Rename">' + PF_PEN + '</button><button type="button" data-wact="x" title="Remove this wallet" aria-label="Remove">' + PF_XS + '</button></span>'; }
+  function pfAddManual() {
+    var w = { manual: true, id: "m" + Date.now(), def: pfNextManual(), name: "", on: true, holdings: [] };
+    pfWallets.push(w); pfWalletsSave(); pfEditW = w; pfEdit = true; pfLoadAll();
   }
   function pfSaveWallet(addr) {
     addr = String(addr || "").trim(); if (!addr) return;
     if (!pfKind(addr)) { var m = document.getElementById("pf-body"); if (m) m.innerHTML = '<div class="pf-msg err">That doesn\'t look like a valid wallet address. Solana and EVM (0x…) addresses are supported.</div>'; return; }
-    var low = addr.toLowerCase(), have = pfWallets.filter(function (w) { return w.addr.toLowerCase() === low; })[0];
+    var low = addr.toLowerCase(), have = pfWallets.filter(function (w) { return !w.manual && w.addr.toLowerCase() === low; })[0];
     if (have) have.on = true; else pfWallets.push({ addr: addr, name: "", on: true });
     pfWalletsSave(); var i = document.getElementById("pf-addr"); if (i) i.value = "";
-    if (pfState.manual) { pfState.manual = false; try { localStorage.removeItem(PF_MODE_KEY); } catch (e) {} }
     pfWlRender(); pfLoadAll();
   }
   pfBox.addEventListener("click", function (e) {
-    var b = e.target.closest("[data-wact]"); if (!b) return; var row = b.closest("[data-wi]"), w = pfWallets[+row.dataset.wi]; if (!w) return;
-    if (b.dataset.wact === "eye") { w.on = w.on === false; pfWalletsSave(); pfWlRender(); pfLoadAll(); }
-    else if (b.dataset.wact === "x") { pfWallets.splice(+row.dataset.wi, 1); pfWalletsSave(); pfWlRender(); pfLoadAll(); }
+    if (e.target.closest("#pf-add-man")) { pfAddManual(); return; }
+    var b = e.target.closest("[data-wact]"), mr = !b && !e.target.closest(".pf-w-in") && e.target.closest(".pf-w.man");
+    if (mr) { var mw = pfWallets[+mr.dataset.wi]; if (pfEdit && pfEditW === mw) pfEditDone(); else { mw.on = true; pfWalletsSave(); pfEditW = mw; pfEdit = true; pfLoadAll(); } return; }
+    if (!b) return; var row = b.closest("[data-wi]"), w = pfWallets[+row.dataset.wi]; if (!w) return;
+    if (b.dataset.wact === "eye") { w.on = w.on === false; if (!w.on && pfEditW === w) { pfEditW = null; pfEdit = false; } pfWalletsSave(); pfLoadAll(); }
+    else if (b.dataset.wact === "x") { if (pfEditW === w) { pfEditW = null; pfEdit = false; } pfWallets.splice(+row.dataset.wi, 1); pfWalletsSave(); pfLoadAll(); }
     else if (b.dataset.wact === "pen") { /* the name is typed right in place */
-      var n = row.querySelector(".pf-w-n"); n.outerHTML = '<input class="pf-w-in" maxlength="40" placeholder="Name, e.g. Main Wallet" value="' + esc(w.name || "") + '">'; var inp = row.querySelector(".pf-w-in"); inp.focus(); inp.select();
+      var n = row.querySelector(".pf-w-n"); n.outerHTML = '<input class="pf-w-in" maxlength="40" placeholder="' + (w.manual ? esc(w.def) : 'Name, e.g. Main Wallet') + '" value="' + esc(w.name || "") + '">'; var inp = row.querySelector(".pf-w-in"); inp.focus(); inp.select();
       var done = function () { if (!inp.isConnected) return; w.name = inp.value.trim(); pfWalletsSave(); pfWlRender(); };
       inp.addEventListener("keydown", function (k) { if (k.key === "Enter") { k.preventDefault(); done(); } else if (k.key === "Escape") pfWlRender(); }); inp.addEventListener("blur", done);
     }
   });
-  function pfLoadAll() { /* scans every shown wallet and adds their holdings up */
+  var pfScanCache = {}; /* address -> its last scan, so showing, hiding or editing wallets needs no new scan */
+  function pfEditDone() { pfEdit = false; pfEditW = null; pfWalletsSave(); pfLoadAll(); }
+  function pfLoadAll(force) { /* scans the shown address wallets (once) and adds every shown wallet up */
     var id = ++pfLoadId, shown = pfWallets.filter(function (w) { return w.on !== false; });
-    pfEdit = false; pfLock = null; pfAP = null; pfSwaps = {}; pfSwapNote = "";
-    if (pfState.manual) { try { localStorage.removeItem(PF_MODE_KEY); } catch (e) {} } /* a saved wallet takes over from the hand-built portfolio */
-    if (!shown.length) { pfSet({ status: "idle", msg: pfWallets.length ? "All saved wallets are hidden. Click the eye of a wallet to show it." : "" }); pfRenderBody(); pfRenderLock(); return; }
-    pfSet({ status: "loading", msg: "Loading token list…" }); pfRenderBody(); pfRenderLock();
-    pfReady().then(function () {
-      if (id !== pfLoadId) return null;
-      pfState.msg = "Scanning " + (shown.length === 1 ? "wallet" : shown.length + " wallets") + "…"; pfRenderBody();
-      return Promise.all(shown.map(function (w) { var k = pfKind(w.addr); return (k === "evm" ? pfScanAllEvm(w.addr) : k === "sol" ? pfScanSolana(w.addr) : Promise.reject()).then(function (r) { return { w: w, r: r }; }, function () { return { w: w, err: true }; }); }));
-    }).then(function (list) {
-      if (!list || id !== pfLoadId) return;
-      var agg = {}, notes = [], bad = list.filter(function (x) { return x.err; }).map(function (x) { return x.w.name || pfShort(x.w.addr); });
-      list.forEach(function (x) { if (x.err) return; if (x.r.note) notes.push(x.r.note); x.r.holdings.forEach(function (h) { var a = agg[h.sym] || (agg[h.sym] = { sym: h.sym, amount: 0, chains: [] }); a.amount += h.amount; (h.chains || []).forEach(function (c) { if (a.chains.indexOf(c) < 0) a.chains.push(c); }); }); });
-      if (bad.length === list.length) { pfSet({ status: "error", msg: "Couldn't read " + (list.length === 1 ? "this wallet" : "these wallets") + " right now. The public RPC may be busy, try again in a moment." }); pfRenderBody(); return; }
-      var hasCt = coins.some(function (c) { return c.contracts && (c.contracts.ethereum || c.contracts.solana); });
+    var addrW = shown.filter(function (w) { return !w.manual; }), manW = shown.filter(function (w) { return w.manual; });
+    var need = addrW.filter(function (w) { return force || !pfScanCache[w.addr.toLowerCase()]; });
+    pfAP = null; if (!(pfEditW && pfEdit)) pfEditW = null;
+    pfWlRender();
+    if (!shown.length) { pfEdit = false; pfLock = null; pfSet({ status: "idle", msg: pfWallets.length ? "All saved wallets are hidden. Click the eye of a wallet to show it." : "" }); pfRenderBody(); pfRenderLock(); return; }
+    var combine = function (bad) {
+      var agg = {}, notes = [];
+      addrW.forEach(function (w) { var r = pfScanCache[w.addr.toLowerCase()]; if (!r) return; if (r.note) notes.push(r.note); r.holdings.forEach(function (h) { var a = agg[h.sym] || (agg[h.sym] = { sym: h.sym, amount: 0, chains: [] }); a.amount += h.amount; (h.chains || []).forEach(function (c) { if (a.chains.indexOf(c) < 0) a.chains.push(c); }); }); });
+      manW.forEach(function (w) { (w.holdings || []).forEach(function (h) { if (!(h.amount > 0)) return; var a = agg[h.sym] || (agg[h.sym] = { sym: h.sym, amount: 0, chains: [] }); a.amount += h.amount; if (a.chains.indexOf("Manual") < 0) a.chains.push("Manual"); }); });
+      if (addrW.length && bad.length === addrW.length && !manW.length) { pfSet({ status: "error", msg: "Couldn't read " + (addrW.length === 1 ? "this wallet" : "these wallets") + " right now. The public RPC may be busy, try again in a moment." }); pfRenderBody(); return; }
+      var hasCt = !addrW.length || coins.some(function (c) { return c.contracts && (c.contracts.ethereum || c.contracts.solana); });
       var note = (bad.length ? "Couldn't read: " + bad.join(", ") + ". " : "") + notes.filter(function (n, i, l) { return l.indexOf(n) === i; }).join(" ");
       if (!hasCt) note = "Token contract data isn't available yet, so only native coins were checked. Save the address again in a minute.";
       pfSet({ status: "ok", msg: note, holdings: Object.keys(agg).map(function (k) { return agg[k]; }) });
-      pfRenderBody(); pfSwapScan(shown.map(function (w) { return w.addr; }), id);
-      shown.forEach(function (w) { if (!w.who) pfWho(w.addr, function (t) { w.who = t; pfWalletsSave(); pfWlRender(); }); });
+      pfRenderBody(); pfRenderLock(true); if (pinnedCoins.length) renderPinned();
+    };
+    if (!need.length) { combine([]); return; }
+    pfLock = null; pfSwaps = {}; pfSwapNote = "";
+    pfSet({ status: "loading", msg: "Loading token list…" }); pfRenderBody(); pfRenderLock();
+    pfReady().then(function () {
+      if (id !== pfLoadId) return null;
+      pfState.msg = "Scanning " + (need.length === 1 ? "wallet" : need.length + " wallets") + "…"; pfRenderBody();
+      return Promise.all(need.map(function (w) { var k = pfKind(w.addr); return (k === "evm" ? pfScanAllEvm(w.addr) : k === "sol" ? pfScanSolana(w.addr) : Promise.reject()).then(function (r) { pfScanCache[w.addr.toLowerCase()] = r; return null; }, function () { return pfWName(w); }); }));
+    }).then(function (bad) {
+      if (!bad || id !== pfLoadId) return;
+      combine(bad.filter(Boolean));
+      pfSwapScan(addrW.map(function (w) { return w.addr; }), id);
+      addrW.forEach(function (w) { if (!w.who) pfWho(w.addr, function (t) { w.who = t; pfWalletsSave(); pfWlRender(); }); });
     });
   }
 
-  function pfStartManual() {
-    ++pfLoadId; pfSet({ manual: true, status: "ok" }); pfEdit = true; pfLock = null; pfSaveManual();
-    var i = document.getElementById("pf-addr"); if (i) i.value = "";
-    pfRenderBody();
-  }
+  function pfStartManual() { pfAddManual(); }
 
   function pfAmt(n) { if (n >= 1) return n.toLocaleString("en-US", { maximumFractionDigits: n >= 1000 ? 2 : 4 }); return String(parseFloat(n.toPrecision(4))); }
   function pfStable(sym) { return STABLECOINS.indexOf(String(sym).toUpperCase()) > -1; }
@@ -5231,23 +5261,25 @@
     var m = pfAvg[pfKey()]; return m && m[sym] > 0 ? m[sym] : 0;
   }
   function pfAvgFor(sym) { if (!portfolioVisible || pfState.status !== "ok" || pfStable(sym)) return null; var a = pfAvgOf(sym); return a > 0 ? a : null; }
-  function pfHolding(sym) { return pfState.holdings.filter(function (h) { return h.sym === sym; })[0]; }
+  function pfManEd() { return !!(pfEdit && pfEditW); }
+  function pfCur() { return pfManEd() ? (pfEditW.holdings || (pfEditW.holdings = [])) : pfState.holdings; }
+  function pfHolding(sym) { return pfCur().filter(function (h) { return h.sym === sym; })[0]; }
   function pfRows() {
-    var rows = [];
-    pfState.holdings.forEach(function (h) {
+    var rows = [], ed = pfManEd();
+    pfCur().forEach(function (h) {
       var c = pfCoin(h.sym); if (!c || !(c.current_price > 0)) return;
       var v = h.amount * c.current_price;
-      if (!pfState.manual && !pfEdit && v < 0.01) return;
+      if (!ed && v < 0.01) return;
       rows.push({ h: h, c: c, amt: h.amount, val: v });
     });
-    if (!pfState.manual) rows.sort(function (a, b) { return b.val - a.val; });
+    if (!ed) rows.sort(function (a, b) { return b.val - a.val; });
     return rows;
   }
   function pfSumHtml(rows) {
     var total = 0, cost = 0, worth = 0, n = 0, st = 0, sn = 0;
     rows.forEach(function (r) { total += r.val; if (STABLECOINS.indexOf(String(r.c.symbol).toUpperCase()) > -1) { st += r.val; sn++; } var a = pfAvgOf(r.h.sym); if (a > 0) { cost += a * r.amt; worth += r.val; n++; } });
     var ok = cost > 0, g = worth - cost, cl = ok ? (g >= 0 ? "up" : "down") : "";
-    return '<div class="pf-tot" title="Hover for a value chart, click to lock it"><div class="lbl">Total Balance</div><div class="big">' + price(total) + '</div><div class="sub">' + rows.length + ' asset' + (rows.length === 1 ? '' : 's') + '</div></div>' +
+    return '<div class="pf-tot' + (pfLock && pfLock.key === "TOTAL" ? ' on' : '') + '" title="' + (pfLock && pfLock.key === "TOTAL" ? 'Click to close the chart' : 'Hover for a value chart, click to open it') + '"><div class="lbl">Total Balance</div><div class="big">' + price(total) + '</div><div class="sub">' + rows.length + ' asset' + (rows.length === 1 ? '' : 's') + '</div></div>' +
       '<div><div class="lbl">Stablecoins</div><div class="big stb">' + (sn ? price(st) : '–') + '</div><div class="sub">' + (sn ? (total > 0 ? (st / total * 100).toFixed(1) + '% · ' : '') + sn + ' coin' + (sn === 1 ? '' : 's') : 'none held') + '</div></div>' +
       '<div><div class="lbl">Average Cost</div><div class="big">' + (ok ? price(cost) : '–') + '</div><div class="sub">' + (ok ? n + ' with a cost set' : 'Set it in Edit mode') + '</div></div>' +
       '<div><div class="lbl">Profit / Loss</div><div class="big ' + cl + '">' + (ok ? pct(g / cost * 100) : '–') + '</div><div class="sub ' + cl + '">' + (ok ? priceSigned(g) : '') + '</div></div>';
@@ -5270,29 +5302,30 @@
   function pfRenderBody() {
     var body = document.getElementById("pf-body"); if (!body) return;
     var s = pfState, mb = document.getElementById("pf-manual"), sw = pfBox.querySelector(".pf-share-w"); if (sw) sw.hidden = !pfShareOk();
-    var showMan = !s.manual && !pfWallets.length && (s.status === "idle" || s.status === "error"); if (mb) mb.hidden = !showMan; var mw = document.getElementById("pf-manual-wrap"); if (mw) mw.hidden = !showMan;
+    var showMan = !pfWallets.length && (s.status === "idle" || s.status === "error"); if (mb) mb.hidden = !showMan; var mw = document.getElementById("pf-manual-wrap"); if (mw) mw.hidden = !showMan;
     if (s.status === "idle") { body.innerHTML = '<div class="pf-msg">' + esc(s.msg || "Enter a wallet address above and press Save, or build a portfolio by hand. You can save several wallets.") + '</div>'; return; }
     if (s.status === "loading") { body.innerHTML = '<div class="pf-msg">' + esc(s.msg || "Loading…") + '</div>'; return; }
     if (s.status === "error") { body.innerHTML = '<div class="pf-msg err">' + esc(s.msg) + '</div>'; return; }
     var rows = pfRows();
-    var bar = '<div class="pf-bar"><button class="gear' + (pfEdit ? ' active' : '') + '" type="button" id="pf-edit">' + (pfEdit ? 'Done' : 'Edit') + '</button></div>';
-    if (!rows.length) { body.innerHTML = bar + '<div class="pf-msg">' + (pfEdit ? 'Click a coin in the list on the left to add it to your portfolio.' : (s.manual ? 'Your portfolio is empty. Press Edit, then click coins in the list on the left to add them.' : 'No supported assets found in this wallet.')) + '</div>'; return; }
-    var foot = '<div class="pf-foot">' + (s.msg ? esc(s.msg) + '<br>' : '') + (pfEdit ? 'Edit mode: click coins in the list on the left to add them. Type an amount and an Average Cost for each asset, then press Done.' : 'Hover an asset or the Total Balance for a value chart, click to lock it. Press Edit to change amounts and Average Costs.') + '</div>';
+    var med = pfManEd(), nMan = pfWallets.filter(function (w) { return w.manual && w.on !== false; }).length;
+    var bar = '<div class="pf-bar">' + (med ? '<span class="pf-ed-who">Editing <b>' + esc(pfWName(pfEditW)) + '</b></span>' : pfEdit && nMan > 1 ? '<span class="pf-ed-who">Click a Manual Wallet above to edit its coins</span>' : '') + '<button class="gear' + (pfEdit ? ' active' : '') + '" type="button" id="pf-edit">' + (pfEdit ? 'Done' : 'Edit') + '</button></div>';
+    if (!rows.length) { body.innerHTML = bar + '<div class="pf-msg">' + (med ? 'Click a coin in the list on the left to add it to ' + esc(pfWName(pfEditW)) + '.' : nMan ? 'This portfolio is empty. Click a Manual Wallet above, then click coins in the list on the left to add them.' : 'No supported assets found in this wallet.') + '</div>'; return; }
+    var foot = '<div class="pf-foot">' + (s.msg ? esc(s.msg) + '<br>' : '') + (med ? 'Edit mode: click coins in the list on the left to add them to ' + esc(pfWName(pfEditW)) + '. Type an amount and an Average Cost for each asset, then press Done.' : pfEdit ? 'Edit mode: type an Average Cost for each asset, then press Done.' : 'Hover an asset or the Total Balance for a value chart, click to lock it. Press Edit to change amounts and Average Costs.') + '</div>';
     var html = '<div class="pf-sum dev-target" id="pf-sum" data-dev-name="Portfolio Amount Header" data-dev-color="#34d399">' + pfSumHtml(rows) + '</div>' +
       (pfEdit ? '' : '<button type="button" class="gear pf-pie-btn' + (pfPie ? ' active' : '') + '" id="pf-pie-btn" aria-expanded="' + pfPie + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M14 2.5a8 8 0 0 1 7.5 7.5H14z"/></svg>' + (pfPie ? 'Hide Allocation' : 'Show Allocation') + '</button>') +
       bar +
       '<div class="pf-cols"><span>Asset</span><span>Average Cost</span><span>Price</span></div>';
     rows.forEach(function (r, i) {
       var sym = esc(r.h.sym), a = pfAvgOf(r.h.sym);
-      var amtHtml = pfEdit ? '<label class="pf-amt-l">Amount <input class="pf-in" data-f="amt" data-sym="' + sym + '" inputmode="decimal" placeholder="0" value="' + (r.amt > 0 ? r.amt : '') + '"></label>' : '<span class="pf-amt">' + pfAmt(r.amt) + '</span>';
-      var avgHtml = pfStable(r.h.sym) ? '<span class="pf-avg stable" title="Stablecoins need no Average Price, their cost is their price">Stable</span>' : pfEdit ? '<span class="pf-avg-ed"><input class="pf-in pf-avg-in" data-f="avg" data-sym="' + sym + '" inputmode="decimal" placeholder="Avg. cost $" value="' + (a > 0 ? a : '') + '"><button type="button" class="pf-calc-b" data-setavg="' + sym + '" title="Calculate the Average Price" aria-label="Calculate the Average Price">⋯</button></span>'
+      var amtHtml = med ? '<label class="pf-amt-l">Amount <input class="pf-in" data-f="amt" data-sym="' + sym + '" inputmode="decimal" placeholder="0" value="' + (r.amt > 0 ? r.amt : '') + '"></label>' : '<span class="pf-amt">' + pfAmt(r.amt) + '</span>';
+      var avgHtml = pfStable(r.h.sym) ? '<span class="pf-avg stable" title="Stablecoins need no Average Price, their cost is their price">Stablecoin</span>' : pfEdit ? '<span class="pf-avg-ed"><input class="pf-in pf-avg-in" data-f="avg" data-sym="' + sym + '" inputmode="decimal" placeholder="Avg. cost $" value="' + (a > 0 ? a : '') + '"><button type="button" class="pf-calc-b" data-setavg="' + sym + '" title="Calculate the Average Price" aria-label="Calculate the Average Price">⋯</button></span>'
         : a > 0 ? '<span class="pf-avg" title="' + ({ swaps: "From your stablecoin swaps", calc: "Calculated from your buys" }[pfSrcOf(r.h.sym)] || "Set by hand") + '">' + price5(a) + (pfSrcOf(r.h.sym) === "swaps" ? ' <i class="pf-src">swaps</i>' : '') + '</span>' : '<button type="button" class="pf-setavg" data-setavg="' + sym + '">Set Average Price</button>';
       html += '<div class="pf-row dev-target' + (pfEdit ? ' ed' : '') + (!pfEdit && !(a > 0) ? ' noavg' : '') + '" data-sym="' + sym + '" data-dev-name="Asset #' + (i + 1) + '" data-dev-color="#f59e0b">' +
         '<div class="pf-asset">' + logoHtml(r.c).replace(' loading="lazy"', '') + '<div class="nm"><b>' + esc(r.c.name) + ' <span class="sym">' + esc(r.c.symbol) + '</span></b>' +
         '<span class="pf-sub">' + amtHtml + ' · <span class="pf-val">' + price(r.val) + '</span>' + (!pfEdit && r.h.chains && r.h.chains.length ? ' · ' + esc(r.h.chains.join(", ")) : '') + '</span></div></div>' +
         '<div>' + avgHtml + '<div class="pf-pl">' + pfPlHtml(r) + '</div></div>' +
         '<div class="pf-price">' + price(r.c.current_price) + '</div>' +
-        (pfEdit ? '<button class="pf-x" type="button" data-sym="' + sym + '" title="Remove" aria-label="Remove asset">×</button>' : '') + '</div>';
+        (med ? '<button class="pf-x" type="button" data-sym="' + sym + '" title="Remove" aria-label="Remove asset">×</button>' : '') + '</div>';
     });
     if (!pfEdit && pfPie) html += '<div class="pf-pie-wrap">' + pfPieHtml(rows) + '</div>'; /* the button sits under the top bar, the pie opens below the asset list */
     body.innerHTML = html + foot.replace('<div class="pf-foot">', '<div class="pf-foot">' + (pfSwapNote ? esc(pfSwapNote) + '<br>' : '')) + pfApHtml();
@@ -5346,7 +5379,10 @@
     if (k) { t1.textContent = el.dataset.pl + " · " + el.dataset.pp; t2.textContent = el.dataset.pv; } else { t1.textContent = "Total"; t2.textContent = pie.dataset.tot || t2.textContent; }
   }
   pfBox.addEventListener("mouseover", function (e) { var el = e.target.closest && e.target.closest("#pf-pie [data-pk]"); var pie = document.getElementById("pf-pie"); if (!pie) return; if (!el && e.target.closest(".pf-pie-leg")) return; if (!pie.dataset.tot) pie.dataset.tot = pie.querySelector(".pf-pie-c2").textContent; pfPieFocus(el); });
-  pfBox.addEventListener("click", function (e) { if (!e.target.closest("#pf-pie-btn")) return; pfPie = !pfPie; try { localStorage.setItem(PF_PIE_KEY, pfPie ? "1" : "0"); } catch (x) {} pfRenderBody(); });
+  pfBox.addEventListener("click", function (e) {
+    if (!e.target.closest("#pf-pie-btn")) return; pfPie = !pfPie; try { localStorage.setItem(PF_PIE_KEY, pfPie ? "1" : "0"); } catch (x) {} pfRenderBody();
+    var pe = pfPie && document.getElementById("pf-pie"); if (pe && pe.scrollIntoView) pe.scrollIntoView({ block: "nearest", behavior: "smooth" }); /* like the Total Balance chart: go to it */
+  });
 
   /* ---- SHARE: the whole Portfolio Manager as one PNG image, drawn on a canvas. Censored hides every amount, prices and percentages stay ---- */
   var PF_SHARE_IC = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>';
@@ -5387,6 +5423,7 @@
   function pfDrawShare(cz, ser, logos, brand, noLogos) {
     var C = { bg: pfCss("--bg"), pop: pfCss("--pop"), fg: pfCss("--fg"), mu: pfCss("--muted"), line: pfCss("--line"), up: pfCss("--up"), dn: pfCss("--down"), st: pfCss("--stable-blue") };
     var F = getComputedStyle(document.body).fontFamily || "sans-serif", rows = pfRows().sort(function (a, b) { return b.val - a.val; });
+    var pcz = function (v) { return cz === 2 ? (v >= 0 ? "+" : "−") + "••.••%" : pct(v); };
     var M = "$•••••", W = 960, P = 32, RH = 56, pie = pfPieSlices(rows);
     var hRows = 30 + rows.length * RH, hPie = pie ? 40 + Math.max(232, pie.sl.length * 30 + 20) : 0, hCh = ser ? 330 : 0;
     var H = P + 44 + 96 + 24 + hRows + 24 + hPie + (hPie ? 24 : 0) + hCh + 64;
@@ -5397,7 +5434,7 @@
     var rr = function (x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
     g.fillStyle = C.pop; g.fillRect(0, 0, W, H); g.textBaseline = "alphabetic";
     var y = P + 22; font("700", 20); txt("Portfolio Manager", W / 2, y, C.fg, "center");
-    font("400", 12); txt(new Date().toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" }) + (cz === 2 ? " · amounts and Average Prices hidden" : cz ? " · amounts hidden" : ""), W / 2, y + 20, C.mu, "center");
+    font("400", 12); txt(new Date().toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" }) + (cz === 2 ? " · amounts, Average Prices and gains hidden" : cz ? " · amounts hidden" : ""), W / 2, y + 20, C.mu, "center");
     y = P + 44 + 12;
     /* the four boxes of the top bar */
     var total = 0, cost = 0, worth = 0, n = 0, st = 0, sn = 0;
@@ -5406,7 +5443,7 @@
     var box = [["Total Balance", cz ? M : price(total), rows.length + " asset" + (rows.length === 1 ? "" : "s"), C.fg, C.mu],
       ["Stablecoins", sn ? (cz ? M : price(st)) : "–", sn ? (total > 0 ? (st / total * 100).toFixed(1) + "% · " : "") + sn + " coin" + (sn === 1 ? "" : "s") : "none held", C.st, C.mu],
       ["Average Cost", ok ? (cz ? M : price(cost)) : "–", ok ? n + " with a cost set" : "", C.fg, C.mu],
-      ["Profit / Loss", ok ? pct(gn / cost * 100) : "–", ok ? (cz ? "" : priceSigned(gn)) : "", ok ? (gn >= 0 ? C.up : C.dn) : C.fg, ok ? (gn >= 0 ? C.up : C.dn) : C.mu]];
+      ["Profit / Loss", ok ? pcz(gn / cost * 100) : "–", ok ? (cz ? "" : priceSigned(gn)) : "", ok ? (gn >= 0 ? C.up : C.dn) : C.fg, ok ? (gn >= 0 ? C.up : C.dn) : C.mu]];
     rr(P, y, W - 2 * P, 84, 12); g.fillStyle = C.bg; g.fill(); g.strokeStyle = C.line; g.lineWidth = 1; g.stroke();
     box.forEach(function (b, i) {
       var x = P + i * bw + 16; if (i) { g.fillStyle = C.line; g.fillRect(P + i * bw, y, 1, 84); }
@@ -5424,8 +5461,8 @@
       font("600", 14); var nm = fit(r.c.name, 300); txt(nm, P + 46, cyy - 3, C.fg); var nw = g.measureText(nm).width; font("400", 12); txt(String(r.c.symbol).toUpperCase(), P + 52 + nw, cyy - 3, C.mu);
       font("400", 12); txt(fit((cz ? "•••" : pfAmt(r.amt)) + " · " + (cz ? M : price(r.val)) + (r.h.chains && r.h.chains.length ? " · " + r.h.chains.join(", ") : ""), 400), P + 46, cyy + 15, C.mu);
       var a = pfAvgOf(r.h.sym); font("600", 13);
-      if (pfStable(r.h.sym)) { txt("Stable", P + 470, cyy + 4, C.st); }
-      else if (a > 0) { txt(cz === 2 ? "$•••••" : price5(a), P + 470, cyy - 3, C.fg); var ch = (r.c.current_price - a) / a * 100; font("400", 12); txt(pct(ch) + (cz ? "" : " [" + priceSigned((r.c.current_price - a) * r.amt) + "]"), P + 470, cyy + 15, ch >= 0 ? C.up : C.dn); }
+      if (pfStable(r.h.sym)) { txt("Stablecoin", P + 470, cyy + 4, C.st); }
+      else if (a > 0) { txt(cz === 2 ? "$•••••" : price5(a), P + 470, cyy - 3, C.fg); var ch = (r.c.current_price - a) / a * 100; font("400", 12); txt(pcz(ch) + (cz ? "" : " [" + priceSigned((r.c.current_price - a) * r.amt) + "]"), P + 470, cyy + 15, ch >= 0 ? C.up : C.dn); }
       else txt("–", P + 470, cyy + 4, C.mu);
       font("600", 14); txt(price(r.c.current_price), W - P - 8, cyy + 5, C.fg, "right");
       y += RH;
@@ -5453,7 +5490,7 @@
       rr(P, y, W - 2 * P, 306, 12); g.fillStyle = C.bg; g.fill(); g.strokeStyle = C.line; g.stroke();
       font("600", 10); txt("TOTAL BALANCE · ALL TIME", P + 18, y + 26, C.mu);
       var gnow = pfGainNow("TOTAL"), chg = gnow ? gnow.pct : 0; font("700", 13);
-      if (gnow) txt(pct(chg) + (cz ? "" : " [" + priceSigned(gnow.abs) + "]"), W - P - 18, y + 26, chg >= 0 ? C.up : C.dn, "right"); else { font("400", 11); txt("Set Average Prices to see your gain", W - P - 18, y + 26, C.mu, "right"); }
+      if (gnow) txt(pcz(chg) + (cz ? "" : " [" + priceSigned(gnow.abs) + "]"), W - P - 18, y + 26, chg >= 0 ? C.up : C.dn, "right"); else { font("400", 11); txt("Set Average Prices to see your gain", W - P - 18, y + 26, C.mu, "right"); }
       if (ser.missing) { font("400", 11); txt(ser.missing + " asset" + (ser.missing === 1 ? "" : "s") + " without price history left out", P + 200, y + 26, C.mu); }
       var x0 = P + (cz ? 18 : 92), x1 = W - P - 18, y0 = y + 50, y1 = y + 268, mn = Math.min.apply(null, v), mx = Math.max.apply(null, v); if (mx === mn) mx = mn + 1;
       var X = function (i) { return x0 + (x1 - x0) * i / Math.max(1, v.length - 1); }, Y = function (q) { return y1 - (y1 - y0) * (q - mn) / (mx - mn); };
@@ -5492,7 +5529,7 @@
     ov.innerHTML = '<div class="pf-sh-box" role="dialog" aria-label="Share your portfolio"><div class="pf-sh-head"><b>Share Portfolio</b>' +
       '<span class="pf-sh-mode">' + { uncensored: "Uncensored", light: "Light Censor", full: "Full Censor" }[mode] + '</span>' +
       '<button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
-      '<div class="pf-sh-note">' + ({ light: 'Light Censor: every amount is hidden. Prices, Average Prices, percentages and the shape of the chart stay.', full: 'Full Censor: every amount and every Average Price is hidden. Prices, percentages and the shape of the chart stay.' }[mode] || 'Uncensored: shows your amounts and values.') + ' Wallet addresses are never shown, hidden wallets are left out.</div>' +
+      '<div class="pf-sh-note">' + ({ light: 'Light Censor: every amount is hidden. Prices, Average Prices, percentages and the shape of the chart stay.', full: 'Full Censor: every amount, every Average Price and every gain in % is hidden (a gain in % would give away the Average Price). Prices, allocation and the shape of the chart stay.' }[mode] || 'Uncensored: shows your amounts and values.') + ' Wallet addresses are never shown, hidden wallets are left out.</div>' +
       '<div class="pf-sh-img" id="pf-sh-img"></div><div class="pf-sh-foot"><button class="gear" type="button" id="pf-sh-cp">Copy Image</button><button class="gear pf-sh-dl" type="button" id="pf-sh-dl">Download PNG</button></div></div>';
     ov.hidden = false; pfShareBuild();
   }
@@ -5526,14 +5563,14 @@
     pfBox.innerHTML = '<div class="pinned-card chart-container pf-card dev-target" data-dev-name="Portfolio Manager" data-dev-color="#38bdf8">' +
       '<div class="pf-title">Portfolio Manager</div>' +
       '<div class="pf-share-w"><button class="gear pf-share" type="button" id="pf-share" aria-haspopup="menu" title="Share your portfolio as an image">' + PF_SHARE_IC + 'Share</button>' +
-      '<div class="pf-share-m" id="pf-share-m" role="menu" hidden><button type="button" role="menuitem" data-share="uncensored"><b>Uncensored</b><span>With all amounts</span></button><button type="button" role="menuitem" data-share="light"><b>Light Censor</b><span>Every amount hidden</span></button><button type="button" role="menuitem" data-share="full"><b>Full Censor</b><span>Amounts and Average Prices hidden</span></button></div></div>' +
+      '<div class="pf-share-m" id="pf-share-m" role="menu" hidden><button type="button" role="menuitem" data-share="uncensored"><b>Uncensored</b><span>With all amounts</span></button><button type="button" role="menuitem" data-share="light"><b>Light Censor</b><span>Every amount hidden</span></button><button type="button" role="menuitem" data-share="full"><b>Full Censor</b><span>Amounts, Average Prices and gains hidden</span></button></div></div>' +
       '<form class="pf-form" id="pf-form" autocomplete="off"><input id="pf-addr" type="text" placeholder="Wallet address (Solana or EVM, 0x…)" spellcheck="false" aria-label="Wallet address"><button class="gear" type="submit">Save</button></form><div class="pf-wl" id="pf-wl" hidden></div>' +
       '<div id="pf-manual-wrap" class="pf-manual-wrap"><div class="pf-or">or</div><button class="gear pf-manual" type="button" id="pf-manual" hidden>Add Manually</button><div class="pf-explain">No wallet address needed. Pick your coins and amounts by hand. If you do enter a wallet address, CoinAtlas only reads the publicly available blockchain data to see what the wallet holds. Nothing is connected or signed.</div></div>' +
       '<div id="pf-body"></div><div id="pf-lock"></div></div>';
     pfMigrate(); pfWlRender();
     updatePinnedColVisibility();
     pfRenderBody(); pfRenderLock();
-    if (!pfState.manual && pfState.status === "idle" && pfWallets.some(function (w) { return w.on !== false; })) pfLoadAll();
+    if (pfState.status === "idle" && pfWallets.some(function (w) { return w.on !== false; })) pfLoadAll();
   }
 
   /* ---- value charts: what the amounts you hold were worth over time ---- */
@@ -5565,7 +5602,7 @@
       var h = pfHolding(key), c = pfCoin(key);
       if (!h || !c || !(h.amount > 0)) return Promise.resolve(null);
       return pfCoinSeries(c, tf).then(function (d) {
-        return d ? { pseudo: Object.assign({}, c, { name: c.name + " · Your Holdings", current_price: h.amount * c.current_price }), d: pfScale(d, h.amount), missing: 0 } : null;
+        return d ? { pseudo: Object.assign({}, c, { name: c.name + " · Your Holdings", pfLbl: "Current Holdings Value", current_price: h.amount * c.current_price }), d: pfScale(d, h.amount), missing: 0 } : null;
       });
     }
     var rows = pfRows().filter(function (r) { return r.amt > 0; });
@@ -5574,7 +5611,7 @@
       var ok = list.filter(function (x) { return x.d; });
       if (!ok.length) return null;
       var total = ok.reduce(function (s, x) { return s + x.r.val; }, 0);
-      return { pseudo: { name: "Total Balance", symbol: "TOTAL", current_price: total, market_cap_rank: 0 }, d: pfSumSeries(ok), missing: list.length - ok.length };
+      return { pseudo: { name: "Total Balance", symbol: "TOTAL", pfLbl: "Current Portfolio Balance", current_price: total, market_cap_rank: 0 }, d: pfSumSeries(ok), missing: list.length - ok.length };
     });
   }
   var PF_TF = [["1D", "Today"], ["1W", "7D"], ["1M", "30D"], ["365D", "365D"], ["ALL", "All Time"]];
@@ -5591,12 +5628,13 @@
   }
   function pfLockFrame(title, sub, tf, inner) {
     return '<div class="pf-lock dev-target" data-dev-name="Portfolio Chart" data-dev-color="#a78bfa">' +
-      '<button class="chart-close-btn pf-lock-x" type="button" aria-label="Close chart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' +
       '<div class="pf-lock-title">' + esc(title) + '</div><div class="pf-lock-sub">' + esc(sub) + '</div>' +
-      '<div class="fg-timeframes tf-row">' + PF_TF.map(function (t) { return '<button type="button" data-pftf="' + t[0] + '"' + (t[0] === tf ? ' class="active"' : '') + '>' + t[1] + '</button>'; }).join("") + '</div>' + inner + '</div>';
+      '<div class="fg-yr-wrap tf-row pf-tfw"><div class="fg-yr-pick"><button type="button" class="fg-yr-btn">' + pfTfName(tf) + ' ▾</button><div class="fg-tf-menu pf-tfm"><div class="fg-tf-col">' +
+      PF_TF.map(function (t) { return '<button type="button" data-pftf="' + t[0] + '"' + (t[0] === tf ? ' class="active"' : '') + '>' + t[1] + '</button>'; }).join("") + '</div></div></div></div>' + inner + '</div>';
   }
   function pfRenderLock(soft) {
     var el = document.getElementById("pf-lock"); if (!el) return;
+    var tt = pfBox.querySelector(".pf-tot"); if (tt) tt.classList.toggle("on", !!pfLock && pfLock.key === "TOTAL");
     if (!pfLock) { el.innerHTML = ""; return; }
     var key = pfLock.key, tf = pfLock.tf, id = ++pfLockId, tot = key === "TOTAL";
     var h = tot ? null : pfHolding(key), c = tot ? null : pfCoin(key);
@@ -5614,7 +5652,7 @@
   function pfToggleLock(key) {
     pfHideHover();
     pfLock = pfLock && pfLock.key === key ? null : { key: key, tf: "1D" };
-    pfRenderLock();
+    pfRenderLock(); var sm = document.getElementById("pf-sum"); if (sm) sm.innerHTML = pfSumHtml(pfRows());
     var el = document.getElementById("pf-lock"); if (pfLock && el && el.scrollIntoView) el.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }
   function pfHoverShow(key) {
@@ -5801,15 +5839,20 @@
     if (pfApClick(e)) return;
 
     if (t.closest("#pf-manual")) { pfStartManual(); return; }
-    if (t.closest("#pf-edit")) { pfEdit = !pfEdit; pfHideHover(); pfRenderBody(); pfRenderLock(true); return; }
-    if (t.closest(".pf-lock-x")) { pfLock = null; pfRenderLock(); return; }
-    var tb = t.closest("[data-pftf]"); if (tb && pfLock) { pfLock.tf = tb.dataset.pftf; pfRenderLock(); return; }
+    if (t.closest("#pf-edit")) {
+      pfHideHover();
+      if (pfEdit) { pfEditDone(); return; }
+      var mans = pfWallets.filter(function (w) { return w.manual && w.on !== false; });
+      pfEdit = true; pfEditW = mans.length === 1 ? mans[0] : null; /* one manual wallet: edit its coins; several: click the one to edit in the list */
+      pfWlRender(); pfRenderBody(); pfRenderLock(true); return;
+    }
+    var tb = t.closest("[data-pftf]"); if (tb && pfLock) { pfLock.tf = tb.dataset.pftf; if (document.activeElement) document.activeElement.blur(); pfRenderLock(); return; }
     var x = t.closest(".pf-x");
     if (x) {
       var sym = x.dataset.sym;
-      pfState.holdings = pfState.holdings.filter(function (h) { return h.sym !== sym; });
-      var m = pfAvg[pfKey()]; if (m) { delete m[sym]; pfSaveAvg(); }
-      if (pfState.manual) pfSaveManual();
+      if (!pfManEd()) return;
+      pfEditW.holdings = pfEditW.holdings.filter(function (h) { return h.sym !== sym; });
+      pfSaveManual(); pfWlRender();
       if (pfLock && pfLock.key === sym) pfLock = null;
       pfHideHover(); pfRenderBody(); pfRenderLock(true); if (pinnedCoins.length) renderPinned();
       return;
@@ -5828,7 +5871,7 @@
   });
   pfBox.addEventListener("change", function (e) {
     if (!e.target.dataset || !e.target.dataset.f) return;
-    pfSaveAvg(); if (pfState.manual) pfSaveManual();
+    pfSaveAvg(); if (pfManEd()) { pfSaveManual(); pfWlRender(); }
     if (pinnedCoins.length) renderPinned();
     pfRenderLock(true);
   });
@@ -5848,14 +5891,14 @@
   pfBox.addEventListener("mouseleave", pfHideHover);
   /* in Edit mode, clicking a coin in the list adds it to the portfolio; otherwise it locks its chart as usual */
   rowsEl.addEventListener("click", function (e) {
-    if (!portfolioVisible || !pfEdit || pfState.status !== "ok" || devFrozen) return;
+    if (!portfolioVisible || !pfManEd() || devFrozen) return;
     var tr = e.target.closest("tr"); if (!tr) return;
     e.stopPropagation();
     var c = displayCoins[+tr.dataset.i]; if (!c) return;
     var sym = c.symbol.toUpperCase();
     if (!pfHolding(sym)) {
-      pfState.holdings.push({ sym: sym, amount: 0, chains: [] });
-      if (pfState.manual) pfSaveManual();
+      pfEditW.holdings.push({ sym: sym, amount: 0, chains: [] });
+      pfSaveManual(); pfWlRender();
       pfRenderBody();
       var inp = pfBox.querySelector('.pf-row[data-sym="' + sym + '"] input[data-f="amt"]');
       if (inp) { inp.focus(); if (inp.scrollIntoView) inp.scrollIntoView({ block: "nearest" }); }
@@ -5867,7 +5910,7 @@
     pfBtn.classList.toggle("active", portfolioVisible);
     pfRenderShell();
     if (pinnedCoins.length) renderPinned();
-    if (portfolioVisible && !pfWallets.length && !pfState.manual) { var el = document.getElementById("pf-addr"); if (el) el.focus(); }
+    if (portfolioVisible && !pfWallets.length) { var el = document.getElementById("pf-addr"); if (el) el.focus(); }
   });
   setInterval(function () {
     if (!portfolioVisible || devFrozen || pfState.status !== "ok") return;
