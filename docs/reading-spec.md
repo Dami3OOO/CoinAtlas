@@ -233,6 +233,8 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Animation: Kacheln gleiten bei jedem Update (alle 3 s) und Zeitraumwechsel an ihren Platz (0,6 s); Sprung >= 1/4 der ersten Farbstufe: kurzes Aufleuchten.
 - Zeiträume: Today (seit Tagesbeginn wie bisher), 1H, 24H, 7D, 30D, 1Y aus Coinpaprika tickers (eine Anfrage, einmal pro Minute). Top 50/100/200.
   Stablecoins ausgelassen. Landing Area (Knopf ⤢) oder Vollbild mit "Send to Landing Area". Einstellungen in localStorage "coinatlas-squares".
+- Die Front lässt sich ziehen (Griff in der Mitte), um der kleineren Seite Platz zu geben; "Auto" oder Doppelklick setzt sie auf den echten Anteil zurück.
+  Die Anzeige "x% up" bleibt immer der echte Wert. Kleine Kacheln zeigen das Logo statt des Symbols.
 
 ## Fear & Greed Index: Past Years (21.11.2026)
 

@@ -411,7 +411,12 @@
   .sqm-l { display: flex; flex-direction: column; align-items: center; gap: 1px; line-height: 1.05; text-align: center; pointer-events: none; text-shadow: 0 1px 2px rgba(0,0,0,.45); }
   .sqm-l b { font-weight: 700; } .sqm-l i { font-style: normal; font-weight: 600; opacity: .95; } .sqm-l .logo { width: 26%; max-width: 34px; height: auto; aspect-ratio: 1; margin-bottom: 3px; }
   .sqm-front { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; z-index: 3; pointer-events: none; background: linear-gradient(#fff, rgba(255,255,255,.55)); box-shadow: 0 0 10px 2px rgba(255,255,255,.55), 0 0 24px 6px rgba(234,179,8,.25); transition: left .6s ease; }
-  .sqm-front[hidden] { display: none; } .sqm-foot { text-align: center; margin-top: 8px; }
+  .sqm-front[hidden] { display: none; }
+  .sqm-front { pointer-events: auto; cursor: ew-resize; touch-action: none; } .sqm-front::before { content: ""; position: absolute; top: 0; bottom: 0; left: -8px; right: -8px; }
+  .sqm-front span { position: absolute; top: 50%; left: 50%; width: 12px; height: 34px; transform: translate(-50%, -50%); background: #fff; border-radius: 6px; box-shadow: 0 0 10px rgba(255,255,255,.7); }
+  .sqm-front span::after { content: ""; position: absolute; inset: 9px 4px; border-left: 1px solid #999; border-right: 1px solid #999; }
+  .sqm-map.dragging .sqm-sq, .sqm-map.dragging .sqm-front { transition: none; } .sqm-map.dragging { cursor: ew-resize; user-select: none; }
+  .sqm-lg { display: grid; place-items: center; } .sqm-lg .logo { width: 100%; height: 100%; margin: 0; max-width: none; font-size: 9px; } .sqm-auto { width: auto; padding: 0 10px; font-size: 12px; } .sqm-foot { text-align: center; margin-top: 8px; }
   #sq-screen { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column; background: var(--bg); } #sq-screen[hidden] { display: none; }
   #sq-screen .sqm-body { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 12px 16px 14px; } #sq-screen .sqm-map { flex: 1; height: auto; min-height: 300px; }
   body.sq-full #pop { z-index: 230; }
@@ -3594,7 +3599,7 @@
   var SQ_TF = [["today", "Today"], ["1h", "1H"], ["24h", "24H"], ["7d", "7D"], ["30d", "30D"], ["1y", "1Y"]];
   var SQ_TIER = { today: [1, 3, 6, 10], "1h": [0.5, 1, 2, 4], "24h": [1, 3, 6, 10], "7d": [3, 8, 15, 25], "30d": [5, 15, 30, 50], "1y": [10, 40, 100, 200] };
   var SQ_UP = ["#1d4a31", "#1f6a3e", "#22864b", "#29a25a", "#31c26a"], SQ_DN = ["#4b1f22", "#6c2228", "#8e272f", "#b02d36", "#d2343e"];
-  var sqPap = null, sqPapAt = 0, sqPapBusy = false, sqFull = false, sqViews = {}, sqLastPc = {};
+  var sqPap = null, sqPapAt = 0, sqPapBusy = false, sqFull = false, sqViews = {}, sqLastPc = {}, sqSplit = { land: null, full: null };
   function sqLoadPap() { /* 1H to 1Y for every coin in one request, refreshed once a minute while the squares are open */
     if (sqPapBusy || (sqPap && Date.now() - sqPapAt < 60000)) return;
     sqPapBusy = true;
@@ -3645,13 +3650,14 @@
   function sqCtrlHtml(full) {
     return '<div class="sqm-ctrl"><div class="fg-timeframes">' + SQ_TF.map(function (t) { return '<button type="button" data-sqtf="' + t[0] + '"' + (sqS.tf === t[0] ? ' class="active"' : '') + '>' + t[1] + '</button>'; }).join("") + '</div>' +
       '<div class="fg-timeframes">' + [50, 100, 200].map(function (t) { return '<button type="button" data-sqtop="' + t + '"' + (sqS.top === t ? ' class="active"' : '') + '>Top ' + t + '</button>'; }).join("") + '</div>' +
+      (sqSplit[full ? "full" : "land"] != null ? '<button type="button" class="sqm-x sqm-auto" data-sqauto="1" title="Put the Sentiment Front back where the market puts it">Auto</button>' : '') +
       (full ? '' : '<button type="button" class="sqm-x" data-sqfull="1" title="Full screen" aria-label="Full screen">⤢</button>') + '</div>';
   }
   function sqView(host, full) { /* builds the frame once; the squares inside are kept and moved */
     var v = sqViews[full ? "full" : "land"];
     if (!v || !host.contains(v.map)) {
       host.innerHTML = (full ? '' : '<div class="pinned-card chart-container pf-card dev-target sqm-card" data-dev-name="Sentiment Squares" data-dev-color="#34d399"><div class="pf-title">Sentiment Squares</div>') +
-        '<div class="sqm-ctrl-w"></div><div class="sqm-head"></div><div class="sqm-map"><div class="sqm-front"></div></div><div class="sqm-foot fg-sub"></div>' + (full ? '' : '</div>');
+        '<div class="sqm-ctrl-w"></div><div class="sqm-head"></div><div class="sqm-map"><div class="sqm-front" title="Drag to give green or red more room · double click: back to the market\'s split"><span></span></div></div><div class="sqm-foot fg-sub"></div>' + (full ? '' : '</div>');
       v = sqViews[full ? "full" : "land"] = { host: host, map: host.querySelector(".sqm-map"), els: {}, first: true };
     }
     return v;
@@ -3663,6 +3669,7 @@
     var W = v.map.clientWidth, H = v.map.clientHeight; if (!(W > 0 && H > 0)) return;
     var up = d.items.filter(function (x) { return x.pc >= 0; }).sort(function (a, b) { return b.w - a.w; }), dn = d.items.filter(function (x) { return x.pc < 0; }).sort(function (a, b) { return b.w - a.w; });
     var su = up.reduce(function (s, x) { return s + x.w; }, 0), sd = dn.reduce(function (s, x) { return s + x.w; }, 0), Wu = su + sd > 0 ? W * su / (su + sd) : W, out = [], o2 = [];
+    var man = sqSplit[full ? "full" : "land"]; if (man != null && su > 0 && sd > 0) Wu = W * man; /* the front was dragged: green and red share the width as set */
     sqTree(up, 0, 0, Wu, H, out); sqTree(dn, 0, 0, W - Wu, H, o2);
     o2.forEach(function (r) { r.x = W - r.x - r.w; }); out = out.concat(o2); /* losers mirrored: the strongest at the right edge */
     var seen = {}, tier = SQ_TIER[sqS.tf][0];
@@ -3670,9 +3677,9 @@
       var x = r.n, el = v.els[x.sym], g = 1.5, key = x.sym + "|" + sqS.tf; seen[x.sym] = 1;
       if (!el) { el = v.els[x.sym] = document.createElement("div"); el.className = "sqm-sq nt"; v.map.appendChild(el); }
       el.dataset.i = x.i; el.style.left = (r.x + g / 2) + "px"; el.style.top = (r.y + g / 2) + "px"; el.style.width = Math.max(0, r.w - g) + "px"; el.style.height = Math.max(0, r.h - g) + "px"; el.style.background = sqColor(x.pc);
-      var m = Math.min(r.w, r.h), lab = r.w >= 42 && r.h >= 34 ? 2 : r.w >= 28 && r.h >= 18 ? 1 : 0, fs = Math.max(9, Math.min(22, m / 4.2)), html = "";
+      var m = Math.min(r.w, r.h), lab = r.w >= 42 && r.h >= 34 ? 2 : m >= 12 ? 1 : 0, fs = Math.max(9, Math.min(22, m / 4.2)), html = "";
       if (lab === 2) html = '<span class="sqm-l">' + (m >= 70 ? logoHtml(x.c).replace(' loading="lazy"', '') : '') + '<b style="font-size:' + fs.toFixed(1) + 'px">' + esc(x.sym) + '</b><i style="font-size:' + Math.max(9, fs * 0.72).toFixed(1) + 'px">' + sqFmt(x.pc) + '</i></span>';
-      else if (lab === 1) html = '<span class="sqm-l"><b style="font-size:' + Math.max(8, fs * 0.9).toFixed(1) + 'px">' + esc(x.sym) + '</b></span>';
+      else if (lab === 1) { var ls = Math.round(Math.min(28, m * 0.62)); html = '<span class="sqm-l sqm-lg" style="width:' + ls + 'px;height:' + ls + 'px">' + logoHtml(x.c).replace(' loading="lazy"', '') + '</span>'; } /* small squares: the logo instead of the symbol */
       var sig = lab + "|" + html.length + "|" + sqFmt(x.pc) + "|" + Math.round(fs); if (el.dataset.sig !== sig) { el.dataset.sig = sig; el.innerHTML = html; }
       el.title = x.c.name + " · " + sqFmt(x.pc);
       var last = sqLastPc[key]; if (!v.first && last !== undefined && Math.abs(x.pc - last) >= tier * 0.25) { el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse"); } /* a sudden move flashes */
@@ -3707,7 +3714,8 @@
     delete sqViews.land; renderSquares(); if (toLanding) sqBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
   function sqClick(e) {
-    var t = e.target.closest("[data-sqtf],[data-sqtop],[data-sqfull],[data-sqland],[data-sqclose]"); if (!t) return;
+    var t = e.target.closest("[data-sqtf],[data-sqtop],[data-sqfull],[data-sqland],[data-sqclose],[data-sqauto]"); if (!t) return;
+    if (t.dataset.sqauto) { sqSplit[sqFull ? "full" : "land"] = null; sqDraw(); return; }
     if (t.dataset.sqtf) { sqS.tf = t.dataset.sqtf; sqSave(); sqDraw(); }
     else if (t.dataset.sqtop) { sqS.top = +t.dataset.sqtop; sqSave(); sqDraw(); }
     else if (t.dataset.sqfull) sqOpenFull();
@@ -3715,6 +3723,20 @@
     else if (t.dataset.sqclose) sqCloseFull(false);
   }
   sqBox.addEventListener("click", sqClick); sqScreen.addEventListener("click", sqClick);
+  /* drag the Sentiment Front to give the smaller side room; a double click puts it back */
+  var sqDrag = null;
+  function sqDown(e) {
+    var f = e.target.closest(".sqm-front"); if (!f) return;
+    var map = f.parentNode; e.preventDefault(); sqDrag = { map: map, key: sqFull ? "full" : "land" }; map.classList.add("dragging"); sqHidePop();
+    try { f.setPointerCapture(e.pointerId); } catch (x) {}
+  }
+  function sqDragMove(e) {
+    if (!sqDrag) return; var r = sqDrag.map.getBoundingClientRect();
+    sqSplit[sqDrag.key] = Math.max(0.08, Math.min(0.92, (e.clientX - r.left) / r.width)); sqDraw();
+  }
+  function sqUp() { if (!sqDrag) return; sqDrag.map.classList.remove("dragging"); sqDrag = null; }
+  [sqBox, sqScreen].forEach(function (el) { el.addEventListener("pointerdown", sqDown); el.addEventListener("pointermove", sqDragMove); el.addEventListener("pointerup", sqUp); el.addEventListener("pointercancel", sqUp);
+    el.addEventListener("dblclick", function (e) { if (e.target.closest(".sqm-front")) { sqSplit[sqFull ? "full" : "land"] = null; sqDraw(); } }); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && sqFull) sqCloseFull(false); });
   window.addEventListener("resize", function () { if (sqVisible || sqFull) sqDraw(); });
   var sqHover = null;
@@ -3725,7 +3747,7 @@
   }
   function sqHidePop() { if (sqHover !== null) { sqHover = null; popEl.classList.remove("on"); } }
   function sqMove(e) {
-    if (devFrozen) return;
+    if (devFrozen || sqDrag) return;
     var el = e.target.closest(".sqm-sq"), c = el && coins[+el.dataset.i]; if (!c) { sqHidePop(); return; }
     if (sqHover !== c.symbol) { sqHover = c.symbol; current = -1; sqShowPop(c); }
     place(e); popEl.classList.add("on");
