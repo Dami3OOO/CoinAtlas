@@ -434,8 +434,8 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
     (vorher Platzhalter mit "x of 30 so far"); Zeitraum = gewählte Dauer.
   - Portfolio-Ansicht: alle stakebaren Assets aus dem Portfolio Manager (lädt die gespeicherten Wallets wenn nötig) mit bester Rate,
     Belohnung in Token (+% in Token) und Bestand danach. Oben nur: "50% of your Portfolio can be staked: $X of $Y".
-    Rechts in jeder Zeile das eigene Token-Wachstum in %. Unten eine Summenlinie mit "+" und die Gesamtzahl, dazu der Satz "Said Staking
-    Rewards would add up to a growth of X% in Tokens in your Portfolio" (jeder Coin gewichtet nach seinem Anteil am heutigen Wert; nur Coins mit Rate). Klick auf eine Zeile öffnet den Rechner.
+    Rechts in jeder Zeile das eigene Token-Wachstum in %. Keine Gesamtzahl unten (Prozente verschiedener Coins
+    lassen sich nicht ehrlich addieren), nur der Sicherheits-Hinweis. Klick auf eine Zeile öffnet den Rechner.
 - Native Raten (getestet über GitHub am 21.11.2026), Netzdurchschnitt vor Validator-Gebühr, im Eintrag als Hinweis vermerkt:
   ATOM, TIA, INJ: cosmos.directory "estimated_apr"; SOL: Validator-Inflation × Gesamtmenge ÷ gestakte Menge (offizielle RPC);
   ADA: Koios, Belohnungen einer abgeschlossenen Epoche ÷ aktiver Stake × 73; BNB: APY der aktiven Validatoren nach Stake gewichtet

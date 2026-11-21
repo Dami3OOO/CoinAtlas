@@ -4146,8 +4146,7 @@
     return bar + '<div class="stk-pot"><div class="stk-pot-big">' + share.toFixed(0) + '%</div><div class="stk-pot-l">of your Portfolio can be staked: <b>' + price(stakeVal) + '</b> of ' + price(totAll) + '</div>' +
       '<div class="stk-pot-s">' + list.length + ' of ' + all.length + ' assets · each with its best provider</div></div>' +
       '<div class="stk-head p"><span>Asset</span><span>Best Rate</span><span></span><span>In ' + stkDurName() + '</span></div>' + rows +
-      (pcs.length ? '<div class="stk-sum"><span class="stk-sum-plus">+</span><span class="stk-sum-v">+' + stkPc(avg) + '</span></div>' +
-        '<div class="stk-sum-t">Said Staking Rewards would add up to a growth of <b>+' + stkPc(avg) + '</b> in Tokens in your Portfolio' + (pcs.length > 1 ? ' (each coin counted by its share of today\'s value)' : '') + '. Worth about ' + price(gainUsd) + ' at today\'s prices.' + (pcs.length < list.length ? ' ' + (list.length - pcs.length) + ' without a public rate left out.' : '') + '</div>' : '') + STK_NOTE;
+      STK_NOTE;
   }
 
   function renderStaking() {
