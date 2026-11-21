@@ -2109,8 +2109,9 @@
     var d = (j.description && j.description.en) ? stripHtml(j.description.en).trim() : "";
     d = d.replace(/\s*\(?\s*Source:?\s*(?:https?:\/\/)?(?:www\.)?coinpaprika\.com\/?\s*\)?\s*$/i, "").trim();
     c.desc = d || "No description available."; c.infoSrc = j._src || c.infoSrc || null;
-    /* description says stablecoin + price ~$1 -> treat as stablecoin (blue, flat chart) */
-    if (/stablecoin|stable coin/i.test(c.desc) && Math.abs(c.current_price - 1) < 0.03 && STABLECOINS.indexOf(c.symbol.toUpperCase()) < 0) {
+    /* description says stablecoin and the price sits at $1, or it is pegged to another currency (euro, pound, franc, yen…) -> treat as stablecoin (tag, blue, flat chart) */
+    var otherFiat = /(pegged|backed|redeemable|tied)[^.]{0,60}\b(euro|eur|pound|sterling|gbp|swiss franc|chf|yen|jpy|singapore dollar|sgd|real|brl|lira|try)\b/i.test(c.desc);
+    if (/stablecoin|stable coin/i.test(c.desc) && (Math.abs(c.current_price - 1) < 0.03 || otherFiat) && STABLECOINS.indexOf(c.symbol.toUpperCase()) < 0) {
       STABLECOINS.push(c.symbol.toUpperCase()); delete chartCache[c.symbol + "-" + sourceKey]; applyPulseTint(); updateBreadth(); updateBadges(true);
     }
     c.socials = j.links || {};
