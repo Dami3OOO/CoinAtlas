@@ -444,7 +444,7 @@
   .stk-pf-btn { width: 100%; height: 36px; margin: 8px 0 12px; font-size: 12px; font-weight: 600; }
   .stk-head, .stk-row { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto 76px; gap: 10px; align-items: center; }
   .stk-head { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 0 8px 6px; border-bottom: 1px solid var(--line); }
-  .stk-head.p { grid-template-columns: minmax(0, 1fr) auto 76px 175px; margin-top: 10px; }
+  .stk-head.p { grid-template-columns: minmax(0, 1fr) auto 76px 175px; margin-top: 10px; } .stk-head.p span:last-child { text-align: right; }
   .stk-row, .stk-prow { padding: 7px 8px; border-bottom: 1px solid var(--line); font-size: 13px; cursor: pointer; border-radius: 6px; } .stk-row:hover, .stk-prow:hover { background: var(--hover); }
   .stk-prow { display: grid; grid-template-columns: minmax(0, 1fr) auto 76px 175px; gap: 10px; align-items: center; }
   .stk-n { color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -4143,8 +4143,8 @@
     if (!list.length) return bar + '<div class="pf-msg">None of your Portfolio\'s assets can be staked with the trusted providers yet.</div>';
     /* today's value first (how much of the Portfolio can be staked), then the growth in tokens: per asset it does not depend on any price */
     var share = totAll > 0 ? stakeVal / totAll * 100 : 0, lo = pcs.length ? Math.min.apply(null, pcs) : 0, hi = pcs.length ? Math.max.apply(null, pcs) : 0, avg = rateVal > 0 ? gainUsd / rateVal * 100 : 0;
-    return bar + '<div class="stk-pot"><div class="stk-pot-big">' + share.toFixed(0) + '%</div><div class="stk-pot-l">of your Portfolio can be staked</div>' +
-      '<div class="stk-pot-s">' + price(stakeVal) + ' of ' + price(totAll) + ' · ' + list.length + ' of ' + all.length + ' assets · each with its best provider</div></div>' +
+    return bar + '<div class="stk-pot"><div class="stk-pot-big">' + share.toFixed(0) + '%</div><div class="stk-pot-l">of your Portfolio can be staked: <b>' + price(stakeVal) + '</b> of ' + price(totAll) + '</div>' +
+      '<div class="stk-pot-s">' + list.length + ' of ' + all.length + ' assets · each with its best provider</div></div>' +
       '<div class="stk-head p"><span>Asset</span><span>Best Rate</span><span></span><span>In ' + stkDurName() + '</span></div>' + rows +
       (pcs.length ? '<div class="stk-sum"><span class="stk-sum-plus">+</span><span class="stk-sum-v">+' + stkPc(avg) + '</span></div>' +
         '<div class="stk-sum-t">Said Staking Rewards would add up to a growth of <b>+' + stkPc(avg) + '</b> in Tokens in your Portfolio' + (pcs.length > 1 ? ' (each coin counted by its share of today\'s value)' : '') + '. Worth about ' + price(gainUsd) + ' at today\'s prices.' + (pcs.length < list.length ? ' ' + (list.length - pcs.length) + ' without a public rate left out.' : '') + '</div>' : '') + STK_NOTE;
