@@ -304,6 +304,9 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Adress-Scans werden gemerkt (pfScanCache); Auge, X und Bearbeiten rechnen ohne neuen Scan neu zusammen.
 - Total Balance: Klick öffnet/schließt den Chart, das Feld ist bei offenem Chart hellgrau (#2a2a28 wie .gear.active); das X am Chart ist weg.
   Zeitauswahl als übliches Dropdown (fg-yr-pick). Statistik-Mitte: "Current Portfolio Balance" (Asset: "Current Holdings Value").
+- Zeitauswahl des Charts rechts wie überall. Öffnen von Chart und Diagramm scrollt so weit, dass beide ganz sichtbar sind, mit 24 px Abstand
+  unten (pfScrollShow; beim Chart noch einmal, sobald er geladen ist und seine volle Höhe hat).
+- Roadmap: Portfolio Manager ist grün (done); Netzwerke und Backend-Swaps stehen als "Portfolio Manager Network Additions" ganz unten.
 - Show Allocation: aktiv hellgrau statt weiß; öffnen scrollt zum Diagramm. Stablecoin-Zeilen zeigen "Stablecoin".
 - Full Censor verbirgt zusätzlich alle Gewinne in % (Punkte, Vorzeichen und Farbe bleiben), auch oben rechts im All-Time-Chart.
 
