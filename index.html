@@ -425,7 +425,8 @@
   .sqm-front span::after { content: ""; position: absolute; inset: 9px 4px; border-left: 1px solid #999; border-right: 1px solid #999; }
   .sqm-map.dragging .sqm-sq, .sqm-map.dragging .sqm-front { transition: none; } .sqm-map.dragging { cursor: ew-resize; user-select: none; }
   .sqm-lg { display: grid; place-items: center; flex: none; } .sqm-lg .logo { width: 100%; height: 100%; margin: 0; max-width: none; font-size: 9px; } .sqm-l .sqm-lg { margin-bottom: 3px; } .sqm-auto { width: auto; padding: 0 10px; font-size: 12px; } .sqm-foot { text-align: center; margin-top: 8px; }
-  .sqm-fly { position: absolute; inset: 0; z-index: 2; pointer-events: none; } .sqm-fly .sqm-sq { z-index: 1; box-shadow: 0 4px 14px rgba(0,0,0,.45); }
+  .sqm-flyl { position: absolute; top: 0; left: 0; height: 100%; width: 0; z-index: 2; pointer-events: none; transition: left 1.1s cubic-bezier(.22,1,.36,1); } .sqm-flyl .sqm-sq { box-shadow: 0 4px 14px rgba(0,0,0,.45); }
+  .sqm-map.dragging .sqm-flyl { transition: none; }
   .sqm-sq.grow { animation: sqGrow .65s cubic-bezier(.22,1,.36,1); } @keyframes sqGrow { 0% { opacity: 0; transform: scale(.35); } 100% { opacity: 1; transform: scale(1); } }
   .sqm-sq.gold { background: linear-gradient(115deg, #7a5410, #d4a017 22%, #fff2a8 38%, #e7b416 52%, #8a6212 70%, #f0c43a 86%, #7a5410) !important; background-size: 300% 300% !important;
     animation: sqGoldFlow 4s linear infinite, sqGoldGlow 2.4s ease-in-out infinite; color: #2a1d00; z-index: 1; }
@@ -3693,14 +3694,14 @@
   function sqMakeView() { /* the frame is built once; the squares inside are kept and moved */
     if (sqView && sqBox.contains(sqView.map)) return sqView;
     sqBox.innerHTML = '<div class="pinned-card chart-container pf-card dev-target sqm-card" data-dev-name="Sentiment Squares" data-dev-color="#34d399"><div class="pf-title">Sentiment Squares</div>' +
-      '<div class="sqm-ctrl-w"></div><div class="sqm-map"><div class="sqm-gl"><div class="sqm-in"></div></div><div class="sqm-rl"><div class="sqm-in"></div></div><div class="sqm-fly"></div>' +
+      '<div class="sqm-ctrl-w"></div><div class="sqm-map"><div class="sqm-gl"><div class="sqm-in"></div><div class="sqm-flyl"></div></div><div class="sqm-rl"><div class="sqm-in"></div><div class="sqm-flyl"></div></div>' +
       '<div class="sqm-front" title="Drag to reveal more red or more green · double click: back to the market\'s split"><span></span></div></div><div class="sqm-foot fg-sub"></div></div>';
     var m = sqBox.querySelector(".sqm-map");
-    return (sqView = { map: m, gl: m.querySelector(".sqm-gl"), rl: m.querySelector(".sqm-rl"), gin: m.querySelector(".sqm-gl .sqm-in"), rin: m.querySelector(".sqm-rl .sqm-in"), fly: m.querySelector(".sqm-fly"), front: m.querySelector(".sqm-front"), els: {}, first: true, W: 0, Gw: 0, Rw: 0, auto: 0 });
+    return (sqView = { map: m, gl: m.querySelector(".sqm-gl"), rl: m.querySelector(".sqm-rl"), gin: m.querySelector(".sqm-gl .sqm-in"), rin: m.querySelector(".sqm-rl .sqm-in"), gfly: m.querySelector(".sqm-gl .sqm-flyl"), rfly: m.querySelector(".sqm-rl .sqm-flyl"), front: m.querySelector(".sqm-front"), els: {}, first: true, W: 0, Gw: 0, Rw: 0, auto: 0 });
   }
   function sqPlaceFront(v) { /* only the window between the two sides moves */
     var W = v.W, x = sqSplit != null ? Math.max(W - v.Rw, Math.min(v.Gw, sqSplit * W)) : v.auto; /* auto: exactly where the dominant side ends, so it is always shown whole */
-    v.gl.style.width = x + "px"; v.rl.style.left = x + "px"; v.rin.style.left = (W - v.Rw - x) + "px"; v.front.style.left = x + "px";
+    v.gl.style.width = x + "px"; v.rl.style.left = x + "px"; v.rfly.style.left = (-x) + "px"; /* the flight layer of the red window stays aligned with the map while the window moves */ v.rin.style.left = (W - v.Rw - x) + "px"; v.front.style.left = x + "px";
   }
   function sqPaint(d) {
     var v = sqMakeView();
@@ -3719,14 +3720,15 @@
     var put = function (r, host) {
       var x = r.n, el = v.els[x.sym], g = 1.5, key = x.sym + "|" + sqShown; seen[x.sym] = 1;
       if (!el) { el = v.els[x.sym] = document.createElement("div"); el.className = "sqm-sq nt"; }
-      if (el.parentNode && el.parentNode !== host && !(el.parentNode === v.fly && el._host === host)) { /* changed sides: it flies above both windows from where it stood, its colour fading over */
-        var o = el.getBoundingClientRect(), mb = v.map.getBoundingClientRect(); el.classList.add("nt"); v.fly.appendChild(el); clearTimeout(el._land); el._land = null;
+      var fly = host === v.gin ? v.gfly : v.rfly; /* a square changing sides flies in the flight layer of its new window: free in its path, but only visible on its side of the line */
+      if (el.parentNode && el.parentNode !== host && !(el.parentNode === fly && el._host === host)) {
+        var o = el.getBoundingClientRect(), mb = v.map.getBoundingClientRect(); el.classList.add("nt"); fly.appendChild(el); clearTimeout(el._land); el._land = null;
         el.style.left = (o.left - mb.left) + "px"; el.style.top = (o.top - mb.top) + "px"; void el.offsetWidth; el.classList.remove("nt");
       } else if (!el.parentNode) { host.appendChild(el); el.classList.add("grow"); setTimeout(function () { el.classList.remove("grow"); }, 700); }
       el.dataset.i = x.i;
-      if (el.parentNode === v.fly) { /* in flight: aim at its place in map coordinates, then settle into its window */
+      if (el.parentNode === fly) { /* in flight: aim at its place in map coordinates, then settle into its window */
         el._host = host; el._r = r; el.style.left = ((host === v.gin ? 0 : W - Rw) + r.x + g / 2) + "px"; el.style.top = (r.y + g / 2) + "px";
-        if (!el._land) el._land = setTimeout(function () { el._land = null; if (el.parentNode !== v.fly || !el._host) return; el.classList.add("nt"); el._host.appendChild(el); el.style.left = (el._r.x + g / 2) + "px"; el.style.top = (el._r.y + g / 2) + "px"; void el.offsetWidth; el.classList.remove("nt"); }, 1250); /* once per flight */
+        if (!el._land) el._land = setTimeout(function () { el._land = null; if (!el.parentNode || !el.parentNode.classList.contains("sqm-flyl") || !el._host) return; el.classList.add("nt"); el._host.appendChild(el); el.style.left = (el._r.x + g / 2) + "px"; el.style.top = (el._r.y + g / 2) + "px"; void el.offsetWidth; el.classList.remove("nt"); }, 1250); /* once per flight */
       } else { el.style.left = (r.x + g / 2) + "px"; el.style.top = (r.y + g / 2) + "px"; } el.style.width = Math.max(0, r.w - g) + "px"; el.style.height = Math.max(0, r.h - g) + "px"; el.style.background = sqColor(x.pc); el.classList.toggle("gold", sqGold && x.pc >= 100);
       /* logo and % on every square that fits both, the font shrinking with the square; on the tiniest ones only the logo, so you still see which coin it is */
       var m = Math.min(r.w, r.h), txt = sqFmt(x.pc), tw = function (f) { return chMeasure(txt, f) * 1.08; }, iw = r.w - 4, ih = r.h - 4, ls = 0, fs = Math.max(6, Math.min(16, m / 5.2));
