@@ -371,3 +371,10 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 
 - Kritischer Rundum-Test des neuen Systems (nur auf Wunsch des Nutzers).
 - Reading des Tages wird ab 22.11.2026 mitgeschrieben (data/readings.json); nach einigen Monaten an ungesehenen Tagen prüfen.
+
+## Scrollen (21.11.2026)
+
+- Jeder Sprung der Seite (Suche, Klick in Sentiment Squares, Locked Charts, Mini-Charts, Portfolio-Chart und Allocation) läuft über smoothScrollY:
+  ease in-out (kubisch), Dauer 420 ms + 12 × √Strecke, höchstens 1,4 s. Mausrad oder Touch des Nutzers bricht sofort ab; bei
+  "reduzierter Bewegung" im System wird direkt gesprungen.
+- Allocation scrollt mit 64 px Abstand unter dem Diagramm (Total-Balance-Chart: 24 px).

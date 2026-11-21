@@ -2391,6 +2391,30 @@
 
   /* the hover chart picks its side at once: it reserves the height of a full chart even while "Loading chart…" is shown, so it never starts below and then jumps up */
   var popFullH = 330, popLastE = null;
+  /* ---- smooth scrolling for every jump on the page: starts slowly, speeds up, and slows down the same way (ease in-out); longer jumps take a bit longer ---- */
+  var scrollAnim = 0;
+  function smoothScrollY(y) {
+    y = Math.max(0, Math.min(y, document.documentElement.scrollHeight - innerHeight));
+    var y0 = scrollY, d = y - y0, id = ++scrollAnim; if (Math.abs(d) < 1) return;
+    if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) { scrollTo(0, y); return; }
+    var dur = Math.min(1400, 420 + Math.sqrt(Math.abs(d)) * 12), t0 = performance.now();
+    var ease = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+    var stop = function () { scrollAnim++; }; /* the user's own wheel or touch takes over at once */
+    addEventListener("wheel", stop, { once: true, passive: true }); addEventListener("touchstart", stop, { once: true, passive: true });
+    (function step(now) {
+      if (id !== scrollAnim) return;
+      var t = Math.min(1, (now - t0) / dur); scrollTo(0, y0 + d * ease(t));
+      if (t < 1) requestAnimationFrame(step); else { removeEventListener("wheel", stop); removeEventListener("touchstart", stop); }
+    })(t0);
+  }
+  function smoothScrollTo(el, block, room) { /* block: "center" or "nearest" (with "room" pixels of space at the edge) */
+    if (!el) return; var r = el.getBoundingClientRect(), dy = 0; room = room == null ? 0 : room;
+    if (block === "center") dy = r.top - (innerHeight - r.height) / 2;
+    else if (r.bottom > innerHeight - room) dy = Math.min(r.bottom - innerHeight + room, r.top - room);
+    else if (r.top < room) dy = r.top - room;
+    if (dy) smoothScrollY(scrollY + dy);
+  }
+
   function place(e) {
     popLastE = { clientX: e.clientX, clientY: e.clientY };
     var full = popEl.querySelector("svg"), oh = popEl.offsetHeight;
@@ -2421,7 +2445,7 @@
     var existingIdx = pinnedCoins.findIndex(function (x) { return x.symbol === c.symbol; });
     if (existingIdx > -1) {
       var card = pinnedEl.querySelector('.pinned-card[data-sym="' + c.symbol + '"]');
-      if (card) { var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; card.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" }); card.classList.add('flash'); setTimeout(function () { card.classList.remove('flash'); }, 350); }
+      if (card) { var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; smoothScrollTo(card, "center"); card.classList.add('flash'); setTimeout(function () { card.classList.remove('flash'); }, 350); }
     } else {
       pinnedCoins.push(c); cardTf[c.symbol] = "1D"; renderPinned();
       var newCard = pinnedEl.querySelector('.pinned-card[data-sym="' + c.symbol + '"]');
@@ -2484,14 +2508,14 @@
         if (newCard) { newCard.classList.add('flash'); setTimeout(function () { newCard.classList.remove('flash'); }, 350); }
       } else {
         var card = pinnedEl.querySelector('.pinned-card[data-sym="' + c.symbol + '"]');
-        if (card) { var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; card.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" }); card.classList.add('flash'); setTimeout(function () { card.classList.remove('flash'); }, 350); }
+        if (card) { var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; smoothScrollTo(card, "center"); card.classList.add('flash'); setTimeout(function () { card.classList.remove('flash'); }, 350); }
       }
       closeResults(); qEl.blur();
       return;
     }
 
     var row = rowsEl.children[i];
-    if (row) { closeResults(); qEl.blur(); var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; row.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" }); Array.prototype.forEach.call(rowsEl.querySelectorAll(".flash"), function (r) { r.classList.remove("flash"); }); clearTimeout(flashTimer); flashTimer = setTimeout(function () { row.classList.add("flash"); flashTimer = setTimeout(function () { row.classList.remove("flash"); }, 900); }, reduce ? 0 : 350); }
+    if (row) { closeResults(); qEl.blur(); var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; smoothScrollTo(row, "center"); Array.prototype.forEach.call(rowsEl.querySelectorAll(".flash"), function (r) { r.classList.remove("flash"); }); clearTimeout(flashTimer); flashTimer = setTimeout(function () { row.classList.add("flash"); flashTimer = setTimeout(function () { row.classList.remove("flash"); }, 900); }, reduce ? 0 : 350); }
   }
   qEl.addEventListener("input", paintResults);
   /* the X on the right of the search: shown while something is typed, clears it in one click */
@@ -3575,7 +3599,7 @@
   document.getElementById("cs-land").addEventListener("click", function () {
     if (!chAsset) return; var m = { id: chAsset.id, tf: chTf };
     if (!chMinis.some(function (x) { return x.id === m.id && x.tf === m.tf; })) chMinis.push(m);
-    chMiniSave(); chClose(); chMiniBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    chMiniSave(); chClose(); smoothScrollTo(chMiniBox, "nearest", 16);
   });
   setTimeout(chMiniRender, 0);
   window.addEventListener("resize", function () { chMiniLive.forEach(function (m) { m.c.resize(); }); });
@@ -3860,7 +3884,7 @@
     sqHidePop(); current = -1;
     var i = displayCoins.findIndex(function (x) { return x.symbol === c.symbol; }), tr = i > -1 && rowsEl.querySelector('tr[data-i="' + i + '"]'), f = sqBox.querySelector(".sqm-foot");
     if (!tr) { if (f) f.textContent = c.name + " is not shown in the list right now (filters or list range)."; return; }
-    tr.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+    smoothScrollTo(tr, "center");
     var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; /* the same light gray flash as a search */
     Array.prototype.forEach.call(rowsEl.querySelectorAll(".flash"), function (r) { r.classList.remove("flash"); }); clearTimeout(flashTimer);
     flashTimer = setTimeout(function () { tr.classList.add("flash"); flashTimer = setTimeout(function () { tr.classList.remove("flash"); }, 900); }, reduce ? 0 : 350);
@@ -3947,7 +3971,7 @@
     { title: "CoinAtlas Sentiment Squares", st: "done", notes: ["Done. Reworked: every coin a square with its logo, sized by how far it moved, colour stronger the bigger the move. Green squares left, red right, the strongest at the outer edges; the glowing Sentiment Front between them shows the share of coins up and can be dragged like a window to reveal the hidden side, without moving a single square.", "Squares glide to their new place on every update, flash on a sudden move and fly into the new picture when the timeframe changes. A click locks the coin's chart in the Landing Area. Today, 1H, 24H, 7D, 30D, 1Y (Coinpaprika), Top 50 / 100 / 200, stablecoins left out.", "On a new timeframe and on first load the squares come in a handful at a time, the strongest first, gliding to their place; a coin that changes sides flies across the front while its colour fades over. Golden Squares (Experimental setting) for coins up 50% or more. Later ideas: a replay of the last 24 hours, and a size option by Market Cap."], desc: "200 Assets, 200 Squares. Every Square is one Asset — green means it's up, red means it's down. No numbers, no noise. One glance and you know exactly where the Market's Head is at." },
     { title: "Google Trends", notes: ["A first attempt was removed again: the search data could not be fetched reliably.", "Next idea: Google offers an official embed for every Trends chart. It would show the chart on the site without an API, but its numbers could not feed the Formula."], desc: "The Goal is To Incorporate Google Trends Into Fear and Greed and into the BTC ETH Ratio tab. Our Workflow is as followed: We determine Extreme Situations, because we go by one rule of thumb: The More Extreme a Situation Is, the more Temporary its going to be. And Google Trends is yet another Confirmation. If we see Extreme Explosions of Certain Searches every time we create the High of the Year, than thats another indicator for us to use. And it goes for the Opposite Case as well. If we see Certain Trends Explode once we create the Low of the Year [which means that afterwards we only saw green], so its bullish, then thats also a Indicator.\nStarts on BTC, Maps out to ETH and eventually the entire Top 200." },
     { title: "Charting History", notes: ["Planned. TOTAL200, BTC.D and USDT.D are house-made from the daily snapshots, so their charts start on 12 Nov 2026. Their history before that will be fetched at some point."], desc: "Complete the history of the house-made charts on the Charts screen." },
-    { title: "Fear and Greed Index Rework", st: "wip", notes: ["Done: Average Monthly and Average Yearly are one section now, Past Years. Every year shows the average of all its days and opens into its twelve months; All Years on top averages each month over every year. Several years can be open at once to compare.", "Findings from the history since February 2018, as the base for the rest of the rework:", "Periods: Fear lasts a median of 21 days, Greed 31, Neutral only 8. Neutral is mostly a passage, not a state.", "After Greed: 9 of 13 Neutral periods that came out of Greed went on into Fear, the first Fear day a median of 8 days later and within 28 days in three of four cases. The Reading already says \"Prepare your USDC for the next period of Fear\" there.", "After Fear: 17 of 29 Neutral periods that came out of Fear went back into Fear.", "Extremes come in series: after Extreme Fear the next extreme was Extreme Fear again 30 times and Extreme Greed 4 times; after Extreme Greed, Extreme Greed again 9 times and Extreme Fear 4 times.", "Bear Years (2018, 2022, 2026): 72 to 93% of the days in Fear, almost never Extreme Greed. June was the lowest month every time (average 18), in line with the Bear Year Extreme Window of June and July.", "Bull Years (2021, 2025): January in Greed (81 and 72), December in Fear (29 and 22).", "Bridge Years: the second Bridge Year ended in Extreme Greed both times (November and December 2020: 86 and 92, 2024: 80 and 76). The first Bridge Year is mixed: 2019 ended in Fear, 2023 in Greed.", "Every year type rests on only two to four years, so these are patterns to watch, not rules."], desc: "Rework the Fear and Greed Index around how its periods change: show the current period with its length, what usually follows it, and how the year type has behaved month by month, so it can point to the next period of Fear or Greed before it starts." },
+    { title: "Fear and Greed Index Rework", st: "done", notes: ["Done: Average Monthly and Average Yearly are one section now, Past Years. Every year shows the average of all its days and opens into its twelve months; All Years on top averages each month over every year. Several years can be open at once to compare.", "Findings from the history since February 2018, as the base for the rest of the rework:", "Periods: Fear lasts a median of 21 days, Greed 31, Neutral only 8. Neutral is mostly a passage, not a state.", "After Greed: 9 of 13 Neutral periods that came out of Greed went on into Fear, the first Fear day a median of 8 days later and within 28 days in three of four cases. The Reading already says \"Prepare your USDC for the next period of Fear\" there.", "After Fear: 17 of 29 Neutral periods that came out of Fear went back into Fear.", "Extremes come in series: after Extreme Fear the next extreme was Extreme Fear again 30 times and Extreme Greed 4 times; after Extreme Greed, Extreme Greed again 9 times and Extreme Fear 4 times.", "Bear Years (2018, 2022, 2026): 72 to 93% of the days in Fear, almost never Extreme Greed. June was the lowest month every time (average 18), in line with the Bear Year Extreme Window of June and July.", "Bull Years (2021, 2025): January in Greed (81 and 72), December in Fear (29 and 22).", "Bridge Years: the second Bridge Year ended in Extreme Greed both times (November and December 2020: 86 and 92, 2024: 80 and 76). The first Bridge Year is mixed: 2019 ended in Fear, 2023 in Greed.", "Every year type rests on only two to four years, so these are patterns to watch, not rules."], desc: "Rework the Fear and Greed Index around how its periods change: show the current period with its length, what usually follows it, and how the year type has behaved month by month, so it can point to the next period of Fear or Greed before it starts." },
     { title: "Settings Window Overhaul", st: "done", notes: ["Done. The Settings open as Tabs: the Sections on the left, their Settings on the right, so the Window fits the Screen without scrolling. Every Header Button can be switched off."], desc: "A new Settings Window: grouped, searchable and easier to scan, without growing endlessly." },
     { title: "Crypto Investor Cheatsheet", notes: ["Not started. If the owner has published the sheet to the web, it can be embedded as it is instead of copied, so it always stays up to date."], desc: "Bring the Crypto Investor Cheatsheet onto the site as a reference next to the other tools." },
     { title: "X Market Sentiment", notes: ["Not started. Reading posts on X needs the paid X API or a paid social sentiment provider; scraping is against the terms of X and breaks often. The Fear & Greed Index already carries a social component."], desc: "A market sentiment built from what is being posted about Bitcoin and Ethereum on X." },
@@ -5380,7 +5404,7 @@
   pfBox.addEventListener("mouseover", function (e) { var el = e.target.closest && e.target.closest("#pf-pie [data-pk]"); var pie = document.getElementById("pf-pie"); if (!pie) return; if (!el && e.target.closest(".pf-pie-leg")) return; if (!pie.dataset.tot) pie.dataset.tot = pie.querySelector(".pf-pie-c2").textContent; pfPieFocus(el); });
   pfBox.addEventListener("click", function (e) {
     if (!e.target.closest("#pf-pie-btn")) return; pfPie = !pfPie; try { localStorage.setItem(PF_PIE_KEY, pfPie ? "1" : "0"); } catch (x) {} pfRenderBody();
-    if (pfPie) pfScrollShow(document.getElementById("pf-pie")); /* like the Total Balance chart: go to it */
+    if (pfPie) pfScrollShow(document.getElementById("pf-pie"), 64); /* like the Total Balance chart: go to it */
   });
 
   /* ---- SHARE: the whole Portfolio Manager as one PNG image, drawn on a canvas. Censored hides every amount, prices and percentages stay ---- */
@@ -5649,12 +5673,7 @@
       if (pfLockScroll) { pfLockScroll = false; pfScrollShow(el.querySelector(".pf-lock") || el); }
     });
   }
-  function pfScrollShow(el) { /* scrolls so the whole element is in view with some room below it (or its top, if it is taller than the screen) */
-    if (!el) return; var r = el.getBoundingClientRect(), room = 24, dy = 0;
-    if (r.bottom > innerHeight - room) dy = Math.min(r.bottom - innerHeight + room, r.top - room);
-    else if (r.top < room) dy = r.top - room;
-    if (dy) scrollBy({ top: dy, behavior: "smooth" });
-  }
+  function pfScrollShow(el, room) { smoothScrollTo(el, "nearest", room == null ? 24 : room); } /* the whole element in view with some room below it (or its top, if it is taller than the screen) */
   var pfLockScroll = false;
   function pfToggleLock(key) {
     pfHideHover();
