@@ -435,3 +435,9 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   - Portfolio-Ansicht: alle stakebaren Assets aus dem Portfolio Manager (lädt die gespeicherten Wallets wenn nötig) mit bester Rate,
     Belohnung und Bestand danach; oben "You could grow your Portfolio's token holdings by X% if you stake all these assets for …"
     (X = Belohnungen in $ / Wert des ganzen Portfolios). Klick auf eine Zeile öffnet den Rechner mit der gehaltenen Menge.
+- Native Raten (getestet über GitHub am 21.11.2026), Netzdurchschnitt vor Validator-Gebühr, im Eintrag als Hinweis vermerkt:
+  ATOM, TIA, INJ: cosmos.directory "estimated_apr"; SOL: Validator-Inflation × Gesamtmenge ÷ gestakte Menge (offizielle RPC);
+  ADA: Koios, Belohnungen einer abgeschlossenen Epoche ÷ aktiver Stake × 73; BNB: APY der aktiven Validatoren nach Stake gewichtet
+  (api.bnbchain.org); HYPE: "predictedApr" der Woche nach Stake gewichtet (api.hyperliquid.xyz). Ohne freie verlässliche Quelle:
+  AVAX (Glacier-Zahlen widersprüchlich), DOT (Subscan braucht Schlüssel), POL, OSMO (liefert 0) → "Rate on site".
+- Workflow "Record staking" (record-staking.yml) holt die Raten auch von Hand, ohne Snapshot.
