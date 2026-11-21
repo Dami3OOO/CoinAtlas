@@ -232,7 +232,7 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   Oben "All Years": jeder Kalendermonat über alle Jahre seit 2018. Mehrere Jahre gleichzeitig offen statt "Compare"; das laufende Jahr ist anfangs offen.
   Filter Bull / Bear / Bridge / All bleiben. Settings: ein Schalter "Show Past Years".
   Jahreszahl in der Farbe ihres Zyklus (Bull grün, Bear rot, Bridge orange). Oben das kommende Jahr (gestrichelt, "Upcoming", Zyklus schon bekannt),
-  "All Years" ganz unten. In den Monaten: der höchste Monat grün umrandet und getönt, der niedrigste rot; alle Monatsboxen gleich hoch.
+  "All Years" ganz unten. In den Monaten (4 pro Reihe, 3 Reihen, wie im Ratio-Tab): der höchste Monat grün umrandet und getönt, der niedrigste rot; alle Monatsboxen gleich hoch.
 
 ## Portfolio Manager: Durchschnittspreis (21.11.2026)
 

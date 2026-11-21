@@ -703,7 +703,7 @@
   .fg-py-avg { font-size: 24px; font-weight: 700; line-height: 1.1; } .fg-py-avg.extreme-fear { color: var(--down); } .fg-py-avg.fear { color: var(--down-tier-2); } .fg-py-avg.neutral { color: #eab308; } .fg-py-avg.greed { color: var(--up-tier-2); } .fg-py-avg.extreme-greed { color: var(--up); }
   .fg-py-l b.bull { color: var(--up); } .fg-py-l b.bear { color: var(--down); } .fg-py-l b.bridge { color: #fb923c; }
   .fg-py.upcoming { border-style: dashed; border-left-style: solid; opacity: .75; } .fg-py.upcoming .fg-py-head { cursor: default; } .fg-py.upcoming .fg-py-head:hover { background: transparent; }
-  .fg-annual-grid.fg-py-grid { grid-auto-rows: 1fr; align-items: stretch; } .fg-annual-grid.fg-py-grid .fg-annual-card { min-height: 0; height: 100%; box-sizing: border-box; }
+  .fg-annual-grid.fg-py-grid { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 1fr; align-items: stretch; } /* 4 months per row, like Past Years in the BTC|ETH Ratio */ .fg-annual-grid.fg-py-grid .fg-annual-card { min-height: 0; height: 100%; box-sizing: border-box; }
   .fg-py-grid .fg-annual-card.fg-hi { border-color: var(--up); background-image: linear-gradient(rgba(34,197,94,.12), rgba(34,197,94,.12)); }
   .fg-py-grid .fg-annual-card.fg-lo { border-color: var(--down); background-image: linear-gradient(rgba(239,68,68,.12), rgba(239,68,68,.12)); }
   .fg-py-chev { color: var(--muted); font-size: 18px; transition: transform .15s ease; } .fg-py.open .fg-py-chev { transform: rotate(90deg); } .fg-py-body { padding: 0 12px 12px; }
