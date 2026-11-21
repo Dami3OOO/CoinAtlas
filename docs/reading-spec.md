@@ -419,3 +419,5 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Locked Hovercharts: Abschnitt "Staking" unter Tokenomics (Einstellung "Show Staking", Standard an): Name als Link (Hover zeigt die Domain),
   Art (Liquid/Native Staking, Lending), Locked/Unlocked, Rate (APR bei nativem Staking, sonst APY). Hinweis: nur echte Rate, kein Finanzrat,
   CoinAtlas verbindet sich nie mit der Wallet, "CoinAtlas is not sponsored by any of these Staking Providers" (fällt bei Partnerschaften weg).
+- Verlauf: jede Nacht mit echten Raten wird zusätzlich in data/staking-history.json gespeichert (eine Zeile pro Tag:
+  {"YYYY-MM-DD": {"ETH": {"Lido": 2.9, …}, …}}), nur Optionen mit Rate; ein erneut aufgenommener Tag wird ersetzt.

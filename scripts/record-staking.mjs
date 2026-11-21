@@ -1,7 +1,7 @@
 // "Where can I stake?": the best staking options for a coin, but only from a hand-picked list of trusted providers
 // (years on the market, audited, never lost user funds). DefiLlama Yields gives the real rates; only the base rate
 // is used (no bonus tokens). Native staking without a public rate is listed with its link and no number.
-// Writes data/staking.json. Runs after the snapshot in .github/workflows/record-snapshot.yml; a failure never stops the snapshot
+// Writes data/staking.json, and adds the night's rates to data/staking-history.json. Runs after the snapshot in .github/workflows/record-snapshot.yml; a failure never stops the snapshot
 // and keeps the last file. Without network (or with STAKING_OFFLINE=1) it writes the list without rates.
 import { writeFileSync, readFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -65,6 +65,21 @@ export function build(pools) {
   return assets;
 }
 
+/* every night's rates are kept: data/staking-history.json, one line per day: { "YYYY-MM-DD": { "ETH": { "Lido": 2.9, ... }, ... } }.
+   Only options with a real rate; a day that is recorded again is replaced */
+export function historyDay(assets) {
+  const d = {};
+  for (const sym of Object.keys(assets)) for (const x of assets[sym].list) if (x.apy !== null) (d[sym] = d[sym] || {})[x.name] = x.apy;
+  return d;
+}
+function writeHistory(day, assets) {
+  const file = join(DATA, "staking-history.json"); let all = {};
+  if (existsSync(file)) { try { all = JSON.parse(readFileSync(file, "utf8")); } catch { all = {}; } }
+  const d = historyDay(assets); if (!Object.keys(d).length) return;
+  all[day] = d;
+  writeFileSync(file, "{\n" + Object.keys(all).sort().map(k => JSON.stringify(k) + ": " + JSON.stringify(all[k])).join(",\n") + "\n}\n");
+}
+
 async function main() {
   let pools = null;
   if (process.env.STAKING_OFFLINE !== "1") {
@@ -79,6 +94,7 @@ async function main() {
   for (const s of Object.keys(PROVIDERS)) for (const p of PROVIDERS[s]) if (p.pools && !(assets[s] && assets[s].list.find(x => x.name === p.name))) missing.push(s + " " + p.name);
   writeFileSync(file, JSON.stringify({ updated: day, source: pools ? "DefiLlama Yields (base rate only)" : "list only, no rates", missing }, null, 1).slice(0, -2) + ',\n "assets": {\n' +
     Object.keys(assets).map(k => "  " + JSON.stringify(k) + ": " + JSON.stringify(assets[k])).join(",\n") + "\n }\n}\n");
+  if (pools) writeHistory(day, assets);
   console.log("Staking for " + Object.keys(assets).length + " coins" + (missing.length ? "; no rate found for: " + missing.join(", ") : ""));
 }
 
