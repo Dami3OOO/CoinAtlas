@@ -1422,8 +1422,8 @@
   var yrPre = {};
   function tfRow(c) { /* same compact picker as the Fear & Greed Index: timeframes on the left, years on the right */
     var tf = cardTf[c.symbol] || "1D", cy = new Date().getFullYear(), yr = /^Y\d{4}$/.test(tf);
-    var lbl = yr ? tf.slice(1) + " · " + cycleStage(+tf.slice(1)) : (tf === "ALL" ? "All Time" : tf);
-    var cols = ["4H", "1D", "1W", "1M", "90D", "365D", "1Y", "ALL"].map(function (t) { return '<button type="button" class="tf-btn' + (t === tf ? ' active' : '') + '" data-sym="' + c.symbol + '" data-tf="' + t + '">' + (t === "ALL" ? "All Time" : t === "1Y" ? "Current Year" : t === "365D" ? "Last 365 Days" : t === "90D" ? "Last 90 Days" : t) + '</button>'; }).join("");
+    var lbl = yr ? tf.slice(1) + " · " + cycleStage(+tf.slice(1)) : (tf === "ALL" ? "All Time" : tf === "1D" ? "Today" : tf);
+    var cols = ["4H", "1D", "1W", "1M", "90D", "365D", "1Y", "ALL"].map(function (t) { return '<button type="button" class="tf-btn' + (t === tf ? ' active' : '') + '" data-sym="' + c.symbol + '" data-tf="' + t + '">' + (t === "ALL" ? "All Time" : t === "1D" ? "Today" : t === "1Y" ? "Current Year" : t === "365D" ? "Last 365 Days" : t === "90D" ? "Last 90 Days" : t) + '</button>'; }).join("");
     var a = allCache[c.symbol], ys = "";
     if (a && a.d && a.d.times && a.d.times.length) {
       for (var y = cy; y >= new Date(a.d.times[0]).getUTCFullYear(); y--) ys += '<button type="button" class="tf-btn' + ((tf === "Y" + y || (tf === "1Y" && y === cy)) ? ' active' : '') + '" data-sym="' + c.symbol + '" data-tf="Y' + y + '">' + y + ' · ' + stg(y) + '</button>';
