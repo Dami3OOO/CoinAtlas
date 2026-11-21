@@ -225,6 +225,13 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Linked Hover, Tint Strongest Months und Altcoin Dominance Line sind immer an und keine Schalter mehr.
 - Experimental: Dev Mode, Party Mode.
 
+## Fear & Greed Index: Past Years (21.11.2026)
+
+- Ersetzt "Average Monthly Index Value" und "Average Yearly Index Value". Eine Karte pro Jahr (neuestes oben) mit dem Durchschnitt aller Tage
+  des Jahres (vorher: Durchschnitt der Monatsdurchschnitte, ohne laufenden Monat), Zyklus-Etikett und Farbe am Rand; Klick klappt die 12 Monate auf.
+  Oben "All Years": jeder Kalendermonat über alle Jahre seit 2018. Mehrere Jahre gleichzeitig offen statt "Compare"; das laufende Jahr ist anfangs offen.
+  Filter Bull / Bear / Bridge / All bleiben. Settings: ein Schalter "Show Past Years".
+
 ## Portfolio Manager: Durchschnittspreis (21.11.2026)
 
 - Asset ohne Durchschnittspreis: graue Ebene über der Zeile, Knopf "Set Average Price". Vorher waren solche Zeilen unsichtbar:

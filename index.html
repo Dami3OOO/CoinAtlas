@@ -695,6 +695,13 @@
   .fg-adv-card .val { font-size: 16px; font-weight: 700; color: var(--fg); }
   .fg-adv-card .val.up { color: var(--up); }
   .fg-adv-card .val.down { color: var(--down); }
+  .fg-py-list { display: flex; flex-direction: column; gap: 8px; }
+  .fg-py { background: var(--pop); border: 1px solid var(--line); border-left: 3px solid var(--muted); border-radius: 8px; } .fg-py.bull { border-left-color: var(--up); } .fg-py.bear { border-left-color: var(--down); } .fg-py.bridge { border-left-color: #fb923c; }
+  .fg-py.current { border-color: rgba(255,255,255,.18); } .fg-py.open { background: var(--hover); }
+  .fg-py-head { display: flex; align-items: center; gap: 12px; width: 100%; font: inherit; color: var(--fg); background: transparent; border: 0; padding: 10px 14px; cursor: pointer; text-align: left; } .fg-py-head:hover { background: var(--hover); border-radius: 8px; }
+  .fg-py-l { flex: 1; display: flex; flex-direction: column; gap: 2px; } .fg-py-l b { font-size: 15px; } .fg-py-r { display: flex; flex-direction: column; align-items: flex-end; }
+  .fg-py-avg { font-size: 24px; font-weight: 700; line-height: 1.1; } .fg-py-avg.extreme-fear { color: var(--down); } .fg-py-avg.fear { color: var(--down-tier-2); } .fg-py-avg.neutral { color: #eab308; } .fg-py-avg.greed { color: var(--up-tier-2); } .fg-py-avg.extreme-greed { color: var(--up); }
+  .fg-py-chev { color: var(--muted); font-size: 18px; transition: transform .15s ease; } .fg-py.open .fg-py-chev { transform: rotate(90deg); } .fg-py-body { padding: 0 12px 12px; }
   .fg-annual-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap; }
   .fg-annual-head .fg-annual-title { margin: 0; }
   .fg-yearly-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
@@ -958,8 +965,8 @@
             <div class="settings-section">
               <div class="section-title">Fear &amp; Greed Index</div>
               <div class="grp" style="display:none"><span class="lbl">Show Average Extremes Value</span><button class="toggle" type="button" id="fga-toggle" role="switch" aria-checked="true" aria-label="Show Average Extremes Value"><span></span></button></div>
-              <div class="grp"><span class="lbl">Show Average Monthly Index Value</span><button class="toggle" type="button" id="annual-toggle" role="switch" aria-checked="true" aria-label="Show Average Monthly Index Value"><span></span></button></div>
-              <div class="grp"><span class="lbl">Show Average Yearly Index Value</span><button class="toggle" type="button" id="yearly-toggle" role="switch" aria-checked="true" aria-label="Show Average Yearly Index Value"><span></span></button></div>
+              <div class="grp" hidden><span class="lbl">Show Average Monthly Index Value</span><button class="toggle" type="button" id="annual-toggle" role="switch" aria-checked="true" aria-label="Show Average Monthly Index Value"><span></span></button></div>
+              <div class="grp"><span class="lbl">Show Past Years</span><button class="toggle" type="button" id="yearly-toggle" role="switch" aria-checked="true" aria-label="Show Average Yearly Index Value"><span></span></button></div>
             </div>
             <div class="dev-only-sec">
             <div class="sep"></div>
@@ -3631,7 +3638,7 @@
     { title: "CoinAtlas Sentiment Squares", st: "wip", notes: ["Prototype: 200 equal Squares with Logo, green or red by today's change, opened from the header.", "Open: other timeframes than today, a hover detail per Square, and optional sizing by Market Cap."], desc: "200 Assets, 200 Squares. Every Square is one Asset — green means it's up, red means it's down. No numbers, no noise. One glance and you know exactly where the Market's Head is at." },
     { title: "Google Trends", notes: ["A first attempt was removed again: the search data could not be fetched reliably.", "Next idea: Google offers an official embed for every Trends chart. It would show the chart on the site without an API, but its numbers could not feed the Formula."], desc: "The Goal is To Incorporate Google Trends Into Fear and Greed and into the BTC ETH Ratio tab. Our Workflow is as followed: We determine Extreme Situations, because we go by one rule of thumb: The More Extreme a Situation Is, the more Temporary its going to be. And Google Trends is yet another Confirmation. If we see Extreme Explosions of Certain Searches every time we create the High of the Year, than thats another indicator for us to use. And it goes for the Opposite Case as well. If we see Certain Trends Explode once we create the Low of the Year [which means that afterwards we only saw green], so its bullish, then thats also a Indicator.\nStarts on BTC, Maps out to ETH and eventually the entire Top 200." },
     { title: "Charting History", notes: ["Planned. TOTAL200, BTC.D and USDT.D are house-made from the daily snapshots, so their charts start on 12 Nov 2026. Their history before that will be fetched at some point."], desc: "Complete the history of the house-made charts on the Charts screen." },
-    { title: "Fear and Greed Index Rework", notes: ["Planned. Findings from the history since February 2018, as the base for the rework:", "Periods: Fear lasts a median of 21 days, Greed 31, Neutral only 8. Neutral is mostly a passage, not a state.", "After Greed: 9 of 13 Neutral periods that came out of Greed went on into Fear, the first Fear day a median of 8 days later and within 28 days in three of four cases. The Reading already says \"Prepare your USDC for the next period of Fear\" there.", "After Fear: 17 of 29 Neutral periods that came out of Fear went back into Fear.", "Extremes come in series: after Extreme Fear the next extreme was Extreme Fear again 30 times and Extreme Greed 4 times; after Extreme Greed, Extreme Greed again 9 times and Extreme Fear 4 times.", "Bear Years (2018, 2022, 2026): 72 to 93% of the days in Fear, almost never Extreme Greed. June was the lowest month every time (average 18), in line with the Bear Year Extreme Window of June and July.", "Bull Years (2021, 2025): January in Greed (81 and 72), December in Fear (29 and 22).", "Bridge Years: the second Bridge Year ended in Extreme Greed both times (November and December 2020: 86 and 92, 2024: 80 and 76). The first Bridge Year is mixed: 2019 ended in Fear, 2023 in Greed.", "Every year type rests on only two to four years, so these are patterns to watch, not rules."], desc: "Rework the Fear and Greed Index around how its periods change: show the current period with its length, what usually follows it, and how the year type has behaved month by month, so it can point to the next period of Fear or Greed before it starts." },
+    { title: "Fear and Greed Index Rework", st: "wip", notes: ["Done: Average Monthly and Average Yearly are one section now, Past Years. Every year shows the average of all its days and opens into its twelve months; All Years on top averages each month over every year. Several years can be open at once to compare.", "Findings from the history since February 2018, as the base for the rest of the rework:", "Periods: Fear lasts a median of 21 days, Greed 31, Neutral only 8. Neutral is mostly a passage, not a state.", "After Greed: 9 of 13 Neutral periods that came out of Greed went on into Fear, the first Fear day a median of 8 days later and within 28 days in three of four cases. The Reading already says \"Prepare your USDC for the next period of Fear\" there.", "After Fear: 17 of 29 Neutral periods that came out of Fear went back into Fear.", "Extremes come in series: after Extreme Fear the next extreme was Extreme Fear again 30 times and Extreme Greed 4 times; after Extreme Greed, Extreme Greed again 9 times and Extreme Fear 4 times.", "Bear Years (2018, 2022, 2026): 72 to 93% of the days in Fear, almost never Extreme Greed. June was the lowest month every time (average 18), in line with the Bear Year Extreme Window of June and July.", "Bull Years (2021, 2025): January in Greed (81 and 72), December in Fear (29 and 22).", "Bridge Years: the second Bridge Year ended in Extreme Greed both times (November and December 2020: 86 and 92, 2024: 80 and 76). The first Bridge Year is mixed: 2019 ended in Fear, 2023 in Greed.", "Every year type rests on only two to four years, so these are patterns to watch, not rules."], desc: "Rework the Fear and Greed Index around how its periods change: show the current period with its length, what usually follows it, and how the year type has behaved month by month, so it can point to the next period of Fear or Greed before it starts." },
     { title: "Settings Window Overhaul", st: "done", notes: ["Done. The Settings open as Tabs: the Sections on the left, their Settings on the right, so the Window fits the Screen without scrolling. Every Header Button can be switched off."], desc: "A new Settings Window: grouped, searchable and easier to scan, without growing endlessly." },
     { title: "Crypto Investor Cheatsheet", notes: ["Not started. If the owner has published the sheet to the web, it can be embedded as it is instead of copied, so it always stays up to date."], desc: "Bring the Crypto Investor Cheatsheet onto the site as a reference next to the other tools." },
     { title: "X Market Sentiment", notes: ["Not started. Reading posts on X needs the paid X API or a paid social sentiment provider; scraping is against the terms of X and breaks often. The Fear & Greed Index already carries a social component."], desc: "A market sentiment built from what is being posted about Bitcoin and Ethereum on X." },
@@ -3972,8 +3979,7 @@
       '<div class="fg-gauge-col dev-target" data-dev-name="Gauge" data-dev-color="#60a5fa" id="fg-gauge-container"></div>' +
       '<div class="fg-stats-col dev-target" data-dev-name="Index Stats" data-dev-color="#34d399" id="fg-stats-container"></div>' +
       '</div>' +
-      (annualOn ? '<div class="fg-annual-section dev-target" data-dev-name="Average Monthly Index Value" data-dev-color="#c084fc" id="fg-annual-container"></div>' : '') +
-      (yearlyOn ? '<div class="fg-annual-section dev-target" data-dev-name="Average Yearly Index Value" data-dev-color="#34d399" id="fg-yearly-container"></div>' : '') +
+      (yearlyOn ? '<div class="fg-annual-section dev-target" data-dev-name="Past Years" data-dev-color="#34d399" id="fg-yearly-container"></div>' : '') +
       '</div>';
       
     var credit = '<div class="fg-credit">Created using Data from <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" rel="noopener noreferrer">Alternative.me</a></div>';
@@ -3982,7 +3988,6 @@
     renderFGGauge(current.value, current.value_classification);
     renderFGStats();
     if (fgaOn) renderFGAdvanced();
-    if (annualOn) renderFGAnnual();
     if (yearlyOn) renderFGYearly();
     if (fgVisible) updateFGTimer();
     reapplyHoverAfterRender();
@@ -4109,25 +4114,46 @@
       card("Days Since Last Extreme", Math.round(el), "", "") + '</div>';
   }
 
+  /* PAST YEARS: one card per year with the average of every day of that year; a click opens its twelve months. "All Years" on top: each calendar month averaged over every year.
+     Replaces the separate Average Monthly and Average Yearly sections. Several years can be open at once to compare them */
+  var fgPastOpen = null;
   function renderFGYearly() {
     if (!yearlyOn || !fgData || fgData.length < 2) return;
     var el = document.getElementById("fg-yearly-container"); if (!el) return;
-    var now = new Date(), cy = now.getFullYear(), cm = now.getMonth(), by = {};
+    var now = new Date(), cy = now.getFullYear(), cm = now.getMonth(), by = {}, mon = {}, all = [[], [], [], [], [], [], [], [], [], [], [], []];
+    var mn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], mf = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    if (!fgPastOpen) { fgPastOpen = {}; fgPastOpen[cy] = true; }
     fgData.forEach(function (d) {
-      var dt = new Date(d.timestamp * 1000), yr = dt.getFullYear(), mo = dt.getMonth();
-      if (yr < 2018 || (yr === cy && mo === cm)) return;
-      ((by[yr] = by[yr] || {})[mo] = by[yr][mo] || []).push(d.value);
+      var dt = new Date(d.timestamp * 1000), yr = dt.getFullYear(), mo = dt.getMonth(); if (yr < 2018) return;
+      (by[yr] = by[yr] || []).push(d.value); ((mon[yr] = mon[yr] || {})[mo] = mon[yr][mo] || []).push(d.value); all[mo].push(d.value);
     });
-    var cards = Object.keys(by).sort().filter(function (k) { var st = cycleStage(+k); return yearlyFilter === "all" || (yearlyFilter === "bull" && st === "Bull Year") || (yearlyFilter === "bear" && st === "Bear Year") || (yearlyFilter === "bridge" && st === "Bridge Year"); }).map(function (k) {
-      var yr = +k, mavg = Object.keys(by[k]).map(function (m) { var v = by[k][m]; return v.reduce(function (a, b) { return a + b; }, 0) / v.length; });
-      var avg = mavg.reduce(function (a, b) { return a + b; }, 0) / mavg.length, r = Math.round(avg), ph = classifyFG(r);
-      var cyc = cycleStage(yr) ? [cycleStage(yr).split(" ")[0], cycleStage(yr).split(" ")[0].toLowerCase()] : null;
-      var sub = yr === cy ? "Waiting for the year to end · " + mavg.length + "/12 months" : (mavg.length < 12 ? mavg.length + "/12 months" : "");
-      return '<div class="fg-annual-card' + (yr === cy ? ' current' : '') + '"><span class="lbl">' + yr + (cyc ? ' <span class="fg-cyc ' + cyc[1] + '">[4 Year Cycle ' + cyc[0] + ' Year]</span>' : '') + '</span>' +
-        '<span class="val ' + ph.toLowerCase().replace(" ", "-") + '">' + r + '</span><span class="fg-sub">' + ph + (sub ? ' · ' + sub : '') + '</span></div>';
-    }).join("");
-    el.innerHTML = '<div class="fg-annual-head"><div class="fg-annual-title">Average Yearly Index Value</div><div class="fg-timeframes">' + [["bull", "Bull Years"], ["bear", "Bear Years"], ["bridge", "Bridge Years"], ["all", "All"]].map(function (r) { return '<button type="button"' + (yearlyFilter === r[0] ? ' class="active"' : '') + ' onclick="window.setYearlyFilter(\'' + r[0] + '\')">' + r[1] + '</button>'; }).join("") + '</div></div><div class="fg-yearly-grid">' + cards + '</div><div class="fg-sub" style="text-align:center;margin-top:8px">Average of each year\'s complete monthly averages</div>';
+    var mean = function (v) { return v.reduce(function (a, b) { return a + b; }, 0) / v.length; }, cls = function (r) { return classifyFG(r).toLowerCase().replace(" ", "-"); };
+    var grid = function (yr) { /* the twelve months of a year, or of all years together (yr null) */
+      var h = '<div class="fg-annual-grid">';
+      for (var m = 0; m < 12; m++) {
+        var v = yr === null ? all[m] : (mon[yr] || {})[m] || [], avg = v.length ? Math.round(mean(v)) : null, sub = "", show = true, cur = (yr === null || yr === cy) && m === cm;
+        if (yr === cy && m > cm) { sub = "Not reached yet"; show = false; } else if (yr === cy && m === cm) sub = "Still collecting this Months Data"; else if (avg === null) sub = "No data";
+        h += '<div class="fg-annual-card' + (cur ? ' current' : '') + '"' + (yr === cy && m > cm ? ' title="We haven\'t been in ' + mf[m] + ' ' + cy + ' yet"' : '') + '><span class="lbl">' + mn[m] + '</span>' + (show ? '<span class="val ' + (avg !== null ? cls(avg) : '') + '">' + (avg !== null ? avg : '–') + '</span>' : '') + '<span class="fg-sub">' + (sub || (avg !== null ? classifyFG(avg) : '')) + '</span></div>';
+      }
+      return h + '</div>';
+    };
+    var card = function (key, title, tag, sub, avg) {
+      var open = !!fgPastOpen[key], r = Math.round(avg);
+      return '<div class="fg-py' + (open ? ' open' : '') + (tag ? ' ' + tag[1] : '') + (key == cy ? ' current' : '') + '"><button type="button" class="fg-py-head" data-fgy="' + key + '" aria-expanded="' + open + '">' +
+        '<span class="fg-py-l"><b>' + title + '</b>' + (tag ? ' <span class="fg-cyc ' + tag[1] + '">[4 Year Cycle ' + tag[0] + ' Year]</span>' : '') + '<span class="fg-sub">' + sub + '</span></span>' +
+        '<span class="fg-py-r"><span class="fg-py-avg ' + cls(r) + '">' + r + '</span><span class="fg-sub">' + classifyFG(r) + '</span></span><span class="fg-py-chev" aria-hidden="true">›</span></button>' +
+        (open ? '<div class="fg-py-body">' + grid(key === "all" ? null : +key) + '</div>' : '') + '</div>';
+    };
+    var years = Object.keys(by).map(Number).sort(function (a, b) { return b - a; }).filter(function (yr) { var st = cycleStage(yr); return yearlyFilter === "all" || (yearlyFilter === "bull" && st === "Bull Year") || (yearlyFilter === "bear" && st === "Bear Year") || (yearlyFilter === "bridge" && st === "Bridge Year"); });
+    var flat = [].concat.apply([], all), cards = flat.length ? card("all", "All Years", null, "Each month averaged over every year since 2018", mean(flat)) : "";
+    years.forEach(function (yr) {
+      var st = cycleStage(yr), tag = st ? [st.split(" ")[0], st.split(" ")[0].toLowerCase()] : null, n = Object.keys(mon[yr]).length;
+      cards += card(yr, yr, tag, yr === cy ? "Average so far · year in progress · " + n + "/12 months" : "Average of every day" + (n < 12 ? " · " + n + "/12 months" : ""), mean(by[yr]));
+    });
+    el.innerHTML = '<div class="fg-annual-head"><div class="fg-annual-title">Past Years</div><div class="fg-timeframes">' + [["bull", "Bull Years"], ["bear", "Bear Years"], ["bridge", "Bridge Years"], ["all", "All"]].map(function (r) { return '<button type="button"' + (yearlyFilter === r[0] ? ' class="active"' : '') + ' onclick="window.setYearlyFilter(\'' + r[0] + '\')">' + r[1] + '</button>'; }).join("") + '</div></div>' +
+      '<div class="fg-py-list">' + cards + '</div><div class="fg-sub" style="text-align:center;margin-top:8px">A year\'s value is the average of all its days. Click a year to see its months.</div>';
   }
+  document.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("[data-fgy]"); if (!b) return; var k = b.dataset.fgy; fgPastOpen[k] = !fgPastOpen[k]; renderFGYearly(); });
 
   function renderFGAnnual() {
     if (!annualOn || !fgData || fgData.length < 2) return;
