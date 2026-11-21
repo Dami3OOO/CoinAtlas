@@ -45,7 +45,49 @@ export const PROVIDERS = {
 const MAX_APY = 30; /* a base rate above this is not real staking: left out */
 
 /* pools: DefiLlama's list. Each option gets the base rate of its biggest matching pool; the 3 best per coin are kept (options without a rate last) */
-export function build(pools) {
+/* native staking: the network's rate from free official sources (tested: probe of 21.11.2026). Before the validator's commission.
+   Each returns the APR in %, or null. Avalanche, Polkadot, Polygon and Osmosis have no reliable free source: they keep "Rate on site" */
+const NATIVE_NOTE = "network average, before validator fee";
+async function jget(url, body) {
+  const r = await fetch(url, { method: body ? "POST" : "GET", headers: { accept: "application/json", "content-type": "application/json" }, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(60000) });
+  if (!r.ok) throw new Error("HTTP " + r.status + " from " + new URL(url).hostname);
+  return r.json();
+}
+const cosmos = chain => async () => { const p = (await jget("https://chains.cosmos.directory/" + chain)).chain.params; const v = +p.estimated_apr; return v > 0 ? v * 100 : null; };
+export const NATIVE_RATES = {
+  ATOM: { "Keplr": cosmos("cosmoshub") },
+  TIA: { "Keplr": cosmos("celestia") },
+  INJ: { "Injective Hub": cosmos("injective") },
+  SOL: { "Solana (native)": async () => { /* yearly validator inflation times all SOL, shared by the staked SOL */
+    const rpc = m => jget("https://api.mainnet-beta.solana.com", { jsonrpc: "2.0", id: 1, method: m });
+    const inf = (await rpc("getInflationRate")).result.validator, sup = (await rpc("getSupply")).result.value.total, va = (await rpc("getVoteAccounts")).result;
+    const staked = va.current.concat(va.delinquent).reduce((s, v) => s + v.activatedStake, 0);
+    return staked > 0 ? inf * sup / staked * 100 : null;
+  } },
+  ADA: { "Lace Wallet": async () => { /* rewards of a finished epoch shared by the active stake, 73 epochs a year */
+    const tip = (await jget("https://api.koios.rest/api/v1/tip"))[0].epoch_no, e = (await jget("https://api.koios.rest/api/v1/epoch_info?_epoch_no=" + (tip - 3)))[0];
+    return e && +e.total_rewards > 0 && +e.active_stake > 0 ? +e.total_rewards / +e.active_stake * (365 / 5) * 100 : null;
+  } },
+  BNB: { "BNB Chain Staking": async () => { /* the validators' APY, weighted by their stake */
+    const v = (await jget("https://api.bnbchain.org/bnb-staking/v1/validator/all?offset=0&limit=100")).data.validators.filter(x => x.status === "ACTIVE" && x.apy > 0);
+    const w = v.reduce((s, x) => s + +x.totalStaked, 0); return w > 0 ? v.reduce((s, x) => s + x.apy * +x.totalStaked, 0) / w * 100 : null;
+  } },
+  HYPE: { "Hyperliquid": async () => { /* the validators' predicted APR of the week, weighted by their stake */
+    const v = (await jget("https://api.hyperliquid.xyz/info", { type: "validatorSummaries" })).filter(x => x.isActive && !x.isJailed);
+    let w = 0, s = 0; v.forEach(x => { const wk = (x.stats || []).find(t => t[0] === "week"), a = wk && +wk[1].predictedApr; if (a > 0) { w += +x.stake; s += a * +x.stake; } });
+    return w > 0 ? s / w * 100 : null;
+  } }
+};
+export async function nativeRates() { /* { SYM: { provider: rate } }; each source on its own, a failing one is just left out */
+  const out = {};
+  for (const sym of Object.keys(NATIVE_RATES)) for (const name of Object.keys(NATIVE_RATES[sym])) {
+    try { const v = await NATIVE_RATES[sym][name](); if (v > 0.1 && v < MAX_APY) (out[sym] = out[sym] || {})[name] = +v.toFixed(2); else console.log("Native rate " + sym + " out of range: " + v); }
+    catch (e) { console.log("Native rate " + sym + " not read: " + e.message); }
+  }
+  return out;
+}
+
+export function build(pools, native = {}) {
   const assets = {};
   for (const sym of Object.keys(PROVIDERS)) {
     const list = PROVIDERS[sym].map(p => {
@@ -55,7 +97,9 @@ export function build(pools) {
           .sort((a, b) => (b.tvlUsd || 0) - (a.tvlUsd || 0))[0];
         if (m) { apy = +m.apyBase.toFixed(2); tvl = Math.round(m.tvlUsd || 0); }
       }
-      return { name: p.name, kind: p.kind, url: p.url, locked: p.locked, apy, tvl, note: p.note || undefined };
+      let note = p.note;
+      if (!p.pools && native[sym] && native[sym][p.name] > 0) { apy = native[sym][p.name]; note = (note ? note + " · " : "") + NATIVE_NOTE; }
+      return { name: p.name, kind: p.kind, url: p.url, locked: p.locked, apy, tvl, note: note || undefined };
     }).filter(x => x.apy !== null || !PROVIDERS[sym].find(p => p.name === x.name).pools) /* a pool that was not found is left out, not shown without a rate */
       .sort((a, b) => (b.apy ?? -1) - (a.apy ?? -1)).slice(0, 3);
     if (!list.length) continue;
@@ -88,7 +132,8 @@ async function main() {
     pools = (await r.json()).data;
     if (!Array.isArray(pools) || pools.length < 1000) throw new Error("DefiLlama answered without pools");
   }
-  const assets = build(pools), file = join(DATA, "staking.json");
+  const native = process.env.STAKING_OFFLINE === "1" ? {} : await nativeRates();
+  const assets = build(pools, native), file = join(DATA, "staking.json");
   let day = new Date().toISOString().slice(0, 10); try { day = (await import("./snapshot-time.mjs")).snapshotDay(); } catch { /* today */ }
   const missing = [];
   for (const s of Object.keys(PROVIDERS)) for (const p of PROVIDERS[s]) if (p.pools && !(assets[s] && assets[s].list.find(x => x.name === p.name))) missing.push(s + " " + p.name);
