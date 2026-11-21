@@ -387,3 +387,5 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
     Gespeichert in "coinatlas-hovercharts" ({on, size}). Aus = keine Hovercharts und keine Abfragen dafür.
   - Locked Hovercharts: die bisherigen Einstellungen, unverändert übernommen.
 - Unter-Tabs merken sich den letzten Tab pro Bereich; der aktive Unter-Tab ist hellgrau (#2a2a28) statt weiß.
+- Klick auf ein Asset in der Liste, dessen Locked Hoverchart schon offen ist: scrollt so, dass die Oberkante des Charts 16 px unter dem
+  Bildschirmrand steht (vorher: Chart in der Mitte, bei hohen Charts zu tief). Ein neuer Chart, der außerhalb des Bildschirms entsteht, ebenso.

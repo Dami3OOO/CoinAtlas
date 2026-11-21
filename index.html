@@ -2422,6 +2422,7 @@
   function smoothScrollTo(el, block, room) { /* block: "center" or "nearest" (with "room" pixels of space at the edge) */
     if (!el) return; var r = el.getBoundingClientRect(), dy = 0; room = room == null ? 0 : room;
     if (block === "center") dy = r.top - (innerHeight - r.height) / 2;
+    else if (block === "start") dy = r.top - room; /* the top of the element right at the top of the screen */
     else if (r.bottom > innerHeight - room) dy = Math.min(r.bottom - innerHeight + room, r.top - room);
     else if (r.top < room) dy = r.top - room;
     if (dy) smoothScrollY(scrollY + dy);
@@ -2457,11 +2458,11 @@
     var existingIdx = pinnedCoins.findIndex(function (x) { return x.symbol === c.symbol; });
     if (existingIdx > -1) {
       var card = pinnedEl.querySelector('.pinned-card[data-sym="' + c.symbol + '"]');
-      if (card) { var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; smoothScrollTo(card, "center"); card.classList.add('flash'); setTimeout(function () { card.classList.remove('flash'); }, 350); }
+      if (card) { var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; smoothScrollTo(card, "start", 16); card.classList.add('flash'); setTimeout(function () { card.classList.remove('flash'); }, 350); }
     } else {
       pinnedCoins.push(c); cardTf[c.symbol] = "1D"; renderPinned();
       var newCard = pinnedEl.querySelector('.pinned-card[data-sym="' + c.symbol + '"]');
-      if (newCard) { newCard.classList.add('flash'); setTimeout(function () { newCard.classList.remove('flash'); }, 350); }
+      if (newCard) { var nr = newCard.getBoundingClientRect(); if (nr.top < 0 || nr.top > innerHeight - 120) smoothScrollTo(newCard, "start", 16); newCard.classList.add('flash'); setTimeout(function () { newCard.classList.remove('flash'); }, 350); }
     }
   });
 
@@ -2520,7 +2521,7 @@
         if (newCard) { newCard.classList.add('flash'); setTimeout(function () { newCard.classList.remove('flash'); }, 350); }
       } else {
         var card = pinnedEl.querySelector('.pinned-card[data-sym="' + c.symbol + '"]');
-        if (card) { var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; smoothScrollTo(card, "center"); card.classList.add('flash'); setTimeout(function () { card.classList.remove('flash'); }, 350); }
+        if (card) { var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; smoothScrollTo(card, "start", 16); card.classList.add('flash'); setTimeout(function () { card.classList.remove('flash'); }, 350); }
       }
       closeResults(); qEl.blur();
       return;
