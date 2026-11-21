@@ -4140,10 +4140,9 @@
     if (!list.length) return bar + '<div class="pf-msg">None of your Portfolio\'s assets can be staked with the trusted providers yet.</div>';
     /* today's value first (how much of the Portfolio can be staked), then the growth in tokens: per asset it does not depend on any price */
     var share = totAll > 0 ? stakeVal / totAll * 100 : 0, lo = pcs.length ? Math.min.apply(null, pcs) : 0, hi = pcs.length ? Math.max.apply(null, pcs) : 0, avg = rateVal > 0 ? gainUsd / rateVal * 100 : 0;
-    var range = !pcs.length ? '' : Math.abs(hi - lo) < 0.005 ? '+' + stkPc(hi) : '+' + stkPc(lo) + ' to +' + stkPc(hi);
     return bar + '<div class="stk-pot">' +
       '<div class="stk-pot-l">Today, <b>' + share.toFixed(0) + '%</b> of your Portfolio can be staked: <b>' + price(stakeVal) + '</b> of ' + price(totAll) + ', in ' + list.length + ' of ' + all.length + ' assets.</div>' +
-      (pcs.length ? '<div class="stk-pot-big">' + range + '</div><div class="stk-pot-l">Staked for <b>' + stkDurName() + '</b>, ' + (pcs.length > 1 ? 'each of these assets would grow by ' + range + ' in tokens. Together: <b>+' + stkPc(avg) + '</b> on your stakeable holdings.' : 'it would grow by ' + range + ' in tokens.') + '</div>' +
+      (pcs.length ? '<div class="stk-pot-big">+' + stkPc(avg) + '</div><div class="stk-pot-l">Staked for <b>' + stkDurName() + '</b>, your stakeable coins would grow by <b>+' + stkPc(avg) + '</b> in tokens' + (pcs.length > 1 ? ' all together (each coin at its own rate, counted by its share of today\'s value)' : '') + '.</div>' +
         '<div class="stk-pot-s">Rewards worth about ' + price(gainUsd) + ' at today\'s prices · each asset with its best provider' + (pcs.length < list.length ? ' · ' + (list.length - pcs.length) + ' without a public rate left out' : '') + '</div>' : '<div class="stk-pot-s">None of these assets has a public rate yet; see the providers\' sites.</div>') + '</div>' +
       '<div class="stk-head p"><span>Asset</span><span>Best Rate</span><span></span><span>Rewards</span></div>' + rows + STK_NOTE;
   }
