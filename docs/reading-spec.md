@@ -395,12 +395,13 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 
 ## Asset-Tags (21.11.2026)
 
-- Geprüft gegen den Snapshot vom 21.11.2026 (Top 200): vorher 70 Assets ohne Tag, jetzt 0.
-- Neue Kategorien mit eigenem Filter im Filters-Fenster: AI, Gaming, Exchange (Börsen- und CeFi-Tokens), Gambling, Entertainment.
+- Geprüft gegen den Snapshot vom 21.11.2026 (Top 200): vorher 70 Assets ohne Tag, jetzt 2 (SHFL und RLB, Gambling wird bewusst nicht getaggt).
+- Neue Kategorien mit eigenem Filter im Filters-Fenster: AI, Gaming, Exchange (Börsen- und CeFi-Tokens), Entertainment.
+  Bewusst keine Kategorie Gambling: solche Coins bekommen keinen Gambling-Tag und es gibt keinen Filter dafür (auch nicht aus tags.json).
 - Bestehende Listen ergänzt (Layer 1, Layer 2, DeFi, Infrastructure, Payment, Meme); FIDD (Fidelity Digital Dollar) ist ein Stablecoin;
   BEAM aus Privacy entfernt (der heutige BEAM ist das Gaming-Netzwerk).
 - Ein Coin kann in mehreren Listen stehen (Filter); der Tag im Chart zeigt die erste Kategorie in der Reihenfolge Meme, Privacy, RWA,
-  Exchange, Gambling, Entertainment, Gaming, AI, DeFi, Infrastructure, Payment, Layer 2, Layer 1.
+  Exchange, Entertainment, Gaming, AI, DeFi, Infrastructure, Payment, Layer 2, Layer 1.
 - Täglich nach dem Snapshot (Workflow-Schritt "Record tags", scripts/record-tags.mjs): Kategorien von CoinGecko für alle Coins des Snapshots
   (Top 300) nach data/tags.json ({updated, source, coins, failed, tags: {SYM: [tag, …]}}). Eine Abfrage pro CoinGecko-Kategorie (20),
   ohne Schlüssel 13 s Pause, mit COINGECKO_KEY 2,2 s. Zuordnung über Namen, oder über das Symbol bei Rang ≤ 400. "stable" nur bei Preis 0,85–1,35.

@@ -2,6 +2,7 @@
 // The site's own hand-made lists stay first: a fetched tag is only used for a coin that has no hand-made tag yet,
 // so a coin that climbs from place 205 to 195 shows up with a tag right away.
 // One request per CoinGecko category (about 20), so it also works without a key. With a free demo key (secret COINGECKO_KEY) it is faster.
+// No gambling category, on purpose: CoinAtlas does not tag or filter gambling coins.
 // Runs after the snapshot in .github/workflows/record-snapshot.yml; a failure here never stops the snapshot.
 import { readFileSync, writeFileSync, readdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -14,7 +15,7 @@ const KEY = process.env.COINGECKO_KEY || "", BASE = "https://api.coingecko.com/a
 /* CoinGecko category -> CoinAtlas tag */
 export const MAP = [
   ["meme-token", "meme"], ["privacy-coins", "privacy"], ["real-world-assets-rwa", "rwa"], ["exchange-based-tokens", "exchange"],
-  ["gambling", "gambling"], ["entertainment", "entertainment"], ["fan-token", "entertainment"], ["gaming", "gaming"],
+  ["entertainment", "entertainment"], ["fan-token", "entertainment"], ["gaming", "gaming"],
   ["artificial-intelligence", "ai"], ["decentralized-finance-defi", "defi"], ["decentralized-exchange", "defi"], ["liquid-staking-tokens", "defi"],
   ["infrastructure", "infra"], ["depin", "infra"], ["oracle", "infra"], ["storage", "infra"], ["payment-solutions", "payment"],
   ["layer-2", "layer2"], ["layer-1", "layer1"], ["stablecoins", "stable"]

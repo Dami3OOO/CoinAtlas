@@ -985,7 +985,6 @@
                 <button class="filter-option" data-filter="ai">AI</button>
                 <button class="filter-option" data-filter="gaming">Gaming</button>
                 <button class="filter-option" data-filter="exchange">Exchange</button>
-                <button class="filter-option" data-filter="gambling">Gambling</button>
                 <button class="filter-option" data-filter="entertainment">Entertainment</button>
                 <button class="filter-option" data-filter="stablecoins">Stablecoins</button>
               </div>
@@ -1197,7 +1196,6 @@
     ai: ["TAO","FET","VIRTUAL","RENDER","WLD","GRASS","VVV","SENT","DGAI","TIBBIR","AIOZ","GLM","PROM","AKT","KITE","IO","NEAR","NMR","PIEVERSE"],
     gaming: ["AXS","MANA","SAND","SUPER","AKE","CARDS","NFT","IMX","PRIME","GALA","APE","ILV","BEAM","RON","YGG","ENJ","FLOW"],
     exchange: ["LEO","OKB","BGB","GT","KCS","MX","BTSE","VSN","NEXO","CRO","WOO"],
-    gambling: ["SHFL","RLB"],
     entertainment: ["CHZ","MMT"],
     privacy: ["XMR","ZEC","DASH","XVG","SCRT","BDX","FIRO","ARRR","ZEN","DCR","GRIN","PIVX","ROSE","NIGHT"]
   };
@@ -1961,7 +1959,7 @@
     var s = c.symbol.toUpperCase();
     if (s === "BTC") return "Heart of Crypto";
     if (STABLECOINS.indexOf(s) > -1) return "Stablecoin";
-    var N = { meme: "Meme", privacy: "Privacy", rwa: "RWA", exchange: "Exchange", gambling: "Gambling", entertainment: "Entertainment", gaming: "Gaming", ai: "AI", defi: "DeFi", infra: "Infrastructure", payment: "Payment", layer2: "Layer 2", layer1: "Layer 1" };
+    var N = { meme: "Meme", privacy: "Privacy", rwa: "RWA", exchange: "Exchange", entertainment: "Entertainment", gaming: "Gaming", ai: "AI", defi: "DeFi", infra: "Infrastructure", payment: "Payment", layer2: "Layer 2", layer1: "Layer 1" };
     for (var k in N) if (CATS[k].indexOf(s) > -1) return N[k];
     return "";
   }
