@@ -261,7 +261,8 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Sofort (Nutzer, 21.11.2026): Account wird frei, sobald die Zahlung unbestätigt im Netzwerk sichtbar ist (Sekunden).
   Einmalige Endprüfung nach 1 Bestätigung: hat diese Transaktion mindestens 5 $ an die Adresse gezahlt? Dann dauerhaft "bezahlt" mit Transaktions-ID,
   danach nie wieder geprüft (das Geld darf von den Adressen wegbewegt werden; geprüft wird die Transaktion, nicht das Guthaben).
-  Keine Bestätigung innerhalb von 60 Minuten: Account gesperrt. Später: USDC über Solana Pay, Lightning.
+  Keine Frist für die Bestätigung: der Server beobachtet die eine Transaktion, bis sie bestätigt ist. Gesperrt wird nur, wenn sie verschwindet
+  (ersetzt, oder nach etwa 2 Wochen unbestätigt aus dem Netzwerk geworfen). Später: USDC über Solana Pay, Lightning.
 - Zeitlimit (Nutzer, 21.11.2026): Passwort vor der Zahlung; Zahlung muss innerhalb von 15 Minuten abgeschickt sein. Ist sie unbestätigt im Netzwerk
   sichtbar, wartet die ID auf die Bestätigung. Ohne Zahlung verfallen ID und Passwort. Vorschlag (noch nicht bestätigt): abgelaufene IDs 7 Tage still
   behalten und bei verspäteter Zahlung trotzdem freischalten; die Adresse erst danach neu vergeben.
