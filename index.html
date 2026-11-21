@@ -5432,7 +5432,7 @@
     var fit = function (t, w) { if (g.measureText(t).width <= w) return t; while (t.length > 1 && g.measureText(t + "…").width > w) t = t.slice(0, -1); return t + "…"; };
     var rr = function (x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
     g.fillStyle = C.pop; g.fillRect(0, 0, W, H); g.textBaseline = "alphabetic";
-    var y = P + 22; font("700", 20); txt("Portfolio Manager", W / 2, y, C.fg, "center");
+    var y = P + 22; font("700", 20); txt("CoinAtlas Portfolio Manager", W / 2, y, C.fg, "center");
     font("400", 12); txt(new Date().toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" }) + (cz === 2 ? " · amounts, Average Prices and gains hidden" : cz ? " · amounts hidden" : ""), W / 2, y + 20, C.mu, "center");
     y = P + 44 + 12;
     /* the four boxes of the top bar */
@@ -5560,7 +5560,7 @@
     if (!portfolioVisible) { pfBox.hidden = true; pfBox.innerHTML = ""; updatePinnedColVisibility(); return; }
     pfBox.hidden = false;
     pfBox.innerHTML = '<div class="pinned-card chart-container pf-card dev-target" data-dev-name="Portfolio Manager" data-dev-color="#38bdf8">' +
-      '<div class="pf-title">Portfolio Manager</div>' +
+      '<div class="pf-title">CoinAtlas Portfolio Manager</div>' +
       '<div class="pf-share-w"><button class="gear pf-share" type="button" id="pf-share" aria-haspopup="menu" title="Share your portfolio as an image">' + PF_SHARE_IC + 'Share</button>' +
       '<div class="pf-share-m" id="pf-share-m" role="menu" hidden><button type="button" role="menuitem" data-share="uncensored"><b>Uncensored</b><span>With all amounts</span></button><button type="button" role="menuitem" data-share="light"><b>Light Censor</b><span>Every amount hidden</span></button><button type="button" role="menuitem" data-share="full"><b>Full Censor</b><span>Amounts, Average Prices and gains hidden</span></button></div></div>' +
       '<form class="pf-form" id="pf-form" autocomplete="off"><input id="pf-addr" type="text" placeholder="Wallet address (Solana or EVM, 0x…)" spellcheck="false" aria-label="Wallet address"><button class="gear" type="submit">Save</button></form><div class="pf-wl" id="pf-wl" hidden></div>' +

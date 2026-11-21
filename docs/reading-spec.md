@@ -289,6 +289,7 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   Anstieg seit dem ersten Kurs des Graphen; ohne Durchschnittspreise steht "Set Average Prices to see your gain".
 - Hover-Charts wählen ihre Seite sofort: place() rechnet mit der Höhe eines vollen Charts (zuletzt gemessen, Start 330 px), auch solange
   "Loading chart…" angezeigt wird, und ein MutationObserver setzt die Position neu, sobald sich der Inhalt ändert.
+- Titel im Manager und im PNG: "CoinAtlas Portfolio Manager" (Header-Knopf bleibt "Portfolio Manager").
 - Share (oben rechts, absolut, Titel bleibt mittig): Menü Uncensored / Light Censor / Full Censor; die Wahl ist im Vorschaufenster fest
   (kein Umschalten), Fenster mit "Copy Image" und "Download PNG". Full Censor verbirgt zusätzlich die Durchschnittspreise.
   Bild wird selbst auf ein Canvas gezeichnet (2x): Titel + Datum, obere Leiste, alle Assets, Allocation, All-Time-Chart des Total Balance, Wasserzeichen
