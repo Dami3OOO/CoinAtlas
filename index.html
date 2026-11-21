@@ -706,7 +706,9 @@
   .settings-card .wide-btn { width: 100%; height: 34px; margin-top: 8px; font-size: 12px; } .settings-card .wide-btn.active { color: #111; background: var(--fg); }
   header .hb-off { display: none !important; }
   .sub-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; } .sub-tabs button { font: inherit; font-size: 12px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
-  .sub-tabs button:hover { color: var(--fg); background: var(--hover); } .sub-tabs button.on { color: var(--bg); background: var(--fg); border-color: var(--fg); font-weight: 600; } .sub-pane { display: flex; flex-direction: column; gap: 10px; } .sub-pane[hidden] { display: none; }
+  .hc-size { display: flex; align-items: center; gap: 10px; } .hc-size input { width: 150px; accent-color: var(--fg); cursor: pointer; } .hc-size b { min-width: 52px; text-align: right; font-size: 12px; font-variant-numeric: tabular-nums; }
+  .grp.dim { opacity: .45; }
+  .sub-tabs button:hover { color: var(--fg); background: var(--hover); } .sub-tabs button.on { color: var(--fg); background: #2a2a28; border-color: #3a3a36; font-weight: 600; } .sub-pane { display: flex; flex-direction: column; gap: 10px; } .sub-pane[hidden] { display: none; }
   .pf-tint-at { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); } .pf-tint-at input { width: 70px; font: inherit; font-size: 13px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 5px 6px; text-align: center; }
   .set-note { font-size: 11px; line-height: 1.5; color: var(--muted); margin: -2px 0 6px; } .set-note[hidden] { display: none; } .rt-asof { display:flex; align-items:center; gap:6px; }
   #rt-asof { background:var(--bg); color:var(--fg); border:1px solid var(--line); border-radius:6px; padding:4px 6px; font:inherit; font-size:12px; color-scheme:dark; } #rt-asof-live { height:28px; padding:0 10px; font-size:11px; }
@@ -1047,14 +1049,22 @@
               <div class="grp" hidden><span class="lbl">Pulse Tint</span><button class="toggle" type="button" id="pulse-toggle" role="switch" aria-checked="false" aria-label="Color coins by performance"><span></span></button></div>
             </div>
             <div class="sep"></div>
-            <div class="settings-section">
-              <div class="section-title">Locked Hovercharts</div>
-              <div class="grp"><span class="lbl">Show Description</span><button class="toggle" type="button" id="desc-toggle" role="switch" aria-checked="true" aria-label="Show descriptions in locked charts"><span></span></button></div>
-              <div class="grp"><span class="lbl">Show Contracts</span><button class="toggle" type="button" id="chains-toggle" role="switch" aria-checked="true" aria-label="Show chains in locked charts"><span></span></button></div>
-              <div class="grp"><span class="lbl">Show Socials</span><button class="toggle" type="button" id="socials-toggle" role="switch" aria-checked="true" aria-label="Show socials in locked charts"><span></span></button></div>
-              <div class="grp"><span class="lbl">Show Tokenomics</span><button class="toggle" type="button" id="tokenomics-toggle" role="switch" aria-checked="true" aria-label="Show tokenomics in locked charts"><span></span></button></div>
-              <div class="grp"><span class="lbl">Advanced Time Display</span><button class="toggle" type="button" id="adv-time-toggle" role="switch" aria-checked="false" aria-label="Show advanced chart times"><span></span></button></div>
+            <div class="settings-section sub-sec" data-subkey="coinatlas-settings-sub-hc" data-subdef="hc">
+              <div class="section-title">Hovercharts</div>
+              <div class="sub-tabs" role="tablist"><button type="button" data-sub="hc">Hovercharts</button><button type="button" data-sub="lhc">Locked Hovercharts</button></div>
+              <div class="sub-pane" data-pane="hc">
+                <div class="grp"><span class="lbl">Hovercharts</span><button class="toggle" type="button" id="hc-toggle" role="switch" aria-checked="true" aria-label="Show a chart when hovering a coin"><span></span></button></div>
+                <div class="grp hc-size-grp"><span class="lbl">Size</span><span class="hc-size"><input type="range" id="hc-size" min="25" max="150" step="5" value="100" aria-label="Size of the Hovercharts in percent"><b id="hc-size-v">Default</b></span></div>
+                <div class="set-note">The chart that shows when you hover a coin, a square or a Portfolio asset. Size from 25% to 150%, Default is 100%.</div>
+              </div>
+              <div class="sub-pane" data-pane="lhc" hidden>
+                <div class="grp"><span class="lbl">Show Description</span><button class="toggle" type="button" id="desc-toggle" role="switch" aria-checked="true" aria-label="Show descriptions in locked charts"><span></span></button></div>
+                <div class="grp"><span class="lbl">Show Contracts</span><button class="toggle" type="button" id="chains-toggle" role="switch" aria-checked="true" aria-label="Show chains in locked charts"><span></span></button></div>
+                <div class="grp"><span class="lbl">Show Socials</span><button class="toggle" type="button" id="socials-toggle" role="switch" aria-checked="true" aria-label="Show socials in locked charts"><span></span></button></div>
+                <div class="grp"><span class="lbl">Show Tokenomics</span><button class="toggle" type="button" id="tokenomics-toggle" role="switch" aria-checked="true" aria-label="Show tokenomics in locked charts"><span></span></button></div>
+                <div class="grp"><span class="lbl">Advanced Time Display</span><button class="toggle" type="button" id="adv-time-toggle" role="switch" aria-checked="false" aria-label="Show advanced chart times"><span></span></button></div>
               <div class="set-note" id="adv-time-note"></div>
+              </div>
             </div>
             <div class="sep"></div>
             <div class="settings-section">
@@ -2390,7 +2400,9 @@
   });
 
   /* the hover chart picks its side at once: it reserves the height of a full chart even while "Loading chart…" is shown, so it never starts below and then jumps up */
-  var popFullH = 330, popLastE = null;
+  var HC_KEY = "coinatlas-hovercharts", hcOn = true, hcSize = 100;
+  try { var hco = JSON.parse(localStorage.getItem(HC_KEY) || "{}"); if (hco.on === false) hcOn = false; if (hco.size >= 25 && hco.size <= 150) hcSize = Math.round(hco.size / 5) * 5; } catch (e) {}
+  var popFullH = 330 * hcSize / 100, popLastE = null;
   /* ---- smooth scrolling for every jump on the page: starts slowly, speeds up, and slows down the same way (ease in-out); longer jumps take a bit longer ---- */
   var scrollAnim = 0;
   function smoothScrollY(y) {
@@ -2417,19 +2429,19 @@
 
   function place(e) {
     popLastE = { clientX: e.clientX, clientY: e.clientY };
-    var full = popEl.querySelector("svg"), oh = popEl.offsetHeight;
-    if (full && oh > 120) popFullH = oh;
-    var w = popEl.offsetWidth || 540, h = Math.max(oh || 0, popFullH), pad = 16;
+    var full = popEl.querySelector("svg"), br = popEl.getBoundingClientRect(), oh = br.height; /* the real size on screen, with the chosen zoom */
+    if (full && oh > 120 * hcSize / 100) popFullH = oh;
+    var w = br.width || 540 * hcSize / 100, h = Math.max(oh || 0, popFullH), pad = 16;
     var x = e.clientX + pad, y = e.clientY + pad;
     if (x + w > window.innerWidth - 8) x = e.clientX - w - pad;
     if (y + h > window.innerHeight - 8) y = e.clientY - h - pad;
-    popEl.style.left = Math.max(8, x) + "px"; popEl.style.top = Math.max(8, y) + "px";
+    var z = hcSize / 100; popEl.style.left = Math.max(8, x) / z + "px"; popEl.style.top = Math.max(8, y) / z + "px";
   }
 
   if (window.MutationObserver) new MutationObserver(function () { if (popLastE && popEl.classList.contains("on")) place(popLastE); }).observe(popEl, { childList: true, subtree: true });
 
   rowsEl.addEventListener("mousemove", function (e) {
-    if (devFrozen) return;
+    if (devFrozen || !hcOn) return;
     var tr = e.target.closest("tr"); if (!tr) { popEl.classList.remove("on"); current = -1; return; }
     var i = +tr.dataset.i; if (i !== current) { current = i; showPop(i); }
     place(e); popEl.classList.add("on");
@@ -3917,7 +3929,7 @@
   }
   function sqHidePop() { if (sqHover !== null) { sqHover = null; popEl.classList.remove("on"); } }
   sqBox.addEventListener("mousemove", function (e) {
-    if (devFrozen || sqDrag) return;
+    if (devFrozen || sqDrag || !hcOn) return;
     var el = e.target.closest(".sqm-sq"), c = el && coins[+el.dataset.i]; if (!c) { sqHidePop(); return; }
     if (sqHover !== c.symbol) { sqHover = c.symbol; current = -1; sqShowPop(c); }
     place(e); popEl.classList.add("on");
@@ -5906,7 +5918,7 @@
     e.preventDefault(); pfSaveWallet(document.getElementById("pf-addr").value);
   });
   pfBox.addEventListener("mousemove", function (e) {
-    if (devFrozen) return;
+    if (devFrozen || !hcOn) return;
     if (pfAP || (e.target.closest && e.target.closest(".pf-setavg, .pf-calc-b"))) { pfHideHover(); return; } /* no value chart while the Average Price window is open or over its button */
     var t = e.target.closest && e.target.closest(".pf-row, .pf-tot");
     if (!t || pfEdit) { pfHideHover(); return; }
@@ -6948,11 +6960,26 @@
 
   /* ---------- CUSTOMIZATION: sub tabs, and the Portfolio Tint ---------- */
   (function () {
-    var SUB_KEY = "coinatlas-settings-sub", cur = "list"; try { cur = localStorage.getItem(SUB_KEY) || "list"; } catch (e) {}
-    var sec = document.querySelector(".cust-sec"); if (!sec) return;
-    function show(k) { Array.prototype.forEach.call(sec.querySelectorAll("[data-sub]"), function (b) { b.classList.toggle("on", b.dataset.sub === k); }); Array.prototype.forEach.call(sec.querySelectorAll("[data-pane]"), function (p) { p.hidden = p.dataset.pane !== k; }); try { localStorage.setItem(SUB_KEY, k); } catch (e) {} }
-    sec.addEventListener("click", function (e) { var b = e.target.closest("[data-sub]"); if (b) show(b.dataset.sub); });
-    show(sec.querySelector('[data-sub="' + cur + '"]') ? cur : "list");
+    Array.prototype.forEach.call(document.querySelectorAll(".cust-sec, .sub-sec"), function (sec) { /* every settings section with sub tabs remembers its last one */
+      var SUB_KEY = sec.dataset.subkey || "coinatlas-settings-sub", def = sec.dataset.subdef || "list", cur = def; try { cur = localStorage.getItem(SUB_KEY) || def; } catch (e) {}
+      function show(k) { Array.prototype.forEach.call(sec.querySelectorAll("[data-sub]"), function (b) { b.classList.toggle("on", b.dataset.sub === k); }); Array.prototype.forEach.call(sec.querySelectorAll("[data-pane]"), function (p) { p.hidden = p.dataset.pane !== k; }); try { localStorage.setItem(SUB_KEY, k); } catch (e) {} }
+      sec.addEventListener("click", function (e) { var b = e.target.closest("[data-sub]"); if (b) show(b.dataset.sub); });
+      show(sec.querySelector('[data-sub="' + cur + '"]') ? cur : def);
+    });
+  })();
+
+  /* ---------- HOVERCHARTS: on/off and size (25% to 150%, Default 100%) ---------- */
+  (function () {
+    var tg = document.getElementById("hc-toggle"), sz = document.getElementById("hc-size"), sv = document.getElementById("hc-size-v");
+    function apply() {
+      tg.setAttribute("aria-checked", hcOn ? "true" : "false"); sz.value = hcSize; sv.textContent = hcSize === 100 ? "Default" : hcSize + "%";
+      sz.closest(".grp").classList.toggle("dim", !hcOn);
+      popEl.style.zoom = hcSize === 100 ? "" : String(hcSize / 100); if (!hcOn) popEl.classList.remove("on");
+      try { localStorage.setItem(HC_KEY, JSON.stringify({ on: hcOn, size: hcSize })); } catch (e) {}
+    }
+    tg.addEventListener("click", function () { hcOn = !hcOn; apply(); });
+    sz.addEventListener("input", function () { hcSize = Math.max(25, Math.min(150, Math.round(+sz.value / 5) * 5)) || 100; popFullH = 330 * hcSize / 100; apply(); });
+    apply();
   })();
 
   /* ---------- HEADER BUTTONS: each one can be switched off in the settings ---------- */

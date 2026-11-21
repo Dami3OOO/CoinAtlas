@@ -378,3 +378,12 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   ease in-out (kubisch), Dauer 420 ms + 12 × √Strecke, höchstens 1,4 s. Mausrad oder Touch des Nutzers bricht sofort ab; bei
   "reduzierter Bewegung" im System wird direkt gesprungen.
 - Allocation scrollt mit 64 px Abstand unter dem Diagramm (Total-Balance-Chart: 24 px).
+
+## Einstellungen: Hovercharts (21.11.2026)
+
+- Der Bereich "Locked Hovercharts" heißt jetzt "Hovercharts" und hat zwei Unter-Tabs (wie Customization):
+  - Hovercharts: Schalter an/aus (Standard an) und Größe 25 % bis 150 % in 5er-Schritten, 100 % heißt "Default".
+    Gilt für alle Hovercharts (Liste, Sentiment Squares, Portfolio). Umsetzung über CSS zoom auf #pop; place() rechnet mit der echten Größe auf dem Schirm.
+    Gespeichert in "coinatlas-hovercharts" ({on, size}). Aus = keine Hovercharts und keine Abfragen dafür.
+  - Locked Hovercharts: die bisherigen Einstellungen, unverändert übernommen.
+- Unter-Tabs merken sich den letzten Tab pro Bereich; der aktive Unter-Tab ist hellgrau (#2a2a28) statt weiß.
