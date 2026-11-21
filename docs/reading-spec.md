@@ -312,6 +312,8 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - TOTAL200 rückwirkend: scripts/backfill-total200.mjs (Workflow "Backfill TOTAL200", von Hand): 365 Tage CoinGecko-Market-Caps der heutigen
   Top 500 (ohne Wrapped/Staked), pro Tag die 200 größten addiert. Coins, die damals Top 200 waren und heute nicht mehr in den Top 500 sind,
   fehlen, daher leicht zu niedrig; Quelle "CoinGecko backfill". Eigene Aufzeichnungen werden nie ersetzt; der Snapshots-Tab zeigt diese Tage nicht.
+  Gelaufen am 21.11.2026: 355 Tage (22.11.2025–11.11.2026) aus 479 Coins. Naht: CoinGecko zählt anders als die eigene Liste, am Übergang
+  11.11. → 12.11.2026 TOTAL200 2,51 → 2,37 Bio. $ (−6 %), BTC.D 59,0 → 60,2 %, USDT.D 7,0 → 7,6 %. Die Chart-Beschreibungen nennen das.
 
 ## Offene Punkte
 
