@@ -238,6 +238,10 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   also genau ans Ende der dominanten Seite, die damit immer ganz sichtbar ist.
 - Zeitraumwechsel: das alte Bild bleibt stehen ("Loading 7D…"), bis 90 % der Coins ihren neuen Wert haben (Coinpaprika: sobald geladen; höchstens 10 s),
   dann gleiten alle Kacheln ins neue Bild. Wechselt ein Coin die Seite, gleitet er von seiner alten Position über die Front, die Farbe blendet über (1,4 s).
+- Neue Kacheln erscheinen nicht auf einmal: alle 0,22 s eine Handvoll (mindestens 3, sonst 1/8 der wartenden, die stärksten zuerst), sie wachsen sanft auf.
+- Größe gedeckelt bei 100 %: darüber wird eine Kachel nicht größer. Experimental-Schalter "Golden Squares" (Standard aus): ab +100 % fließendes, pulsierendes Gold.
+- Seitenwechsel: die Kachel fliegt auf einer eigenen Ebene über beiden Fenstern von ihrem alten zum neuen Platz und landet dann in ihrem Fenster
+  (vorher glitt sie im unsichtbaren Teil des anderen Fensters und tauchte erst an der Front auf).
 - Klick auf eine Kachel: die Liste scrollt zur Zeile des Coins und hebt sie hellgrau hervor wie die Suche. Locked Hovercharts öffnen von dort wie immer auf Today (1D).
 - Bedienung: links "Top [1–200]" als Eingabefeld (Standard 200), rechts derselbe Zeitraum-Wähler wie bei den Locked Hovercharts:
   "grün / rot / blau" (steigende, fallende Coins, Stablecoins; wie der Simple Market Sentiment Counter) steht in der Zeile mit Top-Feld und

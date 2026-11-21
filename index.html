@@ -425,6 +425,13 @@
   .sqm-front span::after { content: ""; position: absolute; inset: 9px 4px; border-left: 1px solid #999; border-right: 1px solid #999; }
   .sqm-map.dragging .sqm-sq, .sqm-map.dragging .sqm-front { transition: none; } .sqm-map.dragging { cursor: ew-resize; user-select: none; }
   .sqm-lg { display: grid; place-items: center; flex: none; } .sqm-lg .logo { width: 100%; height: 100%; margin: 0; max-width: none; font-size: 9px; } .sqm-l .sqm-lg { margin-bottom: 3px; } .sqm-auto { width: auto; padding: 0 10px; font-size: 12px; } .sqm-foot { text-align: center; margin-top: 8px; }
+  .sqm-fly { position: absolute; inset: 0; z-index: 2; pointer-events: none; } .sqm-fly .sqm-sq { z-index: 1; box-shadow: 0 4px 14px rgba(0,0,0,.45); }
+  .sqm-sq.grow { animation: sqGrow .65s cubic-bezier(.22,1,.36,1); } @keyframes sqGrow { 0% { opacity: 0; transform: scale(.35); } 100% { opacity: 1; transform: scale(1); } }
+  .sqm-sq.gold { background: linear-gradient(115deg, #7a5410, #d4a017 22%, #fff2a8 38%, #e7b416 52%, #8a6212 70%, #f0c43a 86%, #7a5410) !important; background-size: 300% 300% !important;
+    animation: sqGoldFlow 4s linear infinite, sqGoldGlow 2.4s ease-in-out infinite; color: #2a1d00; z-index: 1; }
+  .sqm-sq.gold i { text-shadow: 0 1px 1px rgba(255,255,255,.35); color: #2a1d00; }
+  @keyframes sqGoldFlow { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
+  @keyframes sqGoldGlow { 0%, 100% { box-shadow: 0 0 6px 1px rgba(255,200,60,.55), inset 0 0 8px rgba(255,255,255,.25); } 50% { box-shadow: 0 0 16px 4px rgba(255,210,80,.85), inset 0 0 14px rgba(255,255,255,.45); } }
   .sqm-gl, .sqm-rl { position: absolute; top: 0; bottom: 0; overflow: hidden; transition: width 1.1s cubic-bezier(.22,1,.36,1), left 1.1s cubic-bezier(.22,1,.36,1); } .sqm-in { transition: left 1.1s cubic-bezier(.22,1,.36,1), width 1.1s cubic-bezier(.22,1,.36,1); }
   .sqm-map.dragging .sqm-gl, .sqm-map.dragging .sqm-rl, .sqm-map.dragging .sqm-in { transition: none; } .sqm-gl { left: 0; } .sqm-rl { right: 0; } .sqm-in { position: absolute; top: 0; left: 0; height: 100%; }
   .sqm-sq { cursor: pointer; }
@@ -1016,6 +1023,8 @@
               <div class="section-title">Experimental</div>
               <div class="grp"><span class="lbl">Dev Mode</span><button class="toggle" type="button" id="dev-toggle" role="switch" aria-checked="false" aria-label="Enable Dev Mode"><span></span></button></div>
               <div class="grp"><span class="lbl">Party Mode</span><button class="toggle" type="button" id="party-toggle" role="switch" aria-checked="false" aria-label="Enable Party Mode"><span></span></button></div>
+              <div class="grp"><span class="lbl">Golden Squares</span><button class="toggle" type="button" id="sq-gold-toggle" role="switch" aria-checked="false" aria-label="Golden glowing squares for coins up 100% or more in the Sentiment Squares"><span></span></button></div>
+              <div class="set-note">Sentiment Squares: coins up 100% or more glow in flowing gold.</div>
             </div>
             <div id="dev-hotkeys" style="display:none; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line);">
                <div class="section-title" style="border:none; margin-bottom: 8px;">Dev Mode Hotkeys</div>
@@ -3617,6 +3626,7 @@
   var SQ_TF = [["today", "Today"], ["1h", "1H"], ["4h", "4H"], ["7d", "7D"], ["30d", "30D"], ["1y", "365D"]];
   var SQ_TIER = { today: [1, 3, 6, 10], "1h": [0.5, 1, 2, 4], "4h": [1, 2, 4, 7], "7d": [3, 8, 15, 25], "30d": [5, 15, 30, 50], "1y": [10, 40, 100, 200] };
   var SQ_UP = ["#1d4a31", "#1f6a3e", "#22864b", "#29a25a", "#31c26a"], SQ_DN = ["#4b1f22", "#6c2228", "#8e272f", "#b02d36", "#d2343e"];
+  var SQ_GOLD_KEY = "coinatlas-sq-gold", sqGold = false; try { sqGold = localStorage.getItem(SQ_GOLD_KEY) === "1"; } catch (e) {}
   var sqShown = null, sqSwitchAt = 0, sqWait = null, sqPap = null, sqPapAt = 0, sqPapBusy = false, sqView = null, sqLastPc = {}, sqSplit = null, sqDrag = null, sqHover = null;
   function sqLoadPap() { /* 1H to 1Y for every coin in one request, refreshed once a minute while the squares are open */
     if (sqPapBusy || (sqPap && Date.now() - sqPapAt < 60000)) return;
@@ -3664,12 +3674,13 @@
       var pc = sqPc(c); if (pc === null) { nod++; return; }
       items.push({ c: c, i: i, sym: String(c.symbol).toUpperCase(), pc: pc });
     });
-    var mean = items.reduce(function (s, x) { return s + Math.pow(Math.abs(x.pc), 0.8); }, 0) / Math.max(1, items.length);
-    items.forEach(function (x) { x.w = Math.pow(Math.abs(x.pc), 0.8) + 0.15 * mean + 1e-6; }); /* the small base keeps quiet coins visible */
+    var cap = function (x) { return Math.pow(Math.min(Math.abs(x.pc), 100), 0.8); }; /* from 100% on a square stops growing, so one big mover does not shrink all the others */
+    var mean = items.reduce(function (s, x) { return s + cap(x); }, 0) / Math.max(1, items.length);
+    items.forEach(function (x) { x.w = cap(x) + 0.15 * mean + 1e-6; }); /* the small base keeps quiet coins visible */
     return { items: items, stable: stable, nod: nod };
   }
   function sqHeadHtml(d) { /* just the count of green and red coins, like the Simple Market Sentiment Counter */
-    var up = d.items.filter(function (x) { return x.pc > 0; }).length, dn = d.items.filter(function (x) { return x.pc < 0; }).length;
+    var all = d.all || d.items, up = all.filter(function (x) { return x.pc > 0; }).length, dn = all.filter(function (x) { return x.pc < 0; }).length;
     return '<b style="color:var(--up)">' + up + '</b><span>/</span><b style="color:var(--down)">' + dn + '</b><span>/</span><b style="color:var(--stable-blue)" title="Stablecoins, left out of the squares">' + d.stable + '</b>';
   }
   function sqTfLabel() { return SQ_TF.filter(function (t) { return t[0] === sqS.tf; })[0][1]; }
@@ -3682,10 +3693,10 @@
   function sqMakeView() { /* the frame is built once; the squares inside are kept and moved */
     if (sqView && sqBox.contains(sqView.map)) return sqView;
     sqBox.innerHTML = '<div class="pinned-card chart-container pf-card dev-target sqm-card" data-dev-name="Sentiment Squares" data-dev-color="#34d399"><div class="pf-title">Sentiment Squares</div>' +
-      '<div class="sqm-ctrl-w"></div><div class="sqm-map"><div class="sqm-gl"><div class="sqm-in"></div></div><div class="sqm-rl"><div class="sqm-in"></div></div>' +
+      '<div class="sqm-ctrl-w"></div><div class="sqm-map"><div class="sqm-gl"><div class="sqm-in"></div></div><div class="sqm-rl"><div class="sqm-in"></div></div><div class="sqm-fly"></div>' +
       '<div class="sqm-front" title="Drag to reveal more red or more green · double click: back to the market\'s split"><span></span></div></div><div class="sqm-foot fg-sub"></div></div>';
     var m = sqBox.querySelector(".sqm-map");
-    return (sqView = { map: m, gl: m.querySelector(".sqm-gl"), rl: m.querySelector(".sqm-rl"), gin: m.querySelector(".sqm-gl .sqm-in"), rin: m.querySelector(".sqm-rl .sqm-in"), front: m.querySelector(".sqm-front"), els: {}, first: true, W: 0, Gw: 0, Rw: 0, auto: 0 });
+    return (sqView = { map: m, gl: m.querySelector(".sqm-gl"), rl: m.querySelector(".sqm-rl"), gin: m.querySelector(".sqm-gl .sqm-in"), rin: m.querySelector(".sqm-rl .sqm-in"), fly: m.querySelector(".sqm-fly"), front: m.querySelector(".sqm-front"), els: {}, first: true, W: 0, Gw: 0, Rw: 0, auto: 0 });
   }
   function sqPlaceFront(v) { /* only the window between the two sides moves */
     var W = v.W, x = sqSplit != null ? Math.max(W - v.Rw, Math.min(v.Gw, sqSplit * W)) : v.auto; /* auto: exactly where the dominant side ends, so it is always shown whole */
@@ -3708,11 +3719,15 @@
     var put = function (r, host) {
       var x = r.n, el = v.els[x.sym], g = 1.5, key = x.sym + "|" + sqShown; seen[x.sym] = 1;
       if (!el) { el = v.els[x.sym] = document.createElement("div"); el.className = "sqm-sq nt"; }
-      if (el.parentNode && el.parentNode !== host) { /* changed sides: it starts where it stood and glides across the front, its colour fading over */
-        var o = el.getBoundingClientRect(), hb = host.getBoundingClientRect(); el.classList.add("nt"); host.appendChild(el);
-        el.style.left = (o.left - hb.left) + "px"; el.style.top = (o.top - hb.top) + "px"; void el.offsetWidth; el.classList.remove("nt");
-      } else if (!el.parentNode) host.appendChild(el);
-      el.dataset.i = x.i; el.style.left = (r.x + g / 2) + "px"; el.style.top = (r.y + g / 2) + "px"; el.style.width = Math.max(0, r.w - g) + "px"; el.style.height = Math.max(0, r.h - g) + "px"; el.style.background = sqColor(x.pc);
+      if (el.parentNode && el.parentNode !== host && !(el.parentNode === v.fly && el._host === host)) { /* changed sides: it flies above both windows from where it stood, its colour fading over */
+        var o = el.getBoundingClientRect(), mb = v.map.getBoundingClientRect(); el.classList.add("nt"); v.fly.appendChild(el); clearTimeout(el._land); el._land = null;
+        el.style.left = (o.left - mb.left) + "px"; el.style.top = (o.top - mb.top) + "px"; void el.offsetWidth; el.classList.remove("nt");
+      } else if (!el.parentNode) { host.appendChild(el); el.classList.add("grow"); setTimeout(function () { el.classList.remove("grow"); }, 700); }
+      el.dataset.i = x.i;
+      if (el.parentNode === v.fly) { /* in flight: aim at its place in map coordinates, then settle into its window */
+        el._host = host; el._r = r; el.style.left = ((host === v.gin ? 0 : W - Rw) + r.x + g / 2) + "px"; el.style.top = (r.y + g / 2) + "px";
+        if (!el._land) el._land = setTimeout(function () { el._land = null; if (el.parentNode !== v.fly || !el._host) return; el.classList.add("nt"); el._host.appendChild(el); el.style.left = (el._r.x + g / 2) + "px"; el.style.top = (el._r.y + g / 2) + "px"; void el.offsetWidth; el.classList.remove("nt"); }, 1250); /* once per flight */
+      } else { el.style.left = (r.x + g / 2) + "px"; el.style.top = (r.y + g / 2) + "px"; } el.style.width = Math.max(0, r.w - g) + "px"; el.style.height = Math.max(0, r.h - g) + "px"; el.style.background = sqColor(x.pc); el.classList.toggle("gold", sqGold && x.pc >= 100);
       /* logo and % on every square that fits both, the font shrinking with the square; on the tiniest ones only the logo, so you still see which coin it is */
       var m = Math.min(r.w, r.h), txt = sqFmt(x.pc), tw = function (f) { return chMeasure(txt, f) * 1.08; }, iw = r.w - 4, ih = r.h - 4, ls = 0, fs = Math.max(6, Math.min(16, m / 5.2));
       if (tw(fs) > iw) fs = Math.max(5, fs * iw / tw(fs));
@@ -3726,7 +3741,7 @@
     };
     gOut.forEach(function (r) { put(r, v.gin); }); rOut.forEach(function (r) { put(r, v.rin); });
     gOut.concat(rOut).forEach(function (r) { sqLastPc[r.n.sym + "|" + sqShown] = r.n.pc; });
-    Object.keys(v.els).forEach(function (s) { if (!seen[s]) { v.els[s].remove(); delete v.els[s]; } });
+    Object.keys(v.els).forEach(function (s) { if (!seen[s]) { v.els[s].remove(); delete v.els[s]; delete sqRev[s]; } });
     v.front.hidden = !(up.length && dn.length); sqPlaceFront(v); v.first = false;
     requestAnimationFrame(function () { Object.keys(v.els).forEach(function (s) { v.els[s].classList.remove("nt"); }); });
   }
@@ -3743,10 +3758,23 @@
     clearTimeout(sqWait);
     if (!sqShown || sqShown === sqS.tf || sqReady(sqS.tf) || Date.now() - sqSwitchAt > 10000) sqShown = sqS.tf; /* until then the old timeframe stays on screen */
     else sqWait = setTimeout(sqDraw, 400);
-    sqPaint(sqItems());
+    sqPaint(sqReveal(sqItems()));
+  }
+  var sqRev = {}, sqRevT = null;
+  function sqReveal(d) { /* only squares already revealed are drawn; the rest follow a handful at a time */
+    d.all = d.items; var pend = d.items.filter(function (x) { return !sqRev[x.sym]; });
+    if (pend.length && !sqRevT) sqRevT = setTimeout(sqRevealTick, 220);
+    d.items = d.items.filter(function (x) { return sqRev[x.sym]; }); return d;
+  }
+  function sqRevealTick() {
+    sqRevT = null; if (!sqVisible) return;
+    var d = sqItems(), pend = d.items.filter(function (x) { return !sqRev[x.sym]; }).sort(function (a, b) { return Math.abs(b.pc) - Math.abs(a.pc); });
+    if (!pend.length) return;
+    pend.slice(0, Math.max(3, Math.ceil(pend.length / 8))).forEach(function (x) { sqRev[x.sym] = 1; });
+    sqPaint(sqReveal(d));
   }
   function renderSquares() {
-    if (!sqVisible) { sqBox.hidden = true; sqBox.innerHTML = ""; sqView = null; updatePinnedColVisibility(); return; }
+    if (!sqVisible) { sqBox.hidden = true; sqBox.innerHTML = ""; sqView = null; sqRev = {}; updatePinnedColVisibility(); return; }
     sqBox.hidden = false; updatePinnedColVisibility(); sqDraw();
   }
   function sqFind(c) { /* a click on a square: scroll the list to the coin's row and light it up */
@@ -3792,6 +3820,8 @@
     place(e); popEl.classList.add("on");
   });
   sqBox.addEventListener("mouseleave", function () { if (!devFrozen) sqHidePop(); });
+  var sqGoldToggle = document.getElementById("sq-gold-toggle"); if (sqGoldToggle) { sqGoldToggle.setAttribute("aria-checked", sqGold ? "true" : "false");
+    sqGoldToggle.addEventListener("click", function () { sqGold = !sqGold; sqGoldToggle.setAttribute("aria-checked", sqGold ? "true" : "false"); try { localStorage.setItem(SQ_GOLD_KEY, sqGold ? "1" : "0"); } catch (e) {} sqDraw(); }); }
   sqBtn.addEventListener("click", function () { sqVisible = !sqVisible; sqBtn.classList.toggle("active", sqVisible); renderSquares(); });
   setInterval(function () { if (sqVisible && !sqDrag) sqDraw(); }, 3000);
 
