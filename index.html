@@ -2877,6 +2877,14 @@
       if (n && w) { var b = document.createElement("span"); b.className = "badge badge-new"; b.textContent = "NEW IN TOP 200"; b.title = "On the list for " + n + (n === 1 ? " snapshot" : " snapshots") + " in a row"; w.insertBefore(b, w.querySelector(".badges-container")); }
     });
   }
+  repoJson("data/tags.json").then(function (j) { /* tags the daily snapshot fetched for the top 300: only for coins without a hand-made tag */
+    if (!j || !j.tags) return; var add = 0;
+    Object.keys(j.tags).forEach(function (sym) {
+      if (sym === "BTC" || STABLECOINS.indexOf(sym) > -1 || Object.keys(CATS).some(function (k) { return CATS[k].indexOf(sym) > -1; })) return;
+      j.tags[sym].forEach(function (t) { if (t === "stable") { STABLECOINS.push(sym); add++; } else if (CATS[t]) { CATS[t].push(sym); add++; } });
+    });
+    if (add) { if (typeof renderPinned === "function" && pinnedCoins.length) renderPinned(); if (filterState.category) applyFilters(true); }
+  }).catch(function () {});
   repoJson("data/new.json").then(function (j) { snapMeta = j; if (j && j.ready && j.coins) { snapNew = j.coins; applyNewBadges(); } if (snapVisible) renderSnaps(); }).catch(function () {});
 
   /* ---------- RANK ARROWS: did a coin move up or down since yesterday's snapshot ---------- */

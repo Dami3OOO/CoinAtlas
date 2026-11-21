@@ -47,6 +47,13 @@ jobs:
         env:
           SNAPSHOT_MODE: ${{ github.event_name == 'workflow_dispatch' && 'manual' || (github.event.schedule == '15 17 * * *' && 'backup' || 'midnight') }}
         run: node scripts/record-snapshot.mjs
+      # Tags (Meme, DeFi, AI, ...) for every coin of the snapshot's top 300, so a coin entering the top 200 already has one. A failure here never stops the snapshot.
+      - name: Record tags
+        if: steps.due.outputs.run == 'true'
+        continue-on-error: true
+        env:
+          COINGECKO_KEY: ${{ secrets.COINGECKO_KEY }}
+        run: node scripts/record-tags.mjs
       # Open interest, funding and long/short of BTC and ETH. A failure here never stops the snapshot.
       - name: Record derivatives
         if: steps.due.outputs.run == 'true'
