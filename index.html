@@ -348,6 +348,7 @@
   .pf-avg { display: inline-block; min-width: 52px; border: 1px dashed transparent; border-radius: 6px; padding: 1px 6px; margin-right: -7px; }
   .pf-avg.empty { color: var(--muted); }
   .pf-card { position: relative; }
+  .pf-who { margin: 8px 2px 0; font-size: 12px; color: var(--muted); } .pf-who b { color: var(--fg); font-weight: 600; }
   .pf-row.noavg::after { content: ""; position: absolute; inset: 0; background: rgba(128,128,128,.10); pointer-events: none; } .pf-row.noavg .pf-asset, .pf-row.noavg .pf-price, .pf-row.noavg .pf-pl { opacity: .45; }
   .pf-setavg { position: relative; z-index: 1; font: inherit; font-size: 11px; font-weight: 600; color: var(--fg); background: var(--bg); border: 1px dashed var(--muted); border-radius: 6px; padding: 4px 8px; cursor: pointer; white-space: nowrap; } .pf-setavg:hover { border-style: solid; }
   .pf-src { font-style: normal; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
@@ -4812,7 +4813,7 @@
   function pfLoad(addr) {
     addr = String(addr || "").trim();
     var kind = pfKind(addr), id = ++pfLoadId;
-    pfEdit = false; pfLock = null; pfAP = null; pfSwaps = {}; pfSwapNote = "";
+    pfEdit = false; pfLock = null; pfAP = null; pfSwaps = {}; pfSwapNote = ""; pfWhoSet("");
     if (!kind) { pfSet({ addr: addr, status: "error", msg: "That doesn't look like a valid wallet address. Solana and EVM (0x…) addresses are supported." }); pfRenderBody(); pfRenderLock(); return; }
     try { localStorage.setItem(PF_ADDR_KEY, addr); localStorage.removeItem(PF_MODE_KEY); } catch (e) {}
     pfSet({ addr: addr, status: "loading", msg: "Loading token list…" }); pfRenderBody(); pfRenderLock();
@@ -4826,7 +4827,7 @@
       var note = r.note || "";
       if (!hasCt) note = "Token contract data isn't available yet, so only native coins were checked. Press Load again in a minute.";
       pfSet({ addr: addr, status: "ok", msg: note, holdings: r.holdings });
-      pfRenderBody(); pfSwapScan(addr, id);
+      pfRenderBody(); pfSwapScan(addr, id); pfWho(addr, id);
     }).catch(function () {
       if (id !== pfLoadId) return;
       pfSet({ addr: addr, status: "error", msg: "Couldn't read this wallet right now. The public RPC may be busy, try again in a moment." });
@@ -4834,14 +4835,14 @@
     });
   }
   function pfClear() {
-    ++pfLoadId; pfSet({}); pfEdit = false; pfLock = null; delete pfAvg.manual;
+    ++pfLoadId; pfWhoSet(""); pfSet({}); pfEdit = false; pfLock = null; delete pfAvg.manual;
     try { localStorage.removeItem(PF_ADDR_KEY); localStorage.removeItem(PF_MODE_KEY); localStorage.removeItem(PF_MAN_KEY); } catch (e) {}
     pfSaveAvg();
     var i = document.getElementById("pf-addr"); if (i) i.value = "";
     pfHideHover(); pfRenderBody(); pfRenderLock(); if (pinnedCoins.length) renderPinned();
   }
   function pfStartManual() {
-    ++pfLoadId; pfSet({ manual: true, status: "ok" }); pfEdit = true; pfLock = null; pfSaveManual();
+    ++pfLoadId; pfWhoSet(""); pfSet({ manual: true, status: "ok" }); pfEdit = true; pfLock = null; pfSaveManual();
     var i = document.getElementById("pf-addr"); if (i) i.value = "";
     pfRenderBody();
   }
@@ -4918,10 +4919,10 @@
     pfBox.hidden = false;
     pfBox.innerHTML = '<div class="pinned-card chart-container pf-card dev-target" data-dev-name="Portfolio Manager" data-dev-color="#38bdf8">' +
       '<div class="pf-title">Portfolio Manager</div>' +
-      '<form class="pf-form" id="pf-form" autocomplete="off"><input id="pf-addr" type="text" placeholder="Wallet address (Solana or EVM, 0x…)" spellcheck="false" aria-label="Wallet address"><button class="gear" type="button" id="pf-clear">Clear</button><button class="gear" type="submit">Load</button></form>' +
+      '<form class="pf-form" id="pf-form" autocomplete="off"><input id="pf-addr" type="text" placeholder="Wallet address (Solana or EVM, 0x…)" spellcheck="false" aria-label="Wallet address"><button class="gear" type="button" id="pf-clear">Clear</button><button class="gear" type="submit">Load</button></form><div class="pf-who" id="pf-who" hidden></div>' +
       '<div id="pf-manual-wrap" class="pf-manual-wrap"><div class="pf-or">or</div><button class="gear pf-manual" type="button" id="pf-manual" hidden>Add Manually</button><div class="pf-explain">No wallet address needed. Pick your coins and amounts by hand. If you do enter a wallet address, CoinAtlas only reads the publicly available blockchain data to see what the wallet holds. Nothing is connected or signed.</div></div>' +
       '<div id="pf-body"></div><div id="pf-lock"></div></div>';
-    document.getElementById("pf-addr").value = pfState.addr;
+    document.getElementById("pf-addr").value = pfState.addr; pfWhoSet(pfWhoText);
     updatePinnedColVisibility();
     pfRenderBody(); pfRenderLock();
     if (pfState.addr && pfState.status === "idle" && !pfState.manual) pfLoad(pfState.addr);
@@ -5142,6 +5143,26 @@
         if (cost > 0.5 && got.length === 1) { var s = got[0], a = x.net[s]; if (a > 0 && isFinite(cost / a)) buys.push({ sym: s, a: a, p: cost / a, cost: cost, st: x.st, t: x.t, tx: h, ch: ch.label }); }
       });
       return buys;
+    });
+  }
+  /* what can be told about an address: its ENS name or Basename, a public label (e.g. an exchange wallet), and whether it is a normal wallet or a smart contract wallet.
+     Which app someone uses (MetaMask, Tangem, Rabby…) cannot be read from an address: they all make the same kind of address */
+  var pfWhoText = "";
+  function pfWhoSet(t) { pfWhoText = t; var el = document.getElementById("pf-who"); if (el) { el.innerHTML = t; el.hidden = !t; } }
+  function pfWho(addr, id) {
+    if (pfKind(addr) !== "evm") { pfWhoSet("Solana wallet"); return; }
+    var one = function (base) { return getJson(base + "/api/v2/addresses/" + addr, 12000).catch(function () { return null; }); };
+    Promise.all([one(PF_BS.ethereum), one(PF_BS.base)]).then(function (r) {
+      if (id !== pfLoadId) return;
+      var a = r[0] || {}, b = r[1] || {}, parts = [];
+      var names = [a.ens_domain_name, b.ens_domain_name].filter(function (x, i, l) { return x && l.indexOf(x) === i; }); if (names.length) parts.push("<b>" + esc(names.join(" · ")) + "</b>");
+      var tags = [].concat((a.metadata && a.metadata.tags) || [], (b.metadata && b.metadata.tags) || []).map(function (t) { return t && t.name; }).concat([a.name, b.name]).filter(function (x, i, l) { return x && l.indexOf(x) === i; });
+      if (tags.length) parts.push(esc(tags.slice(0, 2).join(", ")));
+      var c = a.is_contract ? a : b.is_contract ? b : null;
+      if (c) { var impl = ((c.implementations || [])[0] || {}).name || c.name || "", kind = /safe/i.test(impl) ? "Safe" : /coinbase/i.test(impl) ? "Coinbase Smart Wallet" : /argent/i.test(impl) ? "Argent" : /ambire/i.test(impl) ? "Ambire" : "";
+        parts.push(kind ? kind + " (smart contract wallet)" : "Smart contract" + (impl ? " · " + esc(impl) : "")); }
+      else if (r[0] || r[1]) parts.push("Regular wallet");
+      pfWhoSet(parts.join(" · "));
     });
   }
   function pfSwapScan(addr, id) {

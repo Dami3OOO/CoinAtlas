@@ -237,6 +237,8 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   ist ein Kauf zu Kosten ÷ Menge. Stablecoins nur über ihre bekannten Vertragsadressen (gegen gefälschte Tokens mit gleichem Namen).
   Ein Asset ohne Preis oder mit Preis aus Swaps bekommt den Swap-Durchschnitt; von Hand gesetzte Preise bleiben.
   Überweisungen zählen nie. Nur mit nachgebildeten Antworten getestet.
+- Unter der Adresse (21.11.2026): ENS-Name/Basename, öffentliche Markierung und Wallet-Art (normal oder Smart-Contract-Wallet wie Safe),
+  aus Blockscout (Ethereum und Base). Welche App jemand nutzt, lässt sich aus einer Adresse nicht ablesen.
 - Später mit Backend: Solana, BNB Chain, Avalanche.
 
 ## Accounts (Plan, 20.11.2026, noch nicht gebaut)
