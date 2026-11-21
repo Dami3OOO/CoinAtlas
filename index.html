@@ -444,9 +444,9 @@
   .stk-pf-btn { width: 100%; height: 36px; margin: 8px 0 12px; font-size: 12px; font-weight: 600; }
   .stk-head, .stk-row { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto 76px; gap: 10px; align-items: center; }
   .stk-head { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 0 8px 6px; border-bottom: 1px solid var(--line); }
-  .stk-head.p { grid-template-columns: minmax(0, 1fr) auto 76px 150px; margin-top: 10px; }
+  .stk-head.p { grid-template-columns: minmax(0, 1fr) auto 76px 175px; margin-top: 10px; }
   .stk-row, .stk-prow { padding: 7px 8px; border-bottom: 1px solid var(--line); font-size: 13px; cursor: pointer; border-radius: 6px; } .stk-row:hover, .stk-prow:hover { background: var(--hover); }
-  .stk-prow { display: grid; grid-template-columns: minmax(0, 1fr) auto 76px 150px; gap: 10px; align-items: center; }
+  .stk-prow { display: grid; grid-template-columns: minmax(0, 1fr) auto 76px 175px; gap: 10px; align-items: center; }
   .stk-n { color: var(--muted); font-variant-numeric: tabular-nums; }
   .stk-a { display: flex; align-items: center; gap: 8px; min-width: 0; } .stk-a .logo { width: 20px; height: 20px; flex: none; } .stk-a b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .stk-a i { font-style: normal; color: var(--muted); font-size: 11px; white-space: nowrap; }
   .stk-r { font-weight: 700; color: #c4b5fd; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; } .stk-r.na { color: var(--muted); font-weight: 400; font-size: 12px; }
@@ -462,7 +462,7 @@
   .stk-res-h { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: center; } .stk-res-h a { color: var(--fg); font-weight: 600; text-decoration: none; border-bottom: 1px dotted var(--muted); } .stk-res-h a:hover { color: #c4b5fd; border-bottom-color: #c4b5fd; } .stk-res-h .k { display: block; font-size: 11px; color: var(--muted); margin-top: 1px; }
   .stk-res-v { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: baseline; margin-top: 8px; font-size: 12px; } .stk-res-v span { color: var(--muted); } .stk-res-v b { color: #c4b5fd; font-variant-numeric: tabular-nums; } .stk-res-v em { font-style: normal; color: var(--muted); min-width: 90px; text-align: right; font-variant-numeric: tabular-nums; } .stk-res-v + .stk-res-v b { color: var(--fg); } .stk-res-v.na { display: block; color: var(--muted); }
   .stk-pot { text-align: center; padding: 14px 12px; background: rgba(196, 181, 253, 0.07); border: 1px solid rgba(196, 181, 253, 0.3); border-radius: 12px; font-size: 13px; line-height: 1.5; } .stk-pot b { color: #c4b5fd; }
-  .stk-pot-big { font-size: 28px; font-weight: 800; color: #c4b5fd; letter-spacing: -0.02em; } .stk-pot-s { margin-top: 4px; font-size: 11px; color: var(--muted); }
+  .stk-pot-big { font-size: 28px; font-weight: 800; color: #c4b5fd; letter-spacing: -0.02em; margin: 6px 0 2px; } .stk-pot-l b { color: #c4b5fd; } .stk-pot-s { margin-top: 4px; font-size: 11px; color: var(--muted); }
   .stk-ch { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); } .stk-ch-h { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; } .stk-ch-s { font-size: 12px; color: #c4b5fd; }
   .stk-ch-empty { padding: 34px 12px; text-align: center; font-size: 12px; color: var(--muted); border: 1px dashed var(--line); border-radius: 8px; }
   .stk-svg { width: 100%; height: 150px; display: block; } .stk-ch-ax { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
@@ -4062,6 +4062,7 @@
     return x.kind === "Native Staking" ? tokens * r * days / 365 : tokens * (Math.pow(1 + r, days / 365) - 1);
   }
   function stkNum(n) { if (!(n > 0)) return "0"; return n >= 1000 ? n.toLocaleString("en-US", { maximumFractionDigits: 0 }) : n >= 1 ? n.toLocaleString("en-US", { maximumFractionDigits: 4 }) : String(parseFloat(n.toPrecision(4))); }
+  function stkPc(v) { return (v >= 10 ? v.toFixed(1) : v.toFixed(2)) + "%"; }
   function stkRateTxt(x) { return x.apy == null ? "Rate on site" : stakeRate(x) + " " + x.apy.toFixed(2) + "%"; }
   function stkLock(x) { return '<span class="lk' + (x.locked ? '' : ' un') + '" title="' + (x.locked ? 'Getting out takes a waiting time' : 'Can be withdrawn or swapped any time') + '">' + (x.locked ? 'Locked' : 'Unlocked') + '</span>'; }
   function stkPicker() {
@@ -4127,18 +4128,23 @@
     if (pfState.status === "loading" || stk.pfWait) return bar + '<div class="pf-msg">Loading your Portfolio…</div>';
     var all = pfState.status === "ok" ? pfRows() : [];
     if (!all.length) return bar + '<div class="pf-msg">Your Portfolio is empty. Save a wallet address or add a Manual Wallet in the Portfolio Manager first.</div>';
-    var list = stkPfRows(), days = stkDays(), totAll = 0, gainUsd = 0, stakeVal = 0;
+    var list = stkPfRows(), days = stkDays(), totAll = 0, gainUsd = 0, stakeVal = 0, rateVal = 0, pcs = [];
     all.forEach(function (r) { totAll += r.val; });
     var rows = list.map(function (x) {
-      var g = stkGain(x.top, x.r.amt, days), px = x.r.c.current_price || 0; stakeVal += x.r.val; if (g != null) gainUsd += g * px;
+      var g = stkGain(x.top, x.r.amt, days), px = x.r.c.current_price || 0; stakeVal += x.r.val;
+      if (g != null) { gainUsd += g * px; rateVal += x.r.val; pcs.push(g / x.r.amt * 100); }
       return '<div class="stk-prow" data-stksym="' + esc(x.sym) + '" data-stkamt="' + x.r.amt + '"><span class="stk-a">' + logoHtml(x.r.c) + '<b>' + esc(x.r.c.name) + '</b><i>' + stkNum(x.r.amt) + ' ' + esc(x.sym) + '</i></span>' +
         '<span class="stk-r' + (x.top.apy == null ? ' na' : '') + '">' + stkRateTxt(x.top) + '</span>' + stkLock(x.top) +
-        '<span class="stk-pg">' + (g == null ? '<em>rate on site</em>' : '<b>+' + stkNum(g) + ' ' + esc(x.sym) + '</b><em>then ' + stkNum(x.r.amt + g) + ' · +' + price(g * px) + '</em>') + '</span></div>';
+        '<span class="stk-pg">' + (g == null ? '<em>rate on site</em>' : '<b>+' + stkNum(g) + ' ' + esc(x.sym) + ' (+' + stkPc(g / x.r.amt * 100) + ')</b><em>then ' + stkNum(x.r.amt + g) + ' ' + esc(x.sym) + '</em>') + '</span></div>';
     }).join("");
     if (!list.length) return bar + '<div class="pf-msg">None of your Portfolio\'s assets can be staked with the trusted providers yet.</div>';
-    var pc = totAll > 0 ? gainUsd / totAll * 100 : 0;
-    return bar + '<div class="stk-pot"><div class="stk-pot-big">+' + (pc >= 10 ? pc.toFixed(1) : pc.toFixed(2)) + '%</div><div>You could grow your Portfolio\'s token holdings by <b>' + (pc >= 10 ? pc.toFixed(1) : pc.toFixed(2)) + '%</b> if you stake all these assets for <b>' + stkDurName() + '</b>.</div>' +
-      '<div class="stk-pot-s">+' + price(gainUsd) + ' in rewards at today\'s prices · ' + list.length + ' of ' + all.length + ' assets can be staked (' + (totAll > 0 ? (stakeVal / totAll * 100).toFixed(0) : 0) + '% of your Portfolio) · each with its best provider</div></div>' +
+    /* today's value first (how much of the Portfolio can be staked), then the growth in tokens: per asset it does not depend on any price */
+    var share = totAll > 0 ? stakeVal / totAll * 100 : 0, lo = pcs.length ? Math.min.apply(null, pcs) : 0, hi = pcs.length ? Math.max.apply(null, pcs) : 0, avg = rateVal > 0 ? gainUsd / rateVal * 100 : 0;
+    var range = !pcs.length ? '' : Math.abs(hi - lo) < 0.005 ? '+' + stkPc(hi) : '+' + stkPc(lo) + ' to +' + stkPc(hi);
+    return bar + '<div class="stk-pot">' +
+      '<div class="stk-pot-l">Today, <b>' + share.toFixed(0) + '%</b> of your Portfolio can be staked: <b>' + price(stakeVal) + '</b> of ' + price(totAll) + ', in ' + list.length + ' of ' + all.length + ' assets.</div>' +
+      (pcs.length ? '<div class="stk-pot-big">' + range + '</div><div class="stk-pot-l">Staked for <b>' + stkDurName() + '</b>, ' + (pcs.length > 1 ? 'each of these assets would grow by ' + range + ' in tokens. Together: <b>+' + stkPc(avg) + '</b> on your stakeable holdings.' : 'it would grow by ' + range + ' in tokens.') + '</div>' +
+        '<div class="stk-pot-s">Rewards worth about ' + price(gainUsd) + ' at today\'s prices · each asset with its best provider' + (pcs.length < list.length ? ' · ' + (list.length - pcs.length) + ' without a public rate left out' : '') + '</div>' : '<div class="stk-pot-s">None of these assets has a public rate yet; see the providers\' sites.</div>') + '</div>' +
       '<div class="stk-head p"><span>Asset</span><span>Best Rate</span><span></span><span>Rewards</span></div>' + rows + STK_NOTE;
   }
 
