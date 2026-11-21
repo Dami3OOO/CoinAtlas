@@ -2462,7 +2462,7 @@
     } else {
       pinnedCoins.push(c); cardTf[c.symbol] = "1D"; renderPinned();
       var newCard = pinnedEl.querySelector('.pinned-card[data-sym="' + c.symbol + '"]');
-      if (newCard) { var nr = newCard.getBoundingClientRect(); if (nr.top < 0 || nr.top > innerHeight - 120) smoothScrollTo(newCard, "start", 16); newCard.classList.add('flash'); setTimeout(function () { newCard.classList.remove('flash'); }, 350); }
+      if (newCard) { newCard.classList.add('flash'); setTimeout(function () { newCard.classList.remove('flash'); }, 350); }
     }
   });
 
