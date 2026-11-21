@@ -258,6 +258,8 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   Jeder Betrag ab 5 $ zählt. Der Server kennt nur den xpub und kann kein Geld bewegen.
 - Erkennen: Backend prüft offene Adressen jede Minute bei mempool.space (Ausweich: Blockstream), aktiv ab 1 Bestätigung.
   Nie mehr als 10 offene Adressen (Lückengrenze der Wallet).
+- Sofort (Nutzer, 21.11.2026): Account wird frei, sobald die Zahlung unbestätigt im Netzwerk sichtbar ist (Sekunden). Ohne Bestätigung
+  nach 30 Minuten wird er gesperrt und bei späterer Bestätigung automatisch wieder freigeschaltet. Später: USDC über Solana Pay, Lightning.
 - Zeitlimit (Nutzer, 21.11.2026): Passwort vor der Zahlung; Zahlung muss innerhalb von 15 Minuten abgeschickt sein. Ist sie unbestätigt im Netzwerk
   sichtbar, wartet die ID auf die Bestätigung. Ohne Zahlung verfallen ID und Passwort. Vorschlag (noch nicht bestätigt): abgelaufene IDs 7 Tage still
   behalten und bei verspäteter Zahlung trotzdem freischalten; die Adresse erst danach neu vergeben.
