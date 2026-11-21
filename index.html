@@ -405,6 +405,7 @@
   .sqm-top-in { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
   .sqm-top-in input { width: 56px; height: 26px; font: inherit; font-size: 12px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; text-align: center; }
   .sqm-x { font: inherit; font-size: 14px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 6px; width: 30px; height: 26px; cursor: pointer; } .sqm-x:hover { color: var(--fg); background: var(--hover); }
+  .sqm-count { font-size: 15px; gap: 8px !important; } .sqm-count span { color: var(--muted); }
   .sqm-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px; font-size: 12px; font-variant-numeric: tabular-nums; } .sqm-front-l { font-weight: 700; }
   .sqm-top { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 16px; font-size: 11px; color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
   .sqm-map { position: relative; height: 480px; margin-top: 10px; border-radius: 8px; overflow: hidden; background: var(--bg); }
@@ -3655,14 +3656,9 @@
     items.forEach(function (x) { x.w = Math.pow(Math.abs(x.pc), 0.8) + 0.15 * mean + 1e-6; }); /* the small base keeps quiet coins visible */
     return { items: items, stable: stable, nod: nod };
   }
-  function sqHeadHtml(d) {
-    var up = d.items.filter(function (x) { return x.pc > 0; }), dn = d.items.filter(function (x) { return x.pc < 0; }), n = d.items.length;
-    var med = n ? d.items.map(function (x) { return x.pc; }).sort(function (a, b) { return a - b; })[Math.floor(n / 2)] : 0, share = n ? Math.round(up.length / n * 100) : 0;
-    var by = function (s) { var x = d.items.filter(function (y) { return y.sym === s; })[0]; return x ? '<span>' + s + ' <b style="color:' + (x.pc >= 0 ? 'var(--up)' : 'var(--down)') + '">' + sqFmt(x.pc) + '</b></span>' : ''; };
-    var top = function (l, asc) { return l.slice().sort(function (a, b) { return asc ? a.pc - b.pc : b.pc - a.pc; }).slice(0, 3).map(function (x) { return x.sym + ' ' + sqFmt(x.pc); }).join(' · '); };
-    return '<div class="sqm-stats"><span class="sqm-front-l" style="color:' + (share >= 50 ? 'var(--up)' : 'var(--down)') + '">Sentiment Front · ' + share + '% up</span>' +
-      '<span><b style="color:var(--up)">' + up.length + '</b> up · <b style="color:var(--down)">' + dn.length + '</b> down · median ' + sqFmt(med) + '</span>' + by("BTC") + by("ETH") + '</div>' +
-      (n ? '<div class="sqm-top"><span>▲ ' + esc(top(up, false) || '–') + '</span><span>▼ ' + esc(top(dn, true) || '–') + '</span></div>' : '');
+  function sqHeadHtml(d) { /* just the count of green and red coins, like the Simple Market Sentiment Counter */
+    var up = d.items.filter(function (x) { return x.pc > 0; }).length, dn = d.items.filter(function (x) { return x.pc < 0; }).length;
+    return '<div class="sqm-stats sqm-count"><b style="color:var(--up)">' + up + '</b><span>/</span><b style="color:var(--down)">' + dn + '</b></div>';
   }
   function sqTfLabel() { return SQ_TF.filter(function (t) { return t[0] === sqS.tf; })[0][1]; }
   function sqCtrlHtml() { /* Top [1-200] on the left, the same timeframe picker as the Locked Hovercharts on the right */

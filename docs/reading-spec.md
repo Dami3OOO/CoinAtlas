@@ -238,6 +238,7 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Klick auf eine Kachel: die Liste scrollt zur Zeile des Coins und hebt sie hellgrau hervor wie die Suche. Wird er dort festgehalten, öffnet der Locked Hoverchart im passenden
   Zeitraum (Today 1D, 1H und 4H 4H, 7D 1W, 30D 1M, 365D 365D).
 - Bedienung: links "Top [1–200]" als Eingabefeld (Standard 200), rechts derselbe Zeitraum-Wähler wie bei den Locked Hovercharts:
+  Kopf nur noch "grün / rot" (Anzahl steigender und fallender Coins), wie der Simple Market Sentiment Counter.
   Today (seit Tagesbeginn), 1H, 7D, 30D, 365D aus Coinpaprika tickers (eine Anfrage pro Minute), 4H aus Binance-5m-Kerzen (je Coin, alle 2 Minuten).
   Kein 24H (Today ersetzt es). Hand-Zeiger über den Kacheln.
   Stablecoins ausgelassen. Nur in der Landing Area (Vollbild verworfen, kommt eher mit der Mobile-Version). Einstellungen in localStorage "coinatlas-squares".
