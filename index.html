@@ -1110,7 +1110,7 @@
     meme: ["DOGE","SHIB","PEPE","BONK","WIF","FLOKI","TRUMP","PENGU","SPX","USELESS","PUMP","MEME","BRETT","POPCAT","MOG","TURBO","NEIRO","BOME","FARTCOIN","GOAT","PNUT","MOODENG"],
     privacy: ["XMR","ZEC","DASH","XVG","SCRT","BDX","FIRO","ARRR","ZEN","DCR","BEAM","GRIN","PIVX","ROSE","NIGHT"]
   };
-  var MAX_LIST = 200, MIN_VOL = 10000, QUOTES = ["USDT", "USDC"];
+  var MAX_LIST = /[?&]snapshot=1\b/.test(location.search) ? 300 : 200, MIN_VOL = 10000, QUOTES = ["USDT", "USDC"]; /* the daily snapshot keeps the top 300 (index.html?snapshot=1); visitors always get 200 */
   var CACHE_MS = 60 * 1000, CACHE_PREFIX = "top200-cache-";
   var LORE_KEY = "top200-lore", LORE_MS = 30 * 60 * 1000;
   var RANGE_KEY = "top200-range", SOURCE_KEY = "top200-source", PULSE_KEY = "top200-pulse", FALLBACK_KEY = "top200-fallback", FALLBACK_SRC_KEY = "top200-fallback-src";
@@ -3605,7 +3605,7 @@
   snapBtn.addEventListener("click", function () {
     snapVisible = !snapVisible; snapBtn.classList.toggle("active", snapVisible);
     if (snapVisible) {
-      repoJson("data/dominance.json").then(function (j) { snapDays = j || {}; }, function () { snapDays = {}; }).then(renderSnaps);
+      repoJson("data/dominance.json").then(function (j) { snapDays = {}; Object.keys(j || {}).forEach(function (k) { if (!/backfill/.test(j[k][4])) snapDays[k] = j[k]; }); }, function () { snapDays = {}; }).then(renderSnaps); /* only days CoinAtlas recorded itself; backfilled days only feed the charts */
       SNAP_HIST.forEach(function (H) { repoJson(H[2]).then(function (j) { snapHist[H[0]] = j && j.days ? j : null; }, function () { snapHist[H[0]] = null; }).then(renderSnaps); });
     }
     renderSnaps();

@@ -1,9 +1,20 @@
 name: Record snapshot
 
-# Twice a day, so one failed run does not lose the day. The later run overwrites the earlier one.
+# The official snapshot is taken right after midnight in New York and records the New York day that just ended.
+# GitHub's scheduler runs in UTC and is often late, so it is started several times between 00:05 and 00:50 New York time,
+# for summer (04:xx UTC) and winter (05:xx UTC); scripts/snapshot-time.mjs lets only the first run of that hour record.
+# The run around noon New York time only fills a day that is still missing.
 on:
   schedule:
-    - cron: "15 11,23 * * *"
+    - cron: "5 4 * * *"
+    - cron: "20 4 * * *"
+    - cron: "35 4 * * *"
+    - cron: "50 4 * * *"
+    - cron: "5 5 * * *"
+    - cron: "20 5 * * *"
+    - cron: "35 5 * * *"
+    - cron: "50 5 * * *"
+    - cron: "15 17 * * *"
   workflow_dispatch:
 
 permissions:
@@ -19,23 +30,40 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      # The headless browser reads the list from the page itself. Without it the script falls back to a public top 200.
+      - name: Is a snapshot due?
+        id: due
+        env:
+          SNAPSHOT_MODE: ${{ github.event_name == 'workflow_dispatch' && 'manual' || (github.event.schedule == '15 17 * * *' && 'backup' || 'midnight') }}
+        run: node scripts/snapshot-time.mjs >> "$GITHUB_OUTPUT"
+      # The headless browser reads the list from the page itself. Without it the script falls back to a public top 300.
       - name: Install headless browser
+        if: steps.due.outputs.run == 'true'
         continue-on-error: true
         run: |
           npm install --no-save playwright@1.49.1
           npx playwright install --with-deps chromium
-      - run: node scripts/record-snapshot.mjs
+      - name: Record snapshot and Reading
+        if: steps.due.outputs.run == 'true'
+        env:
+          SNAPSHOT_MODE: ${{ github.event_name == 'workflow_dispatch' && 'manual' || (github.event.schedule == '15 17 * * *' && 'backup' || 'midnight') }}
+        run: node scripts/record-snapshot.mjs
+      # Open interest, funding and long/short of BTC and ETH. A failure here never stops the snapshot.
+      - name: Record derivatives
+        if: steps.due.outputs.run == 'true'
+        continue-on-error: true
+        run: node scripts/record-derivs.mjs
       # The Fed balance sheet for the Charts screen. FRED updates it once a week; a failure here never stops the snapshot.
       - name: Record WALCL
+        if: steps.due.outputs.run == 'true'
         continue-on-error: true
         run: node scripts/record-fred.mjs
       - name: Commit
+        if: steps.due.outputs.run == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data
           git diff --cached --quiet && exit 0
-          git commit -m "Record snapshot $(date -u +%F)"
+          git commit -m "Record snapshot $(node -e 'import("./scripts/snapshot-time.mjs").then(m => console.log(m.snapshotDay()))')"
           git pull --rebase
           git push

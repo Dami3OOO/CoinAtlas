@@ -1,0 +1,34 @@
+name: Backfill TOTAL200
+
+# Started by hand (Actions -> Backfill TOTAL200 -> Run workflow). Fills TOTAL200, BTC.D and USDT.D for the 365 days before
+# CoinAtlas began recording, from CoinGecko. Takes about 20 minutes with a demo key (secret COINGECKO_KEY), about 2 hours without.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: backfill-total200
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Backfill from CoinGecko
+        env:
+          COINGECKO_KEY: ${{ secrets.COINGECKO_KEY }}
+        run: node scripts/backfill-total200.mjs
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/dominance.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Backfill TOTAL200 from CoinGecko"
+          git pull --rebase
+          git push

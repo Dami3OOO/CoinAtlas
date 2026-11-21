@@ -1,7 +1,11 @@
-// Daily snapshot of the CoinAtlas top 200. Run by .github/workflows/record-snapshot.yml.
+// Daily snapshot of the CoinAtlas top 300. Run by .github/workflows/record-snapshot.yml right after midnight in New York;
+// a snapshot is the record of the New York day that just ended (scripts/snapshot-time.mjs).
 //
 // Writes under data/:
-//   snapshots/YYYY-MM-DD.json  the full list of that day: symbol, name, price, market cap
+//   snapshots/YYYY-MM-DD.json  the top 300 of that day: symbol, name, price, market cap, 24h volume, circulating supply
+//                              (volume and supply from Coinpaprika only, so they stay comparable from day to day).
+//                              Total, dominance and "new in the top 200" use the first 200, as the site does.
+//   readings.json              the Reading of the BTC|ETH Ratio as it stood at the end of each day: what the site really said
 //   dominance.json             one line per day: [BTC %, ETH %, total market cap, coins, source, USDT %]
 //   new.json                   coins that entered the top 200 less than 14 snapshots ago
 //   history/btc-eth.json       every daily close of BTC and ETH since 2017 (Binance)
@@ -19,7 +23,8 @@ import { dirname, join } from "node:path";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const DATA = process.env.SNAPSHOT_DIR || join(ROOT, "data");
-const DAY = process.env.SNAPSHOT_DATE || new Date().toISOString().slice(0, 10);
+import { snapshotDay } from "./snapshot-time.mjs";
+const DAY = snapshotDay(), MODE = process.env.SNAPSHOT_MODE || "manual";
 const NEW_WINDOW = 14;
 
 export async function pageList(prepare) {
@@ -28,10 +33,16 @@ export async function pageList(prepare) {
   try {
     const page = await browser.newPage();
     if (prepare) await prepare(page);
-    await page.goto(pathToFileURL(join(ROOT, "index.html")).href);
+    await page.goto(pathToFileURL(join(ROOT, "index.html")).href + "?snapshot=1");
     const h = await page.waitForFunction(() => (window.coinAtlasList && window.coinAtlasList.coins.length >= 150 ? window.coinAtlasList : null), null, { timeout: 120000 });
     const list = await h.jsonValue();
-    return { source: "CoinAtlas · " + list.label, coins: list.coins };
+    let reading = null;
+    try { /* the Reading of the day, from the page's own Formula, with only the data of that day */
+      await page.evaluate(() => document.getElementById("ratio-btn").click());
+      await page.waitForSelector("#rt-reading .rt-vd", { state: "attached", timeout: 120000 }); await page.waitForTimeout(1500);
+      reading = await page.evaluate(d => { const x = window.coinAtlasDev.readAt(Date.parse(d + "T00:00:00Z"), ""); delete x.expl; return x; }, DAY);
+    } catch (e) { console.log("Reading not recorded:", e.message.split("\n")[0]); }
+    return { source: "CoinAtlas · " + list.label, coins: list.coins, reading };
   } finally { await browser.close(); }
 }
 
@@ -42,8 +53,8 @@ async function getJson(url) {
 }
 async function apiList() {
   const sources = [
-    ["CoinGecko top 200", async () => (await getJson("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=200&page=1")).map(c => [String(c.symbol).toUpperCase(), c.name, c.current_price, c.market_cap])],
-    ["CoinPaprika top 200", async () => (await getJson("https://api.coinpaprika.com/v1/tickers")).map(c => [String(c.symbol).toUpperCase(), c.name, c.quotes?.USD?.price, c.quotes?.USD?.market_cap])]
+    ["CoinGecko top 300", async () => [1, 2].reduce(async (acc, pg) => (await acc).concat((await getJson("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=" + pg)).map(c => [String(c.symbol).toUpperCase(), c.name, c.current_price, c.market_cap])), Promise.resolve([]))],
+    ["CoinPaprika top 300", async () => (await getJson("https://api.coinpaprika.com/v1/tickers")).map(c => [String(c.symbol).toUpperCase(), c.name, c.quotes?.USD?.price, c.quotes?.USD?.market_cap])]
   ];
   let last;
   for (const [source, get] of sources) for (let attempt = 0; attempt < 3; attempt++) {
@@ -110,11 +121,19 @@ export async function recordLogos(coins, get = getImage) { /* coins: [symbol, na
   return { saved, missing: todo.length - saved };
 }
 
-export function build(found) {
-  const coins = found.coins.map(c => [String(c[0]).toUpperCase(), String(c[1]), +c[2] || 0, +c[3] || 0]).sort((a, b) => b[3] - a[3]).slice(0, 200);
-  const total = coins.reduce((s, c) => s + c[3], 0), cap = s => (coins.find(c => c[0] === s) || [])[3] || 0;
-  if (coins.length < 150 || !(cap("BTC") > 0) || !(cap("ETH") > 0)) throw new Error("incomplete list: " + coins.length + " coins");
-  return { date: DAY, taken: new Date().toISOString(), source: found.source, total: Math.round(total), btc: +(cap("BTC") / total * 100).toFixed(3), eth: +(cap("ETH") / total * 100).toFixed(3), ratio: +(coins.find(c => c[0] === "BTC")[2] / coins.find(c => c[0] === "ETH")[2]).toFixed(4), coins };
+/* 24h volume and circulating supply of every coin, from Coinpaprika: { SYMBOL: [volume, supply] }, the biggest coin of a symbol wins */
+export async function extras(get = getJson) {
+  const out = {};
+  try { (await get("https://api.coinpaprika.com/v1/tickers")).forEach(t => { const s = String(t.symbol).toUpperCase(); if (out[s]) return; out[s] = [Math.round(+t.quotes?.USD?.volume_24h || 0) || null, +t.circulating_supply || null]; }); }
+  catch (e) { console.log("volume and supply not added:", e.message); }
+  return out;
+}
+export function build(found, ext = {}) {
+  const all = found.coins.map(c => [String(c[0]).toUpperCase(), String(c[1]), +c[2] || 0, +c[3] || 0]).sort((a, b) => b[3] - a[3]).slice(0, 300);
+  all.forEach(c => { const x = ext[c[0]]; c.push(x ? x[0] : null, x ? x[1] : null); });
+  const top = all.slice(0, 200), total = top.reduce((s, c) => s + c[3], 0), cap = s => (top.find(c => c[0] === s) || [])[3] || 0; /* totals and dominance: the top 200, as on the site */
+  if (all.length < 150 || !(cap("BTC") > 0) || !(cap("ETH") > 0)) throw new Error("incomplete list: " + all.length + " coins");
+  return { date: DAY, taken: new Date().toISOString(), ny: MODE === "midnight" || undefined, late: MODE === "backup" || undefined, source: found.source, total: Math.round(total), btc: +(cap("BTC") / total * 100).toFixed(3), eth: +(cap("ETH") / total * 100).toFixed(3), ratio: +(all.find(c => c[0] === "BTC")[2] / all.find(c => c[0] === "ETH")[2]).toFixed(4), fields: ["symbol", "name", "price", "market cap", "24h volume", "circulating supply"], coins: all };
 }
 
 export function write(snap) {
@@ -123,25 +142,32 @@ export function write(snap) {
   writeFileSync(join(dir, snap.date + ".json"), JSON.stringify(head).slice(0, -1) + ',"coins":[\n' + coins.map(c => JSON.stringify(c)).join(",\n") + "\n]}\n");
 
   const domFile = join(DATA, "dominance.json"), dom = existsSync(domFile) ? JSON.parse(readFileSync(domFile, "utf8") || "{}") : {};
-  dom[snap.date] = [snap.btc, snap.eth, snap.total, coins.length, snap.source, +((coins.find(c => c[0] === "USDT") || [0, 0, 0, 0])[3] / snap.total * 100).toFixed(3)];
+  dom[snap.date] = [snap.btc, snap.eth, snap.total, Math.min(200, coins.length), snap.source, +((coins.slice(0, 200).find(c => c[0] === "USDT") || [0, 0, 0, 0])[3] / snap.total * 100).toFixed(3)];
   writeFileSync(domFile, "{\n" + Object.keys(dom).sort().map(k => JSON.stringify(k) + ": " + JSON.stringify(dom[k])).join(",\n") + "\n}\n");
 
   // new in the top 200: how many snapshots in a row, counted back from today, a coin has been on the list
   const days = readdirSync(dir).filter(f => /^\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort().slice(-NEW_WINDOW).reverse();
-  const sets = days.map(f => new Set(JSON.parse(readFileSync(join(dir, f), "utf8")).coins.map(c => c[0])));
+  const sets = days.map(f => new Set(JSON.parse(readFileSync(join(dir, f), "utf8")).coins.slice(0, 200).map(c => c[0]))); /* the top 200, also in snapshots that keep 300 */
   const ready = sets.length >= NEW_WINDOW, fresh = {};
   if (ready) for (const sym of sets[0]) { let n = 0; while (n < sets.length && sets[n].has(sym)) n++; if (n < NEW_WINDOW) fresh[sym] = n; }
   writeFileSync(join(DATA, "new.json"), JSON.stringify({ updated: snap.date, snapshots: readdirSync(dir).length, window: NEW_WINDOW, ready, coins: fresh }, null, 1) + "\n");
   return { days: Object.keys(dom).length, fresh };
+}
+export function writeReading(day, r) { /* one line per day in readings.json; a day already there is replaced */
+  const file = join(DATA, "readings.json"), all = existsSync(file) ? JSON.parse(readFileSync(file, "utf8") || "{}") : {};
+  all[day] = r;
+  writeFileSync(file, "{\n" + Object.keys(all).sort().map(k => JSON.stringify(k) + ": " + JSON.stringify(all[k])).join(",\n") + "\n}\n");
+  return Object.keys(all).length;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   let found;
   try { found = await pageList(); }
   catch (e) { console.log("CoinAtlas list not available (" + e.message.split("\n")[0] + "), using a public top 200 instead"); found = await apiList(); }
-  const hist = await recordHistory(), snap = build(found);
+  const hist = await recordHistory(), snap = build(found, await extras());
   if (hist.fgToday != null) snap.fg = hist.fgToday;
   const out = write(snap);
+  if (found.reading) console.log("reading:", found.reading.call, "· score", found.reading.score, "·", writeReading(DAY, Object.assign({ recorded: snap.taken }, found.reading)), "days recorded");
   const on = new Set(snap.coins.map(c => c[0])), logos = await recordLogos(found.coins.filter(c => on.has(String(c[0]).toUpperCase())).map(c => [String(c[0]).toUpperCase(), ...c.slice(1)])).catch(e => ({ saved: 0, missing: e.message }));
   console.log("logos: saved", logos.saved, "· still without a logo:", logos.missing);
   console.log("history: BTC|ETH", hist.ratio || "unchanged", "days · Fear & Greed", hist.fg || "unchanged", "days");

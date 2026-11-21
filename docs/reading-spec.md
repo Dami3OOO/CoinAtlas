@@ -298,7 +298,22 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Schritte: 1. Account-ID, Passwort, synchronisierte Einstellungen. 2. Bitcoin-Zahlung. 3. USDC/ETH später (günstiges Netzwerk oder Bezahldienst).
   Ersetzt die 4-stellige PIN-Sperre.
 
+## Snapshot-System (21.11.2026, überarbeitet)
+
+- Zeitpunkt: offiziell direkt nach Mitternacht New York; ein Snapshot ist der Abschluss des New Yorker Tages, der gerade endete.
+  GitHub startet den Job 4× zwischen 00:05 und 00:50 New Yorker Zeit (Sommer 04:xx UTC, Winter 05:xx UTC); scripts/snapshot-time.mjs lässt
+  nur den ersten Lauf in der Mitternachtsstunde aufzeichnen ("ny": true). Ersatzlauf 17:15 UTC füllt nur einen fehlenden Tag ("late": true).
+- Snapshot: Top 300 (Seite mit index.html?snapshot=1, Besucher sehen weiter 200): Symbol, Name, Preis, Market Cap, 24h-Volumen, Umlaufmenge.
+  Volumen und Umlaufmenge nur von Coinpaprika, damit die Reihe vergleichbar bleibt. Total, Dominanz und "New in Top 200" aus den ersten 200.
+- readings.json: das Reading des BTC|ETH Ratio für jeden Tag (Empfehlung, Schlüssel, Stufe, Phase, Linien-Abstand, Score, Marken, Ratio,
+  Fear & Greed, Text), so wie die Formel es mit den Daten bis Tagesende sagte. Das ist der echte, vorher festgehaltene Track Record.
+- derivatives.json (noch ungenutzt): Open Interest, Funding und Long/Short-Verhältnis von BTC und ETH bei Binance, Bybit, OKX, Bitget,
+  Hyperliquid und Deribit; jede Börse einzeln (Binance und Bybit sperren US-Server). Binance füllt, wo erreichbar, die letzten 30 Tage nach.
+- TOTAL200 rückwirkend: scripts/backfill-total200.mjs (Workflow "Backfill TOTAL200", von Hand): 365 Tage CoinGecko-Market-Caps der heutigen
+  Top 500 (ohne Wrapped/Staked), pro Tag die 200 größten addiert. Coins, die damals Top 200 waren und heute nicht mehr in den Top 500 sind,
+  fehlen, daher leicht zu niedrig; Quelle "CoinGecko backfill". Eigene Aufzeichnungen werden nie ersetzt; der Snapshots-Tab zeigt diese Tage nicht.
+
 ## Offene Punkte
 
 - Kritischer Rundum-Test des neuen Systems (nur auf Wunsch des Nutzers).
-- Ab sofort das Reading des Tages mitschreiben, um die Regeln an ungesehenen Tagen zu prüfen.
+- Reading des Tages wird ab 22.11.2026 mitgeschrieben (data/readings.json); nach einigen Monaten an ungesehenen Tagen prüfen.
