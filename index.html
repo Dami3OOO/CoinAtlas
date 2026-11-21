@@ -417,9 +417,9 @@
   .sqm-front span::after { content: ""; position: absolute; inset: 9px 4px; border-left: 1px solid #999; border-right: 1px solid #999; }
   .sqm-map.dragging .sqm-sq, .sqm-map.dragging .sqm-front { transition: none; } .sqm-map.dragging { cursor: ew-resize; user-select: none; }
   .sqm-lg { display: grid; place-items: center; } .sqm-lg .logo { width: 100%; height: 100%; margin: 0; max-width: none; font-size: 9px; } .sqm-auto { width: auto; padding: 0 10px; font-size: 12px; } .sqm-foot { text-align: center; margin-top: 8px; }
-  #sq-screen { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column; background: var(--bg); } #sq-screen[hidden] { display: none; }
-  #sq-screen .sqm-body { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 12px 16px 14px; } #sq-screen .sqm-map { flex: 1; height: auto; min-height: 300px; }
-  body.sq-full #pop { z-index: 230; }
+  .sqm-gl, .sqm-rl { position: absolute; top: 0; bottom: 0; overflow: hidden; transition: width .6s ease, left .6s ease; } .sqm-in { transition: left .6s ease, width .6s ease; }
+  .sqm-map.dragging .sqm-gl, .sqm-map.dragging .sqm-rl, .sqm-map.dragging .sqm-in { transition: none; } .sqm-gl { left: 0; } .sqm-rl { right: 0; } .sqm-in { position: absolute; top: 0; left: 0; height: 100%; }
+  .sqm-sq { cursor: pointer; }
   .sq .logo { width: 60%; height: 60%; font-size: 13px; }
   .snap-note { margin: 2px 0 8px; line-height: 1.5; } .snap-sec { margin-top: 16px; }
   .snap-day { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; overflow: hidden; }
@@ -3590,16 +3590,17 @@
     renderSnaps();
   });
 
-  /* ---------- SENTIMENT SQUARES: every coin a square, its size by how far it moved, green ones left and red ones right, the strongest at the outer edges.
-     The glowing line between them, the Sentiment Front, moves with the market. Squares glide to their new place on every update, flash on a sudden move,
-     and fly into the new picture when the timeframe changes. In the Landing Area, or full screen ---------- */
+  /* ---------- SENTIMENT SQUARES: every coin a square with its logo, its size by how far it moved, green ones left and red ones right, the strongest at the outer edges.
+     Green and red are each laid out once, the smaller side on at least half the width. The Sentiment Front is a window between them: dragging it reveals squares
+     of one side and covers the other, without moving a single square. Squares glide on every update, flash on a sudden move, fly into the new picture when
+     the timeframe changes. A click locks the coin's chart in the Landing Area ---------- */
   var sqVisible = false, sqBtn = document.getElementById("sq-btn"), sqBox = document.getElementById("sq-container");
   var SQ_KEY = "coinatlas-squares", sqS = { tf: "today", top: 200 }; try { var sqo = JSON.parse(localStorage.getItem(SQ_KEY) || "{}"); if (sqo.tf) sqS.tf = sqo.tf; if (sqo.top) sqS.top = sqo.top; } catch (e) {}
   function sqSave() { try { localStorage.setItem(SQ_KEY, JSON.stringify(sqS)); } catch (e) {} }
   var SQ_TF = [["today", "Today"], ["1h", "1H"], ["24h", "24H"], ["7d", "7D"], ["30d", "30D"], ["1y", "1Y"]];
   var SQ_TIER = { today: [1, 3, 6, 10], "1h": [0.5, 1, 2, 4], "24h": [1, 3, 6, 10], "7d": [3, 8, 15, 25], "30d": [5, 15, 30, 50], "1y": [10, 40, 100, 200] };
   var SQ_UP = ["#1d4a31", "#1f6a3e", "#22864b", "#29a25a", "#31c26a"], SQ_DN = ["#4b1f22", "#6c2228", "#8e272f", "#b02d36", "#d2343e"];
-  var sqPap = null, sqPapAt = 0, sqPapBusy = false, sqFull = false, sqViews = {}, sqLastPc = {}, sqSplit = { land: null, full: null };
+  var sqPap = null, sqPapAt = 0, sqPapBusy = false, sqView = null, sqLastPc = {}, sqSplit = null, sqDrag = null, sqHover = null;
   function sqLoadPap() { /* 1H to 1Y for every coin in one request, refreshed once a minute while the squares are open */
     if (sqPapBusy || (sqPap && Date.now() - sqPapAt < 60000)) return;
     sqPapBusy = true;
@@ -3647,115 +3648,103 @@
       '<span><b style="color:var(--up)">' + up.length + '</b> up · <b style="color:var(--down)">' + dn.length + '</b> down · median ' + sqFmt(med) + '</span>' + by("BTC") + by("ETH") + '</div>' +
       (n ? '<div class="sqm-top"><span>▲ ' + esc(top(up, false) || '–') + '</span><span>▼ ' + esc(top(dn, true) || '–') + '</span></div>' : '');
   }
-  function sqCtrlHtml(full) {
+  function sqCtrlHtml() {
     return '<div class="sqm-ctrl"><div class="fg-timeframes">' + SQ_TF.map(function (t) { return '<button type="button" data-sqtf="' + t[0] + '"' + (sqS.tf === t[0] ? ' class="active"' : '') + '>' + t[1] + '</button>'; }).join("") + '</div>' +
       '<div class="fg-timeframes">' + [50, 100, 200].map(function (t) { return '<button type="button" data-sqtop="' + t + '"' + (sqS.top === t ? ' class="active"' : '') + '>Top ' + t + '</button>'; }).join("") + '</div>' +
-      (sqSplit[full ? "full" : "land"] != null ? '<button type="button" class="sqm-x sqm-auto" data-sqauto="1" title="Put the Sentiment Front back where the market puts it">Auto</button>' : '') +
-      (full ? '' : '<button type="button" class="sqm-x" data-sqfull="1" title="Full screen" aria-label="Full screen">⤢</button>') + '</div>';
+      (sqSplit != null ? '<button type="button" class="sqm-x sqm-auto" data-sqauto="1" title="Put the Sentiment Front back where the market puts it">Auto</button>' : '') + '</div>';
   }
-  function sqView(host, full) { /* builds the frame once; the squares inside are kept and moved */
-    var v = sqViews[full ? "full" : "land"];
-    if (!v || !host.contains(v.map)) {
-      host.innerHTML = (full ? '' : '<div class="pinned-card chart-container pf-card dev-target sqm-card" data-dev-name="Sentiment Squares" data-dev-color="#34d399"><div class="pf-title">Sentiment Squares</div>') +
-        '<div class="sqm-ctrl-w"></div><div class="sqm-head"></div><div class="sqm-map"><div class="sqm-front" title="Drag to give green or red more room · double click: back to the market\'s split"><span></span></div></div><div class="sqm-foot fg-sub"></div>' + (full ? '' : '</div>');
-      v = sqViews[full ? "full" : "land"] = { host: host, map: host.querySelector(".sqm-map"), els: {}, first: true };
-    }
-    return v;
+  function sqMakeView() { /* the frame is built once; the squares inside are kept and moved */
+    if (sqView && sqBox.contains(sqView.map)) return sqView;
+    sqBox.innerHTML = '<div class="pinned-card chart-container pf-card dev-target sqm-card" data-dev-name="Sentiment Squares" data-dev-color="#34d399"><div class="pf-title">Sentiment Squares</div>' +
+      '<div class="sqm-ctrl-w"></div><div class="sqm-head"></div><div class="sqm-map"><div class="sqm-gl"><div class="sqm-in"></div></div><div class="sqm-rl"><div class="sqm-in"></div></div>' +
+      '<div class="sqm-front" title="Drag to reveal more red or more green · double click: back to the market\'s split"><span></span></div></div><div class="sqm-foot fg-sub"></div></div>';
+    var m = sqBox.querySelector(".sqm-map");
+    return (sqView = { map: m, gl: m.querySelector(".sqm-gl"), rl: m.querySelector(".sqm-rl"), gin: m.querySelector(".sqm-gl .sqm-in"), rin: m.querySelector(".sqm-rl .sqm-in"), front: m.querySelector(".sqm-front"), els: {}, first: true, W: 0, Gw: 0, Rw: 0, auto: 0 });
   }
-  function sqPaintView(v, d, full) {
-    v.host.querySelector(".sqm-ctrl-w").innerHTML = sqCtrlHtml(full);
-    v.host.querySelector(".sqm-head").innerHTML = sqHeadHtml(d);
-    v.host.querySelector(".sqm-foot").textContent = (d.nod ? d.nod + " coins without data for " + SQ_TF.filter(function (t) { return t[0] === sqS.tf; })[0][1] + " · " : "") + d.stable + " stablecoins left out · size = how far a coin moved";
+  function sqPlaceFront(v) { /* only the window between the two sides moves */
+    var W = v.W, x = Math.max(0, Math.min(W, sqSplit != null ? sqSplit * W : v.auto));
+    v.gl.style.width = x + "px"; v.rl.style.left = x + "px"; v.rin.style.left = (W - v.Rw - x) + "px"; v.front.style.left = x + "px";
+  }
+  function sqPaint(d) {
+    var v = sqMakeView();
+    v.map.parentNode.querySelector(".sqm-ctrl-w").innerHTML = sqCtrlHtml();
+    v.map.parentNode.querySelector(".sqm-head").innerHTML = sqHeadHtml(d);
+    v.map.parentNode.querySelector(".sqm-foot").textContent = (d.nod ? d.nod + " coins without data for " + SQ_TF.filter(function (t) { return t[0] === sqS.tf; })[0][1] + " · " : "") + d.stable + " stablecoins left out · size = how far a coin moved · click a square to lock its chart";
     var W = v.map.clientWidth, H = v.map.clientHeight; if (!(W > 0 && H > 0)) return;
     var up = d.items.filter(function (x) { return x.pc >= 0; }).sort(function (a, b) { return b.w - a.w; }), dn = d.items.filter(function (x) { return x.pc < 0; }).sort(function (a, b) { return b.w - a.w; });
-    var su = up.reduce(function (s, x) { return s + x.w; }, 0), sd = dn.reduce(function (s, x) { return s + x.w; }, 0), Wu = su + sd > 0 ? W * su / (su + sd) : W, out = [], o2 = [];
-    var man = sqSplit[full ? "full" : "land"]; if (man != null && su > 0 && sd > 0) Wu = W * man; /* the front was dragged: green and red share the width as set */
-    sqTree(up, 0, 0, Wu, H, out); sqTree(dn, 0, 0, W - Wu, H, o2);
-    o2.forEach(function (r) { r.x = W - r.x - r.w; }); out = out.concat(o2); /* losers mirrored: the strongest at the right edge */
+    var su = up.reduce(function (s, x) { return s + x.w; }, 0), sd = dn.reduce(function (s, x) { return s + x.w; }, 0), share = su + sd > 0 ? su / (su + sd) : 1;
+    var Gw = !dn.length ? W : !up.length ? 0 : W * Math.max(share, 0.5), Rw = !up.length ? W : !dn.length ? 0 : W * Math.max(1 - share, 0.5); /* the smaller side gets at least half the width, hidden until the front is dragged */
+    v.W = W; v.Gw = Gw; v.Rw = Rw; v.auto = W * share;
+    v.gin.style.width = Gw + "px"; v.rin.style.width = Rw + "px";
+    var gOut = [], rOut = []; sqTree(up, 0, 0, Gw, H, gOut); sqTree(dn, 0, 0, Rw, H, rOut);
+    rOut.forEach(function (r) { r.x = Rw - r.x - r.w; }); /* red mirrored: the strongest at the right edge */
     var seen = {}, tier = SQ_TIER[sqS.tf][0];
-    out.forEach(function (r) {
+    var put = function (r, host) {
       var x = r.n, el = v.els[x.sym], g = 1.5, key = x.sym + "|" + sqS.tf; seen[x.sym] = 1;
-      if (!el) { el = v.els[x.sym] = document.createElement("div"); el.className = "sqm-sq nt"; v.map.appendChild(el); }
+      if (!el) { el = v.els[x.sym] = document.createElement("div"); el.className = "sqm-sq nt"; }
+      if (el.parentNode !== host) { el.classList.add("nt"); host.appendChild(el); } /* changed sides: no glide across the window */
       el.dataset.i = x.i; el.style.left = (r.x + g / 2) + "px"; el.style.top = (r.y + g / 2) + "px"; el.style.width = Math.max(0, r.w - g) + "px"; el.style.height = Math.max(0, r.h - g) + "px"; el.style.background = sqColor(x.pc);
-      var m = Math.min(r.w, r.h), lab = r.w >= 42 && r.h >= 34 ? 2 : m >= 12 ? 1 : 0, fs = Math.max(9, Math.min(22, m / 4.2)), html = "";
-      if (lab === 2) html = '<span class="sqm-l">' + (m >= 70 ? logoHtml(x.c).replace(' loading="lazy"', '') : '') + '<b style="font-size:' + fs.toFixed(1) + 'px">' + esc(x.sym) + '</b><i style="font-size:' + Math.max(9, fs * 0.72).toFixed(1) + 'px">' + sqFmt(x.pc) + '</i></span>';
-      else if (lab === 1) { var ls = Math.round(Math.min(28, m * 0.62)); html = '<span class="sqm-l sqm-lg" style="width:' + ls + 'px;height:' + ls + 'px">' + logoHtml(x.c).replace(' loading="lazy"', '') + '</span>'; } /* small squares: the logo instead of the symbol */
-      var sig = lab + "|" + html.length + "|" + sqFmt(x.pc) + "|" + Math.round(fs); if (el.dataset.sig !== sig) { el.dataset.sig = sig; el.innerHTML = html; }
-      el.title = x.c.name + " · " + sqFmt(x.pc);
+      var m = Math.min(r.w, r.h), ls = m >= 10 ? Math.round(Math.min(72, m * 0.62)) : 0, sig = String(ls);
+      if (el.dataset.sig !== sig) { el.dataset.sig = sig; el.innerHTML = ls ? '<span class="sqm-lg" style="width:' + ls + 'px;height:' + ls + 'px">' + logoHtml(x.c).replace(' loading="lazy"', '') + '</span>' : ''; }
+      el.title = x.c.name + " (" + x.sym + ") · " + sqFmt(x.pc);
       var last = sqLastPc[key]; if (!v.first && last !== undefined && Math.abs(x.pc - last) >= tier * 0.25) { el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse"); } /* a sudden move flashes */
-    });
-    out.forEach(function (r) { sqLastPc[r.n.sym + "|" + sqS.tf] = r.n.pc; });
+    };
+    gOut.forEach(function (r) { put(r, v.gin); }); rOut.forEach(function (r) { put(r, v.rin); });
+    gOut.concat(rOut).forEach(function (r) { sqLastPc[r.n.sym + "|" + sqS.tf] = r.n.pc; });
     Object.keys(v.els).forEach(function (s) { if (!seen[s]) { v.els[s].remove(); delete v.els[s]; } });
-    var fr = v.map.querySelector(".sqm-front"); fr.style.left = Wu + "px"; fr.hidden = !(su > 0 && sd > 0);
-    if (v.first) { v.first = false; requestAnimationFrame(function () { Object.keys(v.els).forEach(function (s) { v.els[s].classList.remove("nt"); }); }); }
-    else requestAnimationFrame(function () { Object.keys(v.els).forEach(function (s) { v.els[s].classList.remove("nt"); }); });
+    v.front.hidden = !(up.length && dn.length); sqPlaceFront(v); v.first = false;
+    requestAnimationFrame(function () { Object.keys(v.els).forEach(function (s) { v.els[s].classList.remove("nt"); }); });
   }
   function sqDraw() {
-    if (!sqVisible && !sqFull) return;
+    if (!sqVisible) return;
     if (sqS.tf !== "today") sqLoadPap();
-    else coins.slice(0, sqS.top).forEach(function (c) { if (dayOpenCache[c.symbol] === undefined && !c.__pendingMidnight) { c.__pendingMidnight = true; midnightQueue.push(c); } }), processMidnightQueue();
-    var d = sqItems();
-    if (sqFull) sqPaintView(sqView(sqScreenBody, true), d, true);
-    else if (sqVisible) sqPaintView(sqView(sqBox, false), d, false);
+    else { coins.slice(0, sqS.top).forEach(function (c) { if (dayOpenCache[c.symbol] === undefined && !c.__pendingMidnight) { c.__pendingMidnight = true; midnightQueue.push(c); } }); processMidnightQueue(); }
+    sqPaint(sqItems());
   }
   function renderSquares() {
-    if (!sqVisible) { sqBox.hidden = true; sqBox.innerHTML = ""; delete sqViews.land; updatePinnedColVisibility(); return; }
+    if (!sqVisible) { sqBox.hidden = true; sqBox.innerHTML = ""; sqView = null; updatePinnedColVisibility(); return; }
     sqBox.hidden = false; updatePinnedColVisibility(); sqDraw();
   }
-  /* the full screen version */
-  var sqScreen = document.createElement("div"); sqScreen.id = "sq-screen"; sqScreen.hidden = true;
-  sqScreen.innerHTML = '<div class="cs-bar"><b class="cs-title">Sentiment Squares</b><span class="cs-info"></span><button type="button" class="cs-land" data-sqland="1">Send to Landing Area</button><button type="button" class="cs-close" data-sqclose="1" aria-label="Close">✕</button></div><div class="sqm-body"></div>';
-  document.body.appendChild(sqScreen);
-  var sqScreenBody = sqScreen.querySelector(".sqm-body");
-  function sqOpenFull() { sqFull = true; sqScreen.hidden = false; document.body.classList.add("cs-open", "sq-full"); delete sqViews.full; sqScreenBody.innerHTML = ""; if (sqVisible) { sqBox.hidden = true; updatePinnedColVisibility(); } sqDraw(); }
-  function sqCloseFull(toLanding) {
-    sqFull = false; sqScreen.hidden = true; document.body.classList.remove("cs-open", "sq-full"); sqHidePop();
-    if (toLanding) { sqVisible = true; sqBtn.classList.add("active"); }
-    delete sqViews.land; renderSquares(); if (toLanding) sqBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  function sqPin(c) { /* like a click in the list: lock the coin's chart in the Landing Area, or show it if it is there already */
+    sqHidePop(); current = -1;
+    var card = pinnedEl.querySelector('.pinned-card[data-sym="' + c.symbol + '"]');
+    if (!card) { pinnedCoins.push(c); cardTf[c.symbol] = "1D"; renderPinned(); card = pinnedEl.querySelector('.pinned-card[data-sym="' + c.symbol + '"]'); }
+    if (card) { card.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" }); card.classList.add("flash"); setTimeout(function () { card.classList.remove("flash"); }, 350); }
   }
-  function sqClick(e) {
-    var t = e.target.closest("[data-sqtf],[data-sqtop],[data-sqfull],[data-sqland],[data-sqclose],[data-sqauto]"); if (!t) return;
-    if (t.dataset.sqauto) { sqSplit[sqFull ? "full" : "land"] = null; sqDraw(); return; }
-    if (t.dataset.sqtf) { sqS.tf = t.dataset.sqtf; sqSave(); sqDraw(); }
-    else if (t.dataset.sqtop) { sqS.top = +t.dataset.sqtop; sqSave(); sqDraw(); }
-    else if (t.dataset.sqfull) sqOpenFull();
-    else if (t.dataset.sqland) sqCloseFull(true);
-    else if (t.dataset.sqclose) sqCloseFull(false);
-  }
-  sqBox.addEventListener("click", sqClick); sqScreen.addEventListener("click", sqClick);
-  /* drag the Sentiment Front to give the smaller side room; a double click puts it back */
-  var sqDrag = null;
-  function sqDown(e) {
-    var f = e.target.closest(".sqm-front"); if (!f) return;
-    var map = f.parentNode; e.preventDefault(); sqDrag = { map: map, key: sqFull ? "full" : "land" }; map.classList.add("dragging"); sqHidePop();
-    try { f.setPointerCapture(e.pointerId); } catch (x) {}
-  }
-  function sqDragMove(e) {
-    if (!sqDrag) return; var r = sqDrag.map.getBoundingClientRect();
-    sqSplit[sqDrag.key] = Math.max(0.08, Math.min(0.92, (e.clientX - r.left) / r.width)); sqDraw();
-  }
-  function sqUp() { if (!sqDrag) return; sqDrag.map.classList.remove("dragging"); sqDrag = null; }
-  [sqBox, sqScreen].forEach(function (el) { el.addEventListener("pointerdown", sqDown); el.addEventListener("pointermove", sqDragMove); el.addEventListener("pointerup", sqUp); el.addEventListener("pointercancel", sqUp);
-    el.addEventListener("dblclick", function (e) { if (e.target.closest(".sqm-front")) { sqSplit[sqFull ? "full" : "land"] = null; sqDraw(); } }); });
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && sqFull) sqCloseFull(false); });
-  window.addEventListener("resize", function () { if (sqVisible || sqFull) sqDraw(); });
-  var sqHover = null;
+  sqBox.addEventListener("click", function (e) {
+    var t = e.target.closest("[data-sqtf],[data-sqtop],[data-sqauto]");
+    if (t) { if (t.dataset.sqtf) sqS.tf = t.dataset.sqtf; else if (t.dataset.sqtop) sqS.top = +t.dataset.sqtop; else sqSplit = null; sqSave(); sqDraw(); return; }
+    var sq = e.target.closest(".sqm-sq"), c = sq && coins[+sq.dataset.i]; if (c) sqPin(c);
+  });
+  /* the Sentiment Front as a window: drag it, double click it to put it back */
+  sqBox.addEventListener("pointerdown", function (e) {
+    var f = e.target.closest(".sqm-front"); if (!f || !sqView) return;
+    e.preventDefault(); sqDrag = true; sqView.map.classList.add("dragging"); sqHidePop(); try { f.setPointerCapture(e.pointerId); } catch (x) {}
+  });
+  sqBox.addEventListener("pointermove", function (e) {
+    if (!sqDrag || !sqView) return; var r = sqView.map.getBoundingClientRect(), v = sqView;
+    var lo = (v.W - v.Rw) / v.W, hi = v.Gw / v.W; sqSplit = Math.max(lo, Math.min(hi, (e.clientX - r.left) / r.width)); /* no further than one side has squares */
+    sqPlaceFront(v); var w = sqBox.querySelector(".sqm-ctrl-w"); if (w && !w.querySelector("[data-sqauto]")) w.innerHTML = sqCtrlHtml();
+  });
+  var sqUp = function () { if (!sqDrag) return; sqDrag = false; if (sqView) sqView.map.classList.remove("dragging"); };
+  sqBox.addEventListener("pointerup", sqUp); sqBox.addEventListener("pointercancel", sqUp);
+  sqBox.addEventListener("dblclick", function (e) { if (e.target.closest(".sqm-front")) { sqSplit = null; sqDraw(); } });
+  window.addEventListener("resize", function () { if (sqVisible) sqDraw(); });
   function sqShowPop(c) { /* the same hover chart as in the list */
     var k = chartCache[c.symbol + "-" + sourceKey];
     if (k && Date.now() - k.at < CHART_TTL) popEl.innerHTML = k.d ? chart(c, k.d, k.d.tag, false, 'popup') : placeholder(c, "No trading-day chart for this coin", false);
     else { popEl.innerHTML = placeholder(c, "Loading chart…", false); fetchChart(c).then(function () { if (sqHover === c.symbol) sqShowPop(c); }, function () {}); }
   }
   function sqHidePop() { if (sqHover !== null) { sqHover = null; popEl.classList.remove("on"); } }
-  function sqMove(e) {
+  sqBox.addEventListener("mousemove", function (e) {
     if (devFrozen || sqDrag) return;
     var el = e.target.closest(".sqm-sq"), c = el && coins[+el.dataset.i]; if (!c) { sqHidePop(); return; }
     if (sqHover !== c.symbol) { sqHover = c.symbol; current = -1; sqShowPop(c); }
     place(e); popEl.classList.add("on");
-  }
-  sqBox.addEventListener("mousemove", sqMove); sqScreen.addEventListener("mousemove", sqMove);
-  sqBox.addEventListener("mouseleave", function () { if (!devFrozen) sqHidePop(); }); sqScreen.addEventListener("mouseleave", function () { if (!devFrozen) sqHidePop(); });
+  });
+  sqBox.addEventListener("mouseleave", function () { if (!devFrozen) sqHidePop(); });
   sqBtn.addEventListener("click", function () { sqVisible = !sqVisible; sqBtn.classList.toggle("active", sqVisible); renderSquares(); });
-  setInterval(function () { if (sqVisible || sqFull) sqDraw(); }, 3000);
+  setInterval(function () { if (sqVisible && !sqDrag) sqDraw(); }, 3000);
 
   /* ---------- ROADMAP ---------- */
   var roadmapVisible = false;
@@ -3791,7 +3780,7 @@
       desc: "To Allow Users to save their Settings, Customized Lists, Portfolios and use future features, Personal Accounts have to be introduced. Because i dont believe in Google or Phone Number Accounts, and prioritize Privacy, we're going to be taking a different Approach: an Account is unlocked like a Giftcard, by supporting CoinAtlas with Bitcoin." },
     { title: "Forums", notes: ["Not started. Depends on Accounts."], desc: "Allows Users to communicate via Forums we Provide. Certain Users might also be allowed to create their Own Forums with their own features. This is the main Usecase for Accounts." },
     { title: "Price Alerts & Watchlists", notes: ["Not started. The daily Snapshots could later power Alerts for Coins entering or leaving the Top 200."], desc: "Allows Users to Set Alerts that are going to immediately announce when a Token Reaches a Certain, customizable price threshold. Watchlists are going to be integrated alongside that. users will be able to create and share their own Lists." },
-    { title: "CoinAtlas Sentiment Squares", st: "wip", notes: ["Reworked: every coin a square sized by how far it moved, colour stronger the bigger the move, symbol and % inside. Green squares left, red right, the strongest at the outer edges; the glowing Sentiment Front between them shows the share of coins up and moves with the market.", "Squares glide to their new place on every update, flash on a sudden move and fly into the new picture when the timeframe changes. Today, 1H, 24H, 7D, 30D, 1Y (Coinpaprika), Top 50 / 100 / 200, stablecoins left out. In the Landing Area or full screen, with Send to Landing Area.", "Open: a replay of the last 24 hours, and a size option by Market Cap."], desc: "200 Assets, 200 Squares. Every Square is one Asset — green means it's up, red means it's down. No numbers, no noise. One glance and you know exactly where the Market's Head is at." },
+    { title: "CoinAtlas Sentiment Squares", st: "wip", notes: ["Reworked: every coin a square with its logo, sized by how far it moved, colour stronger the bigger the move. Green squares left, red right, the strongest at the outer edges; the glowing Sentiment Front between them shows the share of coins up and can be dragged like a window to reveal the hidden side, without moving a single square.", "Squares glide to their new place on every update, flash on a sudden move and fly into the new picture when the timeframe changes. A click locks the coin's chart in the Landing Area. Today, 1H, 24H, 7D, 30D, 1Y (Coinpaprika), Top 50 / 100 / 200, stablecoins left out.", "Open: a replay of the last 24 hours, and a size option by Market Cap."], desc: "200 Assets, 200 Squares. Every Square is one Asset — green means it's up, red means it's down. No numbers, no noise. One glance and you know exactly where the Market's Head is at." },
     { title: "Google Trends", notes: ["A first attempt was removed again: the search data could not be fetched reliably.", "Next idea: Google offers an official embed for every Trends chart. It would show the chart on the site without an API, but its numbers could not feed the Formula."], desc: "The Goal is To Incorporate Google Trends Into Fear and Greed and into the BTC ETH Ratio tab. Our Workflow is as followed: We determine Extreme Situations, because we go by one rule of thumb: The More Extreme a Situation Is, the more Temporary its going to be. And Google Trends is yet another Confirmation. If we see Extreme Explosions of Certain Searches every time we create the High of the Year, than thats another indicator for us to use. And it goes for the Opposite Case as well. If we see Certain Trends Explode once we create the Low of the Year [which means that afterwards we only saw green], so its bullish, then thats also a Indicator.\nStarts on BTC, Maps out to ETH and eventually the entire Top 200." },
     { title: "Charting History", notes: ["Planned. TOTAL200, BTC.D and USDT.D are house-made from the daily snapshots, so their charts start on 12 Nov 2026. Their history before that will be fetched at some point."], desc: "Complete the history of the house-made charts on the Charts screen." },
     { title: "Fear and Greed Index Rework", st: "wip", notes: ["Done: Average Monthly and Average Yearly are one section now, Past Years. Every year shows the average of all its days and opens into its twelve months; All Years on top averages each month over every year. Several years can be open at once to compare.", "Findings from the history since February 2018, as the base for the rest of the rework:", "Periods: Fear lasts a median of 21 days, Greed 31, Neutral only 8. Neutral is mostly a passage, not a state.", "After Greed: 9 of 13 Neutral periods that came out of Greed went on into Fear, the first Fear day a median of 8 days later and within 28 days in three of four cases. The Reading already says \"Prepare your USDC for the next period of Fear\" there.", "After Fear: 17 of 29 Neutral periods that came out of Fear went back into Fear.", "Extremes come in series: after Extreme Fear the next extreme was Extreme Fear again 30 times and Extreme Greed 4 times; after Extreme Greed, Extreme Greed again 9 times and Extreme Fear 4 times.", "Bear Years (2018, 2022, 2026): 72 to 93% of the days in Fear, almost never Extreme Greed. June was the lowest month every time (average 18), in line with the Bear Year Extreme Window of June and July.", "Bull Years (2021, 2025): January in Greed (81 and 72), December in Fear (29 and 22).", "Bridge Years: the second Bridge Year ended in Extreme Greed both times (November and December 2020: 86 and 92, 2024: 80 and 76). The first Bridge Year is mixed: 2019 ended in Fear, 2023 in Greed.", "Every year type rests on only two to four years, so these are patterns to watch, not rules."], desc: "Rework the Fear and Greed Index around how its periods change: show the current period with its length, what usually follows it, and how the year type has behaved month by month, so it can point to the next period of Fear or Greed before it starts." },
