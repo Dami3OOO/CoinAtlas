@@ -92,7 +92,10 @@
   .sub-grp { padding-left: 14px; border-left: 1px solid var(--line); margin-left: 4px; display: none; flex-direction: column; gap: 10px; }
   .sub-grp.on { display: flex; }
   .kbd-hint { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 600; line-height: 1; padding: 3px 6px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); background: var(--hover); pointer-events: none; }
-  .search:focus-within .kbd-hint { display: none; }
+  .search:focus-within .kbd-hint, .search.has-q .kbd-hint { display: none; }
+  #q::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; display: none; } .search.has-q #q { padding-right: 34px; }
+  .q-clear { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; display: grid; place-items: center; padding: 0; font: inherit; font-size: 12px; line-height: 1; color: var(--muted); background: transparent; border: 0; border-radius: 50%; cursor: pointer; }
+  .q-clear:hover { color: var(--fg); background: var(--hover); } .q-clear[hidden] { display: none; }
 
   .settings { position: relative; }
   .box { position: absolute; right: 0; top: 100%; padding-top: 8px; z-index: 30; visibility: hidden; opacity: 0; transition: opacity 0.15s ease, visibility 0.15s ease; transition-delay: 0s; }
@@ -927,6 +930,7 @@
     <div class="search">
       <input id="q" type="search" placeholder="Search coins" autocomplete="off" spellcheck="false" aria-label="Search coins" role="combobox" aria-expanded="false" aria-controls="results">
       <span class="kbd-hint" aria-hidden="true" title="Press T to search">T</span>
+      <button type="button" class="q-clear" id="q-clear" aria-label="Clear the search" title="Clear" hidden>✕</button>
       <ul id="results" role="listbox" hidden></ul>
     </div>
       <button class="gear" type="button" id="fg-btn">Fear & Greed Index</button>
@@ -2400,6 +2404,12 @@
     if (row) { closeResults(); qEl.blur(); var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; row.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" }); Array.prototype.forEach.call(rowsEl.querySelectorAll(".flash"), function (r) { r.classList.remove("flash"); }); clearTimeout(flashTimer); flashTimer = setTimeout(function () { row.classList.add("flash"); flashTimer = setTimeout(function () { row.classList.remove("flash"); }, 900); }, reduce ? 0 : 350); }
   }
   qEl.addEventListener("input", paintResults);
+  /* the X on the right of the search: shown while something is typed, clears it in one click */
+  var qClear = document.getElementById("q-clear");
+  function qClearShow() { var on = !!qEl.value; qClear.hidden = !on; qEl.parentNode.classList.toggle("has-q", on); }
+  qEl.addEventListener("input", qClearShow);
+  qClear.addEventListener("mousedown", function (e) { e.preventDefault(); });
+  qClear.addEventListener("click", function () { qEl.value = ""; qClearShow(); paintResults(); closeResults(); qEl.focus(); });
   qEl.addEventListener("focus", function () { if (qEl.value.trim()) paintResults(); });
   qEl.addEventListener("keydown", function (e) {
     if (e.key === "Escape") { closeResults(); return; } if (!matches.length || resEl.hidden) return;
