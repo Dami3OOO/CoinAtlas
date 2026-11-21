@@ -392,3 +392,12 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   (so kann man mehrere Assets nacheinander hinzufügen); erst ein zweiter Klick auf dasselbe Asset scrollt zu seinem Chart.
 - Portfolio-Zeilen: hinter dem Wert steht, aus welchen Wallets der Coin kommt: Name der Wallet, sonst "Manual Wallet n" bzw. die gekürzte
   Adresse, bei Adressen mit den Netzwerken in Klammern ("Main Wallet (Ethereum, Base), XYZ"). Im Share-Bild heißt eine Adresse ohne Namen nur "Wallet".
+
+## Asset-Tags (21.11.2026)
+
+- Geprüft gegen den Snapshot vom 21.11.2026 (Top 200): vorher 70 Assets ohne Tag, jetzt 0.
+- Neue Kategorien mit eigenem Filter im Filters-Fenster: AI, Gaming, Exchange (Börsen- und CeFi-Tokens), Gambling, Entertainment.
+- Bestehende Listen ergänzt (Layer 1, Layer 2, DeFi, Infrastructure, Payment, Meme); FIDD (Fidelity Digital Dollar) ist ein Stablecoin;
+  BEAM aus Privacy entfernt (der heutige BEAM ist das Gaming-Netzwerk).
+- Ein Coin kann in mehreren Listen stehen (Filter); der Tag im Chart zeigt die erste Kategorie in der Reihenfolge Meme, Privacy, RWA,
+  Exchange, Gambling, Entertainment, Gaming, AI, DeFi, Infrastructure, Payment, Layer 2, Layer 1.

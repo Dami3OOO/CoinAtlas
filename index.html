@@ -982,6 +982,11 @@
                 <button class="filter-option" data-filter="rwa">RWA</button>
                 <button class="filter-option" data-filter="privacy">Privacy</button>
                 <button class="filter-option" data-filter="meme">Meme</button>
+                <button class="filter-option" data-filter="ai">AI</button>
+                <button class="filter-option" data-filter="gaming">Gaming</button>
+                <button class="filter-option" data-filter="exchange">Exchange</button>
+                <button class="filter-option" data-filter="gambling">Gambling</button>
+                <button class="filter-option" data-filter="entertainment">Entertainment</button>
                 <button class="filter-option" data-filter="stablecoins">Stablecoins</button>
               </div>
             </div>
@@ -1177,19 +1182,24 @@
   var DERIVATIVE_SYMBOLS = ["WETH","WBTC","WBETH","WSTETH","STETH","WEETH","EETH","EZETH","RSETH","RETH","CBETH","CBBTC","METH","SWETH","OETH","WBNB","WAVAX","WMATIC","WPOL","WTRX","WSOL","JITOSOL","MSOL","BNSOL","JUPSOL","BBSOL","BTCB","TBTC","SOLVBTC","LBTC","FBTC","UNIBTC","USDT0","SUSDE","SUSDS","SDAI","BUIDL","USTB","USYC","JTRSY"];
   var DERIVATIVE_NAME = /\b(wrapped|staked|restaked|bridged|tokenized|heloc|binance-peg)\b/i;
   var STABLECOINS = ["USDT","USDC","DAI","BUSD","TUSD","USDP","FDUSD","PYUSD","USDD","USDE","USDB","GUSD","FRAX","LUSD","USDS","CRVUSD","USD1","USDG","RLUSD","GHO","USD0","AUSD","USDAI","USDF","USDGO","OUSD","BFUSD","USDTB",
-    /* stablecoins of other currencies: euro, pound, franc, yen, Singapore dollar, real, lira */ "EURC","EURT","EURS","EURI","EURCV","AEUR","EURE","EUROC","EURR","VEUR","GBPT","TGBP","XCHF","VCHF","JPYC","GYEN","XSGD","BRZ","BRLA","TRYB"];
+    /* stablecoins of other currencies: euro, pound, franc, yen, Singapore dollar, real, lira */ "EURC","EURT","EURS","EURI","EURCV","AEUR","EURE","EUROC","EURR","VEUR","GBPT","TGBP","XCHF","VCHF","JPYC","GYEN","XSGD","BRZ","BRLA","TRYB","FIDD"];
   
-  var LAYER1 = ["BTC","ETH","SOL","BNB","ADA","AVAX","DOT","ATOM","NEAR","APT","SUI","SEI","TIA","INJ","TON","TRX","XRP","LTC","BCH","ETC","XLM","ALGO","HBAR","ICP","FTM","S","ENA","BERA","HYPE","MOVE","RAY","KAIA","XDC","EGLD","NEO","VET","FIL","RUNE","KAS","TAO","PI","ONDO","XMR","ZEC","DASH","EOS","AR","CELO","OSMO","KAVA","SCRT","ROSE","AKT","CHEQ","ASTR","GLMR","MOVR","CFX","WAN","KSM","WAVES","XTZ","MINA"];
-  var LAYER2 = ["MATIC","POL","ARB","OP","IMX","STRK","MANTA","METIS","BLAST","MODE","ZK","LRC","SKL","CTSI","BOBA","OMG","HERMEZ","TAIKO","XAI","CYBER","LAT","DYM","AVAIL","ALT","SAFE","PRIME"];
+  var LAYER1 = ["BTC","ETH","SOL","BNB","ADA","AVAX","DOT","ATOM","NEAR","APT","SUI","SEI","TIA","INJ","TON","TRX","XRP","LTC","BCH","ETC","XLM","ALGO","HBAR","ICP","FTM","S","ENA","BERA","HYPE","MOVE","RAY","KAIA","XDC","EGLD","NEO","VET","FIL","RUNE","KAS","TAO","PI","ONDO","XMR","ZEC","DASH","EOS","AR","CELO","OSMO","KAVA","SCRT","ROSE","AKT","CHEQ","ASTR","GLMR","MOVR","CFX","WAN","KSM","WAVES","XTZ","MINA","GRAM","MON","FLR","QTUM","QRL","A","LUNC","PROS","M"];
+  var LAYER2 = ["MATIC","POL","ARB","OP","IMX","STRK","MANTA","METIS","BLAST","MODE","ZK","LRC","SKL","CTSI","BOBA","OMG","HERMEZ","TAIKO","XAI","CYBER","LAT","DYM","AVAIL","ALT","SAFE","PRIME","MNT","STX","BTW"];
   
   var CATS = {
     layer1: LAYER1, layer2: LAYER2,
-    defi: ["UNI","AAVE","MKR","SKY","LDO","CRV","COMP","CAKE","PENDLE","ETHFI","ENA","MORPHO","JUP","RAY","AERO","CVX","SYRUP","FLUID","JTO","KNTQ","MET","DRV","ASTER","LIT","SNX","DYDX","GMX","YFI","SUSHI","1INCH","BAL","USUAL","FF"],
-    infra: ["LINK","GRT","FIL","AR","RENDER","AKT","TAO","FET","THETA","PYTH","ZRO","TIA","QNT","TRAC","ICP","GRASS","ENS","GNO","IOTA","VIRTUAL","WLD","JASMY","AWE","KITE","ZAMA","STORJ","ANKR","API3","UB"],
-    payment: ["XRP","XLM","LTC","BCH","BSV","DASH","XEC","TEL","CRO","HBAR","STABLE","XPL","USDT","USDC","DAI","PYUSD","USDD","USDE","USDS","FDUSD","TUSD","USD1","USDG","RLUSD","EURC"],
+    defi: ["UNI","AAVE","MKR","SKY","LDO","CRV","COMP","CAKE","PENDLE","ETHFI","ENA","MORPHO","JUP","RAY","AERO","CVX","SYRUP","FLUID","JTO","KNTQ","MET","DRV","ASTER","LIT","SNX","DYDX","GMX","YFI","SUSHI","1INCH","BAL","USUAL","FF","JST","SUN","STG","ZRX","RSR","ORCA","EDGE","O","BR","BETH","WLFI","HEX","RAIN","NMR"],
+    infra: ["LINK","GRT","FIL","AR","RENDER","AKT","TAO","FET","THETA","PYTH","ZRO","TIA","QNT","TRAC","ICP","GRASS","ENS","GNO","IOTA","VIRTUAL","WLD","JASMY","AWE","KITE","ZAMA","STORJ","ANKR","API3","UB","BTT","AIOZ","GLM","HOT","ICNT","GEOD","GOMINING","XCN","PROM","GAS","BAT","TWT","SFP"],
+    payment: ["XRP","XLM","LTC","BCH","BSV","DASH","XEC","TEL","CRO","HBAR","STABLE","XPL","USDT","USDC","DAI","PYUSD","USDD","USDE","USDS","FDUSD","TUSD","USD1","USDG","RLUSD","EURC","ZBCN","PIEVERSE"],
     rwa: ["ONDO","PAXG","XAUT","USDY","CC","POLYX","CFG","PLUME","TRU","XDC"],
-    meme: ["DOGE","SHIB","PEPE","BONK","WIF","FLOKI","TRUMP","PENGU","SPX","USELESS","PUMP","MEME","BRETT","POPCAT","MOG","TURBO","NEIRO","BOME","FARTCOIN","GOAT","PNUT","MOODENG"],
-    privacy: ["XMR","ZEC","DASH","XVG","SCRT","BDX","FIRO","ARRR","ZEN","DCR","BEAM","GRIN","PIVX","ROSE","NIGHT"]
+    meme: ["DOGE","SHIB","PEPE","BONK","WIF","FLOKI","TRUMP","PENGU","SPX","USELESS","PUMP","MEME","BRETT","POPCAT","MOG","TURBO","NEIRO","BOME","FARTCOIN","GOAT","PNUT","MOODENG","M","币安人生","DOG","NPC","TIBBIR","B"],
+    ai: ["TAO","FET","VIRTUAL","RENDER","WLD","GRASS","VVV","SENT","DGAI","TIBBIR","AIOZ","GLM","PROM","AKT","KITE","IO","NEAR","NMR","PIEVERSE"],
+    gaming: ["AXS","MANA","SAND","SUPER","AKE","CARDS","NFT","IMX","PRIME","GALA","APE","ILV","BEAM","RON","YGG","ENJ","FLOW"],
+    exchange: ["LEO","OKB","BGB","GT","KCS","MX","BTSE","VSN","NEXO","CRO","WOO"],
+    gambling: ["SHFL","RLB"],
+    entertainment: ["CHZ","MMT"],
+    privacy: ["XMR","ZEC","DASH","XVG","SCRT","BDX","FIRO","ARRR","ZEN","DCR","GRIN","PIVX","ROSE","NIGHT"]
   };
   var MAX_LIST = /[?&]snapshot=1\b/.test(location.search) ? 300 : 200, MIN_VOL = 10000, QUOTES = ["USDT", "USDC"]; /* the daily snapshot keeps the top 300 (index.html?snapshot=1); visitors always get 200 */
   var CACHE_MS = 60 * 1000, CACHE_PREFIX = "top200-cache-";
@@ -1951,7 +1961,7 @@
     var s = c.symbol.toUpperCase();
     if (s === "BTC") return "Heart of Crypto";
     if (STABLECOINS.indexOf(s) > -1) return "Stablecoin";
-    var N = { meme: "Meme", privacy: "Privacy", rwa: "RWA", defi: "DeFi", infra: "Infrastructure", payment: "Payment", layer2: "Layer 2", layer1: "Layer 1" };
+    var N = { meme: "Meme", privacy: "Privacy", rwa: "RWA", exchange: "Exchange", gambling: "Gambling", entertainment: "Entertainment", gaming: "Gaming", ai: "AI", defi: "DeFi", infra: "Infrastructure", payment: "Payment", layer2: "Layer 2", layer1: "Layer 1" };
     for (var k in N) if (CATS[k].indexOf(s) > -1) return N[k];
     return "";
   }
