@@ -225,6 +225,15 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Linked Hover, Tint Strongest Months und Altcoin Dominance Line sind immer an und keine Schalter mehr.
 - Experimental: Dev Mode, Party Mode.
 
+## Sentiment Squares (21.11.2026, Rework)
+
+- Jede Kachel ein Coin, Fläche nach Bewegung (|%|^0,8 plus kleiner Sockel, damit ruhige Coins sichtbar bleiben), Farbe in 5 Stufen je Zeitraum
+  (Grenzen z. B. 24H: 1/3/6/10 %). Grün links, Rot rechts, jeweils als Squarified Treemap, der Stärkste außen. Dazwischen die leuchtende
+  "Sentiment Front"; ihre Lage ist der Anteil der Gewinner an der Fläche. Kopf: Anteil up, up/down, Median, BTC, ETH, je 3 stärkste.
+- Animation: Kacheln gleiten bei jedem Update (alle 3 s) und Zeitraumwechsel an ihren Platz (0,6 s); Sprung >= 1/4 der ersten Farbstufe: kurzes Aufleuchten.
+- Zeiträume: Today (seit Tagesbeginn wie bisher), 1H, 24H, 7D, 30D, 1Y aus Coinpaprika tickers (eine Anfrage, einmal pro Minute). Top 50/100/200.
+  Stablecoins ausgelassen. Landing Area (Knopf ⤢) oder Vollbild mit "Send to Landing Area". Einstellungen in localStorage "coinatlas-squares".
+
 ## Fear & Greed Index: Past Years (21.11.2026)
 
 - Ersetzt "Average Monthly Index Value" und "Average Yearly Index Value". Eine Karte pro Jahr (neuestes oben) mit dem Durchschnitt aller Tage
