@@ -406,3 +406,16 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   (Top 300) nach data/tags.json ({updated, source, coins, failed, tags: {SYM: [tag, …]}}). Eine Abfrage pro CoinGecko-Kategorie (20),
   ohne Schlüssel 13 s Pause, mit COINGECKO_KEY 2,2 s. Zuordnung über Namen, oder über das Symbol bei Rang ≤ 400. "stable" nur bei Preis 0,85–1,35.
   Die Seite übernimmt diese Tags nur für Coins ohne handgemachten Tag (die eigenen Listen haben Vorrang). Fehler stoppen den Snapshot nie.
+
+## Where can I stake? (21.11.2026)
+
+- scripts/record-staking.mjs (nachts nach dem Snapshot, Schritt "Record staking"): feste, handverlesene Anbieterliste (PROVIDERS) – nur seit
+  Jahren bekannte, geprüfte Anbieter ohne Verlust von Nutzergeld; kein Restaking, keine Börsen, keine Stablecoin-Renditen außer Aave (als "Lending").
+  Raten von DefiLlama Yields, nur apyBase (keine Bonus-Token), über 30 % wird verworfen. Pro Coin die 3 besten Optionen; natives Staking ohne
+  öffentliche Rate steht mit Link und ohne Zahl ("Rate on site") hinten. Ergebnis: data/staking.json ({updated, source, missing, assets}).
+  Ohne Netz bzw. STAKING_OFFLINE=1 wird nur die Liste ohne Raten geschrieben; ein Fehler behält die letzte Datei.
+- Liste: lavendelfarbenes Badge "STAKING APY 7.2%" (bzw. "LENDING APY …", "STAKING" ohne Rate) mit der besten Rate der Top 3; das
+  "NEW IN TOP 200"-Badge ist jetzt gelb. Filter "Staking" im Filters-Fenster (nach Marketcap wie die Liste).
+- Locked Hovercharts: Abschnitt "Staking" unter Tokenomics (Einstellung "Show Staking", Standard an): Name als Link (Hover zeigt die Domain),
+  Art (Liquid/Native Staking, Lending), Locked/Unlocked, Rate (APR bei nativem Staking, sonst APY). Hinweis: nur echte Rate, kein Finanzrat,
+  CoinAtlas verbindet sich nie mit der Wallet, "CoinAtlas is not sponsored by any of these Staking Providers" (fällt bei Partnerschaften weg).

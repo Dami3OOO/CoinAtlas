@@ -435,7 +435,17 @@
   .pf-lock-title { font-size: 14px; font-weight: 700; text-align: center; padding: 0 28px; }
   .pf-lock-sub { color: var(--muted); font-size: 11px; line-height: 1.5; text-align: center; margin: 4px 0 10px; }
   .avg-tag.off { transform: none; border-style: dashed; }
-  .badge-new { background: rgba(167, 139, 250, 0.12); color: #a78bfa; border: 1px solid rgba(167, 139, 250, 0.35); margin-left: auto; }
+  .badge-new { background: rgba(250, 204, 21, 0.12); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.35); margin-left: auto; }
+  .badge-stake { background: rgba(196, 181, 253, 0.12); color: #c4b5fd; border: 1px solid rgba(196, 181, 253, 0.35); margin-left: auto; white-space: nowrap; }
+  .badge-new ~ .badge-stake, .badge-stake ~ .badge-new { margin-left: 6px; }
+  .chart-stake-section { margin-top: 16px; font-size: 12px; text-align: center; border-top: 1px solid var(--line); padding-top: 12px; }
+  .stake-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 13px; text-align: left; }
+  .stake-row:last-of-type { border-bottom: none; }
+  .stake-row a { color: var(--fg); font-weight: 600; text-decoration: none; border-bottom: 1px dotted var(--muted); } .stake-row a:hover { color: #c4b5fd; border-bottom-color: #c4b5fd; }
+  .stake-row .k { display: block; font-size: 11px; color: var(--muted); font-weight: 400; margin-top: 1px; }
+  .stake-row .lk { font-size: 11px; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--line); color: var(--muted); } .stake-row .lk.un { color: var(--up); border-color: rgba(76, 194, 122, 0.3); }
+  .stake-row .r { font-weight: 700; color: #c4b5fd; min-width: 74px; text-align: right; font-variant-numeric: tabular-nums; } .stake-row .r.na { color: var(--muted); font-weight: 400; }
+  .stake-note { margin-top: 8px; font-size: 10.5px; line-height: 1.5; color: var(--muted); }
   body:not(.dev-mode) #snap-btn, body:not(.dev-mode) #snap-container, #snap-container[hidden] { display: none !important; }
   #snap-container, #sq-container { margin-bottom: 20px; } #sq-container[hidden] { display: none !important; }
   .sq-count { display: flex; justify-content: center; gap: 14px; font-size: 12px; font-weight: 600; margin: -6px 0 12px; font-variant-numeric: tabular-nums; }
@@ -987,6 +997,7 @@
                 <button class="filter-option" data-filter="exchange">Exchange</button>
                 <button class="filter-option" data-filter="entertainment">Entertainment</button>
                 <button class="filter-option" data-filter="stablecoins">Stablecoins</button>
+                <button class="filter-option" data-filter="staking">Staking</button>
               </div>
             </div>
             <div class="filter-section" id="networks-section" style="display: none;">
@@ -1065,6 +1076,7 @@
                 <div class="grp"><span class="lbl">Show Description</span><button class="toggle" type="button" id="desc-toggle" role="switch" aria-checked="true" aria-label="Show descriptions in locked charts"><span></span></button></div>
                 <div class="grp"><span class="lbl">Show Contracts</span><button class="toggle" type="button" id="chains-toggle" role="switch" aria-checked="true" aria-label="Show chains in locked charts"><span></span></button></div>
                 <div class="grp"><span class="lbl">Show Socials</span><button class="toggle" type="button" id="socials-toggle" role="switch" aria-checked="true" aria-label="Show socials in locked charts"><span></span></button></div>
+                <div class="grp"><span class="lbl">Show Staking</span><button class="toggle" type="button" id="staking-toggle" role="switch" aria-checked="true" aria-label="Show staking in locked charts"><span></span></button></div>
                 <div class="grp"><span class="lbl">Show Tokenomics</span><button class="toggle" type="button" id="tokenomics-toggle" role="switch" aria-checked="true" aria-label="Show tokenomics in locked charts"><span></span></button></div>
                 <div class="grp"><span class="lbl">Advanced Time Display</span><button class="toggle" type="button" id="adv-time-toggle" role="switch" aria-checked="false" aria-label="Show advanced chart times"><span></span></button></div>
               <div class="set-note" id="adv-time-note"></div>
@@ -1188,6 +1200,7 @@
   
   var CATS = {
     layer1: LAYER1, layer2: LAYER2,
+    staking: [], /* filled from data/staking.json */
     defi: ["UNI","AAVE","MKR","SKY","LDO","CRV","COMP","CAKE","PENDLE","ETHFI","ENA","MORPHO","JUP","RAY","AERO","CVX","SYRUP","FLUID","JTO","KNTQ","MET","DRV","ASTER","LIT","SNX","DYDX","GMX","YFI","SUSHI","1INCH","BAL","USUAL","FF","JST","SUN","STG","ZRX","RSR","ORCA","EDGE","O","BR","BETH","WLFI","HEX","RAIN","NMR"],
     infra: ["LINK","GRT","FIL","AR","RENDER","AKT","TAO","FET","THETA","PYTH","ZRO","TIA","QNT","TRAC","ICP","GRASS","ENS","GNO","IOTA","VIRTUAL","WLD","JASMY","AWE","KITE","ZAMA","STORJ","ANKR","API3","UB","BTT","AIOZ","GLM","HOT","ICNT","GEOD","GOMINING","XCN","PROM","GAS","BAT","TWT","SFP"],
     payment: ["XRP","XLM","LTC","BCH","BSV","DASH","XEC","TEL","CRO","HBAR","STABLE","XPL","USDT","USDC","DAI","PYUSD","USDD","USDE","USDS","FDUSD","TUSD","USD1","USDG","RLUSD","EURC","ZBCN","PIEVERSE"],
@@ -1323,6 +1336,32 @@
   var chainsOn = true; try { chainsOn = localStorage.getItem(CHAINS_KEY) !== "0"; } catch (e) {}
   var socialsOn = true; try { socialsOn = localStorage.getItem(SOCIALS_KEY) !== "0"; } catch (e) {}
   var tknOn = true; try { tknOn = localStorage.getItem(TKN_KEY) !== "0"; } catch (e) {}
+  /* ---- STAKING: trusted providers only (data/staking.json, made each night by scripts/record-staking.mjs) ---- */
+  var STAKE_KEY = "coinatlas-staking", stakeOn = true, stakeData = {}; try { stakeOn = localStorage.getItem(STAKE_KEY) !== "0"; } catch (e) {}
+  function stakeOf(c) { return c && stakeData[String(c.symbol).toUpperCase()]; }
+  function stakeRate(x) { return x.kind === "Native Staking" ? "APR" : "APY"; }
+  function stakeBadgeText(st) { /* "STAKING APY 7.2%": the best rate of the options shown */
+    var top = st.best != null ? st.list.filter(function (x) { return x.apy === st.best; })[0] : null;
+    return (st.label === "Lending" ? "LENDING" : "STAKING") + (top ? " " + stakeRate(top) + " " + (st.best >= 10 ? st.best.toFixed(1) : st.best.toFixed(2).replace(/0$/, "")) + "%" : "");
+  }
+  function stakeHtml(c) {
+    var st = stakeOf(c); if (!st) return "";
+    var rows = st.list.map(function (x) {
+      var host = ""; try { host = new URL(x.url).hostname.replace(/^www\./, ""); } catch (e) {}
+      return '<div class="stake-row"><div><a href="' + esc(x.url) + '" target="_blank" rel="noopener noreferrer" title="' + esc(host) + '">' + esc(x.name) + '</a><span class="k">' + esc(x.kind) + (x.note ? ' · ' + esc(x.note) : '') + '</span></div>' +
+        '<span class="lk' + (x.locked ? '' : ' un') + '" title="' + (x.locked ? 'Getting out takes a waiting time' : 'Can be withdrawn or swapped any time') + '">' + (x.locked ? 'Locked' : 'Unlocked') + '</span>' +
+        '<span class="r' + (x.apy == null ? ' na' : '') + '">' + (x.apy == null ? 'Rate on site' : stakeRate(x) + ' ' + x.apy.toFixed(2) + '%') + '</span></div>';
+    }).join("");
+    return '<div class="chart-stake-section dev-target" data-dev-name="Staking" data-dev-color="#c4b5fd"><div class="chart-sub-header">' + (st.label === "Lending" ? "Lending" : "Staking") + '</div>' + rows +
+      '<div class="stake-note">Only the real ' + (st.label === "Lending" ? "lending" : "staking") + ' rate, no bonus tokens. Rates change daily. Not financial advice. CoinAtlas never connects to your wallet.<br>CoinAtlas is not sponsored by any of these ' + (st.label === "Lending" ? "Lending" : "Staking") + ' Providers.</div></div>';
+  }
+  function applyStakeBadges() {
+    Array.prototype.forEach.call(rowsEl.children, function (row, i) {
+      var c = displayCoins[i], w = row.querySelector(".name-wrap"), old = row.querySelector(".badge-stake"), st = stakeOf(c);
+      if (old) old.remove();
+      if (st && w) { var b = document.createElement("span"); b.className = "badge badge-stake"; b.textContent = stakeBadgeText(st); b.title = "Where to stake: open its Locked Hoverchart"; var nw = w.querySelector(".badge-new"); if (nw) w.insertBefore(b, nw); else w.appendChild(b); }
+    });
+  }
   var fgaOn = true; try { fgaOn = localStorage.getItem(FGA_KEY) !== "0"; } catch (e) {}
   function stg(y) { var n = cycleStage(y); return '<span class="st st-' + n.split(" ")[0].toLowerCase() + '">' + n + '</span>'; }
   function cycleStage(y) { return y % 4 === 1 ? "Bull Year" : y % 4 === 2 ? "Bear Year" : "Bridge Year"; }
@@ -1427,7 +1466,7 @@
       var rank = c.market_cap_rank || i + 1;
       return '<tr data-i="' + i + '"><td>' + rank + '</td><td><div class="coin">' + logoHtml(c) + '<div class="name-wrap"><span class="name-text">' + esc(c.name) + ' <span class="sym">' + esc(c.symbol) + '</span></span><div class="badges-container"></div></div></div></td><td>' + price(c.current_price) + '</td><td title="' + (c.market_cap != null ? "$" + c.market_cap.toLocaleString("en-US") : "") + '">' + compact(c.market_cap) + "</td></tr>";
     }).join("");
-    applyNewBadges();
+    applyNewBadges(); applyStakeBadges();
     applyRankArrows();
     applyAgo();
     currentGainSym = null;
@@ -1881,6 +1920,7 @@
 
         html += '</div></div>';
       }
+      if (stakeOn) html += stakeHtml(c);
 
       if (chainsOn) {
         var contracts = c.contracts || {};
@@ -2666,6 +2706,8 @@
   var socialsToggle = document.getElementById("socials-toggle"); socialsToggle.setAttribute("aria-checked", socialsOn ? "true" : "false");
   socialsToggle.addEventListener("click", function () { socialsOn = !socialsOn; socialsToggle.setAttribute("aria-checked", socialsOn ? "true" : "false"); try { localStorage.setItem(SOCIALS_KEY, socialsOn ? "1" : "0"); } catch (e) {} renderPinned(); });
   
+  var stakeToggle = document.getElementById("staking-toggle"); stakeToggle.setAttribute("aria-checked", stakeOn ? "true" : "false");
+  stakeToggle.addEventListener("click", function () { stakeOn = !stakeOn; stakeToggle.setAttribute("aria-checked", stakeOn ? "true" : "false"); try { localStorage.setItem(STAKE_KEY, stakeOn ? "1" : "0"); } catch (e) {} renderPinned(); });
   var tknToggle = document.getElementById("tokenomics-toggle"); tknToggle.setAttribute("aria-checked", tknOn ? "true" : "false");
   tknToggle.addEventListener("click", function () { tknOn = !tknOn; tknToggle.setAttribute("aria-checked", tknOn ? "true" : "false"); try { localStorage.setItem(TKN_KEY, tknOn ? "1" : "0"); } catch (e) {} renderPinned(); });
 
@@ -2875,10 +2917,14 @@
       if (n && w) { var b = document.createElement("span"); b.className = "badge badge-new"; b.textContent = "NEW IN TOP 200"; b.title = "On the list for " + n + (n === 1 ? " snapshot" : " snapshots") + " in a row"; w.insertBefore(b, w.querySelector(".badges-container")); }
     });
   }
+  repoJson("data/staking.json").then(function (j) {
+    if (!j || !j.assets) return; stakeData = j.assets; CATS.staking = Object.keys(j.assets);
+    applyStakeBadges(); if (pinnedCoins.length) renderPinned(); if (filterState.category === "staking") applyFilters(true);
+  }).catch(function () {});
   repoJson("data/tags.json").then(function (j) { /* tags the daily snapshot fetched for the top 300: only for coins without a hand-made tag */
     if (!j || !j.tags) return; var add = 0;
     Object.keys(j.tags).forEach(function (sym) {
-      if (sym === "BTC" || STABLECOINS.indexOf(sym) > -1 || Object.keys(CATS).some(function (k) { return CATS[k].indexOf(sym) > -1; })) return;
+      if (sym === "BTC" || STABLECOINS.indexOf(sym) > -1 || Object.keys(CATS).some(function (k) { return k !== "staking" && CATS[k].indexOf(sym) > -1; })) return;
       j.tags[sym].forEach(function (t) { if (t === "stable") { STABLECOINS.push(sym); add++; } else if (CATS[t]) { CATS[t].push(sym); add++; } });
     });
     if (add) { if (typeof renderPinned === "function" && pinnedCoins.length) renderPinned(); if (filterState.category) applyFilters(true); }
@@ -4003,7 +4049,7 @@
     { title: "Settings Window Overhaul", st: "done", notes: ["Done. The Settings open as Tabs: the Sections on the left, their Settings on the right, so the Window fits the Screen without scrolling. Every Header Button can be switched off."], desc: "A new Settings Window: grouped, searchable and easier to scan, without growing endlessly." },
     { title: "Crypto Investor Cheatsheet", notes: ["Not started. If the owner has published the sheet to the web, it can be embedded as it is instead of copied, so it always stays up to date."], desc: "Bring the Crypto Investor Cheatsheet onto the site as a reference next to the other tools." },
     { title: "X Market Sentiment", notes: ["Not started. Reading posts on X needs the paid X API or a paid social sentiment provider; scraping is against the terms of X and breaks often. The Fear & Greed Index already carries a social component."], desc: "A market sentiment built from what is being posted about Bitcoin and Ethereum on X." },
-    { title: "Where can i stake?", desc: "\"Staking\" Tag like the Highest Loss / Highest Gain Tags and Staking Filter, which displays every assets thats stakeable.\nAdd that into the Description of Tokens. The best Staking rewards and the APY shown on the site. It would in the future also show the Sites or wallets to stake on, and then you could collab with said Staking providers. So, the Goal is to let Users know how much they can get in Staking Rewards from the Top 3 Providers.\nThen theres an easy 3-Click Function where users can just Click on the Link to said Staking Provider, then connect their Wallet, and click Start Stake. Its as easy as that, if implemented Correctly." },
+    { title: "Where can i stake?", st: "wip", notes: ["Works: Staking section in the Locked Hovercharts (under Tokenomics, switchable in Settings): the top 3 options with a hoverable link, Liquid or Native Staking, Locked or Unlocked, and the real rate only (no bonus tokens).", "Works: lavender Staking tag in the list (\"STAKING APY 7.2%\", the best rate of the top 3) and a Staking filter. Stablecoins on Aave show as Lending.", "Only trusted providers from a hand-picked list (years on the market, audited, never lost user funds), e.g. Lido, Rocket Pool, Coinbase, Jito, Marinade, Benqi, Aave and the chains' own staking pages. Rates from DefiLlama, every night with the snapshot.", "Next: rates for Native Staking (Cosmos chains and Cardano can be read for free), more chains (NEAR, TRX, SUI, APT, TON). With partners: referral links, and the \"not sponsored\" line goes away."], desc: "\"Staking\" Tag like the Highest Loss / Highest Gain Tags and Staking Filter, which displays every assets thats stakeable.\nAdd that into the Description of Tokens. The best Staking rewards and the APY shown on the site. It would in the future also show the Sites or wallets to stake on, and then you could collab with said Staking providers. So, the Goal is to let Users know how much they can get in Staking Rewards from the Top 3 Providers.\nThen theres an easy 3-Click Function where users can just Click on the Link to said Staking Provider, then connect their Wallet, and click Start Stake. Its as easy as that, if implemented Correctly." },
     { title: "More Ways to Customize The Asset List", notes: ["Planned. Settings now have a Customization tab with Sub Tabs: Asset List (empty for now), Sentiment Squares (a skin for coins up 50% or more) and Portfolio Tint. Skins: Gold, Silver, Diamond, Emerald, Ruby, Sapphire."], desc: "Let Users make the Asset List their own: Effects like Gold or Diamond for strong movers, Colours, which Columns to show, Highlights for chosen Coins and more." },
     { title: "Portfolio Manager Network Additions", notes: ["Planned. Now: Ethereum, Base, Arbitrum, Optimism, Polygon, BNB Chain, Avalanche and Solana. Next without the Backend: more EVM chains via public RPCs, plus Bitcoin and Tron addresses. Sites like CoinGecko or CoinMarketCap cover 25+ networks through paid indexer APIs (e.g. Zerion, Moralis, Covalent); that needs the Backend for the API key.", "Once the Backend exists: Swaps on Solana, and on BNB Chain and Avalanche (these need an API key that must not sit in the public Site)."], desc: "More Networks for the Portfolio Manager, so Wallets on every common Chain are read, together with their Swaps." },
     { title: "Charts Additions", notes: ["Planned: more Assets on the Charts screen.", "Planned: Drawings saved to the Account. Every time a Drawing is added or changed, its type and position are saved. All Drawings together are encrypted into one string of letters and numbers, tied to the Account ID, and turned back into the Drawings when the site opens. Needs the Backend and Accounts."], desc: "More Assets for the Charts screen, and Drawings that are saved to your Account, so they are still there on the next visit and on every Device." },

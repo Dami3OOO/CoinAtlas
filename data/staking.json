@@ -1,0 +1,29 @@
+{
+ "updated": "2026-11-20",
+ "source": "list only, no rates",
+ "missing": [
+  "ETH Lido",
+  "ETH Rocket Pool",
+  "ETH Coinbase (cbETH)",
+  "SOL Jito",
+  "SOL Marinade",
+  "AVAX Benqi (sAVAX)",
+  "USDC Aave",
+  "USDT Aave",
+  "DAI Aave"
+ ],
+ "assets": {
+  "ETH": {"label":"Staking","best":null,"list":[{"name":"Ethereum Staking Launchpad","kind":"Native Staking","url":"https://launchpad.ethereum.org","locked":true,"apy":null,"tvl":null,"note":"32 ETH per validator"}]},
+  "SOL": {"label":"Staking","best":null,"list":[{"name":"Solana (native)","kind":"Native Staking","url":"https://solana.com/staking","locked":true,"apy":null,"tvl":null}]},
+  "AVAX": {"label":"Staking","best":null,"list":[{"name":"Core Wallet","kind":"Native Staking","url":"https://core.app/stake/","locked":true,"apy":null,"tvl":null}]},
+  "ADA": {"label":"Staking","best":null,"list":[{"name":"Lace Wallet","kind":"Native Staking","url":"https://www.lace.io","locked":false,"apy":null,"tvl":null}]},
+  "DOT": {"label":"Staking","best":null,"list":[{"name":"Polkadot Staking Dashboard","kind":"Native Staking","url":"https://staking.polkadot.cloud","locked":true,"apy":null,"tvl":null}]},
+  "ATOM": {"label":"Staking","best":null,"list":[{"name":"Keplr","kind":"Native Staking","url":"https://wallet.keplr.app/chains/cosmos-hub","locked":true,"apy":null,"tvl":null}]},
+  "TIA": {"label":"Staking","best":null,"list":[{"name":"Keplr","kind":"Native Staking","url":"https://wallet.keplr.app/chains/celestia","locked":true,"apy":null,"tvl":null}]},
+  "OSMO": {"label":"Staking","best":null,"list":[{"name":"Keplr","kind":"Native Staking","url":"https://wallet.keplr.app/chains/osmosis","locked":true,"apy":null,"tvl":null}]},
+  "INJ": {"label":"Staking","best":null,"list":[{"name":"Injective Hub","kind":"Native Staking","url":"https://hub.injective.network/stake","locked":true,"apy":null,"tvl":null}]},
+  "POL": {"label":"Staking","best":null,"list":[{"name":"Polygon Staking","kind":"Native Staking","url":"https://staking.polygon.technology","locked":true,"apy":null,"tvl":null}]},
+  "BNB": {"label":"Staking","best":null,"list":[{"name":"BNB Chain Staking","kind":"Native Staking","url":"https://www.bnbchain.org/en/bnb-staking","locked":true,"apy":null,"tvl":null}]},
+  "HYPE": {"label":"Staking","best":null,"list":[{"name":"Hyperliquid","kind":"Native Staking","url":"https://app.hyperliquid.xyz/staking","locked":true,"apy":null,"tvl":null}]}
+ }
+}

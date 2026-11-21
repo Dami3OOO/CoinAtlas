@@ -54,6 +54,11 @@ jobs:
         env:
           COINGECKO_KEY: ${{ secrets.COINGECKO_KEY }}
         run: node scripts/record-tags.mjs
+      # Staking: the best options from trusted providers, with DefiLlama's real rates. A failure keeps the last file and never stops the snapshot.
+      - name: Record staking
+        if: steps.due.outputs.run == 'true'
+        continue-on-error: true
+        run: node scripts/record-staking.mjs
       # Open interest, funding and long/short of BTC and ETH. A failure here never stops the snapshot.
       - name: Record derivatives
         if: steps.due.outputs.run == 'true'
