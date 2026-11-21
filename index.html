@@ -5210,6 +5210,10 @@
   function pfNextManual() { var n = 0; pfWallets.forEach(function (w) { var m = w.manual && /(\d+)$/.exec(w.def || ""); if (m) n = Math.max(n, +m[1]); }); return "Manual Wallet " + (n + 1); }
   function pfWName(w) { return w.name || (w.manual ? w.def : pfShort(w.addr)); }
   var pfEditW = null; /* the manual wallet whose coins are being edited */
+  function pfSrcText(h, share) { /* "Main Wallet (Ethereum, Base), XYZ"; in a shared image an unnamed address wallet is just "Wallet", so no address shows */
+    if (!h.src || !h.src.length) return (h.chains || []).join(", ");
+    return h.src.map(function (x) { var n = x.name || (share && !x.manual ? "Wallet" : x.def); return n + (x.chains.length ? " (" + x.chains.join(", ") + ")" : ""); }).join(", ");
+  }
   function pfShort(a) { return a.length > 14 ? a.slice(0, 6) + "…" + a.slice(-4) : a; }
   var PF_EYE = '<svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>', PF_EYE_OFF = '<svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6 0 10 7 10 7a17 17 0 0 1-3.2 3.9M6.6 6.6C3.9 8.3 2 12 2 12s4 7 10 7a9.7 9.7 0 0 0 5.4-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
   var PF_PEN = '<svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"/></svg>', PF_XS = '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>';
@@ -5264,8 +5268,11 @@
     if (!shown.length) { pfEdit = false; pfLock = null; pfSet({ status: "idle", msg: pfWallets.length ? "All saved wallets are hidden. Click the eye of a wallet to show it." : "" }); pfRenderBody(); pfRenderLock(); return; }
     var combine = function (bad) {
       var agg = {}, notes = [];
-      addrW.forEach(function (w) { var r = pfScanCache[w.addr.toLowerCase()]; if (!r) return; if (r.note) notes.push(r.note); r.holdings.forEach(function (h) { var a = agg[h.sym] || (agg[h.sym] = { sym: h.sym, amount: 0, chains: [] }); a.amount += h.amount; (h.chains || []).forEach(function (c) { if (a.chains.indexOf(c) < 0) a.chains.push(c); }); }); });
-      manW.forEach(function (w) { (w.holdings || []).forEach(function (h) { if (!(h.amount > 0)) return; var a = agg[h.sym] || (agg[h.sym] = { sym: h.sym, amount: 0, chains: [] }); a.amount += h.amount; if (a.chains.indexOf("Manual") < 0) a.chains.push("Manual"); }); });
+      var addSrc = function (a, w, chains) { /* where a coin comes from: the wallet's name (or "Manual Wallet n" / the address), with its networks */
+        var src = a.src || (a.src = []); src.push({ name: w.name || "", def: w.manual ? w.def : pfShort(w.addr), manual: !!w.manual, chains: chains || [] });
+      };
+      addrW.forEach(function (w) { var r = pfScanCache[w.addr.toLowerCase()]; if (!r) return; if (r.note) notes.push(r.note); r.holdings.forEach(function (h) { var a = agg[h.sym] || (agg[h.sym] = { sym: h.sym, amount: 0, chains: [] }); a.amount += h.amount; (h.chains || []).forEach(function (c) { if (a.chains.indexOf(c) < 0) a.chains.push(c); }); addSrc(a, w, h.chains); }); });
+      manW.forEach(function (w) { (w.holdings || []).forEach(function (h) { if (!(h.amount > 0)) return; var a = agg[h.sym] || (agg[h.sym] = { sym: h.sym, amount: 0, chains: [] }); a.amount += h.amount; addSrc(a, w, []); }); });
       if (addrW.length && bad.length === addrW.length && !manW.length) { pfSet({ status: "error", msg: "Couldn't read " + (addrW.length === 1 ? "this wallet" : "these wallets") + " right now. The public RPC may be busy, try again in a moment." }); pfRenderBody(); return; }
       var hasCt = !addrW.length || coins.some(function (c) { return c.contracts && (c.contracts.ethereum || c.contracts.solana); });
       var note = (bad.length ? "Couldn't read: " + bad.join(", ") + ". " : "") + notes.filter(function (n, i, l) { return l.indexOf(n) === i; }).join(" ");
@@ -5358,7 +5365,7 @@
         : a > 0 ? '<span class="pf-avg" title="' + ({ swaps: "From your stablecoin swaps", calc: "Calculated from your buys" }[pfSrcOf(r.h.sym)] || "Set by hand") + '">' + price5(a) + (pfSrcOf(r.h.sym) === "swaps" ? ' <i class="pf-src">swaps</i>' : '') + '</span>' : '<button type="button" class="pf-setavg" data-setavg="' + sym + '">Set Average Price</button>';
       html += '<div class="pf-row dev-target' + (pfEdit ? ' ed' : '') + (!pfEdit && !(a > 0) ? ' noavg' : '') + '" data-sym="' + sym + '" data-dev-name="Asset #' + (i + 1) + '" data-dev-color="#f59e0b">' +
         '<div class="pf-asset">' + logoHtml(r.c).replace(' loading="lazy"', '') + '<div class="nm"><b>' + esc(r.c.name) + ' <span class="sym">' + esc(r.c.symbol) + '</span></b>' +
-        '<span class="pf-sub">' + amtHtml + ' · <span class="pf-val">' + price(r.val) + '</span>' + (!pfEdit && r.h.chains && r.h.chains.length ? ' · ' + esc(r.h.chains.join(", ")) : '') + '</span></div></div>' +
+        '<span class="pf-sub">' + amtHtml + ' · <span class="pf-val">' + price(r.val) + '</span>' + (!pfEdit && pfSrcText(r.h) ? ' · <span class="pf-src-w" title="' + esc(pfSrcText(r.h)) + '">' + esc(pfSrcText(r.h)) + '</span>' : '') + '</span></div></div>' +
         '<div>' + avgHtml + '<div class="pf-pl">' + pfPlHtml(r) + '</div></div>' +
         '<div class="pf-price">' + price(r.c.current_price) + '</div>' +
         (med ? '<button class="pf-x" type="button" data-sym="' + sym + '" title="Remove" aria-label="Remove asset">×</button>' : '') + '</div>';
@@ -5495,7 +5502,7 @@
       if (im) g.drawImage(im, P + 8, cyy - 14, 28, 28); else { g.fillStyle = C.line; g.fillRect(P + 8, cyy - 14, 28, 28); font("700", 13); g.textBaseline = "middle"; txt(String(r.c.symbol[0] || "?").toUpperCase(), P + 22, cyy + 1, C.fg, "center"); g.textBaseline = "alphabetic"; }
       g.restore();
       font("600", 14); var nm = fit(r.c.name, 300); txt(nm, P + 46, cyy - 3, C.fg); var nw = g.measureText(nm).width; font("400", 12); txt(String(r.c.symbol).toUpperCase(), P + 52 + nw, cyy - 3, C.mu);
-      font("400", 12); txt(fit((cz ? "•••" : pfAmt(r.amt)) + " · " + (cz ? M : price(r.val)) + (r.h.chains && r.h.chains.length ? " · " + r.h.chains.join(", ") : ""), 400), P + 46, cyy + 15, C.mu);
+      font("400", 12); txt(fit((cz ? "•••" : pfAmt(r.amt)) + " · " + (cz ? M : price(r.val)) + (pfSrcText(r.h, true) ? " · " + pfSrcText(r.h, true) : ""), 400), P + 46, cyy + 15, C.mu);
       var a = pfAvgOf(r.h.sym); font("600", 13);
       if (pfStable(r.h.sym)) { txt("Stablecoin", P + 470, cyy + 4, C.st); }
       else if (a > 0) { txt(cz === 2 ? "$•••••" : price5(a), P + 470, cyy - 3, C.fg); var ch = (r.c.current_price - a) / a * 100; font("400", 12); txt(pcz(ch) + (cz ? "" : " [" + priceSigned((r.c.current_price - a) * r.amt) + "]"), P + 470, cyy + 15, ch >= 0 ? C.up : C.dn); }

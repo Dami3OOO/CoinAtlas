@@ -389,3 +389,5 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Unter-Tabs merken sich den letzten Tab pro Bereich; der aktive Unter-Tab ist hellgrau (#2a2a28) statt weiß.
 - Klick auf ein Asset in der Liste, dessen Locked Hoverchart schon offen ist: scrollt so, dass die Oberkante des Charts 16 px unter dem
   Bildschirmrand steht (vorher: Chart in der Mitte, bei hohen Charts zu tief). Ein neuer Chart, der außerhalb des Bildschirms entsteht, ebenso.
+- Portfolio-Zeilen: hinter dem Wert steht, aus welchen Wallets der Coin kommt: Name der Wallet, sonst "Manual Wallet n" bzw. die gekürzte
+  Adresse, bei Adressen mit den Netzwerken in Klammern ("Main Wallet (Ethereum, Base), XYZ"). Im Share-Bild heißt eine Adresse ohne Namen nur "Wallet".
