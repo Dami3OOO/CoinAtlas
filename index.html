@@ -528,7 +528,7 @@
   .snap-note { margin: 2px 0 8px; line-height: 1.5; } .snap-sec { margin-top: 16px; }
   .snap-day { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; overflow: hidden; }
   .snap-head { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr auto; gap: 10px; align-items: baseline; width: 100%; padding: 10px 14px; background: none; border: 0; color: var(--fg); font: inherit; font-size: 12px; font-weight: 600; text-align: left; cursor: pointer; font-variant-numeric: tabular-nums; }
-  .snap-head:hover, .snap-day.open .snap-head { background: var(--hover); } .snap-head b { font-size: 13px; font-weight: 700; }
+  .snap-head:hover, .snap-day.open .snap-head { background: var(--hover); } .snap-in .snap-head:hover, .snap-yr > .snap-head:hover { background: #2a2a28; } .snap-head b { font-size: 13px; font-weight: 700; }
   .snap-list { max-height: 360px; overflow-y: auto; border-top: 1px solid var(--line); padding: 6px 14px 10px; }
   .snap-list table { width: 100%; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; } .snap-list td { padding: 4px 0; border-bottom: 1px solid var(--line); } .snap-list td:nth-child(n+3) { text-align: right; padding-left: 14px; white-space: nowrap; } .snap-list td:first-child { color: var(--muted); width: 40px; } .snap-list td:nth-child(2) { padding-left: 8px; }
   #roadmap-container { margin-bottom: 20px; }
@@ -766,6 +766,7 @@
   .snx, .snx * { font-variant-numeric: normal !important; letter-spacing: normal; }
   .snx .fg-yr-wrap, .snx .rt-right .fg-yr-pick, .snx .fg-timeframes, .snx #fg-timer, .snx .fg-stats-col, .snx .fg-credit, .snx .rt-right { display: none !important; } .snx-tmp { position: absolute; left: 0; top: 0; width: 820px; visibility: hidden; }
   .snx-h { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; } .snx-t { text-align: center; } .snx-t b { display: block; font-size: 34px; letter-spacing: -0.02em; } .snx-t span { font-size: 17px; color: var(--fg); font-weight: 600; }
+  .snx-t2s { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin-top: 16px; } .snx-t2s div { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; border-top: 1px solid var(--line); padding-top: 8px; } .snx-t2s span { color: var(--muted); }
   .snx-rd .snx-rdt { font-size: 15px; line-height: 1.55; font-weight: 600; margin-bottom: 12px; } .snx-fm .fg-tip { display: none !important; } .snx-fm .rt-fm-rows, .snx-fm .rt-fm-total { font-size: 14px; } .snx.tags-off .badge, .snx.tag-off-stake .badge-stake, .snx.tag-off-gain .badge-gain, .snx.tag-off-loss .badge-loss, .snx.tag-off-new .badge-new { display: none; }
   .snx-brand { display: flex; align-items: center; gap: 10px; } .snx-brand svg { width: 36px; height: 36px; stroke: var(--fg); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; } .snx-brand b { font-size: 24px; letter-spacing: -0.02em; }
   .snx-f .snx-brand { justify-content: flex-end; } .snx-f .snx-brand svg { width: 28px; height: 28px; } .snx-f .snx-brand b { font-size: 20px; }
@@ -4169,6 +4170,14 @@
   function snapTopCoins(j, n) { /* the snapshot's first n coins with logos and details from today's list */
     return j.coins.slice(0, n).map(function (c, i) { var S = String(c[0]).toUpperCase(), live = coins.filter(function (x) { return String(x.symbol).toUpperCase() === S; })[0] || {}; return Object.assign({}, live, { symbol: S, name: c[1], rank: i + 1 }); });
   }
+  function snapT200Stats(k) { /* the year of TOTAL 200 in numbers, under its chart in the image */
+    var P = t200Points(k); if (P.length < 2) return "";
+    var v = P.map(function (p) { return p[1]; }), last = v[v.length - 1], hi = 0, lo = 0; v.forEach(function (x, i) { if (x > v[hi]) hi = i; if (x < v[lo]) lo = i; });
+    var d = function (i) { return new Date(P[i][0]).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" }); }, c = function (a, b) { var x = (a / b - 1) * 100; return '<b style="color:var(--' + (x >= 0 ? 'up' : 'down') + ')">[' + pct(x) + ']</b>'; };
+    var kv = function (a, b) { return '<div><span>' + a + '</span>' + b + '</div>'; };
+    return '<div class="snx-t2s">' + kv("Today", '<b style="color:' + T200_C + '">[' + compact(last) + ']</b>') + kv("Previous Day", c(last, v[v.length - 2])) + kv("Year Start", '<b>[' + compact(v[0]) + ']</b>') + kv("Year to Date", c(last, v[0])) +
+      kv("Year High · " + d(hi), '<b>[' + compact(v[hi]) + ']</b>') + kv("From the High", c(last, v[hi])) + kv("Year Low · " + d(lo), '<b>[' + compact(v[lo]) + ']</b>') + kv("From the Low", c(last, v[lo])) + '</div>';
+  }
   function snapPng(k, wk) { /* the whole day (or week) as one landscape image, built from the real UI and photographed, with a preview first */
     snapImgKind = wk ? "W" : "D"; snapImgTitle = wk ? wk.name + " · " + wk.range : ""; snapImgLast = k; var wkKeep = null, wkSwapped = false;
     var ov = document.getElementById("pf-sh"); if (!ov) { ov = document.createElement("div"); ov.id = "pf-sh"; ov.className = "pf-sh"; document.body.appendChild(ov); }
@@ -4189,7 +4198,7 @@
           '<div class="snx-col snx-left"><div class="snx-card snx-listc"><div class="snx-ch"><b>Top 50</b><span>' + (wk ? '[' + wk.name + '] · Tier and gain of the week' : '[Today] · Tier and gain of the day') + '</span></div><table><tbody>' + snapRowsHtml(k, j, 0, 50) + '</tbody></table></div></div>' +
           '<div class="snx-col snx-right">' +
             '<div class="snx-three">' +
-              '<div class="snx-col"><div class="snx-card"><div class="snx-ch"><b style="color:' + T200_C + '">TOTAL 200</b><span>[' + compact(j.total || 0) + ']</span></div>' + snapYearChart(t200Points(k), syYear(k), T200_C, "cap", 640, 200, false) + '</div>' +
+              '<div class="snx-col"><div class="snx-card"><div class="snx-ch"><b style="color:' + T200_C + '">TOTAL 200</b><span>[' + compact(j.total || 0) + ']</span></div>' + snapYearChart(t200Points(k), syYear(k), T200_C, "cap", 640, 200, false) + snapT200Stats(k) + '</div>' +
               '<div class="snx-card snx-fg" id="snx-fg"></div></div>' +
               '<div class="snx-card snx-rt" id="snx-rt"></div>' +
               '<div class="snx-col"><div class="snx-card snx-stk"><div class="snx-ch"><b style="color:#c4b5fd">Staking</b><span>[' + stakeCoins.length + ' with a rate]</span></div><div class="stk-card"><div class="stk-head"><span>#</span><span>Asset</span><span>Best Rate</span><span></span></div>' + snapStakeListHtml(k, stakeCoins) + '</div></div><div class="snx-card snx-rd" id="snx-rd"><div class="snx-ch"><b>BTC|ETH Reading</b><span id="snx-rdo"></span></div></div></div>' +
@@ -4204,8 +4213,8 @@
       /* BTC|ETH: Ratio, Season and Dominance above each other, each with its value of the day */
       var tr = document.createElement("div"); tr.className = "snx-tmp"; x.appendChild(tr); snapEmbedRatio(tr, k, "all");
       var rtc = document.getElementById("snx-rt"), rd = snapRead && snapRead[k], D = RT.data, idx = -1, end = Date.parse(k + "T23:59:59Z"); if (D) for (var q = 0; q < D.t.length; q++) if (D.t[q] <= end) idx = q;
-      var season = idx > 90 ? (D.r[idx] / D.r[idx - 90] - 1) * 100 : null;
-      var vals = ['[' + (+j.ratio).toFixed(2) + ']', season == null ? '' : '[' + (season >= 0 ? 'BTC +' : 'ETH +') + Math.abs(season).toFixed(1) + '% over 90 days]', '<span style="color:' + BTC_C + '">[BTC ' + (+j.btc).toFixed(1) + '%]</span> <span style="color:' + ETH_C + '">[ETH ' + (+j.eth).toFixed(1) + '%]</span> <span style="color:var(--muted)">[ALTS ' + Math.max(0, 100 - j.btc - j.eth).toFixed(1) + '%]</span>'];
+      var season = idx > 90 ? (D.r[idx] / D.r[idx - 90] - 1) * 100 : null, snTip = Array.prototype.filter.call(tr.querySelectorAll(".rt-fm-tip .val"), function (e) { return /Season|Neutral/.test(e.textContent); })[0], sn = snTip ? (/Bitcoin Season/.test(snTip.textContent) ? "BTC" : /Ethereum Season/.test(snTip.textContent) ? "ETH" : "") : "";
+      var vals = ['[' + (+j.ratio).toFixed(2) + ']', sn ? '<span style="color:' + (sn === "BTC" ? BTC_C : ETH_C) + '">[' + sn + ' Season' + (season == null ? '' : ' · ' + (season >= 0 ? '+' : '−') + Math.abs(season).toFixed(1) + '% over 90 days') + ']</span>' : '<span style="color:' + GREY_C + '">[No Season]</span>', '<span style="color:' + BTC_C + '">[BTC ' + (+j.btc).toFixed(1) + '%]</span> <span style="color:' + ETH_C + '">[ETH ' + (+j.eth).toFixed(1) + '%]</span> <span style="color:var(--muted)">[ALTS ' + Math.max(0, 100 - j.btc - j.eth).toFixed(1) + '%]</span>'];
       Array.prototype.forEach.call(tr.querySelectorAll(".rt-chart-section"), function (s, i) { if (i > 2) return; var hd = s.querySelector(".rt-head"); if (hd) hd.insertAdjacentHTML("beforeend", '<span class="snx-val">' + vals[i] + '</span>'); rtc.appendChild(s); });
       var rdc = document.getElementById("snx-rd"), vd = tr.querySelector(".rt-vd"), fm = tr.querySelector("#rt-formula"), tb = fm && fm.querySelector(".rt-fm-total > b"), sb = fm && fm.querySelector(".rt-fm-sum b");
       if (vd) { vd.removeAttribute("id"); vd.className = "rt-vd snx-rdt"; vd.textContent = snapReadingNeutral(vd.textContent); rdc.appendChild(vd); } /* the day's Reading in its own colour, without what depends on your holdings */
@@ -4213,6 +4222,9 @@
       if (fm) { fm.removeAttribute("id"); fm.className = "snx-fm"; rdc.appendChild(fm); } /* the Formula: each data point with its points, Certainty and Uncertainty marks */
       if (tb) document.getElementById("snx-rdo").innerHTML = '<b style="color:' + tb.style.color + '">[' + esc(tb.textContent) + (sb ? ' ' + esc(sb.textContent) : '') + ']</b>';
       tr.remove();
+      var three = x.querySelector(".snx-three"), cs = Array.prototype.slice.call(three.children), mh = Math.max.apply(null, cs.map(function (c) { return c.offsetHeight; }));
+      var rtch = x.querySelectorAll(".snx-rt .rt-chart"), ex1 = mh - cs[1].offsetHeight; if (ex1 > 0 && rtch.length) Array.prototype.forEach.call(rtch, function (c) { c.style.height = (c.offsetHeight + ex1 / rtch.length) + "px"; });
+      var tsv = cs[0].querySelector(".sy-svg"), ex0 = mh - cs[0].offsetHeight; if (ex0 > 0 && tsv) tsv.style.height = (tsv.getBoundingClientRect().height + ex0) + "px";
       var map = document.getElementById("snx-sq"), lh = x.querySelector(".snx-left").offsetHeight, rh = x.querySelector(".snx-right").offsetHeight; /* the squares fill the height the list leaves */
       if (lh > rh) map.style.height = (map.offsetHeight + lh - rh) + "px";
       snapSqFill(map, k, j, 200, null, map.clientWidth, map.clientHeight);

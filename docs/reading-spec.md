@@ -544,3 +544,4 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Snapshot-PNG: Staking zeigt nur Assets mit einer Rate des Tages ("Rate on site" fällt weg). Darunter, direkt neben den BTC|ETH-Charts, die Karte
   "BTC|ETH Reading": Titel rechts mit dem Ergebnis der Formel (z. B. [BTC Overvaluation Lean +2]), der Text in der Farbe des Readings dieses Tages
   (ohne Sätze zu den eigenen Beständen), darunter die Formel: Punkte je Datenpunkt (Ratio, Season, Dominance), Summe, Uncertainty- und Certainty-Marks.
+- Snapshots-Tab: Tage, Wochen und Jahre werden beim Hover hellgrau (#2a2a28). PNG: Season-Wert = Season der Formel ([BTC Season …] orange, [ETH Season …] blau, [No Season] grau); die Ratio-Charts und der TOTAL-200-Chart wachsen, bis alle drei Spalten gleich hoch sind; unter TOTAL 200 stehen Today, Previous Day, Year Start, Year to Date, Year High/Low mit Datum und Abstand dazu.
