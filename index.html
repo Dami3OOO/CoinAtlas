@@ -762,22 +762,22 @@
   .tt-note { margin-top: 10px; line-height: 1.5; }
   .t200-svg { width: 100%; display: block; } .snap-tile b .t200-mini { display: inline-block; width: 70px; vertical-align: middle; margin-left: 8px; } .snap-tile b { display: flex; align-items: center; }
   .t200-big { margin-bottom: 4px; } .t200-ax { display: flex; justify-content: space-between; margin-top: 6px; font-size: 10px; color: var(--muted); text-align: center; } .t200-ax b { display: block; color: #2dd4bf; font-size: 11px; }
-  .snx { position: fixed; left: -20000px; top: 0; width: 1600px; box-sizing: border-box; padding: 40px 44px 30px; background: var(--pop); color: var(--fg); font-family: var(--font); display: flex; flex-direction: column; gap: 18px; }
-  .snx-h { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; } .snx-t { text-align: center; } .snx-t b { display: block; font-size: 30px; letter-spacing: -0.02em; } .snx-t span { font-size: 15px; color: var(--muted); }
-  .snx-brand { display: flex; align-items: center; gap: 10px; } .snx-brand svg { width: 34px; height: 34px; stroke: var(--fg); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; } .snx-brand b { font-size: 22px; letter-spacing: -0.02em; }
-  .snx-f .snx-brand { justify-content: flex-end; } .snx-f .snx-brand svg { width: 26px; height: 26px; } .snx-f .snx-brand b { font-size: 18px; }
-  .snx-row { display: grid; grid-template-columns: 1fr 1.25fr 1fr 1fr; gap: 14px; }
-  .snx-card { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-  .snx-card > span { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); } .snx-card > b { font-size: 24px; font-variant-numeric: tabular-nums; } .snx-card > i { font-style: normal; font-size: 12px; color: var(--muted); } .snx-card .snx-sub { margin-top: 10px; } .snx-card .snx-dom { font-size: 17px; }
-  .snx-fg { align-items: stretch; } .snx-fg .fg-gauge-col { width: auto; border: 0; background: transparent; padding: 0; flex: 1; }
-  .snx-rt { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; } .snx-rt .rt-chart-section { margin: 0; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
-  .snx-sqw { position: relative; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px; } .snx-sqh { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; } .snx-sqh b { font-size: 16px; } .snx-sqh span { font-size: 12px; color: var(--muted); }
-  .snx-sq { height: 560px; margin: 0; } .snx-wm { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 10px; opacity: .55; } .snx-wm svg { width: 22px; height: 22px; stroke: var(--fg); stroke-width: 1.5; fill: none; } .snx-wm b { font-size: 15px; }
-  .snx-list { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; } .snx-list td { padding: 9px 10px; } .snx-list .logo { width: 22px; height: 22px; }
-  .snx-tg { margin-left: 8px; font-size: 12px; font-weight: 600; } .snx-list .badges-container { margin-left: auto; display: flex; gap: 6px; } .snx-list .badge-stake { margin-left: 0; }
-  .snx, .snx * { font-variant-numeric: normal !important; letter-spacing: normal; } /* the photo of the page measures plain digits right */
-  .snx .fg-yr-wrap, .snx .rt-right .fg-yr-pick, .snx .fg-timeframes { display: none !important; } .snx-tmp { position: absolute; left: 0; top: 0; width: 600px; visibility: hidden; }
-  .snx-f { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); }
+  .snx { position: fixed; left: -20000px; top: 0; width: 3200px; box-sizing: border-box; padding: 40px 48px 30px; background: var(--pop); color: var(--fg); font-family: var(--font); display: flex; flex-direction: column; gap: 20px; }
+  .snx, .snx * { font-variant-numeric: normal !important; letter-spacing: normal; }
+  .snx .fg-yr-wrap, .snx .rt-right .fg-yr-pick, .snx .fg-timeframes, .snx #fg-timer, .snx .fg-stats-col, .snx .fg-credit, .snx .rt-right { display: none !important; } .snx-tmp { position: absolute; left: 0; top: 0; width: 820px; visibility: hidden; }
+  .snx-h { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; } .snx-t { text-align: center; } .snx-t b { display: block; font-size: 34px; letter-spacing: -0.02em; } .snx-t span { font-size: 16px; color: var(--muted); }
+  .snx-brand { display: flex; align-items: center; gap: 10px; } .snx-brand svg { width: 36px; height: 36px; stroke: var(--fg); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; } .snx-brand b { font-size: 24px; letter-spacing: -0.02em; }
+  .snx-f .snx-brand { justify-content: flex-end; } .snx-f .snx-brand svg { width: 28px; height: 28px; } .snx-f .snx-brand b { font-size: 20px; }
+  .snx-body { display: grid; grid-template-columns: 0.78fr 2.2fr; gap: 20px; align-items: start; } .snx-three { display: grid; grid-template-columns: 1fr 1.1fr 0.9fr; gap: 20px; align-items: start; } .snx-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; } .snx-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  .snx-card { background: var(--bg); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; min-width: 0; }
+  .snx-ch { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; } .snx-ch b { font-size: 18px; } .snx-ch span { font-size: 14px; color: var(--muted); }
+  .snx-listc td { padding: 6px 10px; font-size: 15px; } .snx-listc .logo { width: 24px; height: 24px; } .snx-tg { margin-left: 8px; font-size: 13px; font-weight: 600; } .snx-listc .badges-container { margin-left: auto; display: flex; gap: 6px; } .snx-listc .badge-stake { margin-left: 0; }
+  .snx-fg > .pf-card, .snx-fg .fg-header { margin-top: 0; } .snx-fg .fg-top-row { justify-content: center; } .snx-fg .fg-gauge-col { width: 260px; border: 0; background: transparent; }
+  .snx-rt { display: flex; flex-direction: column; gap: 16px; } .snx-rt .rt-chart-section { margin: 0; padding: 0; border: 0; background: transparent; } .snx-rt .rt-head { display: flex; align-items: baseline; gap: 10px; } .snx-val { margin-left: auto; font-size: 15px; font-weight: 700; color: var(--fg); }
+  .snx-stk .stk-row { padding: 7px 8px; font-size: 14px; } .snx-stk .stk-a .logo { width: 20px; height: 20px; }
+  .snx-sq { height: 520px; margin: 0; } .snx-wm { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 12px; opacity: .55; } .snx-wm svg { width: 24px; height: 24px; stroke: var(--fg); stroke-width: 1.5; fill: none; } .snx-wm b { font-size: 16px; }
+  .snx-f { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); }
+  .snx-box { width: min(1400px, 100%); }
   .snap-top { position: relative; } .snap-top .pf-title { padding: 0 120px; } .snap-back { position: absolute; left: 0; top: -4px; height: 28px; padding: 0 10px; font-size: 12px; }
   .snap-dlw { position: absolute; right: 0; top: -4px; z-index: 4; } .snap-dlb { height: 28px; padding: 0 10px; font-size: 12px; font-weight: 600; }
   .snap-dlm { position: absolute; right: 0; top: 34px; width: 190px; padding: 4px; background: var(--pop); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.45); display: flex; flex-direction: column; } .snap-dlm[hidden] { display: none; }
@@ -792,7 +792,10 @@
   .snap-ph { display: flex; align-items: center; gap: 8px; } .snap-ph b { font-size: 14px; } .snap-ph span { font-size: 12px; color: var(--muted); } .snap-px { margin-left: auto; font: inherit; font-size: 18px; line-height: 1; color: var(--muted); background: transparent; border: 0; cursor: pointer; } .snap-px:hover { color: var(--fg); }
   .snap-embed .fg-yr-wrap, .snap-embed .fg-timeframes, .snap-embed .rt-right, .snap-embed #fg-timer, .snap-embed .fg-timer, .snap-embed .rt-title-row > .gear, .snap-embed .chart-close-btn { display: none !important; }
   .snap-embed > .pf-card { padding: 0; border: 0; box-shadow: none; background: transparent; }
-  .snap-lock { margin-left: auto; font-size: 12px; color: var(--muted); } .snap-sqmap { height: 360px; }
+  .snap-tf-lock { margin-left: auto; } .snap-tf-lock .fg-yr-btn { min-width: 110px; cursor: default; } .snap-sqmap { height: 460px; }
+  .sy { position: relative; } .sy-svg { width: 100%; display: block; } .sy-x { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(236,236,232,.35); opacity: 0; pointer-events: none; } .sy-tip { position: absolute; pointer-events: none; white-space: nowrap; }
+  .sy-ax { position: relative; height: 16px; font-size: 10px; color: var(--muted); } .sy-ax span { position: absolute; top: 3px; }
+  .snap-stk { cursor: pointer; } .snap-stk.on { background: var(--hover); } .snap-stkc { padding: 8px 4px 12px; border-bottom: 1px solid var(--line); }
   .snap-stkw .stk-row { cursor: default; }
   .snap-kv { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; } .snap-kv span { color: var(--muted); } .snap-kv b { font-variant-numeric: tabular-nums; text-align: right; } .snap-kv em { font-style: normal; font-size: 12px; margin-left: 8px; }
   .snap-tbl { width: 100%; border-collapse: collapse; font-size: 11px; font-variant-numeric: tabular-nums; } .snap-tbl td { padding: 4px 6px; border-bottom: 1px solid var(--line); text-align: right; } .snap-tbl td:first-child { text-align: left; text-transform: capitalize; } .snap-tbl tr:first-child td { color: var(--muted); font-size: 10px; text-transform: uppercase; }
@@ -3850,7 +3853,7 @@
   }
   function snapLoadDays() {
     if (snapDays) return Promise.resolve(snapDays);
-    return repoJson("data/dominance.json").then(function (j) { snapDays = {}; Object.keys(j || {}).forEach(function (k) { if (!/backfill/.test(j[k][4])) snapDays[k] = j[k]; }); }, function () { snapDays = {}; }).then(function () { return snapDays; });
+    return repoJson("data/dominance.json").then(function (j) { snapDays = {}; snapDomAll = j || {}; Object.keys(j || {}).forEach(function (k) { if (!/backfill/.test(j[k][4])) snapDays[k] = j[k]; }); }, function () { snapDays = {}; }).then(function () { return snapDays; });
   }
   function snapCsv(j) {
     var f = j.fields || ["symbol", "name", "price", "market cap", "24h volume", "circulating supply"];
@@ -3889,7 +3892,7 @@
     var oi = 0; if (dv) Object.keys(dv).forEach(function (ex) { ["BTC", "ETH"].forEach(function (a) { var o = dv[ex] && dv[ex][a]; if (o && o.oiUsd) oi += o.oiUsd; }); });
     var g = 0, r = 0; Object.keys(ch).forEach(function (s) { var p = ch[s].pc; if (STABLECOINS.indexOf(s) > -1 || p == null) return; if (p > 0) g++; else if (p < 0) r++; });
     var T = [
-      ["mcap", "TOTAL 200", '[' + compact(j.total || x[2] || 0) + ']' + '<i class="t200-mini">' + t200Spark(k, 120, 22, false) + '</i>', T200_C],
+      ["mcap", "TOTAL 200", '[' + compact(j.total || x[2] || 0) + ']' + '<i class="t200-mini">' + snapYearChart(t200Points(k), syYear(k), T200_C, "cap", 120, 22, true) + '</i>', T200_C],
       ["fg", "Fear & Greed", j.fg != null ? '[' + j.fg + '] ' + classifyFG(j.fg) : '–', j.fg != null ? fgCol(j.fg) : "var(--muted)"],
       ["dom", "Dominance", '<span style="color:' + BTC_C + '">BTC ' + (+j.btc).toFixed(1) + '%</span> · <span style="color:' + ETH_C + '">ETH ' + (+j.eth).toFixed(1) + '%</span>', "var(--fg)"],
       ["ratio", "BTC|ETH Ratio", '[' + (j.ratio ? (+j.ratio).toFixed(2) : '–') + ']' + (ph ? ' ' + ph + ' Phase' : ''), phC],
@@ -3904,15 +3907,17 @@
   function snapEmbedFG(el, k) {
     if (!fgData) { el.innerHTML = '<div class="rt-empty">Loading the Fear & Greed Index…</div>'; fgDataCallbacks.push(function () { if (snapPanel === "fg" && snapOpen === k) renderSnaps(); }); if (!fgLoading) loadFGData(); return; }
     var keep = { box: fgContainer, tf: fgTimeframe, yr: fgYear, yearly: yearlyOn };
-    try { fgContainer = el; fgTimeframe = "1Y"; fgYear = ""; yearlyOn = false; snapDayEmbed = k; renderFGChart(); }
+    try { fgContainer = el; fgTimeframe = "1Y"; fgYear = k.slice(0, 4); yearlyOn = false; snapDayEmbed = k; renderFGChart(); } /* the calendar year of the day */
     finally { fgContainer = keep.box; fgTimeframe = keep.tf; fgYear = keep.yr; yearlyOn = keep.yearly; snapDayEmbed = null; }
     el.innerHTML = el.innerHTML.replace(/fg-grad/g, "snap-fg-grad"); /* its own gradient: the hidden F&G window has one with the same name */
   }
   function snapEmbedRatio(el, k, part) {
     if (!RT.data) { el.innerHTML = '<div class="rt-empty">Loading the BTC|ETH Ratio…</div>'; rtLoad(); var n = 0, t = setInterval(function () { if (RT.data || RT.failed || ++n > 120) { clearInterval(t); if (snapOpen === k && (snapPanel === "ratio" || snapPanel === "dom")) renderSnaps(); } }, 500); return; }
-    var keep = { box: ratioBox, vis: ratioVisible, asOf: RT.asOf, view: RT.view, year: RT.year, cmp: RT.cmp }, tmp = document.createElement("div");
-    try { ratioBox = tmp; ratioVisible = true; RT.asOf = Date.parse(k + "T00:00:00Z"); RT.view = "365D"; RT.cmp = false; rtRender(); }
-    finally { ratioBox = keep.box; ratioVisible = keep.vis; RT.asOf = keep.asOf; RT.view = keep.view; RT.year = keep.year; RT.cmp = keep.cmp; }
+    var keep = { box: ratioBox, vis: ratioVisible, asOf: RT.asOf, view: RT.view, year: RT.year, cmp: RT.cmp, data: RT.data, w: RT.w }, tmp = document.createElement("div");
+    var end = Date.parse(k + "T23:59:59Z"), D = RT.data, n = 0; while (n < D.t.length && D.t[n] <= end) n++;
+    try { ratioBox = tmp; ratioVisible = true; RT.asOf = Date.parse(k + "T00:00:00Z"); RT.view = "YEAR"; RT.year = +k.slice(0, 4); RT.cmp = false; RT.data = { t: D.t.slice(0, n), b: D.b.slice(0, n), e: D.e.slice(0, n), r: D.r.slice(0, n) }; RT.w = null; rtRender(); } /* the year of the day, the data ends on the day */
+    finally { ratioBox = keep.box; ratioVisible = keep.vis; RT.asOf = keep.asOf; RT.view = keep.view; RT.year = keep.year; RT.cmp = keep.cmp; RT.data = keep.data; RT.w = keep.w; }
+    var yl = tmp.querySelector(".rt-ylist"); if (yl) { var sec = yl.closest(".fg-annual-section") || yl.parentNode; if (sec) sec.remove(); } /* no Past Years in a snapshot */
     if (part === "dom") { /* only the Dominance Graph of the Ratio window */
       var secs = tmp.querySelectorAll(".rt-chart-section"), dom = null; Array.prototype.forEach.call(secs, function (s) { if (/Dominance Graph/.test(s.textContent)) dom = s; });
       if (dom) el.appendChild(dom);
@@ -3924,7 +3929,7 @@
     var up = items.filter(function (x) { return x.pc > 0; }).length, dn = items.filter(function (x) { return x.pc < 0; }).length;
     return '<div class="sqm-ctrl"><label class="sqm-top-in">Top <input type="number" min="1" max="200" step="1" inputmode="numeric" data-snapsqtop="1" value="' + snapSqTop + '" aria-label="How many coins of the list"></label>' +
       (snapSqSplit != null ? '<button type="button" class="sqm-x sqm-auto" data-snapsqauto="1">Auto</button>' : '') +
-      '<span class="sqm-cnt"><b style="color:var(--up)">' + up + '</b><span>/</span><b style="color:var(--down)">' + dn + '</b><span>/</span><b style="color:var(--stable-blue)">' + stable + '</b></span><span class="snap-lock">[Today]</span></div>' +
+      '<span class="sqm-cnt"><b style="color:var(--up)">' + up + '</b><span>/</span><b style="color:var(--down)">' + dn + '</b><span>/</span><b style="color:var(--stable-blue)">' + stable + '</b></span><div class="fg-yr-wrap tf-row sqm-tfw snap-tf-lock"><div class="fg-yr-pick"><button type="button" class="fg-yr-btn" tabindex="-1" title="A snapshot holds the day\'s change only">Today</button></div></div></div>' +
       '<div class="sqm-map snap-sqmap" id="snap-sqmap"></div><div class="sqm-foot fg-sub">' + stable + ' stablecoins left out · size and colour by how far a coin moved on ' + snapDate(k) + '</div>';
   }
   function snapSquaresPaint(k, j) { /* lays the squares into the map once it has its size; the front can be dragged */
@@ -3937,21 +3942,15 @@
     };
     fr.ondblclick = function () { snapSqSplit = null; renderSnaps(); };
   }
-  function snapStakingHtml(k) { /* the Staking window's list, with the rates of that day */
-    var h = snapStakeH && snapStakeH[k];
-    if (!h) return '<div class="pf-msg">No staking rates were recorded on this day.</div>';
-    var rows = coins.map(function (c, i) {
-      var S = String(c.symbol).toUpperCase(), st = stakeData[S], r = h[S]; if (!st) return "";
-      var list = st.list.map(function (x) { return { x: x, v: r && r[x.name] != null ? r[x.name] : null }; }).sort(function (a, b) { return (b.v == null ? -1 : b.v) - (a.v == null ? -1 : a.v); }), t = list[0];
-      return '<div class="stk-row snap-stk"><span class="stk-n">' + (c.market_cap_rank || i + 1) + '</span><span class="stk-a">' + logoHtml(c) + '<b>' + esc(c.name) + '</b><i>' + esc(S) + '</i></span>' +
-        '<span class="stk-r' + (t.v == null ? ' na' : '') + '">' + (t.v == null ? 'Rate on site' : stakeRate(t.x) + ' ' + t.v.toFixed(2) + '%') + '</span><span class="lk' + (t.x.locked ? '' : ' un') + '">' + (t.x.locked ? 'Locked' : 'Unlocked') + '</span></div>';
-    }).join("");
-    return '<div class="stk-card snap-stkw"><div class="stk-head"><span>#</span><span>Asset</span><span>Best Rate</span><span></span></div>' + rows + '</div><div class="fg-sub">The rates CoinAtlas recorded on ' + snapDate(k) + '.</div>';
+  function snapStakingHtml(k) { /* the Staking window's list with the rates of that day; a click on an asset shows its rate over the year */
+    if (!snapStakeH || !snapStakeH[k]) return '<div class="pf-msg">No staking rates were recorded on this day.</div>';
+    var j = snapLists[k], list = snapTopCoins(j, 300).filter(function (c) { return stakeData[c.symbol]; });
+    return '<div class="stk-card snap-stkw"><div class="stk-head"><span>#</span><span>Asset</span><span>Best Rate</span><span></span></div>' + snapStakeListHtml(k, list) + '</div><div class="fg-sub">The rates CoinAtlas recorded on ' + snapDate(k) + '. Click an asset for its rate over ' + syYear(k) + '.</div>';
   }
   function snapPanelHtml(k, j) { /* the window behind a tile, at the bottom of the Snapshots tab, locked to that day */
     var p = snapPanel; if (!p) return "";
     var dv = snapDeriv && snapDeriv[k], h = "", pk = snapPrevKey(k), pj = pk && snapLists[pk];
-    if (p === "mcap") h = '<div class="t200-big">' + t200Spark(k, 520, 150, true) + '</div><div class="snap-kv"><span>TOTAL 200</span><b style="color:' + T200_C + '">[' + compact(j.total || 0) + ']</b></div>' + (pj && pj.total ? '<div class="snap-kv"><span>Snapshot before</span><b>[' + compact(pj.total) + ']</b><em class="' + (j.total >= pj.total ? 'up' : 'down') + '">' + pct((j.total / pj.total - 1) * 100) + '</em></div>' : '') + '<div class="snap-kv"><span>Coins recorded</span><b>[' + j.coins.length + ']</b></div><div class="snap-kv"><span>Recorded</span><b>' + (j.taken ? new Date(j.taken).toUTCString().slice(5, 22) + ' UTC' : '–') + '</b></div>';
+    if (p === "mcap") h = '<div class="t200-big">' + snapYearChart(t200Points(k), syYear(k), T200_C, "cap", 520, 170, false) + '</div><div class="snap-kv"><span>TOTAL 200</span><b style="color:' + T200_C + '">[' + compact(j.total || 0) + ']</b></div>' + (pj && pj.total ? '<div class="snap-kv"><span>Previous Day</span><b>[' + compact(pj.total) + ']</b><em class="' + (j.total >= pj.total ? 'up' : 'down') + '">' + pct((j.total / pj.total - 1) * 100) + '</em></div>' : '') + '<div class="snap-kv"><span>Coins recorded</span><b>[' + j.coins.length + ']</b></div><div class="snap-kv"><span>Recorded</span><b>' + (j.taken ? new Date(j.taken).toUTCString().slice(5, 22) + ' UTC' : '–') + '</b></div>';
     if (p === "deriv" && dv) h = '<table class="snap-tbl"><tr><td>Exchange</td><td>BTC OI</td><td>BTC Funding</td><td>ETH OI</td><td>ETH Funding</td></tr>' + Object.keys(dv).map(function (ex) { var b = dv[ex].BTC || {}, e = dv[ex].ETH || {}, f = function (v) { return v == null ? '–' : (v >= 0 ? '+' : '') + (v * 100).toFixed(4) + '%'; }; return '<tr><td>' + esc(ex) + '</td><td>' + (b.oiUsd ? compact(b.oiUsd) : '–') + '</td><td>' + f(b.funding) + '</td><td>' + (e.oiUsd ? compact(e.oiUsd) : '–') + '</td><td>' + f(e.funding) + '</td></tr>'; }).join("") + '</table>';
     if (p === "sq") h = snapSquaresHtml(k, j);
     if (p === "stake") h = snapStakingHtml(k);
@@ -4022,17 +4021,43 @@
     }
   }
   /* ---- TOTAL 200: the Top 200 market cap of the last 7 recorded days, in its own colour (teal) ---- */
-  var T200_C = "#2dd4bf";
-  function t200Series(k) { var ks = snapKeys().filter(function (x) { return x <= k; }).slice(-7); return ks.map(function (x) { return [x, +(snapDays[x] || [])[2] || 0]; }).filter(function (p) { return p[1] > 0; }); }
-  function t200Spark(k, W, H, big) {
-    var s = t200Series(k); if (s.length < 2) return '<div class="fg-sub">' + (big ? 'The graph shows from two recorded days on.' : '') + '</div>';
-    var v = s.map(function (p) { return p[1]; }), mn = Math.min.apply(null, v), mx = Math.max.apply(null, v); if (mx === mn) { mn *= 0.99; mx *= 1.01; }
-    var X = function (i) { return (i / (s.length - 1) * W).toFixed(1); }, Y = function (x) { return (H - 4 - (x - mn) / (mx - mn) * (H - 8)).toFixed(1); };
-    var line = s.map(function (p, i) { return (i ? "L" : "M") + X(i) + " " + Y(p[1]); }).join(" "), id = "t200g" + Math.round(Math.random() * 1e6);
-    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" class="t200-svg" style="height:' + H + 'px"><defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + T200_C + '" stop-opacity=".35"/><stop offset="100%" stop-color="' + T200_C + '" stop-opacity="0"/></linearGradient></defs>' +
-      '<path d="' + line + ' L' + W + ' ' + H + ' L0 ' + H + ' Z" fill="url(#' + id + ')"/><path d="' + line + '" fill="none" stroke="' + T200_C + '" stroke-width="2" vector-effect="non-scaling-stroke"/>' + (big ? s.map(function (p, i) { return '<circle cx="' + X(i) + '" cy="' + Y(p[1]) + '" r="3" fill="' + T200_C + '"/>'; }).join("") : '') + '</svg>';
-    if (!big) return svg;
-    return svg + '<div class="t200-ax">' + s.map(function (p) { return '<span><b>' + compact(p[1]) + '</b>' + new Date(p[0] + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" }) + '</span>'; }).join("") + '</div>';
+  /* ---- one calendar year as a chart (TOTAL 200, Staking rates): the year runs Jan 1 to Dec 31, the data stops at the day; hover shows date and value ---- */
+  var T200_C = "#2dd4bf", snapDomAll = null;
+  function syYear(k) { return +k.slice(0, 4); }
+  function t200Points(k) { /* every recorded or backfilled day of that year up to the day */
+    var y = syYear(k), src = snapDomAll || {}, out = [];
+    Object.keys(src).sort().forEach(function (d) { if (d.slice(0, 4) === String(y) && d <= k) { var v = +(src[d] || [])[2]; if (v > 0) out.push([Date.parse(d + "T00:00:00Z"), v]); } });
+    return out;
+  }
+  function snapYearChart(pts, year, color, kind, W, H, mini) {
+    var a = Date.UTC(year, 0, 1), b = Date.UTC(year + 1, 0, 1);
+    if (!pts.length) return '<div class="fg-sub">Nothing recorded in ' + year + ' yet.</div>';
+    var v = pts.map(function (p) { return p[1]; }), mn = Math.min.apply(null, v), mx = Math.max.apply(null, v); if (mx - mn < Math.abs(mx) * 0.002 || mx === mn) { var pad = Math.abs(mx) * 0.01 || 1; mn -= pad; mx += pad; }
+    var X = function (t) { return ((t - a) / (b - a) * W).toFixed(1); }, Y = function (x) { return (H - 6 - (x - mn) / (mx - mn) * (H - 12)).toFixed(1); };
+    var line = pts.map(function (p, i) { return (i ? "L" : "M") + X(p[0]) + " " + Y(p[1]); }).join(" "), id = "syg" + Math.round(Math.random() * 1e7), last = pts[pts.length - 1];
+    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" class="sy-svg" style="height:' + H + 'px"><defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + color + '" stop-opacity=".32"/><stop offset="100%" stop-color="' + color + '" stop-opacity="0"/></linearGradient></defs>' +
+      (pts.length > 1 ? '<path d="' + line + ' L' + X(last[0]) + ' ' + H + ' L' + X(pts[0][0]) + ' ' + H + ' Z" fill="url(#' + id + ')"/><path d="' + line + '" fill="none" stroke="' + color + '" stroke-width="2" vector-effect="non-scaling-stroke"/>' : '') +
+      '<circle cx="' + X(last[0]) + '" cy="' + Y(last[1]) + '" r="' + (mini ? 2.5 : 3.5) + '" fill="' + color + '"/></svg>';
+    if (mini) return svg;
+    var mon = ["Jan", "Apr", "Jul", "Oct"].map(function (m, i) { return '<span style="left:' + (i * 25) + '%">' + m + '</span>'; }).join("") + '<span style="left:100%;transform:translateX(-100%)">Dec</span>';
+    return '<div class="sy" data-sy=\'' + JSON.stringify({ a: a, b: b, k: kind, p: pts }) + '\'>' + svg + '<div class="sy-x"></div><div class="fg-tip sy-tip" hidden></div></div><div class="sy-ax">' + mon + '</div>';
+  }
+  function syFmt(kind, v) { return kind === "rate" ? v.toFixed(2) + "%" : compact(v); }
+  document.addEventListener("mousemove", function (e) { /* the tooltip of the year charts: date and value of the nearest day */
+    var el = e.target.closest && e.target.closest(".sy"); var all = document.querySelectorAll(".sy .sy-tip:not([hidden])");
+    Array.prototype.forEach.call(all, function (t) { if (!el || !el.contains(t)) { t.hidden = true; t.parentNode.querySelector(".sy-x").style.opacity = 0; } });
+    if (!el) return;
+    var d = el._d || (el._d = JSON.parse(el.dataset.sy)), r = el.getBoundingClientRect(), t = d.a + (e.clientX - r.left) / r.width * (d.b - d.a), best = d.p[0];
+    d.p.forEach(function (p) { if (Math.abs(p[0] - t) < Math.abs(best[0] - t)) best = p; });
+    var x = (best[0] - d.a) / (d.b - d.a) * 100, tip = el.querySelector(".sy-tip"), ln = el.querySelector(".sy-x");
+    ln.style.left = x + "%"; ln.style.opacity = 1;
+    tip.innerHTML = '<div class="fg-tip-date">' + new Date(best[0]).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).toUpperCase() + '</div><div class="fg-tip-val">' + syFmt(d.k, best[1]) + '</div>';
+    tip.hidden = false; var tw = tip.offsetWidth || 130, px = e.clientX - r.left; tip.style.left = Math.max(4, Math.min(r.width - tw - 4, px - tw - 10 < 4 ? px + 14 : px - tw - 10)) + "px"; tip.style.top = "6px";
+  }, { passive: true });
+  function stakeYearPts(k, S) { /* the best recorded rate of an asset on every day of the year up to the day */
+    var y = String(syYear(k)), h = snapStakeH || {}, out = [];
+    Object.keys(h).sort().forEach(function (d) { if (d.slice(0, 4) === y && d <= k && h[d][S]) { var v = Object.keys(h[d][S]).map(function (n) { return h[d][S][n]; }); if (v.length) out.push([Date.parse(d + "T00:00:00Z"), Math.max.apply(null, v)]); } });
+    return out;
   }
   /* ---- the Sentiment Squares map of a day, as in the real window: logos, %, skins from +50%, the white Sentiment Front ---- */
   function snapSqFill(map, k, j, top, split, W, H) {
@@ -4076,49 +4101,73 @@
   var h2cP = null;
   function loadH2C() { return h2cP || (h2cP = new Promise(function (res, rej) { if (window.html2canvas) return res(window.html2canvas); var s = document.createElement("script"); s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"; s.onload = function () { res(window.html2canvas); }; s.onerror = function () { h2cP = null; rej(new Error("html2canvas")); }; document.head.appendChild(s); })); }
   function snapWait(cond, ms) { return new Promise(function (res) { var n = 0, t = setInterval(function () { if (cond() || (n += 200) > ms) { clearInterval(t); res(); } }, 200); }); }
-  function snapPng(k) { /* the whole day as one image, built from the real UI and photographed, with a preview first */
+  function snapStakeListHtml(k, list) { /* the Staking window's rows for the given coins, with the best rate recorded that day */
+    var h = (snapStakeH && snapStakeH[k]) || {};
+    return list.map(function (c, i) {
+      var S = String(c.symbol).toUpperCase(), st = stakeData[S], r = h[S]; if (!st) return "";
+      var t = st.list.map(function (x) { return { x: x, v: r && r[x.name] != null ? r[x.name] : null }; }).sort(function (a, b) { return (b.v == null ? -1 : b.v) - (a.v == null ? -1 : a.v); })[0];
+      return '<div class="stk-row snap-stk' + (snapStakeOpen === S ? ' on' : '') + '" data-snapstk="' + esc(S) + '"><span class="stk-n">' + (c.rank || i + 1) + '</span><span class="stk-a">' + logoHtml(c).replace(' loading="lazy"', '') + '<b>' + esc(c.name) + '</b><i>' + esc(S) + '</i></span>' +
+        '<span class="stk-r' + (t.v == null ? ' na' : '') + '">' + (t.v == null ? 'Rate on site' : stakeRate(t.x) + ' ' + t.v.toFixed(2) + '%') + '</span><span class="lk' + (t.x.locked ? '' : ' un') + '">' + (t.x.locked ? 'Locked' : 'Unlocked') + '</span></div>' +
+        (snapStakeOpen === S && !snapPngBuild ? '<div class="snap-stkc">' + snapYearChart(stakeYearPts(k, S), syYear(k), "#c4b5fd", "rate", 520, 130, false) + '</div>' : '');
+    }).join("");
+  }
+  var snapStakeOpen = null, snapPngBuild = false;
+  function snapTopCoins(j, n) { /* the snapshot's first n coins with logos and details from today's list */
+    return j.coins.slice(0, n).map(function (c, i) { var S = String(c[0]).toUpperCase(), live = coins.filter(function (x) { return String(x.symbol).toUpperCase() === S; })[0] || {}; return Object.assign({}, live, { symbol: S, name: c[1], rank: i + 1 }); });
+  }
+  function snapPng(k) { /* the whole day as one landscape image, built from the real UI and photographed, with a preview first */
     var ov = document.getElementById("pf-sh"); if (!ov) { ov = document.createElement("div"); ov.id = "pf-sh"; ov.className = "pf-sh"; document.body.appendChild(ov); }
-    ov.innerHTML = '<div class="pf-sh-box" role="dialog" aria-label="Snapshot image"><div class="pf-sh-head"><b>Snapshot Image</b><span class="pf-sh-mode">' + snapDate(k) + '</span><button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
+    ov.innerHTML = '<div class="pf-sh-box snx-box" role="dialog" aria-label="Snapshot image"><div class="pf-sh-head"><b>Snapshot Image</b><span class="pf-sh-mode">' + snapDate(k) + '</span><button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
       '<div class="pf-sh-img" id="pf-sh-img"><div class="pf-sh-wait">Building the image…</div></div><div class="pf-sh-foot"><button class="gear pf-sh-dl" type="button" id="snap-png-dl" disabled>Download PNG</button></div></div>';
     ov.hidden = false;
     if (!fgData && !fgLoading) loadFGData(); if (!RT.data) rtLoad();
     Promise.all([loadH2C(), snapFile(k), snapExtras(), snapDayChanges(k), snapWait(function () { return fgData && RT.data; }, 15000)]).then(function (r) {
       var h2c = r[0], j = r[1]; if (!j || !j.coins) throw new Error("no snapshot");
-      var x = document.createElement("div"); x.className = "snx"; x.id = "snx";
-      var rd = snapRead && snapRead[k], ph = rd && (rd.side || rd.phase), sk = snapStakeH && snapStakeH[k], ch = snapChg[k] || {}, g = 0, rr = 0;
-      Object.keys(ch).forEach(function (s) { var p = ch[s].pc; if (STABLECOINS.indexOf(s) > -1 || p == null) return; if (p > 0) g++; else if (p < 0) rr++; });
-      var brand = (document.getElementById("logo-svg") || {}).outerHTML || "";
-      x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas Snapshot</b><span>' + new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }) + '</span></div><div></div></div>' +
-        '<div class="snx-row">' +
-          '<div class="snx-card"><span>TOTAL 200</span><b style="color:' + T200_C + '">[' + compact(j.total || 0) + ']</b>' + t200Spark(k, 300, 80, false) + '<i>Last 7 recorded days</i></div>' +
-          '<div class="snx-card snx-fg" id="snx-fg"><span>Fear & Greed</span></div>' +
-          '<div class="snx-card"><span>BTC|ETH Ratio</span><b style="color:' + (ph === "ETH" ? ETH_C : BTC_C) + '">[' + (+j.ratio).toFixed(2) + ']</b><i>' + (ph ? ph + ' Phase' : '') + '</i><span class="snx-sub">Dominance</span><b class="snx-dom"><span style="color:' + BTC_C + '">BTC ' + (+j.btc).toFixed(1) + '%</span> · <span style="color:' + ETH_C + '">ETH ' + (+j.eth).toFixed(1) + '%</span></b></div>' +
-          '<div class="snx-card"><span>Sentiment Squares</span><b><span style="color:var(--up)">[' + g + ']</span> <span style="color:var(--down)">[' + rr + ']</span></b><i>coins up and down [Today]</i><span class="snx-sub">Staking</span><b style="color:#c4b5fd">[' + (sk ? Object.keys(sk).length : 0) + ' Assets]</b></div>' +
+      var x = document.createElement("div"); x.className = "snx"; x.id = "snx"; snapPngBuild = true;
+      var brand = (document.getElementById("logo-svg") || {}).outerHTML || "", day = new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+      var stakeCoins = snapTopCoins(j, 50).filter(function (c) { return stakeData[c.symbol]; });
+      x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas Snapshot</b><span>' + day + '</span></div><div></div></div>' +
+        '<div class="snx-body">' +
+          '<div class="snx-col snx-left"><div class="snx-card snx-listc"><div class="snx-ch"><b>Top 50</b><span>[Today] · Tier and gain of the day</span></div><table><tbody>' + snapRowsHtml(k, j, 0, 50) + '</tbody></table></div></div>' +
+          '<div class="snx-col snx-right">' +
+            '<div class="snx-three">' +
+              '<div class="snx-col"><div class="snx-card"><div class="snx-ch"><b style="color:' + T200_C + '">TOTAL 200</b><span>[' + compact(j.total || 0) + ']</span></div>' + snapYearChart(t200Points(k), syYear(k), T200_C, "cap", 640, 200, false) + '</div>' +
+              '<div class="snx-card snx-fg" id="snx-fg"></div></div>' +
+              '<div class="snx-card snx-rt" id="snx-rt"></div>' +
+              '<div class="snx-card snx-stk"><div class="snx-ch"><b style="color:#c4b5fd">Staking</b><span>[' + stakeCoins.length + ' of the Top 50]</span></div><div class="stk-card"><div class="stk-head"><span>#</span><span>Asset</span><span>Best Rate</span><span></span></div>' + snapStakeListHtml(k, stakeCoins) + '</div></div>' +
+            '</div>' +
+            '<div class="snx-card snx-sqw"><div class="snx-ch"><b>Sentiment Squares</b><span>Top 200</span></div><div class="sqm-map snx-sq" id="snx-sq"></div><div class="snx-wm">' + brand + '<b>CoinAtlas</b></div></div>' +
+          '</div>' +
         '</div>' +
-        '<div class="snx-rt" id="snx-rt"></div>' +
-        '<div class="snx-sqw"><div class="snx-sqh"><b>Sentiment Squares</b><span>[Today] · Top 200</span></div><div class="sqm-map snx-sq" id="snx-sq"></div><div class="snx-wm">' + brand + '<b>CoinAtlas</b></div></div>' +
-        '<div class="snx-list"><table><tbody>' + snapRowsHtml(k, j, 0, 25) + '</tbody></table><table><tbody>' + snapRowsHtml(k, j, 25, 50) + '</tbody></table></div>' +
         '<div class="snx-f"><span>Recorded at midnight New York time for the day that ended.</span><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div></div>';
       document.body.appendChild(x);
-      var tf = document.createElement("div"); tf.className = "snx-tmp"; x.appendChild(tf); snapEmbedFG(tf, k); /* in the page, so the gauge finds its place */
-      var gauge = tf.querySelector(".fg-gauge-col"); if (gauge) { gauge.removeAttribute("id"); document.getElementById("snx-fg").appendChild(gauge); } tf.remove();
-      var tr = document.createElement("div"); snapEmbedRatio(tr, k, "all"); Array.prototype.forEach.call(tr.querySelectorAll(".rt-chart-section"), function (s, i) { if (i < 3) document.getElementById("snx-rt").appendChild(s); });
-      var map = document.getElementById("snx-sq"); snapSqFill(map, k, j, 200, null, map.clientWidth, map.clientHeight);
-      Array.prototype.forEach.call(x.querySelectorAll("svg, svg *"), function (n) { /* an SVG is photographed on its own: its colours must not be CSS variables */
+      /* Fear & Greed: the year's chart above the half wheel */
+      var fgc = document.getElementById("snx-fg"); snapEmbedFG(fgc, k);
+      /* BTC|ETH: Ratio, Season and Dominance above each other, each with its value of the day */
+      var tr = document.createElement("div"); tr.className = "snx-tmp"; x.appendChild(tr); snapEmbedRatio(tr, k, "all");
+      var rtc = document.getElementById("snx-rt"), rd = snapRead && snapRead[k], D = RT.data, idx = -1, end = Date.parse(k + "T23:59:59Z"); if (D) for (var q = 0; q < D.t.length; q++) if (D.t[q] <= end) idx = q;
+      var season = idx > 90 ? (D.r[idx] / D.r[idx - 90] - 1) * 100 : null;
+      var vals = ['[' + (+j.ratio).toFixed(2) + ']', season == null ? '' : '[' + (season >= 0 ? 'BTC +' : 'ETH +') + Math.abs(season).toFixed(1) + '% over 90 days]', '<span style="color:' + BTC_C + '">[BTC ' + (+j.btc).toFixed(1) + '%]</span> <span style="color:' + ETH_C + '">[ETH ' + (+j.eth).toFixed(1) + '%]</span>'];
+      Array.prototype.forEach.call(tr.querySelectorAll(".rt-chart-section"), function (s, i) { if (i > 2) return; var hd = s.querySelector(".rt-head"); if (hd) hd.insertAdjacentHTML("beforeend", '<span class="snx-val">' + vals[i] + '</span>'); rtc.appendChild(s); });
+      tr.remove();
+      var map = document.getElementById("snx-sq"), lh = x.querySelector(".snx-left").offsetHeight, rh = x.querySelector(".snx-right").offsetHeight; /* the squares fill the height the list leaves */
+      if (lh > rh) map.style.height = (map.offsetHeight + lh - rh) + "px";
+      snapSqFill(map, k, j, 200, null, map.clientWidth, map.clientHeight);
+      Array.prototype.forEach.call(x.querySelectorAll("svg, svg *"), function (n) { /* an SVG is photographed on its own: no CSS variables in it */
         ["fill", "stroke", "stop-color", "color"].forEach(function (at) { var v = n.getAttribute && n.getAttribute(at); if (v && v.indexOf("var(") > -1) n.setAttribute(at, v.replace(/var\((--[\w-]+)\)/g, function (m, nm) { return pfCss(nm); })); });
         if (n.getAttribute && n.getAttribute("style") && n.getAttribute("style").indexOf("var(") > -1) n.setAttribute("style", n.getAttribute("style").replace(/var\((--[\w-]+)\)/g, function (m, nm) { return pfCss(nm); }));
-        if (n.tagName && /^(path|circle|line|polyline|rect|text)$/i.test(n.tagName)) { var cs = getComputedStyle(n); if (!n.getAttribute("stroke") && cs.stroke && cs.stroke !== "none") n.setAttribute("stroke", cs.stroke); if (!n.getAttribute("fill") && cs.fill) n.setAttribute("fill", cs.fill); }
       });
-      Array.prototype.forEach.call(x.querySelectorAll(".snx-fg svg"), function (sv) { /* the gauge as a plain picture of its exact size, so the photo draws its arc */
+      Array.prototype.forEach.call(x.querySelectorAll(".snx-fg .fg-gauge-col svg"), function (sv) { /* the gauge as a plain picture of its exact size, so the photo draws its arc */
         var b = sv.getBoundingClientRect(), c = sv.cloneNode(true); c.setAttribute("xmlns", "http://www.w3.org/2000/svg"); c.setAttribute("width", Math.round(b.width)); c.setAttribute("height", Math.round(b.height)); c.removeAttribute("style");
         var im = new Image(); im.width = Math.round(b.width); im.height = Math.round(b.height); im.style.display = "block"; im.style.margin = "0 auto"; im.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(c)); sv.parentNode.replaceChild(im, sv);
       });
-      return new Promise(function (res) { setTimeout(res, 700); }).then(function () { return h2c(x, { backgroundColor: pfCss("--pop"), scale: 1.5, useCORS: true, logging: false }); }).then(function (cv) { x.remove(); return cv; }, function (e) { x.remove(); throw e; });
+      snapPngBuild = false;
+      return new Promise(function (res) { setTimeout(res, 700); }).then(function () { return h2c(x, { backgroundColor: pfCss("--pop"), scale: 1.25, useCORS: true, logging: false }); }).then(function (cv) { x.remove(); return cv; }, function (e) { x.remove(); throw e; });
     }).then(function (cv) {
       var url = cv.toDataURL("image/png"), im = document.getElementById("pf-sh-img"), b = document.getElementById("snap-png-dl"); if (!im) return;
       im.innerHTML = '<img src="' + url + '" alt="Snapshot image">'; b.disabled = false;
       b.onclick = function () { var a = document.createElement("a"); a.href = url; a.download = "coinatlas-snapshot-" + k + ".png"; document.body.appendChild(a); a.click(); a.remove(); };
-    }).catch(function () { var im = document.getElementById("pf-sh-img"); if (im) im.innerHTML = '<div class="pf-sh-wait">The image could not be built. Please try again.</div>'; });
+    }).catch(function () { snapPngBuild = false; var im = document.getElementById("pf-sh-img"); if (im) im.innerHTML = '<div class="pf-sh-wait">The image could not be built. Please try again.</div>'; });
   }
   snapBtn.addEventListener("click", function () {
     snapVisible = !snapVisible; snapBtn.classList.toggle("active", snapVisible);
@@ -4137,7 +4186,8 @@
     if (t.closest("[data-snapback]")) { snapOpen = null; snapPanel = null; snapPick = null; renderSnaps(); return; }
     if (t.closest("[data-snapsqauto]")) { snapSqSplit = null; renderSnaps(); return; }
     var mo = t.closest("[data-snapmore]"); if (mo) { var mk = mo.dataset.snapmore; snapMore[mk] = !snapMore[mk]; if (snapMore[mk]) snapPanel = null; snapPick = null; renderSnaps(); if (!snapMore[mk]) smoothScrollTo(snapBox, "start", 16); return; }
-    var pn = t.closest("[data-snappanel]"); if (pn) { snapPanel = snapPanel === pn.dataset.snappanel ? null : pn.dataset.snappanel; if (snapPanel && snapOpen) snapMore[snapOpen] = false; renderSnaps(); var pe = snapBox.querySelector(".snap-panel"); if (pe) smoothScrollTo(pe, "nearest", 24); return; }
+    var pn = t.closest("[data-snappanel]"); if (pn) { snapPanel = snapPanel === pn.dataset.snappanel ? null : pn.dataset.snappanel; if (snapPanel && snapOpen) snapMore[snapOpen] = false; renderSnaps(); return; }
+    var sr = t.closest("[data-snapstk]"); if (sr) { snapStakeOpen = snapStakeOpen === sr.dataset.snapstk ? null : sr.dataset.snapstk; renderSnaps(); return; }
     if (t.closest("#snap-chart") || t.closest(".snap-panel")) return;
     var pk2 = t.closest("[data-snappick]"); if (pk2) { snapPick = snapPick === pk2.dataset.snappick ? null : pk2.dataset.snappick; renderSnaps(); return; }
     var b = t.closest("button[data-snap]"); if (!b) return;

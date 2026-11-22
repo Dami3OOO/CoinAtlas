@@ -513,3 +513,10 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   und unten rechts (Logo + CoinAtlas). Open Interest nicht im Bild.
 - Snapshots-Tab: "Market Cap" heißt TOTAL 200 (Teal, kleiner 7-Tage-Graph in der Kachel, großer Graph mit Werten im Fenster);
   Derivatives nur im Dev Mode.
+- Snapshots-Fenster, Feinschliff: Charts zeigen das Kalenderjahr des Tages (1. Jan bis 31. Dez), die Daten enden am Tag: Fear & Greed (Jahresansicht),
+  BTC|ETH Ratio (YEAR-Ansicht, Daten am Tag abgeschnitten, ohne Past Years), TOTAL 200 (alle Tage von dominance.json inkl. Backfill) und Staking
+  (Klick auf ein Asset: beste Rate je Tag aus staking-history.json). TOTAL 200 und Staking mit Tooltip (Datum + Wert). Sentiment Squares mit der
+  üblichen Zeitauswahl "Today", nicht klickbar; Karte 460 px hoch. Kein Scrollen beim Öffnen eines Fensters. "Previous Day" statt "Snapshot before".
+- Snapshot-PNG im Querformat (3200 px Breite, ca. 3:2): links die Top 50; rechts drei Spalten (TOTAL 200 und Fear & Greed mit Jahres-Chart über dem
+  Rad | Ratio, Season und Dominance untereinander, je mit dem Wert des Tages | Staking-Fenster mit den stakebaren Coins der Top 50), darunter die
+  Sentiment Squares, die die restliche Höhe füllen. Die Karten ohne Chart (Ratio/Dominance, Squares/Staking) sind entfallen.
