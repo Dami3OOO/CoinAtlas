@@ -545,3 +545,4 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   "BTC|ETH Reading": Titel rechts mit dem Ergebnis der Formel (z. B. [BTC Overvaluation Lean +2]), der Text in der Farbe des Readings dieses Tages
   (ohne Sätze zu den eigenen Beständen), darunter die Formel: Punkte je Datenpunkt (Ratio, Season, Dominance), Summe, Uncertainty- und Certainty-Marks.
 - Snapshots-Tab: Tage, Wochen und Jahre werden beim Hover hellgrau (#2a2a28). PNG: Season-Wert = Season der Formel ([BTC Season …] orange, [ETH Season …] blau, [No Season] grau); die Ratio-Charts und der TOTAL-200-Chart wachsen, bis alle drei Spalten gleich hoch sind; unter TOTAL 200 stehen Today, Previous Day, Year Start, Year to Date, Year High/Low mit Datum und Abstand dazu.
+- Wochen-PNG einer laufenden Woche: Datum oben mit [Week Still in Progress]. Skins (+50%) im Bild ohne Animation, ganzer Verlauf sichtbar, ruhiger Rand-Glanz. Klick auf eine Woche scrollt nicht mehr.
