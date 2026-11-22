@@ -455,3 +455,6 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   die offizielle Anleitung der Chain (z. B. cardano.org/stake-pool-delegation, slush.app/guides/stake-and-swap-sui, docs.iota.org …/stake,
   stake.tezos.com, Tonkeeper-Hilfeartikel, Vaulta-Guide, qtum.org/use-qtum/stake-qtum). Nur Projektseite, weil keine Staking-Seite
   gefunden wurde: ZANO, BDX. Der Name eines Eintrags beschreibt jetzt die verlinkte Seite (z. B. "TRON Stake 2.0", "Hedera Staking").
+- Staking-Abschnitt in den Locked Hovercharts entfernt (samt Einstellung "Show Staking"): Staking läuft nur noch über das Staking-Fenster.
+- Charts: Auswahl-Bildschirm "Which chart do you want to see?" liegt auf dunklem, verschwommenem Grund (rgba(18,18,17,.82) + blur) statt hellem.
+- Portfolio-Chart (Total Balance und Assets): Zeitauswahl hat jetzt auch die Jahre (aktuelles Jahr bis 2017, mit Bull/Bear/Bridge Year).
