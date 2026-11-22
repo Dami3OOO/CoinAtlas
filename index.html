@@ -473,7 +473,7 @@
   body.tags-off #rows .badge, body.tag-off-stake #rows .badge-stake, body.tag-off-gain #rows .badge-gain, body.tag-off-loss #rows .badge-loss, body.tag-off-new #rows .badge-new { display: none; }
   body.tag-off-stake #rows .badge-new { margin-left: auto; }
   .stake-note { margin-top: 8px; font-size: 10.5px; line-height: 1.5; color: var(--muted); }
-  body:not(.dev-mode) #snap-btn, body:not(.dev-mode) #snap-container, #snap-container[hidden] { display: none !important; }
+  #snap-container[hidden], #tt-container[hidden] { display: none !important; } body.tt-on #rows .badge-new { display: none; } /* "New in Top 200" is about today */ #tt-container { margin-bottom: 20px; }
   #snap-container, #sq-container { margin-bottom: 20px; } #sq-container[hidden] { display: none !important; }
   .sq-count { display: flex; justify-content: center; gap: 14px; font-size: 12px; font-weight: 600; margin: -6px 0 12px; font-variant-numeric: tabular-nums; }
   .sq-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; }
@@ -638,9 +638,6 @@
   .cs-card { display: flex; flex-direction: column; gap: 3px; text-align: left; font: inherit; color: var(--fg); background: var(--pop); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; transition: transform .12s ease, border-color .12s ease; } .cs-card:hover { transform: translateY(-1px); border-color: #555; }
   .cs-card b { font-size: 13px; } .cs-name { font-size: 12px; font-weight: 600; } .cs-desc { font-size: 11px; line-height: 1.45; color: var(--muted); } .cs-tfl { font-size: 10px; color: #6b7280; margin-top: 2px; }
   .rank-arrow { font-size: 9px; margin-left: 4px; vertical-align: 1px; } .rank-arrow.up { color: var(--up); } .rank-arrow.down { color: var(--down); }
-  .ago-wrap { position: relative; } #ago-btn.ago-active { color: #111; background: #facc15; border-color: #facc15; }
-  .ago-menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 40; display: flex; flex-direction: column; gap: 2px; min-width: 170px; padding: 4px; background: var(--pop); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.4); }
-  .ago-menu[hidden] { display: none; } .ago-menu button { text-align: left; font: inherit; font-size: 12px; color: var(--fg); background: transparent; border: 0; border-radius: 6px; padding: 6px 8px; cursor: pointer; } .ago-menu button:hover { background: var(--hover); } .ago-menu button.active { color: #facc15; }
   tr.ago-none td { color: #4b5563 !important; } tr.ago-none img { filter: grayscale(1); opacity: .35; } tr.ago-none td:nth-child(3) { font-size: 11px; white-space: normal; }
   .rt-pyc.ph-btc { background-image: linear-gradient(rgba(59,130,246,.07), rgba(59,130,246,.07)); } .rt-pyc.ph-eth { background-image: linear-gradient(rgba(247,147,26,.07), rgba(247,147,26,.07)); }
   .rt-pyc.upcoming { border-style: dashed; border-left-style: solid; }
@@ -746,6 +743,27 @@
   .sub-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; } .sub-tabs button { font: inherit; font-size: 12px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
   .hc-size { display: flex; align-items: center; gap: 10px; } .hc-size input { width: 150px; accent-color: var(--fg); cursor: pointer; } .hc-size b { min-width: 52px; text-align: right; font-size: 12px; font-variant-numeric: tabular-nums; }
   .grp.dim { opacity: .45; }
+  /* Time Travel and Snapshots */
+  body.tt-sepia .site-layout { filter: sepia(.55) saturate(.85) contrast(.98); } body.tt-gold .site-layout { filter: sepia(.35) saturate(1.7) hue-rotate(-6deg) brightness(1.04); }
+  .site-layout { transition: filter .6s ease; }
+  .tt-warp { position: fixed; inset: 0; z-index: 9500; display: flex; align-items: center; justify-content: center; background: rgba(18,18,17,.0); -webkit-backdrop-filter: blur(0); backdrop-filter: blur(0); opacity: 0; transition: opacity .35s ease, backdrop-filter .35s ease, background-color .35s ease; pointer-events: none; }
+  .tt-warp.on { opacity: 1; background: rgba(18,18,17,.72); -webkit-backdrop-filter: blur(10px) sepia(.4); backdrop-filter: blur(10px) sepia(.4); }
+  .tt-warp-in { text-align: center; } .tt-warp-d { font-size: 40px; font-weight: 800; letter-spacing: -0.02em; color: #f5e6c8; font-variant-numeric: tabular-nums; margin-top: 14px; text-shadow: 0 0 24px rgba(250,204,21,.35); } .tt-warp-s { margin-top: 6px; font-size: 12px; text-transform: uppercase; letter-spacing: .14em; color: #c9b48a; }
+  .tt-clock { width: 64px; height: 64px; fill: none; stroke: #facc15; stroke-width: 2.5; stroke-linecap: round; } .tt-clock .m { transform-origin: 24px 24px; animation: ttSpin .35s linear infinite reverse; } .tt-clock .h { transform-origin: 24px 24px; animation: ttSpin 2.4s linear infinite reverse; }
+  .tt-warp.fwd .tt-clock .m, .tt-warp.fwd .tt-clock .h { animation-direction: normal; } @keyframes ttSpin { to { transform: rotate(360deg); } }
+  .tt-now { display: flex; align-items: center; gap: 10px; padding: 12px 14px; margin-bottom: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; } .tt-now span { font-size: 12px; color: var(--muted); } .tt-now b { font-size: 16px; } .tt-now.past { border-color: rgba(250,204,21,.4); background: rgba(250,204,21,.06); } .tt-now.past b { color: #facc15; } .tt-live { margin-left: auto; height: 30px; padding: 0 12px; font-weight: 600; }
+  .tt-quick { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-bottom: 12px; } .tt-quick .gear { height: 32px; font-size: 12px; } .tt-quick .gear:disabled { opacity: .4; cursor: default; }
+  .tt-cal { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; } .tt-cal-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; } .tt-cal-h button { font: inherit; font-size: 16px; width: 30px; height: 26px; color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 6px; cursor: pointer; } .tt-cal-h button:disabled { opacity: .3; cursor: default; }
+  .tt-cal-g { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; } .tt-cal-g i { font-style: normal; font-size: 10px; color: var(--muted); text-transform: uppercase; } .tt-cal-g span, .tt-cal-g button { height: 30px; display: grid; place-items: center; font: inherit; font-size: 12px; border-radius: 6px; }
+  .tt-cal-g .off { color: #4a4a46; } .tt-cal-g button { color: var(--fg); background: #2a2a28; border: 1px solid #3a3a36; cursor: pointer; font-weight: 600; } .tt-cal-g button:hover { border-color: #facc15; } .tt-cal-g button.on { color: #111; background: #facc15; border-color: #facc15; }
+  .tt-note { margin-top: 10px; line-height: 1.5; }
+  .snap-body { padding: 4px 2px 12px; } .snap-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin: 6px 0 10px; } .snap-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .snap-grid > div { background: var(--bg); padding: 8px 10px; } .snap-grid span { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); } .snap-grid b { font-size: 15px; font-variant-numeric: tabular-nums; } .snap-grid i { display: block; font-style: normal; font-size: 11px; color: var(--muted); }
+  .snap-sub { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 10px 0 4px; } .snap-txt { font-size: 12px; line-height: 1.5; }
+  .snap-tags { display: flex; flex-wrap: wrap; gap: 6px; } .snap-tags span { font-size: 11px; padding: 3px 8px; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); } .snap-tags b { color: var(--fg); } .snap-tags .in b { color: #facc15; } .snap-tags .out b { color: var(--down); }
+  .snap-mv { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; } .snap-mv div { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; font-size: 12px; } .snap-mv span { width: 100%; font-size: 10px; text-transform: uppercase; color: var(--muted); } .snap-mv em { font-style: normal; font-variant-numeric: tabular-nums; }
+  .snap-act { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; } .snap-act .gear { height: 30px; font-size: 12px; padding: 0 10px; } .snap-tt { color: #111 !important; background: #facc15 !important; border-color: #facc15 !important; font-weight: 600; }
+  .snap-more { margin-top: 8px; font: inherit; font-size: 12px; color: var(--muted); background: transparent; border: 0; padding: 0; cursor: pointer; } .snap-more:hover { color: var(--fg); }
   .cust-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } .cust-tiles[hidden] { display: none; }
   .cust-tile { display: grid; grid-template-columns: 28px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 10px; align-items: center; text-align: left; font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; transition: background-color .15s, border-color .15s; }
   .cust-tile:hover { background: #2a2a28; border-color: #3a3a36; } .cust-tile .cust-sw { grid-row: 1 / 3; width: 28px; height: 28px; border-radius: 7px; } .cust-tile b { font-size: 13px; } .cust-tile span { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -1053,7 +1071,7 @@
       <button class="gear" type="button" id="stake-btn">Staking</button>
       <button class="gear" type="button" id="roadmap-btn">Roadmap</button>
       <button class="gear" type="button" id="snap-btn">Snapshots</button>
-      <div class="ago-wrap"><button class="gear" type="button" id="ago-btn" aria-haspopup="true" aria-expanded="false">Years Ago</button><div class="ago-menu" id="ago-menu" hidden><button type="button" data-ago="0">Live</button><button type="button" data-ago="1">Exactly 1 Year Ago</button><button type="button" data-ago="2">Exactly 2 Years Ago</button><button type="button" data-ago="3">Exactly 3 Years Ago</button><button type="button" data-ago="4">Exactly 4 Years Ago</button><button type="button" data-ago="5">Exactly 5 Years Ago</button><button type="button" data-ago="6">Exactly 6 Years Ago</button><button type="button" data-ago="7">Exactly 7 Years Ago</button><button type="button" data-ago="8">Exactly 8 Years Ago</button></div></div>
+      <button class="gear" type="button" id="tt-btn">Time Travel</button>
       <button class="gear" type="button" id="manual-refresh" aria-label="Refresh prices" style="padding:0; width:36px;">
         <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
       </button>
@@ -1076,7 +1094,7 @@
               <div class="grp"><span class="lbl">Sentiment Squares</span><button class="toggle" type="button" data-hb="sq-btn" role="switch" aria-checked="true" aria-label="Show Sentiment Squares in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Roadmap</span><button class="toggle" type="button" data-hb="roadmap-btn" role="switch" aria-checked="true" aria-label="Show Roadmap in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Snapshots</span><button class="toggle" type="button" data-hb="snap-btn" role="switch" aria-checked="true" aria-label="Show Snapshots in the header"><span></span></button></div>
-              <div class="grp"><span class="lbl">Years Ago</span><button class="toggle" type="button" data-hb="ago-btn" role="switch" aria-checked="true" aria-label="Show Years Ago in the header"><span></span></button></div>
+              <div class="grp"><span class="lbl">Time Travel</span><button class="toggle" type="button" data-hb="tt-btn" role="switch" aria-checked="true" aria-label="Show Time Travel in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Refresh Button</span><button class="toggle" type="button" data-hb="manual-refresh" role="switch" aria-checked="true" aria-label="Show Refresh Button in the header"><span></span></button></div>
               <button class="gear wide-btn" type="button" id="moveui-btn">UI Moving Mode</button>
             </div>
@@ -1196,6 +1214,7 @@
       </div>
       <div id="fg-chart-container"></div>
       <div id="ui-mode-note" class="pinned-card ui-note" hidden>UI Moving Mode is turned on, Press ESC to Turn it off</div>
+      <div id="tt-container" hidden></div>
       <div id="stake-container" hidden></div>
       <div id="sq-container" hidden></div>
       <div id="roadmap-container" hidden></div>
@@ -1767,7 +1786,7 @@
     var sym = c.symbol + "-" + sourceKey, hit = chartCache[sym];
     if (hit && Date.now() - hit.at < CHART_TTL) return Promise.resolve(hit.d);
     if (STABLECOINS.indexOf(c.symbol.toUpperCase()) > -1) { /* stablecoin: flat blue line, no exchange/CoinGecko calls */
-      var fc = flatChart(c); chartCache[sym] = { d: fc, at: Date.now() }; dayOpenCache[c.symbol] = { open: fc.v[0], change: 0 };
+      var fc = flatChart(c); chartCache[sym] = { d: fc, at: Date.now() }; if (!ttDay) dayOpenCache[c.symbol] = { open: fc.v[0], change: 0 };
       return Promise.resolve(fc);
     }
     if (chartPending[sym]) return chartPending[sym];
@@ -1794,7 +1813,7 @@
     chartPending[sym] = tryNext(0).then(function (r) {
       if (!r && STABLECOINS.indexOf(c.symbol.toUpperCase()) > -1) r = flatChart(c); /* no real chart: a stablecoin sits at its price */
       chartCache[sym] = { d: r, at: Date.now() + (r && r.tag === "CoinGecko" ? 75000 : 0) }; /* CoinGecko charts stay valid ~2 min (instead of 45s) to save API calls */
-      if (r && r.v && r.v.length) { var change = (r.v[r.v.length - 1] - r.v[0]) / r.v[0] * 100; dayOpenCache[c.symbol] = { open: r.v[0], change: change }; applyPulseTint(); updateBadges(false); updateBreadth(); if (filterState.tier !== null || filterState.category || filterState.network) applyFilters(false); }
+      if (r && r.v && r.v.length && !ttDay) { var change = (r.v[r.v.length - 1] - r.v[0]) / r.v[0] * 100; dayOpenCache[c.symbol] = { open: r.v[0], change: change }; applyPulseTint(); updateBadges(false); updateBreadth(); if (filterState.tier !== null || filterState.category || filterState.network) applyFilters(false); }
       delete chartPending[sym]; return r;
     });
     return chartPending[sym];
@@ -2402,7 +2421,7 @@
   function updatePinnedColVisibility() {
     var col = document.getElementById("pinned-col");
     if (!col) return;
-    if (pinnedCoins.length > 0 || (typeof chMinis !== "undefined" && chMinis.length) || roadmapVisible || portfolioVisible || ratioVisible || uiNoteOn || sqVisible || (typeof stkVisible !== "undefined" && stkVisible) || (snapVisible && devActive)) col.classList.add("on");
+    if (pinnedCoins.length > 0 || (typeof chMinis !== "undefined" && chMinis.length) || roadmapVisible || portfolioVisible || ratioVisible || uiNoteOn || sqVisible || (typeof stkVisible !== "undefined" && stkVisible) || snapVisible || (typeof ttVisible !== "undefined" && ttVisible)) col.classList.add("on");
     else col.classList.remove("on");
   }
 
@@ -2984,45 +3003,7 @@
   rankToggle.addEventListener("click", function () { rankArrowsOn = !rankArrowsOn; rankToggle.setAttribute("aria-checked", rankArrowsOn ? "true" : "false"); try { localStorage.setItem(RANK_KEY, rankArrowsOn ? "1" : "0"); } catch (e) {} applyRankArrows(); });
 
   /* ---------- EXACTLY X YEARS AGO: the list shows the daily close of that day from Binance ---------- */
-  var yearsAgo = 0, agoCache = {}, agoBtn = document.getElementById("ago-btn"), agoMenu = document.getElementById("ago-menu");
-  function agoDay(x) { var n = new Date(); return Date.UTC(n.getUTCFullYear() - x, n.getUTCMonth(), n.getUTCDate()); }
-  function agoPrice(sym, x) { /* resolves to { p: price } or { none: "exist" } when the pair started trading later, { none: "data" } without a Binance pair */
-    var key = x + ":" + sym; if (agoCache[key]) return agoCache[key];
-    var t = agoDay(x);
-    if (sym === "USDT") return (agoCache[key] = Promise.resolve({ p: 1 }));
-    return (agoCache[key] = getJson("https://data-api.binance.vision/api/v3/klines?symbol=" + sym + "USDT&interval=1d&startTime=" + t + "&limit=1", 12000).then(function (j) {
-      if (!j || !j.length) return { none: "exist" };
-      return j[0][0] - t > 2 * 864e5 ? { none: "exist" } : { p: +j[0][4] };
-    }, function () { return { none: "data" }; }));
-  }
-  function applyAgo() {
-    var mh = document.getElementById("mcap-h"), x = yearsAgo;
-    agoBtn.textContent = x ? x + (x === 1 ? " Year Ago" : " Years Ago") : "Years Ago"; agoBtn.classList.toggle("ago-active", !!x);
-        if (mh) mh.textContent = x ? "Since then" : "Market cap";
-    document.body.classList.toggle("ago-on", !!x);
-    if (!x) return;
-    var rows = Array.prototype.slice.call(rowsEl.children), k = 0, run = function () {
-      if (k >= rows.length || yearsAgo !== x) return;
-      var row = rows[k++], c = displayCoins[+row.dataset.i]; if (!c) return run();
-      var tds = row.querySelectorAll("td"); tds[2].textContent = "…"; tds[3].textContent = "";
-      agoPrice(String(c.symbol).toUpperCase(), x).then(function (r) {
-        if (yearsAgo !== x || !row.isConnected) return;
-        row.classList.toggle("ago-none", !r.p);
-        if (r.p) { var g = c.current_price / r.p - 1; tds[2].textContent = price(r.p); tds[3].textContent = (g >= 0 ? "+" : "−") + Math.abs(g * 100).toLocaleString("en-US", { maximumFractionDigits: 0 }) + "%"; tds[3].style.color = g >= 0 ? "var(--up)" : "var(--down)"; tds[3].title = "From " + price(r.p) + " to " + price(c.current_price) + " today"; }
-        else { tds[2].textContent = r.none === "exist" ? "This Asset didn't exist " + x + (x === 1 ? " Year Ago" : " Years Ago") : "No price data from " + x + (x === 1 ? " year ago" : " years ago"); tds[3].textContent = ""; tds[3].title = ""; }
-      }).then(run, run);
-    };
-    for (var w = 0; w < 6; w++) run(); /* six requests at a time */
-  }
-  agoBtn.addEventListener("click", function (e) { e.stopPropagation(); agoMenu.hidden = !agoMenu.hidden; agoBtn.setAttribute("aria-expanded", agoMenu.hidden ? "false" : "true"); });
-  document.addEventListener("click", function (e) { if (!agoMenu.hidden && !e.target.closest(".ago-wrap")) { agoMenu.hidden = true; agoBtn.setAttribute("aria-expanded", "false"); } });
-  agoMenu.addEventListener("click", function (e) {
-    var b = e.target.closest("[data-ago]"); if (!b) return;
-    agoMenu.hidden = true; agoBtn.setAttribute("aria-expanded", "false"); yearsAgo = +b.dataset.ago;
-    Array.prototype.forEach.call(agoMenu.children, function (x) { x.classList.toggle("active", +x.dataset.ago === yearsAgo); });
-    Array.prototype.forEach.call(rowsEl.children, function (r) { r.classList.remove("ago-none"); var td = r.querySelectorAll("td")[3]; if (td) { td.style.color = ""; td.title = ""; } });
-    applyRankArrows(); applyAgo(); if (!yearsAgo) render();
-  });
+  var yearsAgo = 0; function applyAgo() {} /* "Years Ago" became Time Travel (see SNAPSHOTS / TIME TRAVEL) */
   /* ---------- CHARTS: a fullscreen chart for a fixed list of assets (docs/reading-spec.md, Charts).
      Exchange charts come from Bitget and Binance; TOTAL200, BTC.D and USDT.D from the daily snapshots; WALCL from FRED, recorded weekly by the snapshot job.
      Drawn with KLineChart (Apache 2.0), embedded in this page so that nothing can be switched off from outside. ---------- */
@@ -3796,37 +3777,220 @@
     }
     return h + '</div>';
   }
+  /* ---------- SNAPSHOTS (for everyone): every day CoinAtlas recorded, with all that was stored that day, a download, and a jump into Time Travel.
+     The backup history from other sources shows only in Dev Mode ---------- */
+  var snapRead = null, snapDeriv = null, snapStakeH = null, snapMore = {};
+  function snapKeys() { return snapDays ? Object.keys(snapDays).sort() : []; }
+  function snapPrevKey(k) { var ks = snapKeys(), i = ks.indexOf(k); return i > 0 ? ks[i - 1] : null; }
+  function snapFile(k) { /* one day's snapshot file, cached */
+    if (snapLists[k]) return Promise.resolve(snapLists[k]);
+    return repoJson("data/snapshots/" + k + ".json").then(function (j) { snapLists[k] = j && j.coins ? j : {}; return snapLists[k]; }, function () { snapLists[k] = {}; return {}; });
+  }
+  function snapExtras() { /* the day-by-day files beside the snapshots, loaded once */
+    var p = [];
+    if (!snapRead) p.push(repoJson("data/readings.json").then(function (j) { snapRead = j || {}; }, function () { snapRead = {}; }));
+    if (!snapDeriv) p.push(repoJson("data/derivatives.json").then(function (j) { snapDeriv = j || {}; }, function () { snapDeriv = {}; }));
+    if (!snapStakeH) p.push(repoJson("data/staking-history.json").then(function (j) { snapStakeH = j || {}; }, function () { snapStakeH = {}; }));
+    return Promise.all(p);
+  }
+  function snapLoadDays() {
+    if (snapDays) return Promise.resolve(snapDays);
+    return repoJson("data/dominance.json").then(function (j) { snapDays = {}; Object.keys(j || {}).forEach(function (k) { if (!/backfill/.test(j[k][4])) snapDays[k] = j[k]; }); }, function () { snapDays = {}; }).then(function () { return snapDays; });
+  }
+  function snapCsv(j) {
+    var f = j.fields || ["symbol", "name", "price", "market cap", "24h volume", "circulating supply"];
+    return ["rank"].concat(f).join(",") + "\n" + j.coins.map(function (c, i) { return [i + 1].concat(c.map(function (v) { v = v == null ? "" : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; })).join(","); }).join("\n") + "\n";
+  }
+  function snapDownload(k, kind) {
+    snapFile(k).then(function (j) {
+      if (!j.coins) return;
+      var blob = kind === "csv" ? new Blob([snapCsv(j)], { type: "text/csv" }) : new Blob([JSON.stringify(j, null, 1)], { type: "application/json" });
+      var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "coinatlas-snapshot-" + k + "." + kind; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+    });
+  }
+  function snapDayHtml(k) { /* everything stored for one day */
+    var j = snapLists[k], pk = snapPrevKey(k), pj = pk && snapLists[pk], x = snapDays[k] || [];
+    if (!j) return '<div class="rt-empty">Loading the snapshot…</div>';
+    if (!j.coins) return '<div class="rt-empty">This snapshot could not be loaded.</div>';
+    var h = '<div class="snap-grid">' +
+      '<div><span>Top 200 Market Cap</span><b>' + (j.total ? compact(j.total) : x[2] ? compact(x[2]) : '–') + '</b></div>' +
+      '<div><span>BTC Dominance</span><b style="color:' + BTC_C + '">' + (j.btc != null ? (+j.btc).toFixed(1) + '%' : '–') + '</b></div>' +
+      '<div><span>ETH Dominance</span><b style="color:' + ETH_C + '">' + (j.eth != null ? (+j.eth).toFixed(1) + '%' : '–') + '</b></div>' +
+      '<div><span>Fear & Greed</span><b' + (j.fg != null ? ' style="color:' + fgCol(j.fg) + '"' : '') + '>' + (j.fg != null ? j.fg : '–') + '</b></div>' +
+      '<div><span>BTC|ETH Ratio</span><b>' + (j.ratio ? (+j.ratio).toFixed(2) : '–') + '</b></div>' +
+      '<div><span>Coins recorded</span><b>' + j.coins.length + '</b></div></div>';
+    var rd = snapRead && snapRead[k];
+    if (rd) h += '<div class="snap-sub">BTC|ETH Reading</div><div class="snap-txt">' + esc(rd.text || "") + '</div>';
+    var dv = snapDeriv && snapDeriv[k];
+    if (dv) {
+      var oi = { BTC: 0, ETH: 0 }, fu = { BTC: [], ETH: [] };
+      Object.keys(dv).forEach(function (ex) { ["BTC", "ETH"].forEach(function (a) { var o = dv[ex] && dv[ex][a]; if (!o) return; if (o.oiUsd) oi[a] += o.oiUsd; if (o.funding != null) fu[a].push(o.funding); }); });
+      var avg = function (l) { return l.length ? l.reduce(function (s, v) { return s + v; }, 0) / l.length * 100 : null; };
+      h += '<div class="snap-sub">Derivatives (' + Object.keys(dv).length + ' exchanges)</div><div class="snap-grid two">' + ["BTC", "ETH"].map(function (a) { var f = avg(fu[a]); return '<div><span>' + a + ' Open Interest</span><b>' + (oi[a] ? compact(oi[a]) : '–') + '</b><i>funding ' + (f == null ? '–' : (f >= 0 ? '+' : '') + f.toFixed(4) + '%') + '</i></div>'; }).join("") + '</div>';
+    }
+    var sk = snapStakeH && snapStakeH[k];
+    if (sk) h += '<div class="snap-sub">Staking Rates</div><div class="snap-tags">' + Object.keys(sk).map(function (s) { var v = Object.keys(sk[s]).map(function (n) { return sk[s][n]; }), m = Math.max.apply(null, v); return '<span>' + esc(s) + ' <b>' + m.toFixed(2) + '%</b></span>'; }).join("") + '</div>';
+    if (pj && pj.coins) { /* against the snapshot before: who came, who left, who moved most */
+      var top = function (l) { var o = {}; l.slice(0, 200).forEach(function (c, i) { o[String(c[0]).toUpperCase()] = { i: i, p: +c[2], n: c[1] }; }); return o; };
+      var a = top(j.coins), b = top(pj.coins), inn = Object.keys(a).filter(function (s) { return !b[s]; }), out = Object.keys(b).filter(function (s) { return !a[s]; });
+      var mv = Object.keys(a).filter(function (s) { return b[s] && b[s].p > 0 && STABLECOINS.indexOf(s) < 0; }).map(function (s) { return [s, (a[s].p / b[s].p - 1) * 100]; }).sort(function (u, v) { return v[1] - u[1]; });
+      h += '<div class="snap-sub">Against ' + snapDate(pk) + '</div><div class="snap-tags">' +
+        (inn.length ? '<span class="in">New in Top 200: <b>' + inn.map(esc).join(", ") + '</b></span>' : '<span>No coin entered the Top 200</span>') +
+        (out.length ? '<span class="out">Left the Top 200: <b>' + out.map(esc).join(", ") + '</b></span>' : '') + '</div>' +
+        (mv.length ? '<div class="snap-mv"><div><span>Best</span>' + mv.slice(0, 5).map(function (m) { return '<em class="up">' + esc(m[0]) + ' ' + pct(m[1]) + '</em>'; }).join("") + '</div><div><span>Worst</span>' + mv.slice(-5).reverse().map(function (m) { return '<em class="down">' + esc(m[0]) + ' ' + pct(m[1]) + '</em>'; }).join("") + '</div></div>' : '');
+    }
+    h += '<div class="snap-act"><button type="button" class="gear snap-tt" data-tt-go="' + k + '">Time Travel to this day</button><button type="button" class="gear" data-snapdl="csv" data-k="' + k + '">Download CSV</button><button type="button" class="gear" data-snapdl="json" data-k="' + k + '">Download JSON</button></div>';
+    h += '<button type="button" class="snap-more" data-snapmore="' + k + '">' + (snapMore[k] ? 'Hide the full list' : 'Show the full list (' + j.coins.length + ' coins)') + '</button>' + (snapMore[k] ? snapListHtml(k) : '');
+    return h;
+  }
   function renderSnaps() {
     if (!snapVisible) { snapBox.hidden = true; snapBox.innerHTML = ""; updatePinnedColVisibility(); return; }
     snapBox.hidden = false; updatePinnedColVisibility();
-    var h = '<div class="pinned-card chart-container pf-card dev-target" data-dev-name="Snapshots" data-dev-color="#a78bfa"><div class="pf-title">Snapshots</div>';
+    var h = '<div class="pinned-card chart-container pf-card dev-target" data-dev-name="Snapshots" data-dev-color="#a78bfa"><div class="pf-title">CoinAtlas Snapshots</div>';
     if (!snapDays) h += '<div class="rt-empty">Loading snapshots…</div>';
     else {
-      var keys = Object.keys(snapDays).sort().reverse(), n = keys.length, first = n ? keys[n - 1] : "";
-      h += '<div class="rt-val-title">Past Snapshots</div><div class="fg-sub snap-note">History from before CoinAtlas started recording. Stored as a backup and used when a source is unreachable.</div>' + SNAP_HIST.map(function (H) { return snapHistHtml(H, first); }).join("");
-      h += '<div class="rt-val-title snap-sec">CoinAtlas Snapshots</div><div class="fg-sub snap-note">' + n + (n === 1 ? ' day' : ' days') + ' recorded from our own list · New in Top 200 ' + (snapMeta && snapMeta.ready ? 'is active' : 'starts at 14 snapshots') + '</div>';
-      if (!n) h += '<div class="rt-empty">No snapshots yet. The first one appears after the scheduled job in the repository has run.</div>';
+      var keys = snapKeys().reverse(), n = keys.length;
+      h += '<div class="fg-sub snap-note">Every night at midnight New York time CoinAtlas records the Top 300 with prices, market caps, volume and supply, the dominance, Fear & Greed, the BTC|ETH Reading, derivatives and staking rates. ' + n + (n === 1 ? ' day' : ' days') + ' recorded so far.</div>';
+      if (!n) h += '<div class="rt-empty">No snapshots yet.</div>';
       keys.forEach(function (k) {
         var x = snapDays[k], on = snapOpen === k;
         h += '<div class="snap-day' + (on ? ' open' : '') + '"><button type="button" class="snap-head" data-snap="' + k + '"><b>' + snapDate(k) + '</b>' +
-          '<span style="color:' + BTC_C + '">BTC ' + (+x[0]).toFixed(1) + '%</span><span style="color:' + ETH_C + '">ETH ' + (+x[1]).toFixed(1) + '%</span><span>' + (x[2] ? compact(x[2]) : "–") + '</span><span class="fg-sub">' + (x[3] ? x[3] + ' coins' : '') + '</span></button>' + (on ? snapListHtml(k) : '') + '</div>';
+          '<span style="color:' + BTC_C + '">BTC ' + (+x[0]).toFixed(1) + '%</span><span style="color:' + ETH_C + '">ETH ' + (+x[1]).toFixed(1) + '%</span><span>' + (x[2] ? compact(x[2]) : "–") + '</span><span class="fg-sub">' + (ttDay === k ? '⏳ here now' : '') + '</span></button>' + (on ? '<div class="snap-body">' + snapDayHtml(k) + '</div>' : '') + '</div>';
       });
+      if (document.body.classList.contains("dev-mode")) { /* backup history from other sources: Dev Mode only */
+        var first = keys.length ? keys[keys.length - 1] : "";
+        h += '<div class="rt-val-title snap-sec">Backup History · Dev Mode</div><div class="fg-sub snap-note">From other sources, from before CoinAtlas started recording. Stored as a backup and used when a source is unreachable.</div>' + SNAP_HIST.map(function (H) { return snapHistHtml(H, first); }).join("");
+      }
     }
     snapBox.innerHTML = h + '</div>';
   }
   snapBtn.addEventListener("click", function () {
     snapVisible = !snapVisible; snapBtn.classList.toggle("active", snapVisible);
     if (snapVisible) {
-      repoJson("data/dominance.json").then(function (j) { snapDays = {}; Object.keys(j || {}).forEach(function (k) { if (!/backfill/.test(j[k][4])) snapDays[k] = j[k]; }); }, function () { snapDays = {}; }).then(renderSnaps); /* only days CoinAtlas recorded itself; backfilled days only feed the charts */
-      SNAP_HIST.forEach(function (H) { repoJson(H[2]).then(function (j) { snapHist[H[0]] = j && j.days ? j : null; }, function () { snapHist[H[0]] = null; }).then(renderSnaps); });
+      snapLoadDays().then(renderSnaps);
+      SNAP_HIST.forEach(function (H) { if (snapHist[H[0]] === undefined) repoJson(H[2]).then(function (j) { snapHist[H[0]] = j && j.days ? j : null; }, function () { snapHist[H[0]] = null; }).then(renderSnaps); });
     }
     renderSnaps();
   });
   snapBox.addEventListener("click", function (e) {
-    var b = e.target.closest("button[data-snap]"); if (!b) return;
+    var t = e.target;
+    var dl = t.closest("[data-snapdl]"); if (dl) { snapDownload(dl.dataset.k, dl.dataset.snapdl); return; }
+    var go = t.closest("[data-tt-go]"); if (go) { ttGo(go.dataset.ttGo); return; }
+    var mo = t.closest("[data-snapmore]"); if (mo) { snapMore[mo.dataset.snapmore] = !snapMore[mo.dataset.snapmore]; renderSnaps(); return; }
+    var b = t.closest("button[data-snap]"); if (!b) return;
     var k = b.dataset.snap; snapOpen = snapOpen === k ? null : k;
-    if (snapOpen && k.charAt(1) !== ":" && !snapLists[k]) repoJson("data/snapshots/" + k + ".json").then(function (j) { snapLists[k] = j; }, function () { snapLists[k] = {}; }).then(renderSnaps);
+    if (snapOpen && k.charAt(1) !== ":") { var pk = snapPrevKey(k); Promise.all([snapFile(k), pk ? snapFile(pk) : null, snapExtras()]).then(renderSnaps); }
     renderSnaps();
+  });
+
+  /* ---------- TIME TRAVEL: the whole page as it was on a day CoinAtlas recorded (the list, prices, market caps, ranks, changes, Fear & Greed, the BTC|ETH
+     Formula and its Reading, Portfolio values, Staking rates, Sentiment Squares). Charts stay live; they get their own Backtesting later ---------- */
+  var ttVisible = false, ttDay = null, ttLive = null, ttMonth = null, ttBusy = false, ttBtn = document.getElementById("tt-btn"), ttBox = document.getElementById("tt-container");
+  function ttTone() { var v = "sepia"; try { v = localStorage.getItem("coinatlas-tt-tone") === "gold" ? "gold" : "sepia"; } catch (e) {} return v; }
+  function ttApplyTone() { document.body.classList.toggle("tt-on", !!ttDay); document.body.classList.toggle("tt-sepia", !!ttDay && ttTone() === "sepia"); document.body.classList.toggle("tt-gold", !!ttDay && ttTone() === "gold"); }
+  document.addEventListener("coinatlas-tt-tone", ttApplyTone);
+  function ttWarp(from, to, done) { /* the jump: the page blurs, a big date rolls day by day to the target, a clock turns the other way */
+    var ov = document.createElement("div"); ov.className = "tt-warp"; ov.innerHTML = '<div class="tt-warp-in"><svg class="tt-clock" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21"/><path class="h" d="M24 24V12"/><path class="m" d="M24 24l9 6"/></svg><div class="tt-warp-d"></div><div class="tt-warp-s">' + (to ? 'Traveling back in time' : 'Back to Live') + '</div></div>';
+    document.body.appendChild(ov); ov.classList.toggle("fwd", !to);
+    var d = ov.querySelector(".tt-warp-d"), a = Date.parse(from + "T00:00:00Z"), b = Date.parse((to || new Date().toISOString().slice(0, 10)) + "T00:00:00Z");
+    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches, dur = reduce ? 1 : 1500, t0 = performance.now();
+    var fmt = function (t) { return new Date(t).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }); };
+    requestAnimationFrame(function () { ov.classList.add("on"); });
+    (function step(now) {
+      var x = Math.min(1, (now - t0) / dur), e = x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+      d.textContent = fmt(Math.round((a + (b - a) * e) / 864e5) * 864e5);
+      if (x < 1) requestAnimationFrame(step); else { done(); setTimeout(function () { ov.classList.remove("on"); setTimeout(function () { ov.remove(); }, 500); }, 250); }
+    })(t0);
+  }
+  function ttCoins(j, pj) { /* the day's list as live coins: logos and details from today's list, everything else from the snapshot */
+    var live = {}; (ttLive ? ttLive.coins : coins).forEach(function (c) { live[String(c.symbol).toUpperCase()] = c; });
+    var prev = {}; if (pj && pj.coins) pj.coins.forEach(function (c) { prev[String(c[0]).toUpperCase()] = +c[2]; });
+    var open = {}, list = j.coins.slice(0, MAX_LIST).map(function (r, i) {
+      var S = String(r[0]).toUpperCase(), base = live[S] || { symbol: S, name: r[1], image: "", pairs: {} }, c = Object.assign({}, base);
+      c.name = r[1] || c.name; c.current_price = +r[2]; c.market_cap = +r[3] || 0; c.market_cap_rank = i + 1;
+      if (r[4] != null) c.total_volume = +r[4]; if (r[5] != null) c.circulating_supply = +r[5];
+      var p0 = prev[S]; open[c.symbol] = p0 > 0 ? { open: p0, change: (c.current_price / p0 - 1) * 100 } : { open: c.current_price, change: 0 };
+      return c;
+    });
+    var ranks = null; if (pj && pj.coins) { ranks = {}; pj.coins.forEach(function (c, k) { var s = String(c[0]).toUpperCase(); if (!(s in ranks)) ranks[s] = k + 1; }); }
+    return { list: list, open: open, ranks: ranks };
+  }
+  function ttStake(k) { /* the staking rates of that day where they were recorded */
+    var src = ttLive ? ttLive.stake : stakeData, h = snapStakeH && snapStakeH[k], out = {};
+    Object.keys(src).forEach(function (s) {
+      var st = JSON.parse(JSON.stringify(src[s])); if (h && h[s]) st.list.forEach(function (x) { if (h[s][x.name] != null) x.apy = h[s][x.name]; });
+      st.list.sort(function (a, b) { return (b.apy == null ? -1 : b.apy) - (a.apy == null ? -1 : a.apy); }); st.best = st.list.reduce(function (m, x) { return x.apy != null && (m == null || x.apy > m) ? x.apy : m; }, null); out[s] = st;
+    });
+    return out;
+  }
+  function ttRefresh() { /* every part of the page draws itself again with the data it now has */
+    applyFilters(true); if (typeof updateBreadth === "function") updateBreadth();
+    if (pinnedCoins.length) { pinnedCoins = pinnedCoins.map(function (pc) { return coins.find(function (c) { return String(c.symbol).toUpperCase() === String(pc.symbol).toUpperCase(); }) || pc; }); renderPinned(); }
+    if (portfolioVisible) { pfRenderBody(); pfRenderLock(true); }
+    if (ratioVisible) rtRender();
+    if (sqVisible) { sqVal = {}; sqDraw(); }
+    if (stkVisible) renderStaking();
+    if (snapVisible) renderSnaps();
+    if (fgVisible && fgData) renderFGChart();
+    applyStakeBadges();
+  }
+  function ttGo(k) { /* to a recorded day; k null = back to live */
+    if (ttBusy || k === ttDay) return; ttBusy = true;
+    var from = ttDay || new Date().toISOString().slice(0, 10);
+    var ready = k ? snapLoadDays().then(function () { var pk = snapPrevKey(k); return Promise.all([snapFile(k), pk ? snapFile(pk) : null, snapExtras()]); }) : Promise.resolve(null);
+    if (!ttVisible) { ttVisible = true; ttBtn.classList.add("active"); renderTT(); }
+    ready.then(function (r) {
+      if (k && (!r || !r[0] || !r[0].coins)) { ttBusy = false; renderTT("This snapshot could not be loaded."); return; }
+      ttWarp(from, k, function () {
+        if (k) {
+          if (!ttLive) ttLive = { coins: coins, open: dayOpenCache, stake: stakeData, ranks: prevRanks, ranksDay: prevRanksDay, status: statusEl.textContent, asOf: RT.asOf };
+          var t = ttCoins(r[0], r[1]); coins = t.list; dayOpenCache = t.open; prevRanks = t.ranks; prevRanksDay = snapPrevKey(k) || ""; stakeData = ttStake(k); CATS.staking = Object.keys(stakeData);
+          RT.asOf = Date.parse(k + "T00:00:00Z"); ttDay = k;
+          statusEl.textContent = "Time Travel · " + snapDate(k) + " · CoinAtlas Snapshot";
+        } else if (ttLive) {
+          coins = ttLive.coins; dayOpenCache = ttLive.open; stakeData = ttLive.stake; CATS.staking = Object.keys(stakeData); prevRanks = ttLive.ranks; prevRanksDay = ttLive.ranksDay; RT.asOf = ttLive.asOf; statusEl.textContent = ttLive.status;
+          ttLive = null; ttDay = null;
+        }
+        ttApplyTone(); ttRefresh(); renderTT(); ttBusy = false;
+        if (!ttDay) pollPrices(true);
+      });
+    });
+  }
+  function ttCal() { /* a month of days; only recorded days can be clicked */
+    var ks = snapKeys(), have = {}; ks.forEach(function (k) { have[k] = 1; });
+    if (!ttMonth) ttMonth = (ttDay || ks[ks.length - 1] || new Date().toISOString().slice(0, 10)).slice(0, 7);
+    var y = +ttMonth.slice(0, 4), m = +ttMonth.slice(5, 7) - 1, first = new Date(Date.UTC(y, m, 1)), days = new Date(Date.UTC(y, m + 1, 0)).getUTCDate(), lead = (first.getUTCDay() + 6) % 7;
+    var minM = ks.length ? ks[0].slice(0, 7) : ttMonth, maxM = new Date().toISOString().slice(0, 7);
+    var h = '<div class="tt-cal"><div class="tt-cal-h"><button type="button" data-ttm="-1"' + (ttMonth <= minM ? ' disabled' : '') + '>‹</button><b>' + first.toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" }) + '</b><button type="button" data-ttm="1"' + (ttMonth >= maxM ? ' disabled' : '') + '>›</button></div><div class="tt-cal-g">' +
+      ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map(function (d) { return '<i>' + d + '</i>'; }).join("");
+    for (var i = 0; i < lead; i++) h += '<span></span>';
+    for (var d = 1; d <= days; d++) { var k = ttMonth + "-" + (d < 10 ? "0" : "") + d; h += have[k] ? '<button type="button" data-tt-go="' + k + '"' + (k === ttDay ? ' class="on"' : '') + '>' + d + '</button>' : '<span class="off">' + d + '</span>'; }
+    return h + '</div></div>';
+  }
+  function renderTT(msg) {
+    if (!ttVisible) { ttBox.hidden = true; ttBox.innerHTML = ""; updatePinnedColVisibility(); return; }
+    ttBox.hidden = false; updatePinnedColVisibility();
+    var ks = snapKeys(), last = ks[ks.length - 1], ago = function (n) { var t = new Date(Date.parse((last || "") + "T00:00:00Z") - n * 864e5).toISOString().slice(0, 10); return snapDays && snapDays[t] ? t : null; };
+    var h = '<div class="pinned-card chart-container pf-card tt-card dev-target" data-dev-name="Time Travel" data-dev-color="#facc15"><div class="pf-title">Time Travel</div>';
+    h += ttDay ? '<div class="tt-now past"><span>You are on</span><b>' + new Date(ttDay + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }) + '</b><button type="button" class="gear tt-live" data-tt-live="1">Back to Live</button></div>'
+      : '<div class="tt-now"><span>You are</span><b>Live</b></div>';
+    if (msg) h += '<div class="pf-msg err">' + esc(msg) + '</div>';
+    if (!snapDays) h += '<div class="rt-empty">Loading the recorded days…</div>';
+    else if (!ks.length) h += '<div class="rt-empty">No snapshots yet.</div>';
+    else {
+      var q = [["Last Snapshot", last], ["1 Week Ago", ago(7)], ["1 Month Ago", ago(30)], ["1 Year Ago", ago(365)]];
+      h += '<div class="tt-quick">' + q.map(function (x) { return '<button type="button" class="gear" ' + (x[1] ? 'data-tt-go="' + x[1] + '"' : 'disabled title="Not recorded yet"') + '>' + x[0] + '</button>'; }).join("") + '</div>' + ttCal();
+    }
+    h += '<div class="fg-sub tt-note">Pick a day CoinAtlas recorded. The whole page then shows that day as if it were live: the list with its prices, market caps, ranks and daily changes, Fear & Greed, the BTC|ETH Formula and its Reading, your Portfolio\'s value, the Staking rates and the Sentiment Squares. Charts stay live; they get their own Backtesting later. Hover charts and the Locked Hovercharts\' charts show today.</div>';
+    ttBox.innerHTML = h + '</div>';
+  }
+  ttBtn.addEventListener("click", function () { ttVisible = !ttVisible; ttBtn.classList.toggle("active", ttVisible); if (ttVisible) snapLoadDays().then(function () { renderTT(); }); renderTT(); });
+  ttBox.addEventListener("click", function (e) {
+    var t = e.target;
+    if (t.closest("[data-tt-live]")) { ttGo(null); return; }
+    var go = t.closest("[data-tt-go]"); if (go) { ttGo(go.dataset.ttGo); return; }
+    var m = t.closest("[data-ttm]"); if (m) { var y = +ttMonth.slice(0, 4), mo = +ttMonth.slice(5, 7) - 1 + +m.dataset.ttm, d = new Date(Date.UTC(y, mo, 1)); ttMonth = d.toISOString().slice(0, 7); renderTT(); }
   });
 
   /* ---------- SENTIMENT SQUARES: every coin a square with its logo, its size by how far it moved, green ones left and red ones right, the strongest at the outer edges.
@@ -3867,6 +4031,7 @@
     })(todo.shift());
   }
   function sqPc(c) {
+    if (ttDay && sqS.tf !== "today") return null; /* a past day knows its change against the day before, nothing shorter or longer */
     if (sqS.tf === "today") return dayOpenCache[c.symbol] ? changeOf(c) : null;
     if (sqS.tf === "4h") { var h = sq4h[String(c.symbol).toUpperCase()]; return h && h.pc != null && isFinite(h.pc) ? h.pc : null; }
     var p = sqPap && sqPap[String(c.symbol).toUpperCase()], v = p && p.q["percent_change_" + sqS.tf];
@@ -4206,6 +4371,7 @@
       "Steps: 1. Account ID, Password and synced Settings. 2. Bitcoin Payment. 3. USDC / ETH later via a low-fee Network or a Payment Service. Replaces the 4 digit Code Screen."],
       desc: "To Allow Users to save their Settings, Customized Lists, Portfolios and use future features, Personal Accounts have to be introduced. Because i dont believe in Google or Phone Number Accounts, and prioritize Privacy, we're going to be taking a different Approach: an Account is unlocked like a Giftcard, by supporting CoinAtlas with Bitcoin." },
     { title: "Forums", notes: ["Not started. Depends on Accounts."], desc: "Allows Users to communicate via Forums we Provide. Certain Users might also be allowed to create their Own Forums with their own features. This is the main Usecase for Accounts." },
+    { title: "Snapshots & Time Travel", st: "done", notes: ["Works: Snapshots for everyone in the Landing Area: every recorded day with Market Cap, Dominance, Fear & Greed, Ratio, the BTC|ETH Reading, Derivatives, Staking rates, coins that came or left, best and worst, the full Top 300, and a download as CSV or JSON. The backup history from other sources shows only in Dev Mode.", "Works: Time Travel (was Years Ago) in the Landing Area: pick a recorded day in a calendar and the whole page shows that day as if it were live, with a jump animation and a Sepia or Gold tone (Settings, Customization). Charts stay live and get their own Backtesting."], desc: "Look at every day CoinAtlas recorded, and travel back to it." },
     { title: "Price Alerts & Watchlists", notes: ["Not started. The daily Snapshots could later power Alerts for Coins entering or leaving the Top 200."], desc: "Allows Users to Set Alerts that are going to immediately announce when a Token Reaches a Certain, customizable price threshold. Watchlists are going to be integrated alongside that. users will be able to create and share their own Lists." },
     { title: "CoinAtlas Sentiment Squares", st: "done", notes: ["Done. Reworked: every coin a square with its logo, sized by how far it moved, colour stronger the bigger the move. Green squares left, red right, the strongest at the outer edges; the glowing Sentiment Front between them shows the share of coins up and can be dragged like a window to reveal the hidden side, without moving a single square.", "Squares glide to their new place on every update, flash on a sudden move and fly into the new picture when the timeframe changes. A click locks the coin's chart in the Landing Area. Today, 1H, 24H, 7D, 30D, 1Y (Coinpaprika), Top 50 / 100 / 200, stablecoins left out.", "On a new timeframe and on first load the squares come in a handful at a time, the strongest first, gliding to their place; a coin that changes sides flies across the front while its colour fades over. Golden Squares (Experimental setting) for coins up 50% or more. Later ideas: a replay of the last 24 hours, and a size option by Market Cap."], desc: "200 Assets, 200 Squares. Every Square is one Asset — green means it's up, red means it's down. No numbers, no noise. One glance and you know exactly where the Market's Head is at." },
     { title: "Charting History", notes: ["Planned. TOTAL200, BTC.D and USDT.D are house-made from the daily snapshots, so their charts start on 12 Nov 2026. Their history before that will be fetched at some point."], desc: "Complete the history of the house-made charts on the Charts screen." },
@@ -4213,7 +4379,7 @@
     { title: "Settings Window Overhaul", st: "done", notes: ["Done. The Settings open as Tabs: the Sections on the left, their Settings on the right, so the Window fits the Screen without scrolling. Every Header Button can be switched off."], desc: "A new Settings Window: grouped, searchable and easier to scan, without growing endlessly." },
     { title: "Crypto Investor Cheatsheet", notes: ["Not started. If the owner has published the sheet to the web, it can be embedded as it is instead of copied, so it always stays up to date."], desc: "Bring the Crypto Investor Cheatsheet onto the site as a reference next to the other tools." },
     { title: "X Market Sentiment", notes: ["Not started. Reading posts on X needs the paid X API or a paid social sentiment provider; scraping is against the terms of X and breaks often. The Fear & Greed Index already carries a social component."], desc: "A market sentiment built from what is being posted about Bitcoin and Ethereum on X." },
-    { title: "Where can i stake?", st: "wip", notes: ["Works: Staking section in the Locked Hovercharts (under Tokenomics, switchable in Settings): the top 3 options with a hoverable link, Liquid or Native Staking, Locked or Unlocked, and the real rate only (no bonus tokens).", "Works: lavender Staking tag in the list (\"STAKING APY 7.2%\", the best rate of the top 3) and a Staking filter. Stablecoins on Aave show as Lending.", "Only trusted providers from a hand-picked list (years on the market, audited, never lost user funds), e.g. Lido, Rocket Pool, Coinbase, Jito, Marinade, Benqi, Aave and the chains' own staking pages. Rates from DefiLlama, every night with the snapshot.", "Works: Staking button in the Header. A list of every asset with trusted staking (#, Asset, best rate, Locked or Unlocked) with a search, a calculator per asset (Tokens or $, 1, 3, 6 or 12 months, rewards and holdings at the end for the top 3 providers), a lavender Rate History chart (from 30 recorded days on) and \"Use Portfolio Manager Holdings\": the Staking Potential of your Portfolio. A click on a Staking tag in the list opens the calculator.", "Next: rates for Native Staking (Cosmos chains and Cardano can be read for free), more chains (NEAR, TRX, SUI, APT, TON). With partners: referral links, and the \"not sponsored\" line goes away."], desc: "\"Staking\" Tag like the Highest Loss / Highest Gain Tags and Staking Filter, which displays every assets thats stakeable.\nAdd that into the Description of Tokens. The best Staking rewards and the APY shown on the site. It would in the future also show the Sites or wallets to stake on, and then you could collab with said Staking providers. So, the Goal is to let Users know how much they can get in Staking Rewards from the Top 3 Providers.\nThen theres an easy 3-Click Function where users can just Click on the Link to said Staking Provider, then connect their Wallet, and click Start Stake. Its as easy as that, if implemented Correctly." },
+    { title: "Where can i stake?", st: "wip", notes: ["Works: 47 assets with trusted staking: Liquid Staking (Lido, Rocket Pool, Coinbase, Jito, Marinade, Benqi), Lending (Aave) and Native Staking of 37 chains, each with a link straight to its staking page or guide. Real rates from DefiLlama and free official chain data where they exist, else Rate on site.", "Works: lavender Staking tag in the list (\"STAKING APY 7.2%\", the best rate of the top 3) and a Staking filter. Stablecoins on Aave show as Lending.", "Only trusted providers from a hand-picked list (years on the market, audited, never lost user funds), e.g. Lido, Rocket Pool, Coinbase, Jito, Marinade, Benqi, Aave and the chains' own staking pages. Rates from DefiLlama, every night with the snapshot.", "Works: Staking button in the Header. A list of every asset with trusted staking (#, Asset, best rate, Locked or Unlocked) with a search, a calculator per asset (Tokens or $, 1, 3, 6 or 12 months, rewards and holdings at the end for the top 3 providers), a lavender Rate History chart (from 30 recorded days on) and \"Use Portfolio Manager Holdings\": the Staking Potential of your Portfolio. A click on a Staking tag in the list opens the calculator.", "Next: rates for Native Staking (Cosmos chains and Cardano can be read for free), more chains (NEAR, TRX, SUI, APT, TON). With partners: referral links, and the \"not sponsored\" line goes away."], desc: "\"Staking\" Tag like the Highest Loss / Highest Gain Tags and Staking Filter, which displays every assets thats stakeable.\nAdd that into the Description of Tokens. The best Staking rewards and the APY shown on the site. It would in the future also show the Sites or wallets to stake on, and then you could collab with said Staking providers. So, the Goal is to let Users know how much they can get in Staking Rewards from the Top 3 Providers.\nThen theres an easy 3-Click Function where users can just Click on the Link to said Staking Provider, then connect their Wallet, and click Start Stake. Its as easy as that, if implemented Correctly." },
     { title: "More Ways to Customize The Asset List", notes: ["Planned. Settings now have a Customization tab with Sub Tabs: Asset List (empty for now), Sentiment Squares (a skin for coins up 50% or more) and Portfolio Tint. Skins: Gold, Silver, Diamond, Emerald, Ruby, Sapphire."], desc: "Let Users make the Asset List their own: Effects like Gold or Diamond for strong movers, Colours, which Columns to show, Highlights for chosen Coins and more." },
     { title: "Portfolio Manager Network Additions", notes: ["Planned. Now: Ethereum, Base, Arbitrum, Optimism, Polygon, BNB Chain, Avalanche and Solana. Next without the Backend: more EVM chains via public RPCs, plus Bitcoin and Tron addresses. Sites like CoinGecko or CoinMarketCap cover 25+ networks through paid indexer APIs (e.g. Zerion, Moralis, Covalent); that needs the Backend for the API key.", "Once the Backend exists: Swaps on Solana, and on BNB Chain and Avalanche (these need an API key that must not sit in the public Site)."], desc: "More Networks for the Portfolio Manager, so Wallets on every common Chain are read, together with their Swaps." },
     { title: "Charts Additions", notes: ["Planned: more Assets on the Charts screen.", "Planned: Drawings saved to the Account. Every time a Drawing is added or changed, its type and position are saved. All Drawings together are encrypted into one string of letters and numbers, tied to the Account ID, and turned back into the Drawings when the site opens. Needs the Backend and Accounts.", "Planned: Backtesting. Go back to any day in a chart and play it forward candle by candle, to test a strategy without seeing the future."], desc: "More Assets for the Charts screen, a Backtesting Feature, and Drawings that are saved to your Account, so they are still there on the next visit and on every Device." },
@@ -4472,7 +4638,12 @@
 
   function classifyFG(v) { v = parseInt(v, 10); if (v <= 24) return "Extreme Fear"; if (v <= 44) return "Fear"; if (v <= 55) return "Neutral"; if (v <= 75) return "Greed"; return "Extreme Greed"; }
   function fgCol(v) { if (v === null || v === undefined) return "var(--muted)"; v = +v; if (v <= 24) return "var(--down)"; if (v <= 44) return "var(--down-tier-2)"; if (v <= 55) return "#eab308"; if (v <= 75) return "var(--up-tier-2)"; return "var(--up)"; }
-  function fgSlice(tf) { if (!fgData) return []; if (tf === "30D") return fgData.slice(-30); if (tf === "1Y") return fgData.slice(-365); if (tf === "CY") { var cy = new Date().getUTCFullYear(); return fgData.filter(function (d) { return new Date(d.timestamp * 1000).getUTCFullYear() === cy; }); } return fgData.slice(); }
+  function fgSrc() { /* in Time Travel the index ends on the travelled day, with the value CoinAtlas recorded that day */
+    if (!ttDay || !fgData) return fgData; var end = Date.parse(ttDay + "T23:59:59Z") / 1000, l = fgData.filter(function (d) { return d.timestamp <= end; }), j = snapLists[ttDay];
+    if (j && j.fg != null && l.length) l[l.length - 1] = { timestamp: l[l.length - 1].timestamp, value: +j.fg, value_classification: classifyFG(j.fg) };
+    return l;
+  }
+  function fgSlice(tf) { if (!fgData) return []; var fgData = fgSrc(); if (tf === "30D") return fgData.slice(-30); if (tf === "1Y") return fgData.slice(-365); if (tf === "CY") { var cy = new Date().getUTCFullYear(); return fgData.filter(function (d) { return new Date(d.timestamp * 1000).getUTCFullYear() === cy; }); } return fgData.slice(); }
   window.setFGTimeframe = function (tf) { fgTimeframe = tf; fgYear = ""; renderFGChart(); };
   window.setFGYear = function (y) { fgYear = String(y); renderFGChart(); };
   window.fgCompare = function (on) { fgContainer.classList.toggle("fg-cmp-on", !!on || fgCmpPinned); };
@@ -4483,7 +4654,7 @@
 
   function renderFGChart() {
     if (!fgData || !fgData.length) return;
-    var data = fgYear ? fgData.filter(function (d) { return yOf(d.timestamp) === +fgYear; }) : fgSlice(fgTimeframe); if (!data.length) { fgYear = ""; data = fgSlice(fgTimeframe); } fgCurrentData = data;
+    var data = fgYear ? fgSrc().filter(function (d) { return yOf(d.timestamp) === +fgYear; }) : fgSlice(fgTimeframe); if (!data.length) { fgYear = ""; data = fgSlice(fgTimeframe); } fgCurrentData = data;
     var n = data.length, W = 528, H = 180;
 
     var useTimeX = !!fgYear || fgTimeframe === "CY";
@@ -4520,7 +4691,7 @@
     var lastPt = pts[pts.length - 1].split(",");
     
     var phaseColors = { "Extreme Fear": "#f0716a", "Fear": "#f7a8a3", "Neutral": "#eab308", "Greed": "#83daa4", "Extreme Greed": "#4cc27a" };
-    var current = fgData[fgData.length - 1];
+    var current = fgSrc()[fgSrc().length - 1];
     var lastDotColor = phaseColors[data[data.length - 1].value_classification] || "#fff";
     svg += '<circle cx="' + lastPt[0] + '" cy="' + lastPt[1] + '" r="5" fill="' + lastDotColor + '" stroke="var(--pop)" stroke-width="2"/>';
 
@@ -5122,6 +5293,7 @@
   }
 
   function done(list, text, t) {
+    if (ttDay && ttLive) { ttLive.coins = list; ttLive.status = "Updated " + new Date(t).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " · " + (text || "Example data"); return; } /* in Time Travel a fresh live list waits for the way back */
     coins = list; 
     coins.sort(function(a, b) { return (b.market_cap || 0) - (a.market_cap || 0); });
     coins.forEach(function (c) { c.__pendingMidnight = false; }); 
@@ -5181,7 +5353,7 @@
   }
 
   function pollPrices(force) {
-    if (isPolling || (document.hidden && !force) || devFrozen) return;
+    if (ttDay || isPolling || (document.hidden && !force) || devFrozen) return;
     if (sourceKey !== "aggregated" && !EXCHANGES.some(function (e) { return e.id === sourceKey; })) return;
     isPolling = true;
     var promise;

@@ -464,3 +464,17 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Customization: Kacheln statt Unter-Reitern. Jede Kachel zeigt Farbprobe, Namen und die aktuelle Einstellung ("Gold from +50%", "Off" …);
   ein Klick öffnet die Optionen, "‹ Customization" führt zurück (zuletzt offener Bereich gemerkt, "coinatlas-settings-cust").
   Neue Kachel "Time Travel": Ton der Vergangenheit, Sepia oder Gold ("coinatlas-tt-tone").
+
+## Snapshots & Time Travel (22.11.2026)
+
+- Snapshots (für alle, Landing Area): jeder eigene Tag (dominance.json ohne Backfill) als Zeile; aufgeklappt: Top-200-Marketcap, BTC/ETH-Dominanz,
+  Fear & Greed, Ratio, Anzahl Coins, Reading-Text (readings.json), Derivate (Summe Open Interest, mittleres Funding, derivatives.json),
+  Staking-Raten (staking-history.json), gegen den Vortag: neu/raus aus den Top 200, 5 beste/schlechteste. Knöpfe: "Time Travel to this day",
+  "Download CSV/JSON", "Show the full list". Backup-Historie anderer Quellen nur im Dev Mode.
+- Time Travel (Header-Knopf statt "Years Ago", Landing Area): Status (Live / "You are on …" + "Back to Live"), Schnellwahl (Last Snapshot,
+  1 Week, 1 Month, 1 Year Ago, nur wenn aufgezeichnet), Monatskalender, nur aufgezeichnete Tage klickbar.
+  Sprung: Overlay mit Unschärfe, Uhr dreht (rückwärts in die Vergangenheit), Datum rollt Tag für Tag (ease in-out, 1,5 s).
+  Danach: Liste = Snapshot des Tages (Rang, Preis, Marketcap, Volumen, Umlauf; Logos/Details von heute), Tagesänderung gegen den vorigen Snapshot,
+  Rang-Pfeile gegen den vorigen Snapshot, Breadth-Counter, Highest Gain/Loss, Portfolio-Werte, Staking-Raten des Tages, BTC|ETH Formula und
+  Reading (RT.asOf), Fear & Greed (Reihe endet am Tag, Wert aus dem Snapshot), Sentiment Squares (nur "Today"). Live-Updates pausieren; neue
+  Live-Daten warten auf den Rückweg. Ton Sepia oder Gold (Customization). Charts bleiben live (Backtesting kommt). "New in Top 200" ausgeblendet.
