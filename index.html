@@ -776,7 +776,8 @@
   .snx .fg-credit { font-size: 13px; margin-top: 12px; } .snx .fg-credit a { text-decoration: none; }
   .fg-hr { display: flex; align-items: center; gap: 8px; } .fg-header { position: relative; padding-right: 96px; } .fg-header .fg-dlb { position: absolute; right: 0; top: 0; height: 28px; } .fgx .fg-header { padding-right: 0; }
   .fgx .fg-annual-section > .fg-sub:last-child { display: none; } .snx .fg-dlb { display: none; }
-  .snx.fgx { width: 1500px; } .fgx .fg-yr-wrap { display: none !important; } .fgx .fg-annual-head .fg-timeframes { display: flex !important; pointer-events: none; } .fgx .fg-py-chev { display: none; } .fgx .fg-top-row { justify-content: center; }
+  .snx.fgx { width: 1700px; } .fgx .fgx-box { background: none !important; border: 0 !important; padding: 0 !important; } .fgx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; } .fgx-grid.one { grid-template-columns: 1fr; }
+  .fgx .fg-top-row { display: flex !important; gap: 24px; align-items: center; margin-top: 16px; } .fgx .fg-stats-col { display: block !important; flex: 1; } .fgx .fg-gauge-col { flex: 0 0 260px; } .fgx .fgx-r .fg-annual-section { margin: 0; border: 0; padding: 0; background: none; } .fgx .fg-yr-wrap { display: none !important; } .fgx .fg-annual-head .fg-timeframes { display: flex !important; pointer-events: none; } .fgx .fg-py-chev { display: none; } .fgx .fg-top-row { justify-content: center; }
   .snx-t2s { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin-top: 16px; } .snx-t2s div { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; border-top: 1px solid var(--line); padding-top: 8px; } .snx-t2s span { color: var(--muted); }
   .snx-rd .snx-rdt { font-size: 15px; line-height: 1.55; font-weight: 600; margin-bottom: 12px; } .snx-fm .fg-tip { display: none !important; } .snx-fm .rt-fm-rows, .snx-fm .rt-fm-total { font-size: 14px; } .snx.tags-off .badge, .snx.tag-off-stake .badge-stake, .snx.tag-off-gain .badge-gain, .snx.tag-off-loss .badge-loss, .snx.tag-off-new .badge-new { display: none; }
   .snx-brand { display: flex; align-items: center; gap: 10px; } .snx-brand svg { width: 36px; height: 36px; stroke: var(--fg); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; } .snx-brand b { font-size: 24px; letter-spacing: -0.02em; }
@@ -5141,6 +5142,14 @@
       var real = fgContainer, ids = Array.prototype.slice.call(real.querySelectorAll("[id]")); ids.forEach(function (n) { n.id = "keep-" + n.id; }); /* the open window keeps its parts; the image gets its own */
       try { fgContainer = document.getElementById("fgx-box"); renderFGChart(); }
       finally { fgContainer = real; ids.forEach(function (n) { n.id = n.id.slice(5); }); }
+      (function () { /* landscape: chart, wheel and numbers on the left, Past Years on the right; nothing stretched */
+        var box = document.getElementById("fgx-box"), g = document.createElement("div"), L = document.createElement("div"), R = document.createElement("div"), cr = box.querySelector(".fg-credit");
+        g.className = "fgx-grid"; L.className = "snx-card fgx-l"; R.className = "snx-card fgx-r";
+        [".fg-header", ".fg-hit-area", ".fg-ax", ".fg-top-row"].forEach(function (q) { var n = box.querySelector(q); if (n) L.appendChild(n); });
+        var yc = box.querySelector(".fg-annual-section"); if (yc) R.appendChild(yc); else R.remove();
+        box.innerHTML = ""; g.appendChild(L); if (yc) g.appendChild(R); box.appendChild(g); if (cr) box.appendChild(cr);
+        var sv = L.querySelector(".fg-svg"), vb = sv && (sv.getAttribute("viewBox") || "").split(/\s+/); if (vb && vb.length === 4) sv.style.height = (sv.getBoundingClientRect().width * vb[3] / vb[2]) + "px"; /* the chart keeps its own proportions */
+      })();
       Array.prototype.forEach.call(x.querySelectorAll("svg, svg *"), function (n) {
         ["fill", "stroke", "stop-color", "color"].forEach(function (at) { var v = n.getAttribute && n.getAttribute(at); if (v && v.indexOf("var(") > -1) n.setAttribute(at, v.replace(/var\((--[\w-]+)\)/g, function (m, nm) { return pfCss(nm); })); });
         if (n.getAttribute && n.getAttribute("style") && n.getAttribute("style").indexOf("var(") > -1) n.setAttribute("style", n.getAttribute("style").replace(/var\((--[\w-]+)\)/g, function (m, nm) { return pfCss(nm); }));

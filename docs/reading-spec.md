@@ -552,3 +552,4 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Fear & Greed: kein Live-Wert mehr von CoinMarketCap (anderer Index); alle Werte von Alternative.me. CoinMarketCap aus dem Quellen-Fuß entfernt.
 - Fear & Greed: Knopf Download oben rechts in der Titelzeile. Das Bild nimmt die gewählte Zeitauswahl, den Past-Years-Filter (z. B. nur Bear Years) und die aufgeklappten Jahre mit; Kopf mit Logo, Titel, Datum, [Zeitraum] [Filter]; Credit Alternative.me unten.
 - Past Years: die Karte 'All Years' erscheint nur beim Filter All (auch im Bild).
+- Fear-&-Greed-Bild im Querformat (1700 px, Faktor 2): links Chart in eigenen Proportionen, darunter Halbkreis und History; rechts Past Years; Credit unten.
