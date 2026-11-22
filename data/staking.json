@@ -1,11 +1,11 @@
 {
- "updated": "2026-11-20",
+ "updated": "2026-11-21",
  "source": "DefiLlama Yields (base rate only)",
  "missing": [],
  "assets": {
-  "ETH": {"label":"Staking","best":2.59,"list":[{"name":"Lido","kind":"Liquid Staking","url":"https://stake.lido.fi","locked":false,"apy":2.59,"tvl":16399182248},{"name":"Coinbase (cbETH)","kind":"Liquid Staking","url":"https://www.coinbase.com/cbeth","locked":false,"apy":2.5,"tvl":342464788},{"name":"Rocket Pool","kind":"Liquid Staking","url":"https://stake.rocketpool.net","locked":false,"apy":1.87,"tvl":806917853}]},
-  "SOL": {"label":"Staking","best":5.74,"list":[{"name":"Marinade","kind":"Liquid Staking","url":"https://marinade.finance","locked":false,"apy":5.74,"tvl":155291613},{"name":"Solana (native)","kind":"Native Staking","url":"https://solana.com/staking","locked":true,"apy":5.28,"tvl":null,"note":"network average, before validator fee"},{"name":"Jito","kind":"Liquid Staking","url":"https://www.jito.network/staking/","locked":false,"apy":4.89,"tvl":709133199}]},
-  "AVAX": {"label":"Staking","best":3.26,"list":[{"name":"Benqi (sAVAX)","kind":"Liquid Staking","url":"https://benqi.fi","locked":false,"apy":3.26,"tvl":159069975},{"name":"Core Wallet","kind":"Native Staking","url":"https://core.app/stake/","locked":true,"apy":null,"tvl":null}]},
+  "ETH": {"label":"Staking","best":2.59,"list":[{"name":"Lido","kind":"Liquid Staking","url":"https://stake.lido.fi","locked":false,"apy":2.59,"tvl":16270830735},{"name":"Coinbase (cbETH)","kind":"Liquid Staking","url":"https://www.coinbase.com/cbeth","locked":false,"apy":2.5,"tvl":339585433},{"name":"Rocket Pool","kind":"Liquid Staking","url":"https://stake.rocketpool.net","locked":false,"apy":1.87,"tvl":800609176}]},
+  "SOL": {"label":"Staking","best":5.74,"list":[{"name":"Marinade","kind":"Liquid Staking","url":"https://marinade.finance","locked":false,"apy":5.74,"tvl":153118040},{"name":"Solana (native)","kind":"Native Staking","url":"https://solana.com/staking","locked":true,"apy":5.28,"tvl":null,"note":"network average, before validator fee"},{"name":"Jito","kind":"Liquid Staking","url":"https://www.jito.network/staking/","locked":false,"apy":4.89,"tvl":703218808}]},
+  "AVAX": {"label":"Staking","best":3.29,"list":[{"name":"Benqi (sAVAX)","kind":"Liquid Staking","url":"https://benqi.fi","locked":false,"apy":3.29,"tvl":156596297},{"name":"Core Wallet","kind":"Native Staking","url":"https://core.app/stake/","locked":true,"apy":null,"tvl":null}]},
   "ADA": {"label":"Staking","best":2.08,"list":[{"name":"Lace Wallet","kind":"Native Staking","url":"https://www.lace.io","locked":false,"apy":2.08,"tvl":null,"note":"network average, before validator fee"}]},
   "DOT": {"label":"Staking","best":null,"list":[{"name":"Polkadot Staking Dashboard","kind":"Native Staking","url":"https://staking.polkadot.cloud","locked":true,"apy":null,"tvl":null}]},
   "ATOM": {"label":"Staking","best":15.41,"list":[{"name":"Keplr","kind":"Native Staking","url":"https://wallet.keplr.app/chains/cosmos-hub","locked":true,"apy":15.41,"tvl":null,"note":"network average, before validator fee"}]},
@@ -13,16 +13,16 @@
   "OSMO": {"label":"Staking","best":null,"list":[{"name":"Keplr","kind":"Native Staking","url":"https://wallet.keplr.app/chains/osmosis","locked":true,"apy":null,"tvl":null}]},
   "INJ": {"label":"Staking","best":9.12,"list":[{"name":"Injective Hub","kind":"Native Staking","url":"https://hub.injective.network/stake","locked":true,"apy":9.12,"tvl":null,"note":"network average, before validator fee"}]},
   "POL": {"label":"Staking","best":null,"list":[{"name":"Polygon Staking","kind":"Native Staking","url":"https://staking.polygon.technology","locked":true,"apy":null,"tvl":null}]},
-  "BNB": {"label":"Staking","best":0.85,"list":[{"name":"BNB Chain Staking","kind":"Native Staking","url":"https://www.bnbchain.org/en/bnb-staking","locked":true,"apy":0.85,"tvl":null,"note":"network average, before validator fee"}]},
+  "BNB": {"label":"Staking","best":0.77,"list":[{"name":"BNB Chain Staking","kind":"Native Staking","url":"https://www.bnbchain.org/en/bnb-staking","locked":true,"apy":0.77,"tvl":null,"note":"network average, before validator fee"}]},
   "HYPE": {"label":"Staking","best":2.18,"list":[{"name":"Hyperliquid","kind":"Native Staking","url":"https://app.hyperliquid.xyz/staking","locked":true,"apy":2.18,"tvl":null,"note":"network average, before validator fee"}]},
   "TRX": {"label":"Staking","best":3.21,"list":[{"name":"TronLink","kind":"Native Staking","url":"https://www.tronlink.org","locked":true,"apy":3.21,"tvl":null,"note":"network average, before validator fee"}]},
   "APT": {"label":"Staking","best":7,"list":[{"name":"Petra Wallet","kind":"Native Staking","url":"https://petra.app","locked":true,"apy":7,"tvl":null,"note":"network average, before validator fee"}]},
-  "NEAR": {"label":"Staking","best":5.5,"list":[{"name":"MyNearWallet","kind":"Native Staking","url":"https://app.mynearwallet.com/staking","locked":true,"apy":5.5,"tvl":null,"note":"network average, before validator fee"}]},
+  "NEAR": {"label":"Staking","best":5.51,"list":[{"name":"MyNearWallet","kind":"Native Staking","url":"https://app.mynearwallet.com/staking","locked":true,"apy":5.51,"tvl":null,"note":"network average, before validator fee"}]},
   "EGLD": {"label":"Staking","best":9.08,"list":[{"name":"xPortal","kind":"Native Staking","url":"https://xportal.com","locked":true,"apy":9.08,"tvl":null,"note":"network average, before validator fee"}]},
   "AKT": {"label":"Staking","best":4.43,"list":[{"name":"Keplr","kind":"Native Staking","url":"https://wallet.keplr.app/chains/akash","locked":true,"apy":4.43,"tvl":null,"note":"network average, before validator fee"}]},
   "HBAR": {"label":"Staking","best":1.72,"list":[{"name":"HashPack","kind":"Native Staking","url":"https://www.hashpack.app","locked":false,"apy":1.72,"tvl":null,"note":"network average, before validator fee"}]},
-  "USDC": {"label":"Lending","best":2.46,"list":[{"name":"Aave","kind":"Lending","url":"https://app.aave.com","locked":false,"apy":2.46,"tvl":1052854506}]},
-  "USDT": {"label":"Lending","best":2.95,"list":[{"name":"Aave","kind":"Lending","url":"https://app.aave.com","locked":false,"apy":2.95,"tvl":504589418}]},
-  "DAI": {"label":"Lending","best":2.58,"list":[{"name":"Aave","kind":"Lending","url":"https://app.aave.com","locked":false,"apy":2.58,"tvl":25546465}]}
+  "USDC": {"label":"Lending","best":2.49,"list":[{"name":"Aave","kind":"Lending","url":"https://app.aave.com","locked":false,"apy":2.49,"tvl":1033977481}]},
+  "USDT": {"label":"Lending","best":2.95,"list":[{"name":"Aave","kind":"Lending","url":"https://app.aave.com","locked":false,"apy":2.95,"tvl":506141862}]},
+  "DAI": {"label":"Lending","best":2.58,"list":[{"name":"Aave","kind":"Lending","url":"https://app.aave.com","locked":false,"apy":2.58,"tvl":25538597}]}
  }
 }
