@@ -485,3 +485,12 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   ({date, start, step, sources, coins: {SYM: [288 Schlusskurse]}}). Im Time Travel zeigen Hovercharts und der 1D-Chart der Locked Hovercharts
   diesen Verlauf (eigener Chart-Cache, ganze Breite, "21 Nov 2026 · CoinAtlas Snapshot", Mitte "Price at the Snapshot"); ohne Aufzeichnung
   steht "No chart was recorded for this coin on this day". Aufgezeichnet wird ab dem 22.11.2026.
+- Snapshots-Tab (Rework 22.11.2026): Liste der Tage wie früher; ein Tag öffnet eine eigene Ansicht ("‹ All Snapshots", [CSV] [JSON],
+  "Time Travel to this day") mit ruhigen Kacheln, je ein Wert: Market Cap, Fear & Greed (Farbe der Zone), Dominance, BTC|ETH Ratio (Farbe
+  der Phase), Sentiment Squares ([grün] [rot]), Movers, Derivatives, Staking. Ein Klick auf eine Kachel öffnet ihre Daten darunter
+  (Reading-Text nur im Ratio-Panel, Dominanz als Balken mit Stablecoins und Altcoins, Derivate als Tabelle, Squares des Tages als kleine Karte [Today]).
+  Unten ein breiter Knopf "Show Token List" mit [300 Coins]: Liste mit Rang, Name, [Tier 1-3] (Änderung gegen den vorigen Snapshot), Preis,
+  Änderung, Marketcap; ein Klick zeigt den Tages-Chart des Coins direkt im Snapshots-Tab (nicht als Locked Hoverchart).
+- UI-Regel: Zahlen und Zähler in eckigen Klammern, z. B. [300 Coins], [Tier 2], [12].
+- Time Travel: Sprung kürzer (0,85 s), danach pulsiert der Ton (Sepia/Gold) von der Mitte über die Seite; Fehler beim Umschalten lassen das
+  Overlay nie mehr hängen (Fear & Greed hatte im Time Travel eine verdeckte Variable und brach ab).
