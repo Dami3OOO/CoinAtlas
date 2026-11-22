@@ -461,3 +461,6 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Einstellungen: Scrollen bleibt im Fenster (overscroll-behavior: contain), die Seite bewegt sich nicht mit.
 - Simple Market Sentiment Counter nur noch an/aus, ohne Unter-Schalter für Grün, Rot, Stablecoins und Neutral.
 - Roadmap: "Charts Additions" mit Backtesting; neuer Punkt "Final Settings Rework" direkt über Mobile.
+- Customization: Kacheln statt Unter-Reitern. Jede Kachel zeigt Farbprobe, Namen und die aktuelle Einstellung ("Gold from +50%", "Off" …);
+  ein Klick öffnet die Optionen, "‹ Customization" führt zurück (zuletzt offener Bereich gemerkt, "coinatlas-settings-cust").
+  Neue Kachel "Time Travel": Ton der Vergangenheit, Sepia oder Gold ("coinatlas-tt-tone").

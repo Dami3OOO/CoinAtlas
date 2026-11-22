@@ -746,6 +746,10 @@
   .sub-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; } .sub-tabs button { font: inherit; font-size: 12px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
   .hc-size { display: flex; align-items: center; gap: 10px; } .hc-size input { width: 150px; accent-color: var(--fg); cursor: pointer; } .hc-size b { min-width: 52px; text-align: right; font-size: 12px; font-variant-numeric: tabular-nums; }
   .grp.dim { opacity: .45; }
+  .cust-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } .cust-tiles[hidden] { display: none; }
+  .cust-tile { display: grid; grid-template-columns: 28px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 10px; align-items: center; text-align: left; font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; transition: background-color .15s, border-color .15s; }
+  .cust-tile:hover { background: #2a2a28; border-color: #3a3a36; } .cust-tile .cust-sw { grid-row: 1 / 3; width: 28px; height: 28px; border-radius: 7px; } .cust-tile b { font-size: 13px; } .cust-tile span { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cust-back { align-self: flex-start; font: inherit; font-size: 12px; color: var(--muted); background: transparent; border: 0; padding: 0; cursor: pointer; } .cust-back:hover { color: var(--fg); } .cust-h { font-size: 14px; font-weight: 700; margin: -4px 0 2px; }
   .sub-tabs button:hover { color: var(--fg); background: var(--hover); } .sub-tabs button.on { color: var(--fg); background: #2a2a28; border-color: #3a3a36; font-weight: 600; } .sub-pane { display: flex; flex-direction: column; gap: 10px; } .sub-pane[hidden] { display: none; }
   .pf-tint-at { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); } .pf-tint-at input { width: 70px; font: inherit; font-size: 13px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 5px 6px; text-align: center; }
   .set-note { font-size: 11px; line-height: 1.5; color: var(--muted); margin: -2px 0 6px; } .set-note[hidden] { display: none; } .rt-asof { display:flex; align-items:center; gap:6px; }
@@ -1132,13 +1136,18 @@
             <div class="sep"></div>
             <div class="settings-section cust-sec">
               <div class="section-title">Customization</div>
-              <div class="sub-tabs" role="tablist"><button type="button" data-sub="list">Asset List</button><button type="button" data-sub="sq">Sentiment Squares</button><button type="button" data-sub="pf">Portfolio Tint</button></div>
-              <div class="sub-pane" data-pane="list"><div class="set-note">Nothing to customize here yet. More ways to customize the Asset List are on the Roadmap.</div></div>
-              <div class="sub-pane" data-pane="sq" hidden>
+              <div class="cust-tiles" id="cust-tiles">
+                <button type="button" class="cust-tile" data-sub="list"><i class="cust-sw" style="background: linear-gradient(135deg, #2a2a28, #3a3a36)"></i><b>Asset List</b><span data-sum="list"></span></button>
+                <button type="button" class="cust-tile" data-sub="sq"><i class="cust-sw" style="background: linear-gradient(135deg, #22c55e, #ef4444)"></i><b>Sentiment Squares</b><span data-sum="sq"></span></button>
+                <button type="button" class="cust-tile" data-sub="pf"><i class="cust-sw" style="background: linear-gradient(135deg, #34d399, #f5c451)"></i><b>Portfolio Tint</b><span data-sum="pf"></span></button>
+                <button type="button" class="cust-tile" data-sub="tt"><i class="cust-sw" style="background: linear-gradient(135deg, #a47148, #facc15)"></i><b>Time Travel</b><span data-sum="tt"></span></button>
+              </div>
+              <div class="sub-pane" data-pane="list" hidden><button type="button" class="cust-back" data-sub="">‹ Customization</button><div class="cust-h">Asset List</div><div class="set-note">Nothing to customize here yet. More ways to customize the Asset List are on the Roadmap.</div></div>
+              <div class="sub-pane" data-pane="sq" hidden><button type="button" class="cust-back" data-sub="">‹ Customization</button><div class="cust-h">Sentiment Squares</div>
                 <div class="grp"><span class="lbl">Squares from +50%</span><select id="sq-fx" aria-label="Skin for coins up 50% or more in the Sentiment Squares"><option value="off">Off</option><option value="gold">Gold</option><option value="silver">Silver</option><option value="diamond">Diamond</option><option value="emerald">Emerald</option><option value="ruby">Ruby</option><option value="sapphire">Sapphire</option></select></div>
                 <div class="set-note">Coins up 50% or more in the Sentiment Squares get this skin: a flowing shine with a slight pulse.</div>
               </div>
-              <div class="sub-pane" data-pane="pf" hidden>
+              <div class="sub-pane" data-pane="pf" hidden><button type="button" class="cust-back" data-sub="">‹ Customization</button><div class="cust-h">Portfolio Tint</div>
                 <div class="grp"><span class="lbl">Profit Tint</span><button class="toggle" type="button" id="pf-tint-profit" role="switch" aria-checked="false" aria-label="Tint portfolio assets green in profit and red in loss"><span></span></button></div>
                 <div class="set-note">Assets in profit get a green tint, assets in loss a red one. Needs an Average Price.</div>
                 <div class="grp"><span class="lbl">Extra Tints</span><button class="toggle" type="button" id="pf-tint-extra" role="switch" aria-checked="false" aria-label="A skin for assets with a high profit"><span></span></button></div>
@@ -1146,6 +1155,10 @@
                   <div class="grp"><span class="lbl">Starting at</span><span class="pf-tint-at"><input id="pf-tint-at" type="number" min="1" max="100000" step="1" value="50" aria-label="Profit in percent from which the Extra Tint shows"> % Profit</span></div>
                   <div class="grp"><span class="lbl">Extra Tint</span><select id="pf-tint-skin" aria-label="Skin for assets above that profit"><option value="gold">Gold</option><option value="silver">Silver</option><option value="diamond">Diamond</option><option value="emerald">Emerald</option><option value="ruby">Ruby</option><option value="sapphire">Sapphire</option></select></div>
                 </div>
+              </div>
+              <div class="sub-pane" data-pane="tt" hidden><button type="button" class="cust-back" data-sub="">‹ Customization</button><div class="cust-h">Time Travel</div>
+                <div class="grp"><span class="lbl">Tone of the past</span><select id="tt-tone" aria-label="Color tone of the page while traveling in time"><option value="sepia">Sepia</option><option value="gold">Gold</option></select></div>
+                <div class="set-note">While you look at a past day with Time Travel, the page gets this tone, so you always see that it is not live.</div>
               </div>
             </div>
             <div class="sep"></div>
@@ -7184,12 +7197,33 @@
 
   /* ---------- CUSTOMIZATION: sub tabs, and the Portfolio Tint ---------- */
   (function () {
-    Array.prototype.forEach.call(document.querySelectorAll(".cust-sec, .sub-sec"), function (sec) { /* every settings section with sub tabs remembers its last one */
+    Array.prototype.forEach.call(document.querySelectorAll(".sub-sec"), function (sec) { /* settings sections with sub tabs remember their last one */
       var SUB_KEY = sec.dataset.subkey || "coinatlas-settings-sub", def = sec.dataset.subdef || "list", cur = def; try { cur = localStorage.getItem(SUB_KEY) || def; } catch (e) {}
       function show(k) { Array.prototype.forEach.call(sec.querySelectorAll("[data-sub]"), function (b) { b.classList.toggle("on", b.dataset.sub === k); }); Array.prototype.forEach.call(sec.querySelectorAll("[data-pane]"), function (p) { p.hidden = p.dataset.pane !== k; }); try { localStorage.setItem(SUB_KEY, k); } catch (e) {} }
       sec.addEventListener("click", function (e) { var b = e.target.closest("[data-sub]"); if (b) show(b.dataset.sub); });
       show(sec.querySelector('[data-sub="' + cur + '"]') ? cur : def);
     });
+    /* Customization: tiles with what is set right now; a tile opens its options, "‹ Customization" goes back. Scales to many areas */
+    var cust = document.querySelector(".cust-sec"); if (!cust) return;
+    var tiles = document.getElementById("cust-tiles"), CK = "coinatlas-settings-cust";
+    function txt(id) { var e = document.getElementById(id); return e && e.options ? e.options[e.selectedIndex].text : ""; }
+    function on(id) { var e = document.getElementById(id); return e && e.getAttribute("aria-checked") === "true"; }
+    function sums() {
+      var S = { list: "Nothing to set yet", sq: txt("sq-fx") === "Off" ? "No skin" : txt("sq-fx") + " from +50%", tt: txt("tt-tone") + " tone",
+        pf: (on("pf-tint-profit") ? "Profit Tint" : "") + (on("pf-tint-extra") ? (on("pf-tint-profit") ? " · " : "") + txt("pf-tint-skin") + " from +" + ((document.getElementById("pf-tint-at") || {}).value || 50) + "%" : "") || "Off" };
+      Array.prototype.forEach.call(tiles.querySelectorAll("[data-sum]"), function (e) { e.textContent = S[e.dataset.sum] || ""; });
+    }
+    function open(k) {
+      tiles.hidden = !!k; Array.prototype.forEach.call(cust.querySelectorAll("[data-pane]"), function (p) { p.hidden = p.dataset.pane !== k; });
+      if (!k) sums(); try { localStorage.setItem(CK, k); } catch (e) {}
+    }
+    cust.addEventListener("click", function (e) { var b = e.target.closest("[data-sub]"); if (b) open(b.dataset.sub); else setTimeout(sums, 0); });
+    cust.addEventListener("change", function () { setTimeout(sums, 0); });
+    var tone = document.getElementById("tt-tone"); /* Time Travel tone: remembered, read by Time Travel */
+    try { tone.value = localStorage.getItem("coinatlas-tt-tone") === "gold" ? "gold" : "sepia"; } catch (e) {}
+    tone.addEventListener("change", function () { try { localStorage.setItem("coinatlas-tt-tone", tone.value); } catch (e) {} document.dispatchEvent(new Event("coinatlas-tt-tone")); });
+    var ck = ""; try { ck = localStorage.getItem(CK) || ""; } catch (e) {}
+    open(cust.querySelector('[data-pane="' + ck + '"]') ? ck : "");
   })();
 
   /* ---------- HOVERCHARTS: on/off and size (25% to 150%, Default 100%) ---------- */
