@@ -458,3 +458,6 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Staking-Abschnitt in den Locked Hovercharts entfernt (samt Einstellung "Show Staking"): Staking läuft nur noch über das Staking-Fenster.
 - Charts: Auswahl-Bildschirm "Which chart do you want to see?" liegt auf dunklem, verschwommenem Grund (rgba(18,18,17,.82) + blur) statt hellem.
 - Portfolio-Chart (Total Balance und Assets): Zeitauswahl hat jetzt auch die Jahre (aktuelles Jahr bis 2017, mit Bull/Bear/Bridge Year).
+- Einstellungen: Scrollen bleibt im Fenster (overscroll-behavior: contain), die Seite bewegt sich nicht mit.
+- Simple Market Sentiment Counter nur noch an/aus, ohne Unter-Schalter für Grün, Rot, Stablecoins und Neutral.
+- Roadmap: "Charts Additions" mit Backtesting; neuer Punkt "Final Settings Rework" direkt über Mobile.
