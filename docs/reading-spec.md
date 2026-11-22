@@ -505,3 +505,11 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   Gilt für Liste, Squares, PNG und Time Travel. Grund: die Snapshots bis 20.11. wurden noch um ~18:50 New York aufgenommen (alter Zeitplan).
 - Time Travel: nach dem Sprung wächst der Ton (Sepia/Gold) als Kreis von der Bildschirmmitte, mit leuchtendem Rand (backdrop-filter + Maske),
   bis alles bedeckt ist; zurück zu Live öffnet sich ein klarer Kreis. Header wird mit getönt.
+- Snapshot-PNG (Download ▾ → [PNG] Everything): zuerst eine Vorschau (wie beim Portfolio-Share), dann "Download PNG". Gebaut aus der echten UI
+  (unsichtbarer Aufbau, mit html2canvas 1.4.1 von cdnjs fotografiert, Faktor 1,5): Kopf mit Logo, Karten TOTAL 200 (Wert + 7-Tage-Graph in Teal
+  #2dd4bf), Fear & Greed (das echte Rad), BTC|ETH Ratio + Dominance, Sentiment Squares + Staking; die drei Ratio-Charts (Ratio, Season, Dominance);
+  die Sentiment Squares mit Logos, Skins ab +50% und der weißen Front; die Top 50 als echte Listenzeilen in zwei Spalten mit Logo, [Tier] [Gewinn]
+  neben dem Namen, Staking-, Highest-Gain/Loss-Badges, Preis, Marketcap, Pulse-Tönung wenn in der Liste an. Wasserzeichen unter den Squares
+  und unten rechts (Logo + CoinAtlas). Open Interest nicht im Bild.
+- Snapshots-Tab: "Market Cap" heißt TOTAL 200 (Teal, kleiner 7-Tage-Graph in der Kachel, großer Graph mit Werten im Fenster);
+  Derivatives nur im Dev Mode.
