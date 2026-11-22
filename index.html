@@ -5407,7 +5407,7 @@
       var st = cycleStage(yr), tag = st ? [st.split(" ")[0], st.split(" ")[0].toLowerCase()] : null, n = Object.keys(mon[yr]).length;
       cards += card(yr, yr, tag, yr === cy ? "Average so far · year in progress · " + n + "/12 months" : "Average of every day" + (n < 12 ? " · " + n + "/12 months" : ""), mean(by[yr]));
     });
-    if (flat.length) cards += card("all", "All Years", null, "Each month averaged over every year since 2018", mean(flat));
+    if (flat.length && yearlyFilter === "all") cards += card("all", "All Years", null, "Each month averaged over every year since 2018", mean(flat));
     el.innerHTML = '<div class="fg-annual-head"><div class="fg-annual-title">Past Years</div><div class="fg-timeframes">' + [["bull", "Bull Years"], ["bear", "Bear Years"], ["bridge", "Bridge Years"], ["all", "All"]].map(function (r) { return '<button type="button"' + (yearlyFilter === r[0] ? ' class="active"' : '') + ' onclick="window.setYearlyFilter(\'' + r[0] + '\')">' + r[1] + '</button>'; }).join("") + '</div></div>' +
       '<div class="fg-py-list">' + cards + '</div><div class="fg-sub" style="text-align:center;margin-top:8px">A year\'s value is the average of all its days. Click a year to see its months: the greediest month has a green border, the most fearful a red one.</div>';
   }
