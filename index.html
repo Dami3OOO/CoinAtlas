@@ -767,6 +767,7 @@
   .snx .fg-yr-wrap, .snx .rt-right .fg-yr-pick, .snx .fg-timeframes, .snx #fg-timer, .snx .fg-stats-col, .snx .fg-credit, .snx .rt-right { display: none !important; } .snx-tmp { position: absolute; left: 0; top: 0; width: 820px; visibility: hidden; }
   .snx-h { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; } .snx-t { text-align: center; } .snx-t b { display: block; font-size: 34px; letter-spacing: -0.02em; } .snx-t span { font-size: 17px; color: var(--fg); font-weight: 600; }
   .snx .fx { animation: none !important; background-size: 100% 100% !important; box-shadow: inset 0 0 0 1px rgba(var(--fxc), .7), 0 0 16px rgba(var(--fxc), .45) !important; } .snx .fx::before, .snx .fx::after { display: none !important; } /* the photo cannot catch the moving shine: the skin still, its whole gradient visible */
+  .snx-fgy { margin-top: 14px; } .snx-fgy .fg-py-chev { display: none; }
   .snx-t2s { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin-top: 16px; } .snx-t2s div { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; border-top: 1px solid var(--line); padding-top: 8px; } .snx-t2s span { color: var(--muted); }
   .snx-rd .snx-rdt { font-size: 15px; line-height: 1.55; font-weight: 600; margin-bottom: 12px; } .snx-fm .fg-tip { display: none !important; } .snx-fm .rt-fm-rows, .snx-fm .rt-fm-total { font-size: 14px; } .snx.tags-off .badge, .snx.tag-off-stake .badge-stake, .snx.tag-off-gain .badge-gain, .snx.tag-off-loss .badge-loss, .snx.tag-off-new .badge-new { display: none; }
   .snx-brand { display: flex; align-items: center; gap: 10px; } .snx-brand svg { width: 36px; height: 36px; stroke: var(--fg); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; } .snx-brand b { font-size: 24px; letter-spacing: -0.02em; }
@@ -4199,7 +4200,7 @@
           '<div class="snx-col snx-left"><div class="snx-card snx-listc"><div class="snx-ch"><b>Top 50</b><span>' + (wk ? '[' + wk.name + '] · Tier and gain of the week' : '[Today] · Tier and gain of the day') + '</span></div><table><tbody>' + snapRowsHtml(k, j, 0, 50) + '</tbody></table></div></div>' +
           '<div class="snx-col snx-right">' +
             '<div class="snx-three">' +
-              '<div class="snx-col"><div class="snx-card"><div class="snx-ch"><b style="color:' + T200_C + '">TOTAL 200</b><span>[' + compact(j.total || 0) + ']</span></div>' + snapYearChart(t200Points(k), syYear(k), T200_C, "cap", 640, 200, false) + snapT200Stats(k) + '</div>' +
+              '<div class="snx-col"><div class="snx-card"><div class="snx-ch"><b style="color:' + T200_C + '">TOTAL 200</b><b style="color:' + T200_C + '">[' + compact(j.total || 0) + ']</b></div>' + snapYearChart(t200Points(k), syYear(k), T200_C, "cap", 640, 200, false) + '</div>' +
               '<div class="snx-card snx-fg" id="snx-fg"></div></div>' +
               '<div class="snx-card snx-rt" id="snx-rt"></div>' +
               '<div class="snx-col"><div class="snx-card snx-stk"><div class="snx-ch"><b style="color:#c4b5fd">Staking</b><span>[' + stakeCoins.length + ' with a rate]</span></div><div class="stk-card"><div class="stk-head"><span>#</span><span>Asset</span><span>Best Rate</span><span></span></div>' + snapStakeListHtml(k, stakeCoins) + '</div></div><div class="snx-card snx-rd" id="snx-rd"><div class="snx-ch"><b>BTC|ETH Reading</b><span id="snx-rdo"></span></div></div></div>' +
@@ -4211,6 +4212,14 @@
       document.body.appendChild(x);
       /* Fear & Greed: the year's chart above the half wheel */
       var fgc = document.getElementById("snx-fg"); snapEmbedFG(fgc, k);
+      (function () { /* the year's monthly averages and its average, the card of Past Years, data up to the day */
+        var Y = +k.slice(0, 4), real = document.getElementById("fg-yearly-container"), box = document.createElement("div"), keep = { d: fgData, on: yearlyOn, open: fgPastOpen, f: yearlyFilter };
+        if (real) real.id = "fg-yearly-keep"; box.id = "fg-yearly-container"; x.appendChild(box);
+        try { snapDayEmbed = k; var src = fgSrc(); snapDayEmbed = null; fgData = src; yearlyOn = true; fgPastOpen = {}; fgPastOpen[Y] = true; yearlyFilter = "all"; renderFGYearly(); }
+        finally { snapDayEmbed = null; fgData = keep.d; yearlyOn = keep.on; fgPastOpen = keep.open; yearlyFilter = keep.f; if (real) real.id = "fg-yearly-container"; }
+        var yc = box.querySelector('[data-fgy="' + Y + '"]'); yc = yc && yc.closest(".fg-py"); box.remove();
+        if (yc) { var sec = document.createElement("div"); sec.className = "fg-annual-section snx-fgy"; sec.appendChild(yc); fgc.appendChild(sec); }
+      })();
       /* BTC|ETH: Ratio, Season and Dominance above each other, each with its value of the day */
       var tr = document.createElement("div"); tr.className = "snx-tmp"; x.appendChild(tr); snapEmbedRatio(tr, k, "all");
       var rtc = document.getElementById("snx-rt"), rd = snapRead && snapRead[k], D = RT.data, idx = -1, end = Date.parse(k + "T23:59:59Z"); if (D) for (var q = 0; q < D.t.length; q++) if (D.t[q] <= end) idx = q;
