@@ -4618,9 +4618,9 @@
     ov.hidden = false;
     loadH2C().then(function (h2c) {
       var brand = (document.getElementById("logo-svg") || {}).outerHTML || "", x = document.createElement("div"); x.className = "snx sqx"; snapChg[K] = ch;
-      x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas Sentiment Squares</b><span>' + esc(day) + '</span></div><div class="sqx-cnt"><b style="color:var(--up)">[' + up + ' Up]</b> <b style="color:var(--down)">[' + dn + ' Down]</b></div></div>' +
-        '<div class="snx-card snx-sqw"><div class="snx-ch"><b>Sentiment Squares</b><span>[Top ' + sqS.top + '] [' + esc(tf) + ']</span></div><div class="sqm-map snx-sq" id="sqx-map"></div><div class="snx-wm">' + brand + '<b>CoinAtlas</b></div></div>' +
-        '<div class="snx-f"><span>Size and colour by how far a coin moved · stablecoins left out.</span><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div></div>';
+      x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas Sentiment Squares</b><span>' + esc(day) + ' · [Top ' + sqS.top + '] [' + esc(tf) + ']</span></div><div class="sqx-cnt"><b style="color:var(--up)">[' + up + ' Up]</b> <b style="color:var(--down)">[' + dn + ' Down]</b></div></div>' +
+        '<div class="snx-card snx-sqw"><div class="sqm-map snx-sq" id="sqx-map"></div></div>' +
+        '<div class="snx-f"><span>Size and colour by how far a coin moved · stablecoins left out.</span></div>'; /* one title, one logo */
       document.body.appendChild(x);
       var map = document.getElementById("sqx-map");
       try { snapSqFill(map, K, j, j.coins.length, sqSplit, map.clientWidth, map.clientHeight); } finally { delete snapChg[K]; }
