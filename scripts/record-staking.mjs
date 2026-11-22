@@ -29,7 +29,7 @@ export const PROVIDERS = {
     { name: "Benqi (sAVAX)", kind: "Liquid Staking", url: "https://benqi.fi", locked: false, pools: { project: ["benqi-staked-avax", "benqi-liquid-staking"], symbol: "SAVAX", chain: "Avalanche" } },
     { name: "Core Wallet", kind: "Native Staking", url: "https://core.app/stake/", locked: true }
   ],
-  ADA: [{ name: "Lace Wallet", kind: "Native Staking", url: "https://www.lace.io", locked: false }],
+  ADA: [{ name: "Cardano Stake Pool Delegation", kind: "Native Staking", url: "https://cardano.org/stake-pool-delegation/", locked: false }],
   DOT: [{ name: "Polkadot Staking Dashboard", kind: "Native Staking", url: "https://staking.polkadot.cloud", locked: true }],
   ATOM: [{ name: "Keplr", kind: "Native Staking", url: "https://wallet.keplr.app/chains/cosmos-hub", locked: true }],
   TIA: [{ name: "Keplr", kind: "Native Staking", url: "https://wallet.keplr.app/chains/celestia", locked: true }],
@@ -38,39 +38,39 @@ export const PROVIDERS = {
   POL: [{ name: "Polygon Staking", kind: "Native Staking", url: "https://staking.polygon.technology", locked: true }],
   BNB: [{ name: "BNB Chain Staking", kind: "Native Staking", url: "https://www.bnbchain.org/en/bnb-staking", locked: true }],
   HYPE: [{ name: "Hyperliquid", kind: "Native Staking", url: "https://app.hyperliquid.xyz/staking", locked: true }],
-  TRX: [{ name: "TronLink", kind: "Native Staking", url: "https://www.tronlink.org", locked: true }],
-  APT: [{ name: "Petra Wallet", kind: "Native Staking", url: "https://petra.app", locked: true }],
+  TRX: [{ name: "TRON Stake 2.0", kind: "Native Staking", url: "https://developers.tron.network/docs/staking-on-tron-network", locked: true }],
+  APT: [{ name: "Aptos Staking", kind: "Native Staking", url: "https://aptos.dev/network/blockchain/staking", locked: true }],
   NEAR: [{ name: "MyNearWallet", kind: "Native Staking", url: "https://app.mynearwallet.com/staking", locked: true }],
-  EGLD: [{ name: "xPortal", kind: "Native Staking", url: "https://xportal.com", locked: true }],
+  EGLD: [{ name: "MultiversX Staking", kind: "Native Staking", url: "https://multiversx.com/staking", locked: true }],
   AKT: [{ name: "Keplr", kind: "Native Staking", url: "https://wallet.keplr.app/chains/akash", locked: true }],
-  HBAR: [{ name: "HashPack", kind: "Native Staking", url: "https://www.hashpack.app", locked: false }],
+  HBAR: [{ name: "Hedera Staking", kind: "Native Staking", url: "https://docs.hedera.com/learn/core-concepts/staking", locked: false }],
   /* native staking with a link only (no free source for the rate yet): "Rate on site" */
-  GRAM: [{ name: "Tonkeeper", kind: "Native Staking", url: "https://tonkeeper.com", locked: true }],
-  SUI: [{ name: "Slush Wallet", kind: "Native Staking", url: "https://slush.app", locked: true }],
-  TAO: [{ name: "Bittensor", kind: "Native Staking", url: "https://bittensor.com", locked: false }],
+  GRAM: [{ name: "Tonkeeper Staking Guide", kind: "Native Staking", url: "https://tonkeeper.helpscoutdocs.com/article/82-how-to-stake-with-tonkeeper", locked: true }],
+  SUI: [{ name: "Slush Wallet", kind: "Native Staking", url: "https://slush.app/guides/stake-and-swap-sui", locked: true }],
+  TAO: [{ name: "Bittensor Docs", kind: "Native Staking", url: "https://www.bittensor.com/docs", locked: false }],
   ICP: [{ name: "NNS (Network Nervous System)", kind: "Native Staking", url: "https://nns.ic0.app", locked: true }],
-  STX: [{ name: "Leather Wallet", kind: "Native Staking", url: "https://leather.io", locked: true, note: "Stacking, paid in BTC" }],
-  DASH: [{ name: "Dash Masternodes", kind: "Native Staking", url: "https://www.dash.org", locked: false, note: "1,000 DASH per masternode" }],
+  STX: [{ name: "Leather Wallet", kind: "Native Staking", url: "https://app.leather.io/posts/stacking", locked: true, note: "Stacking, paid in BTC" }],
+  DASH: [{ name: "Dash Masternodes", kind: "Native Staking", url: "https://www.dash.org/masternodes/", locked: false, note: "1,000 DASH per masternode" }],
   FLR: [{ name: "Flare Portal", kind: "Native Staking", url: "https://portal.flare.network", locked: false }],
-  XDC: [{ name: "XDC Network", kind: "Native Staking", url: "https://xdc.org", locked: true }],
-  GNO: [{ name: "Gnosis Chain", kind: "Native Staking", url: "https://www.gnosis.io", locked: true, note: "1 GNO per validator" }],
-  SEI: [{ name: "Sei App", kind: "Native Staking", url: "https://app.sei.io", locked: true }],
-  XTZ: [{ name: "Tezos", kind: "Native Staking", url: "https://tezos.com", locked: true }],
-  DCR: [{ name: "Decred", kind: "Native Staking", url: "https://decred.org", locked: true, note: "ticket staking" }],
+  XDC: [{ name: "XDC Masternodes", kind: "Native Staking", url: "https://master.xinfin.network", locked: true }],
+  GNO: [{ name: "Gnosis Validator Deposit", kind: "Native Staking", url: "https://docs.gnosischain.com/node/manual/validator/deposit", locked: true, note: "1 GNO per validator" }],
+  SEI: [{ name: "Sei Staking Guide", kind: "Native Staking", url: "https://docs.sei.io/learn/general-staking", locked: true }],
+  XTZ: [{ name: "stake.tezos.com", kind: "Native Staking", url: "https://stake.tezos.com", locked: true }],
+  DCR: [{ name: "Decred Proof of Stake", kind: "Native Staking", url: "https://docs.decred.org/proof-of-stake/overview/", locked: true, note: "ticket staking" }],
   KAIA: [{ name: "Kaia Portal", kind: "Native Staking", url: "https://portal.kaia.io", locked: true }],
-  RUNE: [{ name: "THORChain", kind: "Native Staking", url: "https://thorchain.org", locked: true }],
-  CFX: [{ name: "ConfluxHub", kind: "Native Staking", url: "https://confluxhub.io", locked: true }],
-  MON: [{ name: "Monad", kind: "Native Staking", url: "https://www.monad.xyz", locked: true }],
-  IOTA: [{ name: "IOTA", kind: "Native Staking", url: "https://www.iota.org", locked: true }],
-  THETA: [{ name: "Theta Wallet", kind: "Native Staking", url: "https://wallet.thetatoken.org", locked: true }],
-  A: [{ name: "Vaulta", kind: "Native Staking", url: "https://www.vaulta.com", locked: true }],
-  S: [{ name: "Sonic", kind: "Native Staking", url: "https://my.soniclabs.com", locked: true }],
-  CHZ: [{ name: "Chiliz", kind: "Native Staking", url: "https://www.chiliz.com", locked: true }],
-  QTUM: [{ name: "Qtum", kind: "Native Staking", url: "https://qtum.org", locked: false }],
+  RUNE: [{ name: "THORChain RUNEPool", kind: "Native Staking", url: "https://docs.thorchain.org/thorchain-finance/runepool", locked: true }],
+  CFX: [{ name: "ConfluxHub", kind: "Native Staking", url: "https://confluxhub.io/governance/pos", locked: true }],
+  MON: [{ name: "Monad Staking", kind: "Native Staking", url: "https://docs.monad.xyz/reference/staking/overview", locked: true }],
+  IOTA: [{ name: "IOTA Wallet Staking Guide", kind: "Native Staking", url: "https://docs.iota.org/users/iota-wallet/how-to/stake", locked: true }],
+  THETA: [{ name: "Theta Guardian Nodes", kind: "Native Staking", url: "https://docs.thetatoken.org/docs/guardian-node-overview", locked: true }],
+  A: [{ name: "Vaulta Staking Guide", kind: "Native Staking", url: "https://vaulta.gitbook.io/vaulta-guides/vaulta-token/staking", locked: true }],
+  S: [{ name: "Sonic", kind: "Native Staking", url: "https://my.soniclabs.com/stake", locked: true }],
+  CHZ: [{ name: "Chiliz Staking", kind: "Native Staking", url: "https://www.chiliz.com/glossary-term/staking/", locked: true }],
+  QTUM: [{ name: "Qtum Staking", kind: "Native Staking", url: "https://qtum.org/use-qtum/stake-qtum", locked: false }],
   ZANO: [{ name: "Zano", kind: "Native Staking", url: "https://zano.org", locked: false }],
   BDX: [{ name: "Beldex", kind: "Native Staking", url: "https://www.beldex.io", locked: true }],
   VET: [{ name: "VeChain StarGate", kind: "Native Staking", url: "https://stargate.vechain.org", locked: true }],
-  XEC: [{ name: "eCash", kind: "Native Staking", url: "https://e.cash", locked: true }],
+  XEC: [{ name: "eCash Staking", kind: "Native Staking", url: "https://e.cash/staking", locked: true }],
   USDC: [{ name: "Aave", kind: "Lending", url: "https://app.aave.com", locked: false, pools: { project: ["aave-v3"], symbol: "USDC", chain: "Ethereum" } }],
   USDT: [{ name: "Aave", kind: "Lending", url: "https://app.aave.com", locked: false, pools: { project: ["aave-v3"], symbol: "USDT", chain: "Ethereum" } }],
   DAI: [{ name: "Aave", kind: "Lending", url: "https://app.aave.com", locked: false, pools: { project: ["aave-v3"], symbol: "DAI", chain: "Ethereum" } }]
@@ -97,7 +97,7 @@ export const NATIVE_RATES = {
     const staked = va.current.concat(va.delinquent).reduce((s, v) => s + v.activatedStake, 0);
     return staked > 0 ? inf * sup / staked * 100 : null;
   } },
-  ADA: { "Lace Wallet": async () => { /* rewards of a finished epoch shared by the active stake, 73 epochs a year */
+  ADA: { "Cardano Stake Pool Delegation": async () => { /* rewards of a finished epoch shared by the active stake, 73 epochs a year */
     const tip = (await jget("https://api.koios.rest/api/v1/tip"))[0].epoch_no, e = (await jget("https://api.koios.rest/api/v1/epoch_info?_epoch_no=" + (tip - 3)))[0];
     return e && +e.total_rewards > 0 && +e.active_stake > 0 ? +e.total_rewards / +e.active_stake * (365 / 5) * 100 : null;
   } },
@@ -106,7 +106,7 @@ export const NATIVE_RATES = {
     const w = v.reduce((s, x) => s + +x.totalStaked, 0); return w > 0 ? v.reduce((s, x) => s + x.apy * +x.totalStaked, 0) / w * 100 : null;
   } },
   AKT: { "Keplr": cosmos("akash") },
-  APT: { "Petra Wallet": async () => { /* the reward rate per epoch, times the epochs in a year */
+  APT: { "Aptos Staking": async () => { /* the reward rate per epoch, times the epochs in a year */
     const c = (await jget("https://api.mainnet.aptoslabs.com/v1/accounts/0x1/resource/0x1::staking_config::StakingConfig")).data, b = (await jget("https://api.mainnet.aptoslabs.com/v1/accounts/0x1/resource/0x1::block::BlockResource")).data;
     return +c.rewards_rate / +c.rewards_rate_denominator * (365 * 24 * 3600e6 / +b.epoch_interval) * 100;
   } },
@@ -117,13 +117,13 @@ export const NATIVE_RATES = {
     const staked = v.current_validators.reduce((s, x) => s + Number(x.stake), 0), sup = Number(blk.header.total_supply);
     return staked > 0 ? inf * sup / staked * 100 : null;
   } },
-  TRX: { "TronLink": async () => { /* the voters' yearly rate of each Super Representative, weighted by its votes */
+  TRX: { "TRON Stake 2.0": async () => { /* the voters' yearly rate of each Super Representative, weighted by its votes */
     const d = (await jget("https://apilist.tronscanapi.com/api/vote/witness")).data || [];
     let w = 0, s = 0; d.forEach(x => { const r = +x.annualizedRate, v = +x.realTimeVotes; if (r > 0 && v > 0) { w += v; s += r * v; } });
     return w > 0 ? s / w : null;
   } },
-  EGLD: { "xPortal": async () => { const e = await jget("https://api.multiversx.com/economics"); return +e.apr > 0 ? +e.apr * 100 : null; } },
-  HBAR: { "HashPack": async () => { /* each node's reward rate (tinybars per HBAR per day), weighted by the rewarded stake */
+  EGLD: { "MultiversX Staking": async () => { const e = await jget("https://api.multiversx.com/economics"); return +e.apr > 0 ? +e.apr * 100 : null; } },
+  HBAR: { "Hedera Staking": async () => { /* each node's reward rate (tinybars per HBAR per day), weighted by the rewarded stake */
     let url = "https://mainnet-public.mirrornode.hedera.com/api/v1/network/nodes?limit=25", w = 0, s = 0, n = 0;
     while (url && n++ < 6) { const j = await jget(url); (j.nodes || []).forEach(x => { const r = +x.reward_rate_start, k = +x.stake_rewarded; if (r > 0 && k > 0) { w += k; s += r * k; } }); url = j.links && j.links.next ? "https://mainnet-public.mirrornode.hedera.com" + j.links.next : null; }
     return w > 0 ? s / w * 365 / 1e8 * 100 : null;
