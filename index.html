@@ -1281,7 +1281,7 @@
       <div id="pinned-container" hidden></div>
     </div>
   </div>
-  <div class="site-credit">Created using Data from <a href="https://www.coingecko.com" target="_blank" rel="noopener noreferrer">CoinGecko</a>, <a href="https://coinpaprika.com" target="_blank" rel="noopener noreferrer">CoinPaprika</a>, <a href="https://www.coinlore.com" target="_blank" rel="noopener noreferrer">CoinLore</a>, <a href="https://coinmarketcap.com" target="_blank" rel="noopener noreferrer">CoinMarketCap</a>, <a href="https://www.binance.com" target="_blank" rel="noopener noreferrer">Binance</a>, <a href="https://www.bitget.com" target="_blank" rel="noopener noreferrer">Bitget</a>, <a href="https://www.okx.com" target="_blank" rel="noopener noreferrer">OKX</a>, <a href="https://www.bybit.com" target="_blank" rel="noopener noreferrer">Bybit</a>, <a href="https://www.kucoin.com" target="_blank" rel="noopener noreferrer">KuCoin</a>, <a href="https://www.gate.io" target="_blank" rel="noopener noreferrer">Gate.io</a>, <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" rel="noopener noreferrer">Alternative.me</a>, <a href="https://defillama.com" target="_blank" rel="noopener noreferrer">DefiLlama</a> and <a href="https://fred.stlouisfed.org" target="_blank" rel="noopener noreferrer">FRED</a>.</div>
+  <div class="site-credit">Created using Data from <a href="https://www.coingecko.com" target="_blank" rel="noopener noreferrer">CoinGecko</a>, <a href="https://coinpaprika.com" target="_blank" rel="noopener noreferrer">CoinPaprika</a>, <a href="https://www.coinlore.com" target="_blank" rel="noopener noreferrer">CoinLore</a>, <a href="https://www.binance.com" target="_blank" rel="noopener noreferrer">Binance</a>, <a href="https://www.bitget.com" target="_blank" rel="noopener noreferrer">Bitget</a>, <a href="https://www.okx.com" target="_blank" rel="noopener noreferrer">OKX</a>, <a href="https://www.bybit.com" target="_blank" rel="noopener noreferrer">Bybit</a>, <a href="https://www.kucoin.com" target="_blank" rel="noopener noreferrer">KuCoin</a>, <a href="https://www.gate.io" target="_blank" rel="noopener noreferrer">Gate.io</a>, <a href="https://alternative.me/crypto/fear-and-greed-index/" target="_blank" rel="noopener noreferrer">Alternative.me</a>, <a href="https://defillama.com" target="_blank" rel="noopener noreferrer">DefiLlama</a> and <a href="https://fred.stlouisfed.org" target="_blank" rel="noopener noreferrer">FRED</a>.</div>
 </main>
 
 <div id="pop" class="chart-container"></div>
@@ -5090,10 +5090,7 @@
     var histPromise = fetch("https://api.alternative.me/fng/?limit=0").then(function (r) { return r.json(); })
       .then(function (j) { return j.data.reverse().map(function (d) { return { timestamp: parseInt(d.timestamp, 10), value: parseInt(d.value, 10), value_classification: d.value_classification }; }); })
       .catch(function () { return repoJson("data/history/fear-greed.json").then(function (j) { return j.days.map(function (x) { return { timestamp: Date.parse(x[0] + "T00:00:00Z") / 1000, value: x[1], value_classification: classifyFG(x[1]) }; }); }); }); /* stored history when alternative.me is unreachable */
-    var livePromise = fetch("https://pro-api.coinmarketcap.com/public-api/v3/fear-and-greed/latest")
-      .then(function (r) { if (!r.ok) throw new Error("cmc"); return r.json(); })
-      .then(function (j) { var d = j && j.data; if (d && typeof d.value !== "undefined") return { value: parseInt(d.value, 10), value_classification: d.value_classification || classifyFG(d.value) }; throw new Error("shape"); })
-      .catch(function () { return null; });
+    var livePromise = Promise.resolve(null); /* one index only: every value from Alternative.me */
     Promise.all([histPromise, livePromise]).then(function (res) {
       fgData = res[0]; fgLive = res[1];
       if (fgLive && fgData.length) {
