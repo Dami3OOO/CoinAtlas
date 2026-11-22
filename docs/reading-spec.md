@@ -520,3 +520,23 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Snapshot-PNG im Querformat (3200 px Breite, ca. 3:2): links die Top 50; rechts drei Spalten (TOTAL 200 und Fear & Greed mit Jahres-Chart über dem
   Rad | Ratio, Season und Dominance untereinander, je mit dem Wert des Tages | Staking-Fenster mit den stakebaren Coins der Top 50), darunter die
   Sentiment Squares, die die restliche Höhe füllen. Die Karten ohne Chart (Ratio/Dominance, Squares/Staking) sind entfallen.
+
+## Wochen-Snapshots, Time-Travel-Sperre, Bild-Feinschliff (22.11.2026)
+- Snapshots-Tab: statt der Tage stehen Jahre (vergangene Jahre mit Daten, dieses und nächstes Jahr, z. B. 2027 und 2026). Ein Klick auf ein Jahr
+  öffnet zwei Knöpfe, Weeks und Days. Weeks: echte ISO-Kalenderwochen (Montag bis Sonntag), "Week 47 [16 Nov – 22 Nov 2026] [6/7 Snapshots]",
+  neueste oben. Days: die Tage des Jahres wie bisher.
+- Wochenansicht: die Woche wird als ihr letzter aufgenommener Tag gezeigt, aber mit der Bewegung der ganzen Woche (Open des ersten Tages aus dem
+  Tages-Chart bis zum Schluss des letzten Snapshots): Liste, Tiers, Squares, Kacheln. Darüber die 7 Tage als Knöpfe (Mo–So, fehlende ausgegraut),
+  ein Klick öffnet den Tag. Chart eines Coins = die Tages-Charts der Woche hintereinander. Charts mit mehr Geschichte (F&G, Ratio, TOTAL 200)
+  zeigen das Jahr bis zum letzten Tag. Download: PNG "CoinAtlas Weekly Snapshot", CSV der Liste des letzten Tages, JSON mit allen Tagen der Woche.
+- Snapshot-PNG: Titel "CoinAtlas Daily Snapshot" bzw. "CoinAtlas Weekly Snapshot", Datum darunter weiß. Dominance Graph oben rechts mit
+  [BTC] [ETH] [ALTS] (ALTS = 100 − BTC − ETH). F&G-Chart mit Monatsachse (Jan Apr Jul Oct Dec, auch auf der Seite in der Jahresansicht).
+  BTC|ETH Reading des Tages als eigene Karte unter Fear & Greed, ohne Sätze, die sich auf die eigenen Bestände beziehen (mit "your").
+  Einstellungen der Seite gelten im Bild (Tags aus bzw. einzelne Tags aus, Pulse). Schärfer: html2canvas Faktor 2 (6400 × 4266 px).
+  Dateiname coinatlas-daily-snapshot-JJJJ-MM-TT.png bzw. coinatlas-weekly-snapshot-JJJJ-Www.png.
+- Ein Tooltip-Design überall: die Jahres-Charts (TOTAL 200, Staking) nutzen jetzt den Tooltip der Preis-Charts (.price-tooltip, Datum + Wert),
+  die gestrichelte weiße Linie und den weißen Punkt.
+- Time Travel: alle Zeitauswahlen werden auf den Tag gesperrt und behalten ihr Aussehen (Menü öffnet sich nicht): Locked Hovercharts und
+  Portfolio auf Today, Sentiment Squares auf Today, Fear & Greed und Monats-Durchschnitte auf das Jahr des Tages, BTC|ETH Ratio auf YEAR mit dem
+  Jahr des Tages. Zurück zu Live stellt die vorherige Auswahl wieder her.
+- Roadmap: "Snapshot Customization" (Fenster im Bild wählen, Listenlänge, eigener Name/Tag oben rechts in der Titelzeile).

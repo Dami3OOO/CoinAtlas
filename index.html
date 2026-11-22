@@ -783,7 +783,9 @@
   .snap-dlw { position: absolute; right: 0; top: -4px; z-index: 4; } .snap-dlb { height: 28px; padding: 0 10px; font-size: 12px; font-weight: 600; }
   .snap-dlm { position: absolute; right: 0; top: 34px; width: 190px; padding: 4px; background: var(--pop); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.45); display: flex; flex-direction: column; } .snap-dlm[hidden] { display: none; }
   .snap-dlm button { text-align: left; font: inherit; font-size: 12px; color: var(--fg); background: transparent; border: 0; border-radius: 7px; padding: 7px 10px; cursor: pointer; } .snap-dlm button:hover { background: var(--hover); }
-  .snap-date { text-align: center; font-size: 12px; color: var(--muted); margin: -8px 0 12px; }
+  .snap-date { text-align: center; font-size: 12px; color: var(--muted); margin: -8px 0 12px; } .snap-wkd b { color: var(--fg); }
+  .snap-in { padding: 4px 10px 10px; } .snap-in .snap-day { background: var(--card, var(--bg)); } .snap-ym { display: flex; gap: 8px; justify-content: center; margin: 4px 0 10px; } .snap-ym .gear { min-width: 92px; }
+  .snap-wds { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin: 0 0 8px; } .snap-wd { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; } .snap-wd i { font-style: normal; font-size: 10px; color: var(--muted); font-weight: 500; } .snap-wd:hover { background: var(--hover); } .snap-wd.off { opacity: .35; cursor: default; }
   .snap-tt { width: 100%; height: 34px; margin-bottom: 10px; font-weight: 600; }
   .snap-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
   .snap-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; font: inherit; color: var(--fg); padding: 9px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; cursor: pointer; transition: border-color .15s, background-color .15s; }
@@ -3861,12 +3863,13 @@
     var f = j.fields || ["symbol", "name", "price", "market cap", "24h volume", "circulating supply"];
     return ["rank"].concat(f).join(",") + "\n" + j.coins.map(function (c, i) { return [i + 1].concat(c.map(function (v) { v = v == null ? "" : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; })).join(","); }).join("\n") + "\n";
   }
-  function snapDownload(k, kind) {
-    if (kind === "png") { snapPng(k); return; }
-    snapFile(k).then(function (j) {
-      if (!j.coins) return;
-      var blob = kind === "csv" ? new Blob([snapCsv(j)], { type: "text/csv" }) : new Blob([JSON.stringify(j, null, 1)], { type: "application/json" });
-      var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "coinatlas-snapshot-" + k + "." + kind; document.body.appendChild(a); a.click(); a.remove();
+  function snapDownload(k, kind, wkId) {
+    var wk = snapWeekFromId(wkId);
+    if (kind === "png") { snapPng(k, wk); return; }
+    (wk ? Promise.all(wk.have.map(snapFile)) : snapFile(k)).then(function (j) {
+      var last = wk ? j[j.length - 1] : j; if (!last || !last.coins) return;
+      var blob = kind === "csv" ? new Blob([snapCsv(last)], { type: "text/csv" }) : new Blob([JSON.stringify(wk ? { week: wk.id, range: wk.range, days: j } : j, null, 1)], { type: "application/json" });
+      var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = wk ? "coinatlas-weekly-snapshot-" + wk.id + "." + kind : "coinatlas-snapshot-" + k + "." + kind; document.body.appendChild(a); a.click(); a.remove();
       setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
     });
   }
@@ -3931,8 +3934,8 @@
     var up = items.filter(function (x) { return x.pc > 0; }).length, dn = items.filter(function (x) { return x.pc < 0; }).length;
     return '<div class="sqm-ctrl"><label class="sqm-top-in">Top <input type="number" min="1" max="200" step="1" inputmode="numeric" data-snapsqtop="1" value="' + snapSqTop + '" aria-label="How many coins of the list"></label>' +
       (snapSqSplit != null ? '<button type="button" class="sqm-x sqm-auto" data-snapsqauto="1">Auto</button>' : '') +
-      '<span class="sqm-cnt"><b style="color:var(--up)">' + up + '</b><span>/</span><b style="color:var(--down)">' + dn + '</b><span>/</span><b style="color:var(--stable-blue)">' + stable + '</b></span><div class="fg-yr-wrap tf-row sqm-tfw snap-tf-lock"><div class="fg-yr-pick"><button type="button" class="fg-yr-btn" tabindex="-1" title="A snapshot holds the day\'s change only">Today</button></div></div></div>' +
-      '<div class="sqm-map snap-sqmap" id="snap-sqmap"></div><div class="sqm-foot fg-sub">' + stable + ' stablecoins left out · size and colour by how far a coin moved on ' + snapDate(k) + '</div>';
+      '<span class="sqm-cnt"><b style="color:var(--up)">' + up + '</b><span>/</span><b style="color:var(--down)">' + dn + '</b><span>/</span><b style="color:var(--stable-blue)">' + stable + '</b></span><div class="fg-yr-wrap tf-row sqm-tfw snap-tf-lock"><div class="fg-yr-pick"><button type="button" class="fg-yr-btn" tabindex="-1" title="A snapshot holds the day\'s change only">' + (snapWk ? 'This Week' : 'Today') + '</button></div></div></div>' +
+      '<div class="sqm-map snap-sqmap" id="snap-sqmap"></div><div class="sqm-foot fg-sub">' + stable + ' stablecoins left out · size and colour by how far a coin moved ' + (snapWk ? 'in ' + snapWk.name : 'on ' + snapDate(k)) + '</div>';
   }
   function snapSquaresPaint(k, j) { /* lays the squares into the map once it has its size; the front can be dragged */
     var map = document.getElementById("snap-sqmap"); if (!map) return;
@@ -3958,7 +3961,7 @@
     if (p === "stake") h = snapStakingHtml(k);
     if (p === "fg" || p === "ratio" || p === "dom") h = '<div id="snap-embed" class="snap-embed"></div>';
     var names = { mcap: "TOTAL 200", fg: "Fear & Greed Index", dom: "Dominance", ratio: "BTC|ETH Ratio", sq: "Sentiment Squares", stake: "Staking", deriv: "Derivatives" };
-    return '<div class="snap-panel"><div class="snap-ph"><b>' + names[p] + '</b><span>[' + snapDate(k) + ']</span><button type="button" class="snap-px" data-snappanel="' + p + '" aria-label="Close">×</button></div>' + h + '</div>';
+    return '<div class="snap-panel"><div class="snap-ph"><b>' + names[p] + '</b><span>[' + (snapWk ? snapWk.name : snapDate(k)) + ']</span><button type="button" class="snap-px" data-snappanel="' + p + '" aria-label="Close">×</button></div>' + h + '</div>';
   }
   function snapListRows(k, j) {
     var ch = snapChg[k] || {};
@@ -3970,43 +3973,89 @@
     }).join("") + '</div>';
   }
   function snapLoadPick(k) {
-    var S = snapPick, j = snapLists[k]; if (!S || !j) return;
-    snapIntra(k).then(function (d) {
+    var S = snapPick, j = snapLists[k], wk = snapWk; if (!S || !j) return;
+    (wk ? Promise.all(wk.have.map(snapIntra)).then(function (a) { var v = [], tt = [], o = {}; a.forEach(function (d) { var x = d && d.coins && d.coins[S]; if (x) x.forEach(function (p, i) { v.push(p); tt.push(d.start + i * d.step); }); }); o[S] = v; return { coins: o, times: tt }; }) : snapIntra(k)).then(function (d) {
       var el = document.getElementById("snap-chart"); if (!el || snapPick !== S) return;
       var row = j.coins.filter(function (c) { return String(c[0]).toUpperCase() === S; })[0], v = d && d.coins && d.coins[S]; if (!row) return;
-      var live = coins.filter(function (c) { return String(c.symbol).toUpperCase() === S; })[0] || {}, c = Object.assign({}, live, { symbol: S, name: row[1], current_price: v && v.length ? v[v.length - 1] : +row[2], market_cap: +row[3], pfLbl: "Close of the Day" });
+      var live = coins.filter(function (c) { return String(c.symbol).toUpperCase() === S; })[0] || {}, c = Object.assign({}, live, { symbol: S, name: row[1], current_price: v && v.length ? v[v.length - 1] : +row[2], market_cap: +row[3], pfLbl: wk ? "Close of the Week" : "Close of the Day" });
       if (!v || v.length < 2) { el.innerHTML = '<div class="empty">No chart was recorded for ' + esc(S) + ' on ' + snapDate(k) + '.</div>'; return; }
-      el.innerHTML = chart(c, { v: v.slice(), hi: v.slice(), lo: v.slice(), times: v.map(function (_, i) { return d.start + i * d.step; }), tag: "CoinAtlas Snapshot", live: false, dayLabel: snapDate(k) }, "CoinAtlas Snapshot", false, "snap-" + S);
+      el.innerHTML = chart(c, { v: v.slice(), hi: v.slice(), lo: v.slice(), times: d.times || v.map(function (_, i) { return d.start + i * d.step; }), tag: "CoinAtlas Snapshot", live: false, dayLabel: wk ? wk.name : snapDate(k) }, "CoinAtlas Snapshot", false, "snap-" + S);
     });
   }
-  function snapDayHtml(k) {
+  /* ---- Weeks: real ISO calendar weeks, Monday to Sunday, up to 7 snapshots each. A week is drawn as its last recorded day with the moves of the whole week ---- */
+  var snapWk = null, snapWChg = {}, snapYrOpen = new Date().getUTCFullYear(), snapYrMode = "days";
+  function isoMon1(y) { var j4 = Date.UTC(y, 0, 4); return j4 - ((new Date(j4).getUTCDay() + 6) % 7) * 864e5; }
+  function isoWk(k) { var t = Date.parse(k + "T00:00:00Z"), mon = t - ((new Date(t).getUTCDay() + 6) % 7) * 864e5, y = new Date(mon + 3 * 864e5).getUTCFullYear(); return { y: y, w: Math.round((mon - isoMon1(y)) / (7 * 864e5)) + 1 }; }
+  function snapWeek(y, w) {
+    var mon = isoMon1(y) + (w - 1) * 7 * 864e5, days = [], have = [];
+    for (var i = 0; i < 7; i++) { var d = new Date(mon + i * 864e5).toISOString().slice(0, 10); days.push(d); if (snapDays && snapDays[d]) have.push(d); }
+    var f = function (d, yr) { return new Date(d + "T00:00:00Z").toLocaleDateString("en-GB", yr ? { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" } : { day: "numeric", month: "short", timeZone: "UTC" }); };
+    return { id: y + "-W" + (w < 10 ? "0" : "") + w, y: y, w: w, days: days, have: have, first: have[0] || null, last: have[have.length - 1] || null, name: "Week " + w, range: f(days[0]) + " – " + f(days[6], true) };
+  }
+  function snapWeekFromId(id) { var m = /^(\d{4})-W(\d\d)$/.exec(id || ""); return m ? snapWeek(+m[1], +m[2]) : null; }
+  function snapWeekLoad(wk) { /* each coin's move over the week: from the open of its first recorded day to the close of the last */
+    if (!wk || !wk.last) return Promise.resolve(null);
+    if (snapWChg[wk.id + wk.have.length]) return Promise.resolve(snapWChg[wk.id]);
+    var pk = snapPrevKey(wk.last);
+    return Promise.all([snapFile(wk.last), pk ? snapFile(pk) : null, snapExtras()].concat(wk.have.map(snapDayChanges))).then(function (r) {
+      var j = r[0], chs = r.slice(3), out = {};
+      (j.coins || []).forEach(function (c) {
+        var S = String(c[0]).toUpperCase(), op = null; for (var i = 0; i < chs.length && op == null; i++) if (chs[i][S] && chs[i][S].open > 0) op = chs[i][S].open;
+        out[S] = op ? { pc: (+c[2] / op - 1) * 100, open: op, src: "week" } : { pc: null, open: null, src: "" };
+      });
+      snapWChg[wk.id + wk.have.length] = 1; return (snapWChg[wk.id] = out);
+    });
+  }
+  function snapAsWeek(wk, fn) { /* draws the last day of the week with the moves of the whole week */
+    var L = wk && wk.last, w = L && snapWChg[wk.id]; if (!w) return fn();
+    var keep = snapChg[L]; snapChg[L] = w; try { return fn(); } finally { snapChg[L] = keep; }
+  }
+  function snapDayHtml(k, wk) {
     var j = snapLists[k];
-    if (!j || !snapChg[k]) return '<div class="rt-empty">Loading the snapshot…</div>';
+    if (!j || !snapChg[k] || (wk && !snapWChg[wk.id])) return '<div class="rt-empty">' + (wk ? 'Loading the week…' : 'Loading the snapshot…') + '</div>';
     if (!j.coins) return '<div class="rt-empty">This snapshot could not be loaded.</div>';
-    var list = snapMore[k];
-    return '<div class="snap-date">' + new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }) + '</div>' +
-      '<button type="button" class="gear snap-tt" data-tt-go="' + k + '">Time Travel to this day</button>' + snapTiles(k, j) +
+    var list = snapMore[k], WD = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+    return (wk ? '<div class="snap-date snap-wkd"><b>' + wk.name + '</b> [' + wk.range + ']</div><div class="snap-wds">' + wk.days.map(function (d, i) { return snapDays[d] ? '<button type="button" class="snap-wd" data-snap="' + d + '" title="Open ' + snapDate(d) + '"><i>' + WD[i] + '</i>' + (+d.slice(8)) + '</button>' : '<span class="snap-wd off"><i>' + WD[i] + '</i>' + (+d.slice(8)) + '</span>'; }).join("") + '</div>' +
+        '<div class="fg-sub snap-note">[' + wk.have.length + '/7 Snapshots] · every move from the open of ' + snapDate(wk.first) + ' to the close of ' + snapDate(k) + '</div>'
+      : '<div class="snap-date">' + new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }) + '</div>') +
+      '<button type="button" class="gear snap-tt" data-tt-go="' + k + '">' + (wk ? 'Time Travel to ' + snapDate(k) : 'Time Travel to this day') + '</button>' + snapTiles(k, j) +
       (list ? '' : snapPanelHtml(k, j)) +
       '<button type="button" class="snap-showlist' + (list ? ' open' : '') + '" data-snapmore="' + k + '"><b>' + (list ? 'Hide Token List' : 'Show Token List') + '</b><span>[' + j.coins.length + ' Coins]</span></button>' +
       (list ? snapListRows(k, j) : '');
   }
-  function renderSnaps() {
+  function renderSnaps() { return snapAsWeek(snapWk, renderSnapsIn); }
+  function renderSnapsIn() {
     if (!snapVisible) { snapBox.hidden = true; snapBox.innerHTML = ""; updatePinnedColVisibility(); return; }
     snapBox.hidden = false; updatePinnedColVisibility();
-    var day = snapOpen && snapOpen.charAt(1) !== ":" ? snapOpen : null;
+    var day = snapWk ? snapWk.last : snapOpen && snapOpen.charAt(1) !== ":" ? snapOpen : null, wkA = snapWk ? ' data-wk="' + snapWk.id + '"' : '';
     var h = '<div class="pinned-card chart-container pf-card dev-target" data-dev-name="Snapshots" data-dev-color="#a78bfa"><div class="snap-top">' +
       (day ? '<button type="button" class="gear snap-back" data-snapback="1">‹ All Snapshots</button>' : '') + '<div class="pf-title">CoinAtlas Snapshots</div>' +
-      (day ? '<div class="snap-dlw"><button type="button" class="gear snap-dlb" data-snapdlmenu="1">Download ▾</button><div class="snap-dlm"' + (snapDlOpen ? '' : ' hidden') + '><button type="button" data-snapdl="csv" data-k="' + day + '">[CSV] Token List</button><button type="button" data-snapdl="json" data-k="' + day + '">[JSON] Full Snapshot</button><button type="button" data-snapdl="png" data-k="' + day + '">[PNG] Everything</button></div></div>' : '') + '</div>';
+      (day ? '<div class="snap-dlw"><button type="button" class="gear snap-dlb" data-snapdlmenu="1">Download ▾</button><div class="snap-dlm"' + (snapDlOpen ? '' : ' hidden') + '><button type="button" data-snapdl="csv" data-k="' + day + '"' + wkA + '>[CSV] Token List</button><button type="button" data-snapdl="json" data-k="' + day + '"' + wkA + '>[JSON] Full Snapshot</button><button type="button" data-snapdl="png" data-k="' + day + '"' + wkA + '>[PNG] Everything</button></div></div>' : '') + '</div>';
     if (!snapDays) h += '<div class="rt-empty">Loading snapshots…</div>';
-    else if (day) h += snapDayHtml(day);
+    else if (day) h += snapDayHtml(day, snapWk);
     else {
-      var keys = snapKeys().reverse(), n = keys.length;
+      var keys = snapKeys().reverse(), n = keys.length, cy = new Date().getUTCFullYear(), yrs = {}; keys.forEach(function (k) { yrs[+k.slice(0, 4)] = 1; }); yrs[cy] = 1; yrs[cy + 1] = 1;
       h += '<div class="fg-sub snap-note">Recorded every night at midnight New York time, each for the day that just ended. [' + n + (n === 1 ? ' Day' : ' Days') + ']</div>';
-      if (!n) h += '<div class="rt-empty">No snapshots yet.</div>';
-      keys.forEach(function (k) {
-        var x = snapDays[k];
-        h += '<div class="snap-day"><button type="button" class="snap-head" data-snap="' + k + '"><b>' + snapDate(k) + '</b>' +
-          '<span style="color:' + BTC_C + '">BTC ' + (+x[0]).toFixed(1) + '%</span><span style="color:' + ETH_C + '">ETH ' + (+x[1]).toFixed(1) + '%</span><span>[' + (x[2] ? compact(x[2]) : "–") + ']</span><span class="fg-sub">' + (ttDay === k ? '⏳ here now' : '') + '</span></button></div>';
+      Object.keys(yrs).map(Number).sort(function (a, b) { return b - a; }).forEach(function (y) { /* past years with snapshots, this year and the next */
+        var dk = keys.filter(function (k) { return +k.slice(0, 4) === y; }), wks = {}, on = snapYrOpen === y;
+        keys.forEach(function (k) { var iw = isoWk(k); if (iw.y === y) wks[iw.w] = 1; });
+        var wl = Object.keys(wks).map(Number).sort(function (a, b) { return b - a; });
+        h += '<div class="snap-day snap-yr' + (on ? ' open' : '') + '"><button type="button" class="snap-head" data-snapyr="' + y + '"><b>' + y + '</b><span style="grid-column:span 3"><span class="fg-sub">' + (y === cy ? 'This Year' : y === cy + 1 ? 'Next Year' : 'Past Year') + '</span> · [' + wl.length + (wl.length === 1 ? ' Week' : ' Weeks') + '] [' + dk.length + (dk.length === 1 ? ' Day' : ' Days') + ']</span><span class="fg-sub">' + (on ? '▴' : '▾') + '</span></button>';
+        if (on) {
+          h += '<div class="snap-in"><div class="snap-ym"><button type="button" class="gear' + (snapYrMode === "weeks" ? ' active' : '') + '" data-snapym="weeks">Weeks</button><button type="button" class="gear' + (snapYrMode === "days" ? ' active' : '') + '" data-snapym="days">Days</button></div>';
+          if (!(snapYrMode === "weeks" ? wl : dk).length) h += '<div class="rt-empty">No snapshots in ' + y + (y > cy ? ' yet. Its weeks and days appear here as they are recorded.' : ' yet.') + '</div>';
+          if (snapYrMode === "weeks") wl.forEach(function (w) {
+            var wk = snapWeek(y, w), here = ttDay && wk.days.indexOf(ttDay) > -1;
+            h += '<div class="snap-day"><button type="button" class="snap-head" data-snapwk="' + wk.id + '"><b>' + wk.name + '</b><span style="grid-column:span 2">[' + wk.range + ']</span><span>[' + wk.have.length + '/7 Snapshots]</span><span class="fg-sub">' + (here ? '⏳ here now' : '') + '</span></button></div>';
+          });
+          else dk.forEach(function (k) {
+            var x = snapDays[k];
+            h += '<div class="snap-day"><button type="button" class="snap-head" data-snap="' + k + '"><b>' + snapDate(k) + '</b>' +
+              '<span style="color:' + BTC_C + '">BTC ' + (+x[0]).toFixed(1) + '%</span><span style="color:' + ETH_C + '">ETH ' + (+x[1]).toFixed(1) + '%</span><span>[' + (x[2] ? compact(x[2]) : "–") + ']</span><span class="fg-sub">' + (ttDay === k ? '⏳ here now' : '') + '</span></button></div>';
+          });
+          h += '</div>';
+        }
+        h += '</div>';
       });
       if (document.body.classList.contains("dev-mode")) {
         var first = keys.length ? keys[keys.length - 1] : "";
@@ -4120,14 +4169,16 @@
   function snapTopCoins(j, n) { /* the snapshot's first n coins with logos and details from today's list */
     return j.coins.slice(0, n).map(function (c, i) { var S = String(c[0]).toUpperCase(), live = coins.filter(function (x) { return String(x.symbol).toUpperCase() === S; })[0] || {}; return Object.assign({}, live, { symbol: S, name: c[1], rank: i + 1 }); });
   }
-  function snapPng(k) { /* the whole day as one landscape image, built from the real UI and photographed, with a preview first */
+  function snapPng(k, wk) { /* the whole day (or week) as one landscape image, built from the real UI and photographed, with a preview first */
+    snapImgKind = wk ? "W" : "D"; snapImgTitle = wk ? wk.name + " · " + wk.range : ""; snapImgLast = k; var wkKeep = null, wkSwapped = false;
     var ov = document.getElementById("pf-sh"); if (!ov) { ov = document.createElement("div"); ov.id = "pf-sh"; ov.className = "pf-sh"; document.body.appendChild(ov); }
-    ov.innerHTML = '<div class="pf-sh-box snx-box" role="dialog" aria-label="Snapshot image"><div class="pf-sh-head"><b>Snapshot Image</b><span class="pf-sh-mode">' + snapDate(k) + '</span><button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
+    ov.innerHTML = '<div class="pf-sh-box snx-box" role="dialog" aria-label="Snapshot image"><div class="pf-sh-head"><b>Snapshot Image</b><span class="pf-sh-mode">' + (wk ? wk.name + ' [' + wk.range + ']' : snapDate(k)) + '</span><button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
       '<div class="pf-sh-img" id="pf-sh-img"><div class="pf-sh-wait">Building the image…</div></div><div class="pf-sh-foot"><button class="gear pf-sh-dl" type="button" id="snap-png-dl" disabled>Download PNG</button></div></div>';
     ov.hidden = false;
     if (!fgData && !fgLoading) loadFGData(); if (!RT.data) rtLoad();
-    Promise.all([loadH2C(), snapFile(k), snapExtras(), snapDayChanges(k), snapWait(function () { return fgData && RT.data; }, 15000)]).then(function (r) {
+    Promise.all([loadH2C(), snapFile(k), snapExtras(), snapDayChanges(k), snapWait(function () { return fgData && RT.data; }, 15000), snapWeekLoad(wk)]).then(function (r) {
       var h2c = r[0], j = r[1]; if (!j || !j.coins) throw new Error("no snapshot");
+      if (wk && snapWChg[wk.id]) { wkKeep = snapChg[k]; snapChg[k] = snapWChg[wk.id]; wkSwapped = true; } /* the week's moves while the image is built */
       var x = document.createElement("div"); x.className = "snx"; x.id = "snx"; snapPngBuild = true;
       var isWeek = /^W/.test(snapImgKind || ""), brand = (document.getElementById("logo-svg") || {}).outerHTML || "", day = snapImgTitle || new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
       var stakeCoins = snapTopCoins(j, 50).filter(function (c) { return stakeData[c.symbol]; });
@@ -4135,7 +4186,7 @@
       x.className = "snx " + document.body.className.split(/\s+/).filter(function (c) { return /^(tags-off|tag-off-)/.test(c); }).join(" "); /* the settings of the site carry into the image */
       x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas ' + (isWeek ? 'Weekly' : 'Daily') + ' Snapshot</b><span>' + day + '</span></div><div></div></div>' +
         '<div class="snx-body">' +
-          '<div class="snx-col snx-left"><div class="snx-card snx-listc"><div class="snx-ch"><b>Top 50</b><span>[Today] · Tier and gain of the day</span></div><table><tbody>' + snapRowsHtml(k, j, 0, 50) + '</tbody></table></div></div>' +
+          '<div class="snx-col snx-left"><div class="snx-card snx-listc"><div class="snx-ch"><b>Top 50</b><span>' + (wk ? '[' + wk.name + '] · Tier and gain of the week' : '[Today] · Tier and gain of the day') + '</span></div><table><tbody>' + snapRowsHtml(k, j, 0, 50) + '</tbody></table></div></div>' +
           '<div class="snx-col snx-right">' +
             '<div class="snx-three">' +
               '<div class="snx-col"><div class="snx-card"><div class="snx-ch"><b style="color:' + T200_C + '">TOTAL 200</b><span>[' + compact(j.total || 0) + ']</span></div>' + snapYearChart(t200Points(k), syYear(k), T200_C, "cap", 640, 200, false) + '</div>' +
@@ -4146,7 +4197,7 @@
             '<div class="snx-card snx-sqw"><div class="snx-ch"><b>Sentiment Squares</b><span>Top 200</span></div><div class="sqm-map snx-sq" id="snx-sq"></div><div class="snx-wm">' + brand + '<b>CoinAtlas</b></div></div>' +
           '</div>' +
         '</div>' +
-        '<div class="snx-f"><span>Recorded at midnight New York time for the day that ended.</span><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div></div>';
+        '<div class="snx-f"><span>' + (wk ? 'Every move from the open of ' + snapDate(wk.first) + ' to the close of ' + snapDate(k) + ' · [' + wk.have.length + '/7 Snapshots] · recorded at midnight New York time.' : 'Recorded at midnight New York time for the day that ended.') + '</span><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div></div>';
       document.body.appendChild(x);
       /* Fear & Greed: the year's chart above the half wheel */
       var fgc = document.getElementById("snx-fg"); snapEmbedFG(fgc, k);
@@ -4168,13 +4219,13 @@
         var b = sv.getBoundingClientRect(), c = sv.cloneNode(true); c.setAttribute("xmlns", "http://www.w3.org/2000/svg"); c.setAttribute("width", Math.round(b.width)); c.setAttribute("height", Math.round(b.height)); c.removeAttribute("style");
         var im = new Image(); im.width = Math.round(b.width); im.height = Math.round(b.height); im.style.display = "block"; im.style.margin = "0 auto"; im.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(c)); sv.parentNode.replaceChild(im, sv);
       });
-      snapPngBuild = false;
+      snapPngBuild = false; if (wkSwapped) { snapChg[k] = wkKeep; wkSwapped = false; }
       return new Promise(function (res) { setTimeout(res, 700); }).then(function () { return h2c(x, { backgroundColor: pfCss("--pop"), scale: 2, useCORS: true, logging: false }); }).then(function (cv) { x.remove(); return cv; }, function (e) { x.remove(); throw e; });
     }).then(function (cv) {
       var url = cv.toDataURL("image/png"), im = document.getElementById("pf-sh-img"), b = document.getElementById("snap-png-dl"); if (!im) return;
       im.innerHTML = '<img src="' + url + '" alt="Snapshot image">'; b.disabled = false;
-      b.onclick = function () { var a = document.createElement("a"); a.href = url; a.download = "coinatlas-snapshot-" + k + ".png"; document.body.appendChild(a); a.click(); a.remove(); };
-    }).catch(function () { snapPngBuild = false; var im = document.getElementById("pf-sh-img"); if (im) im.innerHTML = '<div class="pf-sh-wait">The image could not be built. Please try again.</div>'; });
+      b.onclick = function () { var a = document.createElement("a"); a.href = url; a.download = wk ? "coinatlas-weekly-snapshot-" + wk.id + ".png" : "coinatlas-daily-snapshot-" + k + ".png"; document.body.appendChild(a); a.click(); a.remove(); };
+    }).catch(function () { snapPngBuild = false; if (wkSwapped) { snapChg[k] = wkKeep; wkSwapped = false; } var im = document.getElementById("pf-sh-img"); if (im) im.innerHTML = '<div class="pf-sh-wait">The image could not be built. Please try again.</div>'; });
   }
   snapBtn.addEventListener("click", function () {
     snapVisible = !snapVisible; snapBtn.classList.toggle("active", snapVisible);
@@ -4187,10 +4238,13 @@
   snapBox.addEventListener("click", function (e) {
     var t = e.target;
     if (t.closest("[data-snapdlmenu]")) { snapDlOpen = !snapDlOpen; renderSnaps(); return; }
-    var dl = t.closest("[data-snapdl]"); if (dl) { snapDlOpen = false; snapDownload(dl.dataset.k, dl.dataset.snapdl); renderSnaps(); return; }
+    var dl = t.closest("[data-snapdl]"); if (dl) { snapDlOpen = false; snapDownload(dl.dataset.k, dl.dataset.snapdl, dl.dataset.wk); renderSnaps(); return; }
     if (snapDlOpen && !t.closest(".snap-dlm")) { snapDlOpen = false; renderSnaps(); }
     var go = t.closest("[data-tt-go]"); if (go) { ttGo(go.dataset.ttGo); return; }
-    if (t.closest("[data-snapback]")) { snapOpen = null; snapPanel = null; snapPick = null; renderSnaps(); return; }
+    if (t.closest("[data-snapback]")) { snapOpen = null; snapWk = null; snapPanel = null; snapPick = null; renderSnaps(); return; }
+    var yb = t.closest("[data-snapyr]"); if (yb) { snapYrOpen = snapYrOpen === +yb.dataset.snapyr ? null : +yb.dataset.snapyr; renderSnaps(); return; }
+    var ym = t.closest("[data-snapym]"); if (ym) { snapYrMode = ym.dataset.snapym; renderSnaps(); return; }
+    var wb = t.closest("[data-snapwk]"); if (wb) { snapWk = snapWeekFromId(wb.dataset.snapwk); snapOpen = snapWk && snapWk.last; snapPanel = null; snapPick = null; snapSqSplit = null; snapDlOpen = false; snapWeekLoad(snapWk).then(renderSnaps); renderSnaps(); smoothScrollTo(snapBox, "start", 16); return; }
     if (t.closest("[data-snapsqauto]")) { snapSqSplit = null; renderSnaps(); return; }
     var mo = t.closest("[data-snapmore]"); if (mo) { var mk = mo.dataset.snapmore; snapMore[mk] = !snapMore[mk]; if (snapMore[mk]) snapPanel = null; snapPick = null; renderSnaps(); if (!snapMore[mk]) smoothScrollTo(snapBox, "start", 16); return; }
     var pn = t.closest("[data-snappanel]"); if (pn) { snapPanel = snapPanel === pn.dataset.snappanel ? null : pn.dataset.snappanel; if (snapPanel && snapOpen) snapMore[snapOpen] = false; renderSnaps(); return; }
@@ -4198,7 +4252,7 @@
     if (t.closest("#snap-chart") || t.closest(".snap-panel")) return;
     var pk2 = t.closest("[data-snappick]"); if (pk2) { snapPick = snapPick === pk2.dataset.snappick ? null : pk2.dataset.snappick; renderSnaps(); return; }
     var b = t.closest("button[data-snap]"); if (!b) return;
-    var k = b.dataset.snap; snapOpen = snapOpen === k ? null : k; snapPanel = null; snapPick = null; snapSqSplit = null;
+    var k = b.dataset.snap, fromWk = !!snapWk; snapWk = null; snapOpen = snapOpen === k && !fromWk ? null : k; snapPanel = null; snapPick = null; snapSqSplit = null;
     if (snapOpen && k.charAt(1) !== ":") { var pk = snapPrevKey(k); Promise.all([snapFile(k), pk ? snapFile(pk) : null, snapExtras(), snapDayChanges(k)]).then(renderSnaps); }
     renderSnaps();
   });
