@@ -447,3 +447,7 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   Nicht möglich: SUI (öffentliches JSON-RPC abgeschaltet), TON (tonapi-Werte unrealistisch), XTZ (keine fertige Rate),
   KAVA, SEI, DYDX (cosmos.directory liefert 0 oder nichts), DOT über den Parity-Sidecar (Fehler).
 - Workflow "Record staking" (record-staking.yml) holt die Raten auch von Hand, ohne Snapshot.
+- Abdeckung (22.11.2026): Von den Top 200 haben sicher 73 Staking (45 natives Chain-Staking, 28 Staking im eigenen Protokoll), 18 unsicher.
+  26 weitere Chains mit nativem Staking stehen jetzt nur mit Link (offizielle Staking-Seite oder Projektseite) und Locked/Unlocked drin,
+  ohne Rate ("Rate on site"): GRAM, SUI, TAO, ICP, STX, DASH, FLR, XDC, GNO, SEI, XTZ, DCR, KAIA, RUNE, CFX, MON, IOTA, THETA, A, S, CHZ,
+  QTUM, ZANO, BDX, VET, XEC. Ausgelassen, weil die offizielle Seite unklar ist: LUNC, KITE, M. Protokoll-Staking (AAVE, CRV, GMX …) fehlt noch.
