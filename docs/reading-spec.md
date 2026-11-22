@@ -540,3 +540,7 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   Portfolio auf Today, Sentiment Squares auf Today, Fear & Greed und Monats-Durchschnitte auf das Jahr des Tages, BTC|ETH Ratio auf YEAR mit dem
   Jahr des Tages. Zurück zu Live stellt die vorherige Auswahl wieder her.
 - Roadmap: "Snapshot Customization" (Fenster im Bild wählen, Listenlänge, eigener Name/Tag oben rechts in der Titelzeile).
+- Snapshots-Knopf öffnet immer das aktuelle Jahr im Modus "Days".
+- Snapshot-PNG: Staking zeigt nur Assets mit einer Rate des Tages ("Rate on site" fällt weg). Darunter, direkt neben den BTC|ETH-Charts, die Karte
+  "BTC|ETH Reading": Titel rechts mit dem Ergebnis der Formel (z. B. [BTC Overvaluation Lean +2]), der Text in der Farbe des Readings dieses Tages
+  (ohne Sätze zu den eigenen Beständen), darunter die Formel: Punkte je Datenpunkt (Ratio, Season, Dominance), Summe, Uncertainty- und Certainty-Marks.

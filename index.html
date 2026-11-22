@@ -766,7 +766,7 @@
   .snx, .snx * { font-variant-numeric: normal !important; letter-spacing: normal; }
   .snx .fg-yr-wrap, .snx .rt-right .fg-yr-pick, .snx .fg-timeframes, .snx #fg-timer, .snx .fg-stats-col, .snx .fg-credit, .snx .rt-right { display: none !important; } .snx-tmp { position: absolute; left: 0; top: 0; width: 820px; visibility: hidden; }
   .snx-h { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; } .snx-t { text-align: center; } .snx-t b { display: block; font-size: 34px; letter-spacing: -0.02em; } .snx-t span { font-size: 17px; color: var(--fg); font-weight: 600; }
-  .snx-rd .snx-rdt { font-size: 15px; line-height: 1.55; } .snx.tags-off .badge, .snx.tag-off-stake .badge-stake, .snx.tag-off-gain .badge-gain, .snx.tag-off-loss .badge-loss, .snx.tag-off-new .badge-new { display: none; }
+  .snx-rd .snx-rdt { font-size: 15px; line-height: 1.55; font-weight: 600; margin-bottom: 12px; } .snx-fm .fg-tip { display: none !important; } .snx-fm .rt-fm-rows, .snx-fm .rt-fm-total { font-size: 14px; } .snx.tags-off .badge, .snx.tag-off-stake .badge-stake, .snx.tag-off-gain .badge-gain, .snx.tag-off-loss .badge-loss, .snx.tag-off-new .badge-new { display: none; }
   .snx-brand { display: flex; align-items: center; gap: 10px; } .snx-brand svg { width: 36px; height: 36px; stroke: var(--fg); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; } .snx-brand b { font-size: 24px; letter-spacing: -0.02em; }
   .snx-f .snx-brand { justify-content: flex-end; } .snx-f .snx-brand svg { width: 28px; height: 28px; } .snx-f .snx-brand b { font-size: 20px; }
   .snx-body { display: grid; grid-template-columns: 0.78fr 2.2fr; gap: 20px; align-items: start; } .snx-three { display: grid; grid-template-columns: 1fr 1.1fr 0.9fr; gap: 20px; align-items: start; } .snx-col { display: flex; flex-direction: column; gap: 20px; min-width: 0; } .snx-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
@@ -4181,7 +4181,7 @@
       if (wk && snapWChg[wk.id]) { wkKeep = snapChg[k]; snapChg[k] = snapWChg[wk.id]; wkSwapped = true; } /* the week's moves while the image is built */
       var x = document.createElement("div"); x.className = "snx"; x.id = "snx"; snapPngBuild = true;
       var isWeek = /^W/.test(snapImgKind || ""), brand = (document.getElementById("logo-svg") || {}).outerHTML || "", day = snapImgTitle || new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
-      var stakeCoins = snapTopCoins(j, 50).filter(function (c) { return stakeData[c.symbol]; });
+      var skH = (snapStakeH && snapStakeH[k]) || {}, stakeCoins = snapTopCoins(j, 50).filter(function (c) { return stakeData[c.symbol] && skH[c.symbol] && Object.keys(skH[c.symbol]).length; }); /* only rates the image can show */
       var rdo = snapRead && snapRead[snapImgLast || k], rdS = rdo ? (rdo.side || rdo.phase ? (rdo.side || rdo.phase) + ' Phase' : '') : '', rdT = rdo && rdo.text ? snapReadingNeutral(rdo.text) : '';
       x.className = "snx " + document.body.className.split(/\s+/).filter(function (c) { return /^(tags-off|tag-off-)/.test(c); }).join(" "); /* the settings of the site carry into the image */
       x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas ' + (isWeek ? 'Weekly' : 'Daily') + ' Snapshot</b><span>' + day + '</span></div><div></div></div>' +
@@ -4190,9 +4190,9 @@
           '<div class="snx-col snx-right">' +
             '<div class="snx-three">' +
               '<div class="snx-col"><div class="snx-card"><div class="snx-ch"><b style="color:' + T200_C + '">TOTAL 200</b><span>[' + compact(j.total || 0) + ']</span></div>' + snapYearChart(t200Points(k), syYear(k), T200_C, "cap", 640, 200, false) + '</div>' +
-              '<div class="snx-card snx-fg" id="snx-fg"></div>' + (rdT ? '<div class="snx-card snx-rd"><div class="snx-ch"><b>BTC|ETH Reading</b><span>' + esc(rdS) + '</span></div><div class="snx-rdt">' + esc(rdT) + '</div></div>' : '') + '</div>' +
+              '<div class="snx-card snx-fg" id="snx-fg"></div></div>' +
               '<div class="snx-card snx-rt" id="snx-rt"></div>' +
-              '<div class="snx-card snx-stk"><div class="snx-ch"><b style="color:#c4b5fd">Staking</b><span>[' + stakeCoins.length + ' of the Top 50]</span></div><div class="stk-card"><div class="stk-head"><span>#</span><span>Asset</span><span>Best Rate</span><span></span></div>' + snapStakeListHtml(k, stakeCoins) + '</div></div>' +
+              '<div class="snx-col"><div class="snx-card snx-stk"><div class="snx-ch"><b style="color:#c4b5fd">Staking</b><span>[' + stakeCoins.length + ' with a rate]</span></div><div class="stk-card"><div class="stk-head"><span>#</span><span>Asset</span><span>Best Rate</span><span></span></div>' + snapStakeListHtml(k, stakeCoins) + '</div></div><div class="snx-card snx-rd" id="snx-rd"><div class="snx-ch"><b>BTC|ETH Reading</b><span id="snx-rdo"></span></div></div></div>' +
             '</div>' +
             '<div class="snx-card snx-sqw"><div class="snx-ch"><b>Sentiment Squares</b><span>Top 200</span></div><div class="sqm-map snx-sq" id="snx-sq"></div><div class="snx-wm">' + brand + '<b>CoinAtlas</b></div></div>' +
           '</div>' +
@@ -4207,6 +4207,11 @@
       var season = idx > 90 ? (D.r[idx] / D.r[idx - 90] - 1) * 100 : null;
       var vals = ['[' + (+j.ratio).toFixed(2) + ']', season == null ? '' : '[' + (season >= 0 ? 'BTC +' : 'ETH +') + Math.abs(season).toFixed(1) + '% over 90 days]', '<span style="color:' + BTC_C + '">[BTC ' + (+j.btc).toFixed(1) + '%]</span> <span style="color:' + ETH_C + '">[ETH ' + (+j.eth).toFixed(1) + '%]</span> <span style="color:var(--muted)">[ALTS ' + Math.max(0, 100 - j.btc - j.eth).toFixed(1) + '%]</span>'];
       Array.prototype.forEach.call(tr.querySelectorAll(".rt-chart-section"), function (s, i) { if (i > 2) return; var hd = s.querySelector(".rt-head"); if (hd) hd.insertAdjacentHTML("beforeend", '<span class="snx-val">' + vals[i] + '</span>'); rtc.appendChild(s); });
+      var rdc = document.getElementById("snx-rd"), vd = tr.querySelector(".rt-vd"), fm = tr.querySelector("#rt-formula"), tb = fm && fm.querySelector(".rt-fm-total > b"), sb = fm && fm.querySelector(".rt-fm-sum b");
+      if (vd) { vd.removeAttribute("id"); vd.className = "rt-vd snx-rdt"; vd.textContent = snapReadingNeutral(vd.textContent); rdc.appendChild(vd); } /* the day's Reading in its own colour, without what depends on your holdings */
+      else if (rdT) rdc.insertAdjacentHTML("beforeend", '<div class="snx-rdt">' + esc(rdT) + '</div>');
+      if (fm) { fm.removeAttribute("id"); fm.className = "snx-fm"; rdc.appendChild(fm); } /* the Formula: each data point with its points, Certainty and Uncertainty marks */
+      if (tb) document.getElementById("snx-rdo").innerHTML = '<b style="color:' + tb.style.color + '">[' + esc(tb.textContent) + (sb ? ' ' + esc(sb.textContent) : '') + ']</b>';
       tr.remove();
       var map = document.getElementById("snx-sq"), lh = x.querySelector(".snx-left").offsetHeight, rh = x.querySelector(".snx-right").offsetHeight; /* the squares fill the height the list leaves */
       if (lh > rh) map.style.height = (map.offsetHeight + lh - rh) + "px";
@@ -4230,6 +4235,7 @@
   snapBtn.addEventListener("click", function () {
     snapVisible = !snapVisible; snapBtn.classList.toggle("active", snapVisible);
     if (snapVisible) {
+      snapYrOpen = new Date().getUTCFullYear(); snapYrMode = "days"; /* every opening starts on this year's days */
       snapLoadDays().then(renderSnaps);
       SNAP_HIST.forEach(function (H) { if (snapHist[H[0]] === undefined) repoJson(H[2]).then(function (j) { snapHist[H[0]] = j && j.days ? j : null; }, function () { snapHist[H[0]] = null; }).then(renderSnaps); });
     }
