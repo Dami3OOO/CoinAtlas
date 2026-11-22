@@ -783,8 +783,8 @@
   .imx-park { flex: 1; display: flex; flex-direction: column; gap: 6px; border: 1px dashed var(--line); border-radius: 8px; padding: 8px; } .imx-park.hot { border-color: var(--fg); background: var(--hover); } .imx-hint { font-size: 11px; color: var(--muted); line-height: 1.5; }
   .imx-chip { padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); font-size: 12px; font-weight: 600; cursor: grab; user-select: none; } .imx-ghost { position: fixed; z-index: 100000; pointer-events: none; }
   .imx-stage { overflow: auto; border-radius: 8px; } .imx-wrap { position: relative; margin: 0 auto; } .snx.imx-canvas { position: absolute !important; left: 0 !important; top: 0 !important; transform-origin: 0 0; }
-  .imx-area { position: relative; } .imx-blk { position: absolute; cursor: move; touch-action: none; } .imx-blk > * { margin: 0 !important; } .imx-canvas .imx-blk:hover { outline: 1px dashed rgba(255,255,255,.35); } .imx-blk.on { outline: 1px solid #fff; z-index: 5; }
-  .imx-rs { position: absolute; right: -7px; bottom: -7px; width: 14px; height: 14px; border-radius: 3px; background: #fff; cursor: nwse-resize; opacity: 0; } .imx-blk:hover .imx-rs, .imx-blk.on .imx-rs { opacity: 1; } .imx-cap .imx-rs { display: none; }
+  .imx-area { position: relative; } .imx-area.imx-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 20px; align-items: stretch; } .imx-blk { position: relative; cursor: grab; touch-action: none; min-width: 0; } .imx-blk > :first-child { height: 100%; box-sizing: border-box; } .imx-blk .fg-py { height: 100%; box-sizing: border-box; } .imx-blk > * { margin: 0 !important; } .imx-canvas .imx-blk:hover { outline: 1px dashed rgba(255,255,255,.35); } .imx-blk.on { outline: 1px solid #fff; z-index: 5; }
+  .imx-rs { position: absolute; right: -6px; top: 50%; width: 8px; height: 46px; margin-top: -23px; border-radius: 4px; background: #fff; cursor: ew-resize; opacity: 0; } .imx-blk.on { cursor: grabbing; } .imx-blk:hover .imx-rs, .imx-blk.on .imx-rs { opacity: 1; } .imx-cap .imx-rs { display: none; }
   .imx-tip { margin-right: auto; font-size: 12px; color: var(--muted); } .fgx-credit { text-align: center; margin-top: 16px; } .fgx-gauge { display: flex; align-items: center; justify-content: center; } .fgx-hist .fg-stats-col { display: block !important; } .fgx-year .fg-py { margin: 0; } .fgx-year { background: none !important; border: 0 !important; padding: 0 !important; } .fgx-gauge .fg-gauge-col { border: 0 !important; background: none !important; }
   .snx-t2s { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin-top: 16px; } .snx-t2s div { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; border-top: 1px solid var(--line); padding-top: 8px; } .snx-t2s span { color: var(--muted); }
   .snx-rd .snx-rdt { font-size: 15px; line-height: 1.55; font-weight: 600; margin-bottom: 12px; } .snx-fm .fg-tip { display: none !important; } .snx-fm .rt-fm-rows, .snx-fm .rt-fm-total { font-size: 14px; } .snx.tags-off .badge, .snx.tag-off-stake .badge-stake, .snx.tag-off-gain .badge-gain, .snx.tag-off-loss .badge-loss, .snx.tag-off-new .badge-new { display: none; }
@@ -4867,7 +4867,7 @@
     { title: "More Ways to Customize The Asset List", notes: ["Planned. Settings now have a Customization tab with Sub Tabs: Asset List (empty for now), Sentiment Squares (a skin for coins up 50% or more) and Portfolio Tint. Skins: Gold, Silver, Diamond, Emerald, Ruby, Sapphire."], desc: "Let Users make the Asset List their own: Effects like Gold or Diamond for strong movers, Colours, which Columns to show, Highlights for chosen Coins and more." },
     { title: "Portfolio Manager Network Additions", notes: ["Planned. Now: Ethereum, Base, Arbitrum, Optimism, Polygon, BNB Chain, Avalanche and Solana. Next without the Backend: more EVM chains via public RPCs, plus Bitcoin and Tron addresses. Sites like CoinGecko or CoinMarketCap cover 25+ networks through paid indexer APIs (e.g. Zerion, Moralis, Covalent); that needs the Backend for the API key.", "Once the Backend exists: Swaps on Solana, and on BNB Chain and Avalanche (these need an API key that must not sit in the public Site)."], desc: "More Networks for the Portfolio Manager, so Wallets on every common Chain are read, together with their Swaps." },
     { title: "Charts Additions", notes: ["Planned: more Assets on the Charts screen.", "Planned: Drawings saved to the Account. Every time a Drawing is added or changed, its type and position are saved. All Drawings together are encrypted into one string of letters and numbers, tied to the Account ID, and turned back into the Drawings when the site opens. Needs the Backend and Accounts.", "Planned: Backtesting. Go back to any day in a chart and play it forward candle by candle, to test a strategy without seeing the future."], desc: "More Assets for the Charts screen, a Backtesting Feature, and Drawings that are saved to your Account, so they are still there on the next visit and on every Device." },
-    { title: "Improved Image Export", st: "wip", notes: ["First version in Fear & Greed: the preview is an editor. Drag parts to move them, drag a corner to make them wider or narrower, drag them into the sidebar on the left to leave them out, Reset puts everything back. Next: the same editor for the Snapshot and Sentiment Squares images."], desc: "Every image export as a small editor: move parts around, then save the PNG." },
+    { title: "Improved Image Export", st: "wip", notes: ["First version in Fear & Greed: the preview is an editor. Parts sit on a fixed grid: drag one onto another to swap places, drag its right edge to make it wider or narrower in steps (a quarter, a third, half, two thirds, three quarters, full), drag it into the sidebar on the left to leave it out. Every row is filled to the edge, so the image always stays tidy. Reset puts everything back. Next: the same editor for the Snapshot and Sentiment Squares images."], desc: "Every image export as a small editor: move parts around, then save the PNG." },
     { title: "Snapshot Customization", notes: ["Planned. Choose which windows the Snapshot image shows, how long the list is, and add your own name or tag at the top right, in the row of the title."], desc: "More control over your own Snapshot images: show only what you want to show." },
     { title: "Final Settings Rework", notes: ["Planned. The Settings grew section by section. Once the main features stand, they get one clean structure, search, and fewer but clearer options."], desc: "A last, complete rework of the Settings window, so every option is easy to find." },
     { title: "Mobile Version / Mobile App", notes: ["Planned. The current Site is built for Desktop: on a Phone the Header Buttons run off the Screen and several Windows are too wide.", "Idea: rebuild the Phone Layout from scratch. A first step could be an installable Web App (PWA) from the same Site; a real App for the Stores can follow later."], desc: "A complete Mobile Version of CoinAtlas, made for Phones from the ground up instead of a shrunk Desktop Site, and later a Mobile App." }
@@ -5135,43 +5135,55 @@
   window.fgCmpToggle = function (b) { fgCmpPinned = !fgCmpPinned; b.classList.toggle("on", fgCmpPinned); fgContainer.classList.toggle("fg-cmp-on", fgCmpPinned || b.matches(":hover")); };
   function yOf(ts) { return new Date(ts * 1000).getUTCFullYear(); }
 
-  /* ---- Image Editor: the preview of an image export is a small editor. Parts can be moved, made wider or narrower, or dragged into the sidebar on the left to leave them out ---- */
-  function imxOpen(o) { /* o: { title, mode, file, canvas (the built .snx element, header and credit inside), area (.imx-area in it), parts: [{ name, el }], layout: function (parts, W) sets p.x, p.y, p.w } */
+  /* ---- Image Editor: the preview of an image export is a small editor on a fixed grid of 12 columns. Parts can only be reordered (drag onto another part),
+     made wider or narrower in set steps (¼ ⅓ ½ ⅔ ¾ full), or dragged into the sidebar on the left to leave them out. Every row is filled to the edge and its parts
+     are equally tall, so the image always stays tidy ---- */
+  function imxOpen(o) { /* o: { title, mode, file, canvas (the built .snx element, header and credit inside), area (.imx-area in it), parts: [{ name, el, span }] } */
     var ov = document.getElementById("pf-sh"); if (!ov) { ov = document.createElement("div"); ov.id = "pf-sh"; ov.className = "pf-sh"; document.body.appendChild(ov); }
     ov.innerHTML = '<div class="pf-sh-box imx-box" role="dialog" aria-label="' + esc(o.title) + '"><div class="pf-sh-head"><b>' + esc(o.title) + '</b><span class="pf-sh-mode">' + esc(o.mode) + '</span><button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
-      '<div class="imx-body"><div class="imx-side"><div class="imx-st">Left out</div><div class="imx-park" id="imx-park"><div class="imx-hint">Drag parts here to leave them out of the image. Drag them back to use them again.</div></div></div><div class="imx-stage" id="imx-stage"><div class="imx-wrap" id="imx-wrap"></div></div></div>' +
-      '<div class="pf-sh-foot"><span class="imx-tip">Drag a part to move it · drag its corner to resize</span><button class="gear" type="button" id="imx-reset">Reset</button><button class="gear pf-sh-dl" type="button" id="snap-png-dl">Download PNG</button></div></div>';
+      '<div class="imx-body"><div class="imx-side"><div class="imx-st">Left out</div><div class="imx-park" id="imx-park"><div class="imx-hint">Drag parts here to leave them out of the image. Drag them back onto the image to use them again.</div></div></div><div class="imx-stage" id="imx-stage"><div class="imx-wrap" id="imx-wrap"></div></div></div>' +
+      '<div class="pf-sh-foot"><span class="imx-tip">Drag a part onto another to swap places · drag its right edge to make it wider or narrower</span><button class="gear" type="button" id="imx-reset">Reset</button><button class="gear pf-sh-dl" type="button" id="snap-png-dl">Download PNG</button></div></div>';
     ov.hidden = false;
-    var cv = o.canvas, area = o.area, wrap = document.getElementById("imx-wrap"), stage = document.getElementById("imx-stage"), park = document.getElementById("imx-park"), W = 0, s = 1, G = 10;
-    cv.classList.add("imx-canvas"); wrap.appendChild(cv); W = area.clientWidth;
-    o.parts.forEach(function (p, i) { var b = document.createElement("div"); b.className = "imx-blk"; b.dataset.i = i; b.appendChild(p.el); b.insertAdjacentHTML("beforeend", '<i class="imx-rs" title="Resize"></i>'); p.b = b; area.appendChild(b); });
+    var cv = o.canvas, area = o.area, wrap = document.getElementById("imx-wrap"), stage = document.getElementById("imx-stage"), park = document.getElementById("imx-park"), s = 1, SNAP = [3, 4, 6, 8, 9, 12], order = [];
+    cv.classList.add("imx-canvas"); area.classList.add("imx-grid"); wrap.appendChild(cv);
+    o.parts.forEach(function (p, i) { var b = document.createElement("div"); b.className = "imx-blk"; b.dataset.i = i; b.appendChild(p.el); b.insertAdjacentHTML("beforeend", '<i class="imx-rs" title="Wider or narrower"></i>'); p.b = b; p.span0 = p.span; area.appendChild(b); });
     var fit = function (p) { /* charts keep their own proportions at every width */
       Array.prototype.forEach.call(p.b.querySelectorAll("svg[viewBox].fg-svg, svg[viewBox].sy-svg"), function (sv) { var vb = sv.getAttribute("viewBox").split(/\s+/); sv.style.height = (sv.getBoundingClientRect().width / s * vb[3] / vb[2]) + "px"; });
     };
-    var place = function (p) { p.b.style.left = p.x + "px"; p.b.style.top = p.y + "px"; p.b.style.width = p.w + "px"; fit(p); };
-    var grow = function () { /* the image is as tall as its parts */
-      var h = 0; o.parts.forEach(function (p) { if (!p.out) h = Math.max(h, p.y + p.b.offsetHeight); }); area.style.height = Math.max(120, h) + "px";
-      s = Math.min(1, (stage.clientWidth - 24) / cv.offsetWidth); cv.style.transform = "scale(" + s + ")"; wrap.style.width = cv.offsetWidth * s + "px"; wrap.style.height = cv.offsetHeight * s + "px";
+    var flow = function () { /* rows packed in order; the last part of a row takes what is left, so no row has a gap */
+      var vis = order.filter(function (p) { return !p.out; }), rows = [], cur = [], used = 0;
+      o.parts.forEach(function (p) { p.b.hidden = !!p.out; });
+      vis.forEach(function (p) { area.appendChild(p.b); var sp = Math.min(12, p.span); if (used + sp > 12) { rows.push(cur); cur = []; used = 0; } cur.push(p); used += sp; });
+      if (cur.length) rows.push(cur);
+      rows.forEach(function (r) { var u = r.reduce(function (a, p) { return a + Math.min(12, p.span); }, 0); r.forEach(function (p, k) { var sp = Math.min(12, p.span) + (k === r.length - 1 ? 12 - u : 0); p.b.style.gridColumn = "span " + sp; }); });
+      vis.forEach(fit); grow();
     };
-    var chip = function (p) { var c = document.createElement("div"); c.className = "imx-chip"; c.textContent = p.name; c.dataset.i = o.parts.indexOf(p); park.appendChild(c); };
-    var out = function (p) { p.out = true; p.b.hidden = true; chip(p); grow(); }, back = function (p, x, y) { p.out = false; p.b.hidden = false; var c = park.querySelector('.imx-chip[data-i="' + o.parts.indexOf(p) + '"]'); if (c) c.remove(); p.x = Math.max(0, Math.min(W - p.w, Math.round(x / G) * G)); p.y = Math.max(0, Math.round(y / G) * G); place(p); grow(); };
-    var reset = function () { Array.prototype.forEach.call(park.querySelectorAll(".imx-chip"), function (c) { c.remove(); }); o.parts.forEach(function (p) { p.out = false; p.b.hidden = false; p.y = 0; p.x = 0; p.w = W; place(p); }); s = 1; cv.style.transform = "none"; o.layout(o.parts, W, place); o.parts.forEach(place); grow(); };
+    var grow = function () { s = Math.min(1, (stage.clientWidth - 24) / cv.offsetWidth); cv.style.transform = "scale(" + s + ")"; wrap.style.width = cv.offsetWidth * s + "px"; wrap.style.height = cv.offsetHeight * s + "px"; };
     var overPark = function (e) { var r = park.getBoundingClientRect(); return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom; };
+    var target = function (e, self) { var b = null; document.elementsFromPoint(e.clientX, e.clientY).some(function (el) { var x = el.closest && el.closest(".imx-blk"); if (x && x !== self) { b = x; return true; } return false; }); if (!b || b === self || !area.contains(b)) return null; var r = b.getBoundingClientRect(); return { p: o.parts[+b.dataset.i], before: e.clientX < r.left + r.width / 2 }; };
+    var moveTo = function (p, t) { order.splice(order.indexOf(p), 1); var k = order.indexOf(t.p); order.splice(t.before ? k : k + 1, 0, p); };
+    var setPark = function () { Array.prototype.forEach.call(park.querySelectorAll(".imx-chip"), function (c) { c.remove(); }); o.parts.forEach(function (p, i) { if (!p.out) return; var c = document.createElement("div"); c.className = "imx-chip"; c.textContent = p.name; c.dataset.i = i; park.appendChild(c); }); };
+    var reset = function () { order = o.parts.slice(); o.parts.forEach(function (p) { p.out = false; p.span = p.span0; }); setPark(); flow(); };
     area.addEventListener("pointerdown", function (e) {
-      var b = e.target.closest(".imx-blk"); if (!b) return; e.preventDefault(); var p = o.parts[+b.dataset.i], rs = e.target.classList.contains("imx-rs"), sx = e.clientX, sy = e.clientY, x0 = p.x, y0 = p.y, w0 = p.w;
-      b.classList.add("on"); try { b.setPointerCapture(e.pointerId); } catch (x) {}
-      b.onpointermove = function (ev) {
-        var dx = (ev.clientX - sx) / s, dy = (ev.clientY - sy) / s;
-        if (rs) { p.w = Math.max(160, Math.min(W - p.x, Math.round((w0 + dx) / G) * G)); }
-        else { p.x = Math.max(0, Math.min(W - p.w, Math.round((x0 + dx) / G) * G)); p.y = Math.max(0, Math.round((y0 + dy) / G) * G); park.classList.toggle("hot", overPark(ev)); }
-        place(p);
+      var b = e.target.closest(".imx-blk"); if (!b) return; e.preventDefault(); var p = o.parts[+b.dataset.i], rs = e.target.classList.contains("imx-rs"), sx = e.clientX, w0 = b.getBoundingClientRect().width, col = area.getBoundingClientRect().width / 12, last = "";
+      b.classList.add("on");
+      var mv = function (ev) {
+        if (rs) { var want = (w0 + ev.clientX - sx) / col, sp = SNAP.reduce(function (a, c) { return Math.abs(c - want) < Math.abs(a - want) ? c : a; }); if (sp !== p.span) { p.span = sp; flow(); } return; }
+        park.classList.toggle("hot", overPark(ev));
+        var t = target(ev, b);
+        var key = t ? t.p.name + t.before : ""; if (t && key !== last) { last = key; moveTo(p, t); flow(); }
       };
-      b.onpointerup = b.onpointercancel = function (ev) { b.onpointermove = b.onpointerup = b.onpointercancel = null; b.classList.remove("on"); park.classList.remove("hot"); if (!rs && overPark(ev)) out(p); grow(); };
+      var up = function (ev) { document.removeEventListener("pointermove", mv); document.removeEventListener("pointerup", up); b.classList.remove("on"); park.classList.remove("hot"); if (!rs && overPark(ev)) { p.out = true; setPark(); flow(); } };
+      document.addEventListener("pointermove", mv); document.addEventListener("pointerup", up);
     });
     park.addEventListener("pointerdown", function (e) {
       var c = e.target.closest(".imx-chip"); if (!c) return; e.preventDefault(); var p = o.parts[+c.dataset.i], g = c.cloneNode(true); g.className = "imx-chip imx-ghost"; document.body.appendChild(g);
       var mv = function (ev) { g.style.left = ev.clientX + 8 + "px"; g.style.top = ev.clientY + 8 + "px"; }; mv(e);
-      var up = function (ev) { document.removeEventListener("pointermove", mv); document.removeEventListener("pointerup", up); g.remove(); var r = area.getBoundingClientRect(); if (ev.clientX >= r.left && ev.clientX <= r.right && ev.clientY >= r.top - 40 && ev.clientY <= r.bottom + 400) back(p, (ev.clientX - r.left) / s - p.w / 2, (ev.clientY - r.top) / s - 20); };
+      var up = function (ev) {
+        document.removeEventListener("pointermove", mv); document.removeEventListener("pointerup", up); g.remove();
+        var r = stage.getBoundingClientRect(); if (ev.clientX < r.left || ev.clientX > r.right || ev.clientY < r.top || ev.clientY > r.bottom) return;
+        var t = target(ev, null); p.out = false; if (t) moveTo(p, t); else { order.splice(order.indexOf(p), 1); order.push(p); } setPark(); flow();
+      };
       document.addEventListener("pointermove", mv); document.addEventListener("pointerup", up);
     });
     document.getElementById("imx-reset").onclick = reset;
@@ -5205,21 +5217,13 @@
       var im = new Image(); im.width = Math.round(b.width); im.height = Math.round(b.height); im.style.display = "block"; im.style.margin = "0 auto"; im.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(c)); sv.parentNode.replaceChild(im, sv);
     });
     var box = document.getElementById("fgx-box"), q = function (sel) { return box.querySelector(sel); }, mk = function (cls, nodes) { var d = document.createElement("div"); d.className = cls; nodes.forEach(function (n) { if (n) d.appendChild(n); }); return d; };
-    var parts = [{ name: "Chart", k: "chart", el: mk("snx-card fgx-chart", [q(".fg-header"), q(".fg-hit-area"), q(".fg-ax")]) }, { name: "Wheel", k: "gauge", el: mk("snx-card fgx-gauge", [q(".fg-gauge-col")]) }];
-    if (q(".fg-stats-col")) parts.push({ name: "History", k: "hist", el: mk("snx-card fgx-hist", [q(".fg-stats-col")]) });
-    Array.prototype.forEach.call(box.querySelectorAll(".fg-py"), function (c) { var t = c.querySelector(".fg-py-l b"); parts.push({ name: (t ? t.textContent : "Year") + (c.querySelector(".fg-py-body") ? " · Months" : ""), k: "year", el: mk("fgx-year fg-annual-section", [c]) }); });
+    var parts = [{ name: "Chart", span: 6, el: mk("snx-card fgx-chart", [q(".fg-header"), q(".fg-hit-area"), q(".fg-ax")]) }, { name: "Wheel", span: 3, el: mk("snx-card fgx-gauge", [q(".fg-gauge-col")]) }];
+    if (q(".fg-stats-col")) parts.push({ name: "History", span: 3, el: mk("snx-card fgx-hist", [q(".fg-stats-col")]) });
+    var nY = box.querySelectorAll(".fg-py").length;
+    Array.prototype.forEach.call(box.querySelectorAll(".fg-py"), function (c) { var t = c.querySelector(".fg-py-l b"); parts.push({ name: (t ? t.textContent : "Year") + (c.querySelector(".fg-py-body") ? " · Months" : ""), span: nY % 3 === 0 ? 4 : 6, el: mk("fgx-year fg-annual-section", [c]) }); });
     var cr = q(".fg-credit"); if (cr) x.querySelector(".fgx-credit").appendChild(cr);
     box.remove(); x.remove();
-    imxOpen({ title: "Fear & Greed Image", mode: mode, file: "coinatlas-fear-and-greed-" + (ttDay || new Date().toISOString().slice(0, 10)) + ".png", canvas: x, area: x.querySelector(".imx-area"), parts: parts,
-      layout: function (P, W, place) { /* two even columns: chart, wheel and History on the left, the years where there is room */
-        var g = 20, half = (W - g) / 2, yL = 0, yR = 0, by = function (k) { return P.filter(function (p) { return p.k === k; }); };
-        by("chart").forEach(function (p) { p.x = 0; p.y = 0; p.w = half; place(p); yL = p.b.offsetHeight + g; });
-        var gs = by("gauge"), hs = by("hist"), hh = 0;
-        gs.forEach(function (p) { p.x = 0; p.y = yL; p.w = 260; place(p); hh = Math.max(hh, p.b.offsetHeight); });
-        hs.forEach(function (p) { p.x = 280; p.y = yL; p.w = half - 280; place(p); hh = Math.max(hh, p.b.offsetHeight); });
-        yL += hh + g;
-        by("year").forEach(function (p) { var left = yL < yR; p.x = left ? 0 : half + g; p.y = left ? yL : yR; p.w = half; place(p); if (left) yL += p.b.offsetHeight + g; else yR += p.b.offsetHeight + g; });
-      } });
+    imxOpen({ title: "Fear & Greed Image", mode: mode, file: "coinatlas-fear-and-greed-" + (ttDay || new Date().toISOString().slice(0, 10)) + ".png", canvas: x, area: x.querySelector(".imx-area"), parts: parts });
   }
   document.addEventListener("click", function (e) { if (e.target.closest && e.target.closest("[data-fgdl]")) fgPng(); });
   function renderFGChart() {
