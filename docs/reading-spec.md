@@ -451,3 +451,7 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   26 weitere Chains mit nativem Staking stehen jetzt nur mit Link (offizielle Staking-Seite oder Projektseite) und Locked/Unlocked drin,
   ohne Rate ("Rate on site"): GRAM, SUI, TAO, ICP, STX, DASH, FLR, XDC, GNO, SEI, XTZ, DCR, KAIA, RUNE, CFX, MON, IOTA, THETA, A, S, CHZ,
   QTUM, ZANO, BDX, VET, XEC. Ausgelassen, weil die offizielle Seite unklar ist: LUNC, KITE, M. Protokoll-Staking (AAVE, CRV, GMX …) fehlt noch.
+- Links (22.11.2026 über GitHub geprüft: Status 200 und Seite über Staking): native Einträge zeigen direkt auf die Staking-Seite oder
+  die offizielle Anleitung der Chain (z. B. cardano.org/stake-pool-delegation, slush.app/guides/stake-and-swap-sui, docs.iota.org …/stake,
+  stake.tezos.com, Tonkeeper-Hilfeartikel, Vaulta-Guide, qtum.org/use-qtum/stake-qtum). Nur Projektseite, weil keine Staking-Seite
+  gefunden wurde: ZANO, BDX. Der Name eines Eintrags beschreibt jetzt die verlinkte Seite (z. B. "TRON Stake 2.0", "Hedera Staking").
