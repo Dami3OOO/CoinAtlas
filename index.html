@@ -745,7 +745,12 @@
   .grp.dim { opacity: .45; }
   /* Time Travel and Snapshots */
   body.tt-sepia .site-layout { filter: sepia(.55) saturate(.85) contrast(.98); } body.tt-gold .site-layout { filter: sepia(.35) saturate(1.7) hue-rotate(-6deg) brightness(1.04); }
-  .site-layout { transition: filter .6s ease; }
+  .site-layout { transition: filter .7s ease .25s; } /* the tone settles while the pulse runs */
+  .tt-pulse { position: fixed; inset: 0; z-index: 9400; pointer-events: none; animation: ttPulse 1.25s cubic-bezier(.2,.7,.2,1) both; }
+  .tt-pulse-sepia { background: radial-gradient(circle at 50% 50%, rgba(196,154,108,.0) 0%, rgba(196,154,108,.42) 38%, rgba(164,113,72,.22) 55%, rgba(164,113,72,0) 70%); }
+  .tt-pulse-gold { background: radial-gradient(circle at 50% 50%, rgba(250,204,21,.0) 0%, rgba(250,204,21,.38) 38%, rgba(234,179,8,.2) 55%, rgba(234,179,8,0) 70%); }
+  .tt-pulse-live { background: radial-gradient(circle at 50% 50%, rgba(236,236,232,0) 0%, rgba(236,236,232,.16) 40%, rgba(236,236,232,0) 68%); }
+  @keyframes ttPulse { 0% { opacity: 1; transform: scale(.05); } 70% { opacity: .9; } 100% { opacity: 0; transform: scale(2.6); } }
   .tt-warp { position: fixed; inset: 0; z-index: 9500; display: flex; align-items: center; justify-content: center; background: rgba(18,18,17,.0); -webkit-backdrop-filter: blur(0); backdrop-filter: blur(0); opacity: 0; transition: opacity .35s ease, backdrop-filter .35s ease, background-color .35s ease; pointer-events: none; }
   .tt-warp.on { opacity: 1; background: rgba(18,18,17,.72); -webkit-backdrop-filter: blur(10px) sepia(.4); backdrop-filter: blur(10px) sepia(.4); }
   .tt-warp-in { text-align: center; } .tt-warp-d { font-size: 40px; font-weight: 800; letter-spacing: -0.02em; color: #f5e6c8; font-variant-numeric: tabular-nums; margin-top: 14px; text-shadow: 0 0 24px rgba(250,204,21,.35); } .tt-warp-s { margin-top: 6px; font-size: 12px; text-transform: uppercase; letter-spacing: .14em; color: #c9b48a; }
@@ -3908,13 +3913,19 @@
     var ov = document.createElement("div"); ov.className = "tt-warp"; ov.innerHTML = '<div class="tt-warp-in"><svg class="tt-clock" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21"/><path class="h" d="M24 24V12"/><path class="m" d="M24 24l9 6"/></svg><div class="tt-warp-d"></div><div class="tt-warp-s">' + (to ? 'Traveling back in time' : 'Back to Live') + '</div></div>';
     document.body.appendChild(ov); ov.classList.toggle("fwd", !to);
     var d = ov.querySelector(".tt-warp-d"), a = Date.parse(from + "T00:00:00Z"), b = Date.parse((to || new Date().toISOString().slice(0, 10)) + "T00:00:00Z");
-    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches, dur = reduce ? 1 : 1500, t0 = performance.now();
+    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches, dur = reduce ? 1 : 850, t0 = performance.now();
     var fmt = function (t) { return new Date(t).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }); };
     requestAnimationFrame(function () { ov.classList.add("on"); });
     (function step(now) {
       var x = Math.min(1, (now - t0) / dur), e = x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
       d.textContent = fmt(Math.round((a + (b - a) * e) / 864e5) * 864e5);
-      if (x < 1) requestAnimationFrame(step); else { done(); setTimeout(function () { ov.classList.remove("on"); setTimeout(function () { ov.remove(); }, 500); }, 250); }
+      if (x < 1) { requestAnimationFrame(step); return; }
+      try { done(); } catch (err) { console.error(err); } /* whatever happens, the overlay always goes away */
+      ov.classList.remove("on"); setTimeout(function () { ov.remove(); }, 400);
+      if (!reduce) { /* the tone starts in the middle of the screen and pulses out over the whole page */
+        var pu = document.createElement("div"); pu.className = "tt-pulse " + (to ? "tt-pulse-" + ttTone() : "tt-pulse-live"); document.body.appendChild(pu);
+        setTimeout(function () { pu.remove(); }, 1300);
+      }
     })(t0);
   }
   function ttCoins(j, pj) { /* the day's list as live coins: logos and details from today's list, everything else from the snapshot */
@@ -4658,7 +4669,7 @@
     if (j && j.fg != null && l.length) l[l.length - 1] = { timestamp: l[l.length - 1].timestamp, value: +j.fg, value_classification: classifyFG(j.fg) };
     return l;
   }
-  function fgSlice(tf) { if (!fgData) return []; var fgData = fgSrc(); if (tf === "30D") return fgData.slice(-30); if (tf === "1Y") return fgData.slice(-365); if (tf === "CY") { var cy = new Date().getUTCFullYear(); return fgData.filter(function (d) { return new Date(d.timestamp * 1000).getUTCFullYear() === cy; }); } return fgData.slice(); }
+  function fgSlice(tf) { if (!fgData) return []; var src = fgSrc(); if (tf === "30D") return src.slice(-30); if (tf === "1Y") return src.slice(-365); if (tf === "CY") { var cy = new Date().getUTCFullYear(); return src.filter(function (d) { return new Date(d.timestamp * 1000).getUTCFullYear() === cy; }); } return src.slice(); }
   window.setFGTimeframe = function (tf) { fgTimeframe = tf; fgYear = ""; renderFGChart(); };
   window.setFGYear = function (y) { fgYear = String(y); renderFGChart(); };
   window.fgCompare = function (on) { fgContainer.classList.toggle("fg-cmp-on", !!on || fgCmpPinned); };
