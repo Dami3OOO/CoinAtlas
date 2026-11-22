@@ -925,6 +925,7 @@
   .st { opacity: .75; font-weight: 600; } .st-bull { color: var(--up); } .st-bear { color: var(--down); } .st-bridge { color: #fb923c; }
   .fg-tf-menu { display: none; position: absolute; right: 0; top: calc(100% - 2px); z-index: 30; grid-template-columns: 120px 190px; gap: 8px; padding: 8px; background: var(--pop); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.4); }
   .fg-yr-pick:hover .fg-tf-menu, .fg-yr-pick:focus-within .fg-tf-menu { display: grid; }
+  body.tt-on .fg-yr-pick .fg-tf-menu, body.tt-on .fg-yr-pick .fg-yr-menu { display: none !important; } body.tt-on .fg-yr-pick .fg-yr-btn { cursor: default; pointer-events: none; } /* Time Travel: the pickers stay as they look, locked to the day */
   .fg-tf-col { display: flex; flex-direction: column; gap: 2px; max-height: 260px; overflow-y: auto; } .fg-tf-col.yrs { border-left: 1px solid var(--line); padding-left: 8px; }
   .fg-tf-col button { background: transparent; border: none; color: var(--muted); text-align: left; padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; white-space: nowrap; }
   .fg-tf-col button:hover { background: var(--hover); color: var(--fg); } .fg-tf-col button.active { color: var(--fg); font-weight: 700; background: var(--hover); }
@@ -4272,8 +4273,17 @@
     if (sqVisible) { sqVal = {}; sqDraw(); }
     if (stkVisible) renderStaking();
     if (snapVisible) renderSnaps();
-    if (fgVisible && fgData) renderFGChart();
+    if (fgVisible && fgData) { renderFGChart(); renderFGAnnual(); }
     applyStakeBadges();
+  }
+  var ttTfKeep = null;
+  function ttLockTf(k) { /* in the past every window shows that day: Today, and the charts with more history its year up to the day; pickers keep their look but cannot be opened */
+    if (k) {
+      if (!ttTfKeep) ttTfKeep = { card: Object.assign({}, cardTf), fgTf: fgTimeframe, fgYr: fgYear, ann: annualRange, rtV: RT.view, rtY: RT.year, sq: sqS.tf, pf: pfLock && pfLock.tf };
+      Object.keys(cardTf).forEach(function (s) { cardTf[s] = "1D"; }); fgTimeframe = "1Y"; fgYear = k.slice(0, 4); annualRange = k.slice(0, 4); RT.view = "YEAR"; RT.year = +k.slice(0, 4); sqS.tf = "today"; if (pfLock) pfLock.tf = "1D";
+    } else if (ttTfKeep) {
+      var o = ttTfKeep; ttTfKeep = null; Object.keys(cardTf).forEach(function (s) { cardTf[s] = o.card[s] || "1D"; }); fgTimeframe = o.fgTf; fgYear = o.fgYr; annualRange = o.ann; RT.view = o.rtV; RT.year = o.rtY; sqS.tf = o.sq; if (pfLock && o.pf) pfLock.tf = o.pf;
+    }
   }
   function ttGo(k) { /* to a recorded day; k null = back to live */
     if (ttBusy || k === ttDay) return; ttBusy = true;
@@ -4287,11 +4297,11 @@
           if (!ttLive) ttLive = { coins: coins, open: dayOpenCache, stake: stakeData, ranks: prevRanks, ranksDay: prevRanksDay, status: statusEl.textContent, asOf: RT.asOf, charts: chartCache, pending: chartPending };
           chartCache = {}; chartPending = {}; /* the day's own charts */
           var t = ttCoins(r[0], r[1], r[3]); coins = t.list; dayOpenCache = t.open; prevRanks = t.ranks; prevRanksDay = snapPrevKey(k) || ""; stakeData = ttStake(k); CATS.staking = Object.keys(stakeData);
-          RT.asOf = Date.parse(k + "T00:00:00Z"); ttDay = k;
+          RT.asOf = Date.parse(k + "T00:00:00Z"); ttDay = k; ttLockTf(k);
           statusEl.textContent = "Time Travel · " + snapDate(k) + " · CoinAtlas Snapshot";
         } else if (ttLive) {
           coins = ttLive.coins; dayOpenCache = ttLive.open; chartCache = ttLive.charts || {}; chartPending = ttLive.pending || {}; stakeData = ttLive.stake; CATS.staking = Object.keys(stakeData); prevRanks = ttLive.ranks; prevRanksDay = ttLive.ranksDay; RT.asOf = ttLive.asOf; statusEl.textContent = ttLive.status;
-          ttLive = null; ttDay = null;
+          ttLive = null; ttDay = null; ttLockTf(null);
         }
         ttRefresh(); renderTT(); ttBusy = false;
         if (k && !document.body.classList.contains("tt-on")) ttReveal(true, ttApplyTone); else if (!k) ttReveal(false, ttApplyTone); else ttApplyTone(); /* past to past: the tone is already there */
@@ -5259,7 +5269,7 @@
     var mf = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     function grid(sel) {
       var md = [[], [], [], [], [], [], [], [], [], [], [], []];
-      fgData.forEach(function (d) { var dt = new Date(d.timestamp * 1000), y = dt.getFullYear(); if (y < 2018 || (sel !== null && y !== sel)) return; md[dt.getMonth()].push(d.value); });
+      fgSrc().forEach(function (d) { var dt = new Date(d.timestamp * 1000), y = dt.getFullYear(); if (y < 2018 || (sel !== null && y !== sel)) return; md[dt.getMonth()].push(d.value); });
       var h = '<div class="fg-annual-grid">';
       for (var m = 0; m < 12; m++) {
         var v = md[m], avg = v.length ? Math.round(v.reduce(function (a, b) { return a + b; }, 0) / v.length) : null, sub = "", tip = "", showVal = true;
