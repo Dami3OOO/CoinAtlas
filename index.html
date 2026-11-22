@@ -1782,8 +1782,22 @@
     }).catch(function () { return null; });
     return p.then(function (a) { if (!a || !a.length) return null; return a.some(function (x) { return mine.indexOf(x) > -1; }); });
   }
+  var ttIntra = {}; /* Time Travel: the recorded "Today" charts of a day (data/intraday) */
+  function ttDayChart(c) {
+    var k = ttDay, f = ttIntra[k] || (ttIntra[k] = repoJson("data/intraday/" + k + ".json").catch(function () { return null; }));
+    return f.then(function (j) {
+      var v = j && j.coins && j.coins[String(c.symbol).toUpperCase()];
+      if (!v || v.length < 2) return STABLECOINS.indexOf(c.symbol.toUpperCase()) > -1 ? Object.assign(flatChart(c), { live: false }) : null;
+      var t = v.map(function (_, i) { return j.start + i * j.step; });
+      return { v: v.slice(), hi: v.slice(), lo: v.slice(), times: t, tag: "CoinAtlas Snapshot", live: false };
+    });
+  }
   function fetchChart(c) {
     var sym = c.symbol + "-" + sourceKey, hit = chartCache[sym];
+    if (ttDay) { /* a past day: its recorded chart, kept apart from the live ones */
+      if (hit) return Promise.resolve(hit.d);
+      return ttDayChart(c).then(function (r) { if (ttDay) chartCache[sym] = { d: r, at: Date.now() + 864e5 }; return r; });
+    }
     if (hit && Date.now() - hit.at < CHART_TTL) return Promise.resolve(hit.d);
     if (STABLECOINS.indexOf(c.symbol.toUpperCase()) > -1) { /* stablecoin: flat blue line, no exchange/CoinGecko calls */
       var fc = flatChart(c); chartCache[sym] = { d: fc, at: Date.now() }; if (!ttDay) dayOpenCache[c.symbol] = { open: fc.v[0], change: 0 };
@@ -1832,12 +1846,12 @@
     return '<div class="t dev-target" data-dev-name="Chart Header" data-dev-color="#60a5fa"><div><div><b>' + esc(c.name) + '</b>' + tierStr + '</div>' + (catLabel(c) ? '<div class="cat-tag">' + catLabel(c) + '</div>' : '') + '</div><div class="chart-h-actions"><span class="' + (cls || "m") + ' v">' + right + '</span>' + closeBtn + '</div></div>' + (showClose ? tfRow(c) : '');
   }
   function stats(c, min, max) {
-    return '<div class="chart-stats dev-target" data-dev-name="Chart Stats" data-dev-color="#f472b6"><div><span>Low</span>' + (min == null ? "–" : price(min)) + '</div><div class="mid"><span>' + (c.pfLbl || 'Current price') + '</span>' + price(c.current_price) + '</div><div><span>High</span>' + (max == null ? "–" : price(max)) + "</div></div>";
+    return '<div class="chart-stats dev-target" data-dev-name="Chart Stats" data-dev-color="#f472b6"><div><span>Low</span>' + (min == null ? "–" : price(min)) + '</div><div class="mid"><span>' + (c.pfLbl || (ttDay ? 'Price at the Snapshot' : 'Current price')) + '</span>' + price(c.current_price) + '</div><div><span>High</span>' + (max == null ? "–" : price(max)) + "</div></div>";
   }
 
   function chart(c, d, tag, showClose, refKey, mode) {
     var day = nyDay(Date.now());
-    var f = mode === "ALL" ? (d.frac || 1) : Math.min(1, Math.max(0.03, (Date.now() - day.start) / day.ms));
+    var f = mode === "ALL" ? (d.frac || 1) : d.live === false ? 1 : Math.min(1, Math.max(0.03, (Date.now() - day.start) / day.ms)); /* a recorded past day fills the whole width */
     var arrV = d.v.slice(), arrHi = d.hi.slice(), arrLo = d.lo.slice();
     var times = (d.times && d.times.length) ? d.times.slice() : arrV.map(function (_, i) { return day.start + (i / Math.max(1, arrV.length - 1)) * day.ms; });
     if (arrV.length > 0 && d.live !== false) {
@@ -1861,7 +1875,7 @@
     var pctColor = isStable ? "var(--stable-blue)" : getTrendColor(change);
     var end = pts[pts.length - 1].split(",");
     var right = isStable ? '<span class="stable">Stable</span>' : d.pcNone ? '<span class="m">' + d.pcNone + '</span>' : ('<span style="color: ' + pctColor + '">' + pct(change) + ' [' + priceSigned(changeAbs) + ']</span>');
-    right += ' <span class="m">· ' + (mode === "ALL" ? (d.label || "All Time") : "Today") + (tag ? ' · ' + tag : '') + '</span>';
+    right += ' <span class="m">· ' + (mode === "ALL" ? (d.label || "All Time") : ttDay && d.live === false ? snapDate(ttDay) : "Today") + (tag ? ' · ' + tag : '') + '</span>';
 
     if (refKey) chartTimesRegistry[refKey] = times;
 
@@ -2055,7 +2069,7 @@
   }
   function placeholder(c, text, showClose) {
     if (PRIVACY.indexOf(c.symbol.toUpperCase()) > -1 && /^No trading/.test(text)) text = "Privacy token: delisted from most major exchanges, so no live chart is available";
-    var html = head(c, "Today", "m", 0, showClose) + '<div class="empty">' + text + '</div>' +
+    var html = head(c, ttDay ? snapDate(ttDay) : "Today", "m", 0, showClose) + '<div class="empty">' + text + '</div>' +
       '<div class="chart-axis"><span style="left:0;">--:--</span><span style="left:50%; transform:translateX(-50%);">--:--</span><span style="left:100%; transform:translateX(-100%);">--:--</span></div>' +
       stats(c, null, null);
     if (showClose) html += infoHtml(c);
@@ -2290,7 +2304,7 @@
     var c = displayCoins[i]; if (!c) return;
     var k = chartCache[c.symbol + "-" + sourceKey];
     if (k && Date.now() - k.at < CHART_TTL) {
-      popEl.innerHTML = k.d ? chart(c, k.d, k.d.tag, false, 'popup') : placeholder(c, "No trading-day chart for this coin", false);
+      popEl.innerHTML = k.d ? chart(c, k.d, k.d.tag, false, 'popup') : placeholder(c, (ttDay ? "No chart was recorded for this coin on this day" : "No trading-day chart for this coin"), false);
     } else {
       popEl.innerHTML = placeholder(c, "Loading chart…", false);
       fetchChart(c).then(function () { if (current === i) showPop(i); });
@@ -3944,12 +3958,13 @@
       if (k && (!r || !r[0] || !r[0].coins)) { ttBusy = false; renderTT("This snapshot could not be loaded."); return; }
       ttWarp(from, k, function () {
         if (k) {
-          if (!ttLive) ttLive = { coins: coins, open: dayOpenCache, stake: stakeData, ranks: prevRanks, ranksDay: prevRanksDay, status: statusEl.textContent, asOf: RT.asOf };
+          if (!ttLive) ttLive = { coins: coins, open: dayOpenCache, stake: stakeData, ranks: prevRanks, ranksDay: prevRanksDay, status: statusEl.textContent, asOf: RT.asOf, charts: chartCache, pending: chartPending };
+          chartCache = {}; chartPending = {}; /* the day's own charts */
           var t = ttCoins(r[0], r[1]); coins = t.list; dayOpenCache = t.open; prevRanks = t.ranks; prevRanksDay = snapPrevKey(k) || ""; stakeData = ttStake(k); CATS.staking = Object.keys(stakeData);
           RT.asOf = Date.parse(k + "T00:00:00Z"); ttDay = k;
           statusEl.textContent = "Time Travel · " + snapDate(k) + " · CoinAtlas Snapshot";
         } else if (ttLive) {
-          coins = ttLive.coins; dayOpenCache = ttLive.open; stakeData = ttLive.stake; CATS.staking = Object.keys(stakeData); prevRanks = ttLive.ranks; prevRanksDay = ttLive.ranksDay; RT.asOf = ttLive.asOf; statusEl.textContent = ttLive.status;
+          coins = ttLive.coins; dayOpenCache = ttLive.open; chartCache = ttLive.charts || {}; chartPending = ttLive.pending || {}; stakeData = ttLive.stake; CATS.staking = Object.keys(stakeData); prevRanks = ttLive.ranks; prevRanksDay = ttLive.ranksDay; RT.asOf = ttLive.asOf; statusEl.textContent = ttLive.status;
           ttLive = null; ttDay = null;
         }
         ttApplyTone(); ttRefresh(); renderTT(); ttBusy = false;
@@ -3982,7 +3997,7 @@
       var q = [["Last Snapshot", last], ["1 Week Ago", ago(7)], ["1 Month Ago", ago(30)], ["1 Year Ago", ago(365)]];
       h += '<div class="tt-quick">' + q.map(function (x) { return '<button type="button" class="gear" ' + (x[1] ? 'data-tt-go="' + x[1] + '"' : 'disabled title="Not recorded yet"') + '>' + x[0] + '</button>'; }).join("") + '</div>' + ttCal();
     }
-    h += '<div class="fg-sub tt-note">Pick a day CoinAtlas recorded. The whole page then shows that day as if it were live: the list with its prices, market caps, ranks and daily changes, Fear & Greed, the BTC|ETH Formula and its Reading, your Portfolio\'s value, the Staking rates and the Sentiment Squares. Charts stay live; they get their own Backtesting later. Hover charts and the Locked Hovercharts\' charts show today.</div>';
+    h += '<div class="fg-sub tt-note">Pick a day CoinAtlas recorded. The whole page then shows that day as if it were live: the list with its prices, market caps, ranks and daily changes, Fear & Greed, the BTC|ETH Formula and its Reading, your Portfolio\'s value, the Staking rates and the Sentiment Squares. The hover charts show the day\'s own chart, recorded every night. The Charts screen stays live; it gets its own Backtesting later.</div>';
     ttBox.innerHTML = h + '</div>';
   }
   ttBtn.addEventListener("click", function () { ttVisible = !ttVisible; ttBtn.classList.toggle("active", ttVisible); if (ttVisible) snapLoadDays().then(function () { renderTT(); }); renderTT(); });
@@ -5651,6 +5666,7 @@
     if (b.dataset.wact === "eye") { w.on = w.on === false; if (!w.on && pfEditW === w) { pfEditW = null; pfEdit = false; } pfWalletsSave(); pfLoadAll(); }
     else if (b.dataset.wact === "x") { if (pfEditW === w) { pfEditW = null; pfEdit = false; } pfWallets.splice(+row.dataset.wi, 1); pfWalletsSave(); pfLoadAll(); }
     else if (b.dataset.wact === "pen") { /* the name is typed right in place */
+      if (w.manual && !(pfEdit && pfEditW === w)) { w.on = true; pfEditW = w; pfEdit = true; row.classList.add("ed"); pfHideHover(); pfRenderBody(); pfRenderLock(true); } /* the pen of a manual wallet also opens its coins: click coins in the list to add them */
       var n = row.querySelector(".pf-w-n"); n.outerHTML = '<input class="pf-w-in" maxlength="40" placeholder="' + (w.manual ? esc(w.def) : 'Name, e.g. Main Wallet') + '" value="' + esc(w.name || "") + '">'; var inp = row.querySelector(".pf-w-in"); inp.focus(); inp.select();
       var done = function () { if (!inp.isConnected) return; w.name = inp.value.trim(); pfWalletsSave(); pfWlRender(); };
       inp.addEventListener("keydown", function (k) { if (k.key === "Enter") { k.preventDefault(); done(); } else if (k.key === "Escape") pfWlRender(); }); inp.addEventListener("blur", done);
@@ -6024,7 +6040,7 @@
   }
   function pfScale(d, k) {
     var f = function (a) { return a.map(function (x) { return x * k; }); };
-    return { v: f(d.v), hi: f(d.hi || d.v), lo: f(d.lo || d.v), times: d.times, tag: "Portfolio" };
+    return { v: f(d.v), hi: f(d.hi || d.v), lo: f(d.lo || d.v), times: d.times, tag: "Portfolio", live: d.live, dom: d.dom, frac: d.frac }; /* a past year stays past: no "now" point at its end */
   }
   function pfSumSeries(list) {
     var base = list.reduce(function (m, x) { return x.d.times.length > m.d.times.length ? x : m; }, list[0]), T = base.d.times, n = T.length, v = [], i;
@@ -6037,7 +6053,7 @@
         v[i] += x.r.amt * p[idx];
       }
     });
-    return { v: v, hi: v.slice(), lo: v.slice(), times: T.slice(), tag: "Portfolio" };
+    return { v: v, hi: v.slice(), lo: v.slice(), times: T.slice(), tag: "Portfolio", live: base.d.live, dom: base.d.dom, frac: base.d.frac };
   }
   function pfSeries(key, tf) {
     if (key !== "TOTAL") {

@@ -54,6 +54,11 @@ jobs:
         env:
           COINGECKO_KEY: ${{ secrets.COINGECKO_KEY }}
         run: node scripts/record-tags.mjs
+      # The day's "Today" chart of the Top 200 (15-minute steps) for Time Travel. A failure here never stops the snapshot.
+      - name: Record intraday charts
+        if: steps.due.outputs.run == 'true'
+        continue-on-error: true
+        run: node scripts/record-intraday.mjs
       # Staking: the best options from trusted providers, with DefiLlama's real rates. A failure keeps the last file and never stops the snapshot.
       - name: Record staking
         if: steps.due.outputs.run == 'true'

@@ -478,3 +478,10 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
   Rang-Pfeile gegen den vorigen Snapshot, Breadth-Counter, Highest Gain/Loss, Portfolio-Werte, Staking-Raten des Tages, BTC|ETH Formula und
   Reading (RT.asOf), Fear & Greed (Reihe endet am Tag, Wert aus dem Snapshot), Sentiment Squares (nur "Today"). Live-Updates pausieren; neue
   Live-Daten warten auf den Rückweg. Ton Sepia oder Gold (Customization). Charts bleiben live (Backtesting kommt). "New in Top 200" ausgeblendet.
+- Portfolio-Chart, vergangene Jahre: kein angehängter "Jetzt"-Punkt mehr am Ende (pfScale/pfSumSeries geben live, dom, frac weiter).
+- Manual Wallet: der Stift öffnet zusätzlich die Coins der Wallet zum Bearbeiten (Coins links anklicken fügt sie hinzu).
+- Tages-Charts für Time Travel: scripts/record-intraday.mjs (nachts, Schritt "Record intraday charts") speichert den "Today"-Chart des
+  abgelaufenen New-York-Tages für die Top 200 in 15-Minuten-Schritten (Binance, sonst Bitget) nach data/intraday/YYYY-MM-DD.json
+  ({date, start, step, sources, coins: {SYM: [96 Schlusskurse]}}). Im Time Travel zeigen Hovercharts und der 1D-Chart der Locked Hovercharts
+  diesen Verlauf (eigener Chart-Cache, ganze Breite, "21 Nov 2026 · CoinAtlas Snapshot", Mitte "Price at the Snapshot"); ohne Aufzeichnung
+  steht "No chart was recorded for this coin on this day". Aufgezeichnet wird ab dem 22.11.2026.
