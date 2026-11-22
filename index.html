@@ -766,11 +766,12 @@
   .snx, .snx * { font-variant-numeric: normal !important; letter-spacing: normal; }
   .snx .fg-yr-wrap, .snx .rt-right .fg-yr-pick, .snx .fg-timeframes, .snx #fg-timer, .snx .fg-stats-col, .snx .fg-credit, .snx .rt-right { display: none !important; } .snx-tmp { position: absolute; left: 0; top: 0; width: 820px; visibility: hidden; }
   .snx-h { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; } .snx-t { text-align: center; } .snx-t b { display: block; font-size: 34px; letter-spacing: -0.02em; } .snx-t span { font-size: 17px; color: var(--fg); font-weight: 600; }
-  .snx .fx { animation: none !important; background-size: 100% 100% !important; box-shadow: inset 0 0 0 1px rgba(var(--fxc), .7), 0 0 16px rgba(var(--fxc), .45) !important; } .snx .fx::before, .snx .fx::after { display: none !important; } /* the photo cannot catch the moving shine: the skin still, its whole gradient visible */
+  .snx .fx { animation: none !important; box-shadow: inset 0 0 0 1px rgba(var(--fxc), .7), 0 0 16px rgba(var(--fxc), .45) !important; } .snx .fx::before, .snx .fx::after { display: none !important; } /* the photo cannot catch the moving shine: the skin still, its whole gradient visible */
   .snx-fgy { margin-top: 8px; padding: 0 !important; border: 0 !important; background: none !important; } .snx-fgy .fg-py-chev, .snx-fgy .fg-cyc, .snx-fgy .fg-py-l .fg-sub, .snx-fgy .fg-annual-card .fg-sub, .snx-fgy .fg-annual-card > :last-child:not(.val):not(.lbl) { display: none; }
   .snx-fgy .fg-py { margin: 0; } .snx-fgy .fg-py-head { padding: 6px 10px; } .snx-fgy .fg-py-avg { font-size: 18px; } .snx-fgy .fg-py-body { padding: 0 8px 8px; }
   .snx-fgy .fg-py-grid { grid-template-columns: repeat(6, 1fr) !important; gap: 5px; } .snx-fgy .fg-annual-card { padding: 4px 2px !important; min-height: 0 !important; } .snx-fgy .fg-annual-card .val { font-size: 15px; } .snx-fgy .fg-annual-card .lbl { font-size: 10px; }
-  .snx-fg .fg-gauge-col { margin: 0 !important; padding: 0 !important; }
+  .snx-fg .fg-gauge-col { margin: 0 !important; padding: 0 !important; } .snx-fgrow { display: flex !important; gap: 16px; align-items: center; margin-top: 10px; } .snx-fgrow > .fg-gauge-col { flex: 0 0 210px !important; width: 210px !important; min-width: 0 !important; } .snx-fgrow > .snx-fgy { flex: 1 1 auto !important; } .snx-fgrow .snx-fgy { margin: 0; }
+  .snx-fgrow .fg-py-grid { grid-template-columns: repeat(4, 1fr) !important; } .snx-fgrow .fg-annual-card { padding: 8px 2px !important; } .snx-fgrow > * { min-width: 0; width: 100% !important; max-width: none !important; } .snx-fgrow .fg-py, .snx-fgrow .fg-py-body, .snx-fgrow .fg-py-grid { width: 100% !important; max-width: none !important; box-sizing: border-box; } .snx-fgrow .fg-annual-card .val { font-size: 19px; } .snx-fgrow .fg-annual-card .lbl { font-size: 11px; } .snx-fgrow .fg-py-avg { font-size: 22px; }
   .snx-t2s { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin-top: 16px; } .snx-t2s div { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; border-top: 1px solid var(--line); padding-top: 8px; } .snx-t2s span { color: var(--muted); }
   .snx-rd .snx-rdt { font-size: 15px; line-height: 1.55; font-weight: 600; margin-bottom: 12px; } .snx-fm .fg-tip { display: none !important; } .snx-fm .rt-fm-rows, .snx-fm .rt-fm-total { font-size: 14px; } .snx.tags-off .badge, .snx.tag-off-stake .badge-stake, .snx.tag-off-gain .badge-gain, .snx.tag-off-loss .badge-loss, .snx.tag-off-new .badge-new { display: none; }
   .snx-brand { display: flex; align-items: center; gap: 10px; } .snx-brand svg { width: 36px; height: 36px; stroke: var(--fg); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; } .snx-brand b { font-size: 24px; letter-spacing: -0.02em; }
@@ -4079,7 +4080,7 @@
   }
   /* ---- TOTAL 200: the Top 200 market cap of the last 7 recorded days, in its own colour (teal) ---- */
   /* ---- one calendar year as a chart (TOTAL 200, Staking rates): the year runs Jan 1 to Dec 31, the data stops at the day; hover shows date and value ---- */
-  var T200_C = "#2dd4bf", snapDomAll = null;
+  var T200_C = "#0f8a55", snapDomAll = null;
   function syYear(k) { return +k.slice(0, 4); }
   function t200Points(k) { /* every recorded or backfilled day of that year up to the day */
     var y = syYear(k), src = snapDomAll || {}, out = [];
@@ -4221,7 +4222,10 @@
         try { snapDayEmbed = k; var src = fgSrc(); snapDayEmbed = null; fgData = src; yearlyOn = true; fgPastOpen = {}; fgPastOpen[Y] = true; yearlyFilter = "all"; renderFGYearly(); }
         finally { snapDayEmbed = null; fgData = keep.d; yearlyOn = keep.on; fgPastOpen = keep.open; yearlyFilter = keep.f; if (real) real.id = "fg-yearly-container"; }
         var yc = box.querySelector('[data-fgy="' + Y + '"]'); yc = yc && yc.closest(".fg-py"); box.remove();
-        if (yc) { var sec = document.createElement("div"); sec.className = "fg-annual-section snx-fgy"; sec.appendChild(yc); fgc.appendChild(sec); }
+        if (yc) { /* the wheel on the left, the year's months beside it */
+          var sec = document.createElement("div"), row = document.createElement("div"), gc = fgc.querySelector(".fg-gauge-col"); sec.className = "fg-annual-section snx-fgy"; sec.appendChild(yc); row.className = "snx-fgrow";
+          fgc.appendChild(row); if (gc) { var gp = gc.parentNode; row.appendChild(gc); if (gp && gp !== fgc && !gp.textContent.trim() && !gp.querySelector("img,svg")) gp.remove(); } row.appendChild(sec); /* its own full-width row at the bottom of the card */
+        }
       })();
       /* BTC|ETH: Ratio, Season and Dominance above each other, each with its value of the day */
       var tr = document.createElement("div"); tr.className = "snx-tmp"; x.appendChild(tr); snapEmbedRatio(tr, k, "all");
@@ -4245,6 +4249,7 @@
         ["fill", "stroke", "stop-color", "color"].forEach(function (at) { var v = n.getAttribute && n.getAttribute(at); if (v && v.indexOf("var(") > -1) n.setAttribute(at, v.replace(/var\((--[\w-]+)\)/g, function (m, nm) { return pfCss(nm); })); });
         if (n.getAttribute && n.getAttribute("style") && n.getAttribute("style").indexOf("var(") > -1) n.setAttribute("style", n.getAttribute("style").replace(/var\((--[\w-]+)\)/g, function (m, nm) { return pfCss(nm); }));
       });
+      Array.prototype.forEach.call(x.querySelectorAll(".fx"), function (q) { q.style.setProperty("background-position", Math.round(Math.random() * 300) + "% 50%", "important"); }); /* each skin a random frame of its shine */
       Array.prototype.forEach.call(x.querySelectorAll(".snx-fg .fg-gauge-col svg"), function (sv) { /* the gauge as a plain picture of its exact size, so the photo draws its arc */
         var b = sv.getBoundingClientRect(), c = sv.cloneNode(true); c.setAttribute("xmlns", "http://www.w3.org/2000/svg"); c.setAttribute("width", Math.round(b.width)); c.setAttribute("height", Math.round(b.height)); c.removeAttribute("style");
         var im = new Image(); im.width = Math.round(b.width); im.height = Math.round(b.height); im.style.display = "block"; im.style.margin = "0 auto"; im.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(c)); sv.parentNode.replaceChild(im, sv);
