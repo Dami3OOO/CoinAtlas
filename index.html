@@ -744,13 +744,11 @@
   .hc-size { display: flex; align-items: center; gap: 10px; } .hc-size input { width: 150px; accent-color: var(--fg); cursor: pointer; } .hc-size b { min-width: 52px; text-align: right; font-size: 12px; font-variant-numeric: tabular-nums; }
   .grp.dim { opacity: .45; }
   /* Time Travel and Snapshots */
-  body.tt-sepia .site-layout { filter: sepia(.55) saturate(.85) contrast(.98); } body.tt-gold .site-layout { filter: sepia(.35) saturate(1.7) hue-rotate(-6deg) brightness(1.04); }
-  .site-layout { transition: filter .7s ease .25s; } /* the tone settles while the pulse runs */
-  .tt-pulse { position: fixed; inset: 0; z-index: 9400; pointer-events: none; animation: ttPulse 1.25s cubic-bezier(.2,.7,.2,1) both; }
-  .tt-pulse-sepia { background: radial-gradient(circle at 50% 50%, rgba(196,154,108,.0) 0%, rgba(196,154,108,.42) 38%, rgba(164,113,72,.22) 55%, rgba(164,113,72,0) 70%); }
-  .tt-pulse-gold { background: radial-gradient(circle at 50% 50%, rgba(250,204,21,.0) 0%, rgba(250,204,21,.38) 38%, rgba(234,179,8,.2) 55%, rgba(234,179,8,0) 70%); }
-  .tt-pulse-live { background: radial-gradient(circle at 50% 50%, rgba(236,236,232,0) 0%, rgba(236,236,232,.16) 40%, rgba(236,236,232,0) 68%); }
-  @keyframes ttPulse { 0% { opacity: 1; transform: scale(.05); } 70% { opacity: .9; } 100% { opacity: 0; transform: scale(2.6); } }
+  body.tt-sepia .site-layout, body.tt-sepia > .page > header, body.tt-sepia header { filter: sepia(.55) saturate(.85) contrast(.98); } body.tt-gold .site-layout, body.tt-gold header { filter: sepia(.35) saturate(1.7) hue-rotate(-6deg) brightness(1.04); }
+  .tt-veil { position: fixed; inset: 0; z-index: 9400; pointer-events: none; }
+  .tt-ring { position: fixed; left: 50%; top: 50%; z-index: 9401; pointer-events: none; transform: translate(-50%, -50%); border-radius: 50%; border: 2px solid rgba(250,204,21,.8); box-shadow: 0 0 40px 8px rgba(250,204,21,.25), inset 0 0 40px 8px rgba(250,204,21,.18); }
+  .tt-ring.sepia { border-color: rgba(214,170,120,.85); box-shadow: 0 0 40px 8px rgba(196,154,108,.25), inset 0 0 40px 8px rgba(196,154,108,.18); } .tt-ring.live { border-color: rgba(236,236,232,.6); box-shadow: 0 0 36px 6px rgba(236,236,232,.15); }
+
   .tt-warp { position: fixed; inset: 0; z-index: 9500; display: flex; align-items: center; justify-content: center; background: rgba(18,18,17,.0); -webkit-backdrop-filter: blur(0); backdrop-filter: blur(0); opacity: 0; transition: opacity .35s ease, backdrop-filter .35s ease, background-color .35s ease; pointer-events: none; }
   .tt-warp.on { opacity: 1; background: rgba(18,18,17,.72); -webkit-backdrop-filter: blur(10px) sepia(.4); backdrop-filter: blur(10px) sepia(.4); }
   .tt-warp-in { text-align: center; } .tt-warp-d { font-size: 40px; font-weight: 800; letter-spacing: -0.02em; color: #f5e6c8; font-variant-numeric: tabular-nums; margin-top: 14px; text-shadow: 0 0 24px rgba(250,204,21,.35); } .tt-warp-s { margin-top: 6px; font-size: 12px; text-transform: uppercase; letter-spacing: .14em; color: #c9b48a; }
@@ -762,32 +760,33 @@
   .tt-cal-g { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; } .tt-cal-g i { font-style: normal; font-size: 10px; color: var(--muted); text-transform: uppercase; } .tt-cal-g span, .tt-cal-g button { height: 30px; display: grid; place-items: center; font: inherit; font-size: 12px; border-radius: 6px; }
   .tt-cal-g .off { color: #4a4a46; } .tt-cal-g button { color: var(--fg); background: #2a2a28; border: 1px solid #3a3a36; cursor: pointer; font-weight: 600; } .tt-cal-g button:hover { border-color: #facc15; } .tt-cal-g button.on { color: #111; background: #facc15; border-color: #facc15; }
   .tt-note { margin-top: 10px; line-height: 1.5; }
-  .snap-dh { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; } .snap-dh b { font-size: 15px; flex: 1; } .snap-dl { display: flex; gap: 4px; } .snap-dl button { font: inherit; font-size: 11px; color: var(--muted); background: transparent; border: 0; cursor: pointer; padding: 2px 4px; } .snap-dl button:hover { color: var(--fg); }
-  .snap-tt { width: 100%; height: 34px; margin-bottom: 10px; }
+  .snap-top { position: relative; } .snap-top .pf-title { padding: 0 120px; } .snap-back { position: absolute; left: 0; top: -4px; height: 28px; padding: 0 10px; font-size: 12px; }
+  .snap-dlw { position: absolute; right: 0; top: -4px; z-index: 4; } .snap-dlb { height: 28px; padding: 0 10px; font-size: 12px; font-weight: 600; }
+  .snap-dlm { position: absolute; right: 0; top: 34px; width: 190px; padding: 4px; background: var(--pop); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.45); display: flex; flex-direction: column; } .snap-dlm[hidden] { display: none; }
+  .snap-dlm button { text-align: left; font: inherit; font-size: 12px; color: var(--fg); background: transparent; border: 0; border-radius: 7px; padding: 7px 10px; cursor: pointer; } .snap-dlm button:hover { background: var(--hover); }
+  .snap-date { text-align: center; font-size: 12px; color: var(--muted); margin: -8px 0 12px; }
+  .snap-tt { width: 100%; height: 34px; margin-bottom: 10px; font-weight: 600; }
   .snap-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
-  .snap-tile { --tint: transparent; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; font: inherit; color: var(--fg); padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; background: linear-gradient(135deg, color-mix(in srgb, var(--tint) 14%, var(--bg)), var(--bg) 70%); transition: border-color .15s, background-color .15s; }
-  .snap-tile:hover, .snap-tile.on { border-color: #3a3a36; background-color: #2a2a28; } .snap-tile.on { box-shadow: inset 0 0 0 1px #3a3a36; }
+  .snap-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; font: inherit; color: var(--fg); padding: 9px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; cursor: pointer; transition: border-color .15s, background-color .15s; }
+  .snap-tile:hover, .snap-tile.on { background: #2a2a28; border-color: #3a3a36; }
   .snap-tile span { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); } .snap-tile b { font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-  .snap-panel { margin-top: 8px; padding: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .snap-panel { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
+  .snap-ph { display: flex; align-items: center; gap: 8px; } .snap-ph b { font-size: 14px; } .snap-ph span { font-size: 12px; color: var(--muted); } .snap-px { margin-left: auto; font: inherit; font-size: 18px; line-height: 1; color: var(--muted); background: transparent; border: 0; cursor: pointer; } .snap-px:hover { color: var(--fg); }
+  .snap-embed .fg-yr-wrap, .snap-embed .fg-timeframes, .snap-embed .rt-right, .snap-embed #fg-timer, .snap-embed .fg-timer, .snap-embed .rt-title-row > .gear, .snap-embed .chart-close-btn { display: none !important; }
+  .snap-embed > .pf-card { padding: 0; border: 0; box-shadow: none; background: transparent; }
+  .snap-lock { margin-left: auto; font-size: 12px; color: var(--muted); } .snap-sqmap { height: 360px; }
+  .snap-stkw .stk-row { cursor: default; }
   .snap-kv { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; } .snap-kv span { color: var(--muted); } .snap-kv b { font-variant-numeric: tabular-nums; text-align: right; } .snap-kv em { font-style: normal; font-size: 12px; margin-left: 8px; }
-  .snap-big { font-size: 22px; font-weight: 800; }
-  .snap-bar { display: grid; grid-template-columns: 90px 1fr 54px; gap: 8px; align-items: center; font-size: 12px; } .snap-bar span { color: var(--muted); } .snap-bar i { height: 8px; background: #2a2a28; border-radius: 4px; overflow: hidden; } .snap-bar u { display: block; height: 100%; border-radius: 4px; } .snap-bar b { text-align: right; font-variant-numeric: tabular-nums; }
   .snap-tbl { width: 100%; border-collapse: collapse; font-size: 11px; font-variant-numeric: tabular-nums; } .snap-tbl td { padding: 4px 6px; border-bottom: 1px solid var(--line); text-align: right; } .snap-tbl td:first-child { text-align: left; text-transform: capitalize; } .snap-tbl tr:first-child td { color: var(--muted); font-size: 10px; text-transform: uppercase; }
-  .snap-sq { position: relative; width: 100%; border-radius: 8px; overflow: hidden; } .snap-sq i { position: absolute; box-sizing: border-box; border: 1px solid var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; font-style: normal; color: #fff; }
-  .snap-sq b { font-size: 11px; line-height: 1.1; } .snap-sq em { font-style: normal; font-size: 10px; opacity: .85; }
   .snap-showlist { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 100%; margin-top: 12px; padding: 12px; font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; cursor: pointer; } .snap-showlist:hover { background: #2a2a28; border-color: #3a3a36; } .snap-showlist b { font-size: 13px; } .snap-showlist span { font-size: 11px; color: var(--muted); }
-  .snap-tl { margin-top: 12px; border-top: 1px solid var(--line); }
-  .snap-tr { display: grid; grid-template-columns: 30px minmax(0, 1fr) 88px 64px 64px; gap: 8px; align-items: center; padding: 6px 4px; border-bottom: 1px solid var(--line); font-size: 12px; cursor: pointer; border-radius: 4px; } .snap-tr:hover, .snap-tr.on { background: var(--hover); }
-  .snap-tr .n { color: var(--muted); } .snap-tr .a { display: flex; align-items: baseline; gap: 6px; min-width: 0; } .snap-tr .a b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .snap-tr .a i { font-style: normal; color: var(--muted); font-size: 11px; } .snap-tier { font-size: 10px; font-weight: 600; white-space: nowrap; }
-  .snap-tr .p, .snap-tr .c, .snap-tr .m { text-align: right; font-variant-numeric: tabular-nums; } .snap-tr .m { color: var(--muted); }
+  .snap-showlist.open { position: sticky; top: 8px; z-index: 3; background: #2a2a28; box-shadow: 0 6px 18px rgba(0,0,0,.4); }
+  .snap-tl { margin-top: 8px; }
+  .snap-tr { display: grid; grid-template-columns: 30px minmax(0, 1fr) 90px 66px; gap: 8px; align-items: center; padding: 6px 4px; border-bottom: 1px solid var(--line); font-size: 12px; cursor: pointer; border-radius: 4px; } .snap-tr:hover, .snap-tr.on { background: var(--hover); }
+  .snap-tr .n { color: var(--muted); } .snap-tr .a { display: flex; align-items: baseline; gap: 6px; min-width: 0; } .snap-tr .a b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .snap-tr .a i { font-style: normal; color: var(--muted); font-size: 11px; }
+  .snap-tier { font-size: 10px; font-weight: 600; white-space: nowrap; } .snap-pc { font-size: 11px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .snap-tr .p, .snap-tr .m { text-align: right; font-variant-numeric: tabular-nums; } .snap-tr .m { color: var(--muted); }
   .snap-chart { padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); }
   .snap-body { padding: 4px 2px 12px; } .snap-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin: 6px 0 10px; } .snap-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .snap-grid > div { background: var(--bg); padding: 8px 10px; } .snap-grid span { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); } .snap-grid b { font-size: 15px; font-variant-numeric: tabular-nums; } .snap-grid i { display: block; font-style: normal; font-size: 11px; color: var(--muted); }
-  .snap-sub { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 10px 0 4px; } .snap-txt { font-size: 12px; line-height: 1.5; }
-  .snap-tags { display: flex; flex-wrap: wrap; gap: 6px; } .snap-tags span { font-size: 11px; padding: 3px 8px; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); } .snap-tags b { color: var(--fg); } .snap-tags .in b { color: #facc15; } .snap-tags .out b { color: var(--down); }
-  .snap-mv { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; } .snap-mv div { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; font-size: 12px; } .snap-mv span { width: 100%; font-size: 10px; text-transform: uppercase; color: var(--muted); } .snap-mv em { font-style: normal; font-variant-numeric: tabular-nums; }
-  .snap-act { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; } .snap-act .gear { height: 30px; font-size: 12px; padding: 0 10px; } .snap-tt { color: #111 !important; background: #facc15 !important; border-color: #facc15 !important; font-weight: 600; }
-  .snap-more { margin-top: 8px; font: inherit; font-size: 12px; color: var(--muted); background: transparent; border: 0; padding: 0; cursor: pointer; } .snap-more:hover { color: var(--fg); }
   .cust-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } .cust-tiles[hidden] { display: none; }
   .cust-tile { display: grid; grid-template-columns: 28px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 10px; align-items: center; text-align: left; font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; transition: background-color .15s, border-color .15s; }
   .cust-tile:hover { background: #2a2a28; border-color: #3a3a36; } .cust-tile .cust-sw { grid-row: 1 / 3; width: 28px; height: 28px; border-radius: 7px; } .cust-tile b { font-size: 13px; } .cust-tile span { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -3840,6 +3839,7 @@
     return ["rank"].concat(f).join(",") + "\n" + j.coins.map(function (c, i) { return [i + 1].concat(c.map(function (v) { v = v == null ? "" : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; })).join(","); }).join("\n") + "\n";
   }
   function snapDownload(k, kind) {
+    if (kind === "png") { snapPng(k); return; }
     snapFile(k).then(function (j) {
       if (!j.coins) return;
       var blob = kind === "csv" ? new Blob([snapCsv(j)], { type: "text/csv" }) : new Blob([JSON.stringify(j, null, 1)], { type: "application/json" });
@@ -3847,109 +3847,161 @@
       setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
     });
   }
-  var snapPanel = null, snapPick = null;
-  function snapChange(j, pj) { /* each coin's change against the snapshot before (the day's "Today") */
-    var prev = {}, out = {}; if (pj && pj.coins) pj.coins.forEach(function (c) { prev[String(c[0]).toUpperCase()] = +c[2]; });
-    j.coins.forEach(function (c) { var S = String(c[0]).toUpperCase(), p0 = prev[S]; out[S] = p0 > 0 ? (+c[2] / p0 - 1) * 100 : null; });
-    return out;
+  var snapPanel = null, snapPick = null, snapChg = {}, snapSqTop = 200, snapSqSplit = null, snapDlOpen = false;
+  function snapIntra(k) { return ttIntra[k] || (ttIntra[k] = repoJson("data/intraday/" + k + ".json").catch(function () { return null; })); }
+  function snapDayChanges(k) { /* each coin's move on that day: from its day chart (midnight to midnight New York); without one, against the snapshot before */
+    if (snapChg[k]) return Promise.resolve(snapChg[k]);
+    var pk = snapPrevKey(k);
+    return Promise.all([snapFile(k), pk ? snapFile(pk) : null, snapIntra(k)]).then(function (r) {
+      var j = r[0], pj = r[1], d = r[2], prev = {}, out = {};
+      if (pj && pj.coins) pj.coins.forEach(function (c) { prev[String(c[0]).toUpperCase()] = +c[2]; });
+      (j.coins || []).forEach(function (c) {
+        var S = String(c[0]).toUpperCase(), v = d && d.coins && d.coins[S];
+        if (v && v.length > 1 && v[0] > 0) out[S] = { pc: (v[v.length - 1] / v[0] - 1) * 100, open: v[0], src: "day" };
+        else if (prev[S] > 0) out[S] = { pc: (+c[2] / prev[S] - 1) * 100, open: prev[S], src: "snap" };
+        else out[S] = { pc: null, open: null, src: "" };
+      });
+      return (snapChg[k] = out);
+    });
   }
-  function snapTiles(k, j, pj, ch) { /* one quiet tile per data point; a click opens its data below */
-    var x = snapDays[k] || [], rd = snapRead && snapRead[k], dv = snapDeriv && snapDeriv[k], sk = snapStakeH && snapStakeH[k];
+  function snapTierTag(pc) { if (pc == null) return ""; var t = getTier(pc), up = pc >= 0; return '<span class="snap-tier" style="color:' + (t === 3 ? (up ? "var(--up)" : "var(--down)") : "var(--" + (up ? "up" : "down") + "-tier-" + t + ")") + '">[Tier ' + t + ']</span>'; }
+  function snapTiles(k, j) { /* one quiet tile per window; all alike, only the value carries its colour */
+    var x = snapDays[k] || [], rd = snapRead && snapRead[k], dv = snapDeriv && snapDeriv[k], sk = snapStakeH && snapStakeH[k], ch = snapChg[k] || {};
     var ph = rd && (rd.side || rd.phase), phC = ph === "ETH" ? ETH_C : ph === "BTC" ? BTC_C : "var(--fg)";
     var oi = 0; if (dv) Object.keys(dv).forEach(function (ex) { ["BTC", "ETH"].forEach(function (a) { var o = dv[ex] && dv[ex][a]; if (o && o.oiUsd) oi += o.oiUsd; }); });
-    var g = 0, r = 0; Object.keys(ch).forEach(function (s) { if (STABLECOINS.indexOf(s) > -1 || ch[s] == null) return; if (ch[s] > 0) g++; else if (ch[s] < 0) r++; });
+    var g = 0, r = 0; Object.keys(ch).forEach(function (s) { var p = ch[s].pc; if (STABLECOINS.indexOf(s) > -1 || p == null) return; if (p > 0) g++; else if (p < 0) r++; });
     var T = [
-      ["mcap", "Market Cap", '[' + compact(j.total || x[2] || 0) + ']', "var(--fg)", ""],
-      ["fg", "Fear & Greed", j.fg != null ? '[' + j.fg + '] ' + classifyFG(j.fg) : '–', j.fg != null ? fgCol(j.fg) : "var(--muted)", j.fg != null ? fgCol(j.fg) : ""],
-      ["dom", "Dominance", '<span style="color:' + BTC_C + '">BTC ' + (+j.btc).toFixed(1) + '%</span> · <span style="color:' + ETH_C + '">ETH ' + (+j.eth).toFixed(1) + '%</span>', "var(--fg)", ""],
-      ["ratio", "BTC|ETH Ratio", '[' + (j.ratio ? (+j.ratio).toFixed(2) : '–') + ']' + (ph ? ' ' + ph + ' Phase' : ''), phC, ph ? phC : ""],
-      ["sq", "Sentiment Squares", '<span class="up">[' + g + ']</span> <span class="down">[' + r + ']</span>', "var(--fg)", ""],
-      ["moves", "Movers", pj && pj.coins ? 'vs ' + snapDate(snapPrevKey(k)) : 'first snapshot', "var(--fg)", ""]
+      ["mcap", "Market Cap", '[' + compact(j.total || x[2] || 0) + ']', "var(--fg)"],
+      ["fg", "Fear & Greed", j.fg != null ? '[' + j.fg + '] ' + classifyFG(j.fg) : '–', j.fg != null ? fgCol(j.fg) : "var(--muted)"],
+      ["dom", "Dominance", '<span style="color:' + BTC_C + '">BTC ' + (+j.btc).toFixed(1) + '%</span> · <span style="color:' + ETH_C + '">ETH ' + (+j.eth).toFixed(1) + '%</span>', "var(--fg)"],
+      ["ratio", "BTC|ETH Ratio", '[' + (j.ratio ? (+j.ratio).toFixed(2) : '–') + ']' + (ph ? ' ' + ph + ' Phase' : ''), phC],
+      ["sq", "Sentiment Squares", '<span style="color:var(--up)">[' + g + ']</span> <span style="color:var(--down)">[' + r + ']</span>', "var(--fg)"],
+      ["stake", "Staking", sk ? '[' + Object.keys(sk).length + ' Assets]' : '–', "#c4b5fd"]
     ];
-    if (dv) T.push(["deriv", "Derivatives", '[' + compact(oi) + '] Open Interest', "var(--fg)", ""]);
-    if (sk) T.push(["stake", "Staking", '[' + Object.keys(sk).length + '] rates', "#c4b5fd", "#c4b5fd"]);
-    return '<div class="snap-tiles">' + T.map(function (t) { return '<button type="button" class="snap-tile' + (snapPanel === t[0] ? ' on' : '') + '" data-snappanel="' + t[0] + '"' + (t[4] ? ' style="--tint:' + t[4] + '"' : '') + '><span>' + t[1] + '</span><b style="color:' + t[3] + '">' + t[2] + '</b></button>'; }).join("") + '</div>';
+    if (dv) T.push(["deriv", "Derivatives", '[' + compact(oi) + '] Open Interest', "var(--fg)"]);
+    return '<div class="snap-tiles">' + T.map(function (t) { return '<button type="button" class="snap-tile' + (snapPanel === t[0] ? ' on' : '') + '" data-snappanel="' + t[0] + '"><span>' + t[1] + '</span><b style="color:' + t[3] + '">' + t[2] + '</b></button>'; }).join("") + '</div>';
   }
-  function snapPanelHtml(k, j, pj, ch) { /* the data behind one tile */
+  /* ---- the real windows, drawn for a past day inside the Snapshots tab (borrowed for a moment, then given back) ---- */
+  var snapDayEmbed = null; /* read by fgSrc: the day an embedded window shows */
+  function snapEmbedFG(el, k) {
+    if (!fgData) { el.innerHTML = '<div class="rt-empty">Loading the Fear & Greed Index…</div>'; fgDataCallbacks.push(function () { if (snapPanel === "fg" && snapOpen === k) renderSnaps(); }); if (!fgLoading) loadFGData(); return; }
+    var keep = { box: fgContainer, tf: fgTimeframe, yr: fgYear, yearly: yearlyOn };
+    try { fgContainer = el; fgTimeframe = "1Y"; fgYear = ""; yearlyOn = false; snapDayEmbed = k; renderFGChart(); }
+    finally { fgContainer = keep.box; fgTimeframe = keep.tf; fgYear = keep.yr; yearlyOn = keep.yearly; snapDayEmbed = null; }
+    el.innerHTML = el.innerHTML.replace(/fg-grad/g, "snap-fg-grad"); /* its own gradient: the hidden F&G window has one with the same name */
+  }
+  function snapEmbedRatio(el, k, part) {
+    if (!RT.data) { el.innerHTML = '<div class="rt-empty">Loading the BTC|ETH Ratio…</div>'; rtLoad(); var n = 0, t = setInterval(function () { if (RT.data || RT.failed || ++n > 120) { clearInterval(t); if (snapOpen === k && (snapPanel === "ratio" || snapPanel === "dom")) renderSnaps(); } }, 500); return; }
+    var keep = { box: ratioBox, vis: ratioVisible, asOf: RT.asOf, view: RT.view, year: RT.year, cmp: RT.cmp }, tmp = document.createElement("div");
+    try { ratioBox = tmp; ratioVisible = true; RT.asOf = Date.parse(k + "T00:00:00Z"); RT.view = "365D"; RT.cmp = false; rtRender(); }
+    finally { ratioBox = keep.box; ratioVisible = keep.vis; RT.asOf = keep.asOf; RT.view = keep.view; RT.year = keep.year; RT.cmp = keep.cmp; }
+    if (part === "dom") { /* only the Dominance Graph of the Ratio window */
+      var secs = tmp.querySelectorAll(".rt-chart-section"), dom = null; Array.prototype.forEach.call(secs, function (s) { if (/Dominance Graph/.test(s.textContent)) dom = s; });
+      if (dom) el.appendChild(dom);
+    } else { var card = tmp.firstElementChild; if (card) { card.classList.remove("pinned-card"); el.appendChild(card); } }
+  }
+  function snapSquaresHtml(k, j) { /* the real Sentiment Squares look: Top [1-200], green and red, the draggable Sentiment Front; [Today] of that day only */
+    var ch = snapChg[k] || {}, items = [], stable = 0;
+    j.coins.slice(0, snapSqTop).forEach(function (c, i) { var S = String(c[0]).toUpperCase(); if (STABLECOINS.indexOf(S) > -1) { stable++; return; } var p = ch[S] && ch[S].pc; if (p == null) return; items.push({ s: S, n: c[1], pc: p, i: i }); });
+    var up = items.filter(function (x) { return x.pc > 0; }).length, dn = items.filter(function (x) { return x.pc < 0; }).length;
+    return '<div class="sqm-ctrl"><label class="sqm-top-in">Top <input type="number" min="1" max="200" step="1" inputmode="numeric" data-snapsqtop="1" value="' + snapSqTop + '" aria-label="How many coins of the list"></label>' +
+      (snapSqSplit != null ? '<button type="button" class="sqm-x sqm-auto" data-snapsqauto="1">Auto</button>' : '') +
+      '<span class="sqm-cnt"><b style="color:var(--up)">' + up + '</b><span>/</span><b style="color:var(--down)">' + dn + '</b><span>/</span><b style="color:var(--stable-blue)">' + stable + '</b></span><span class="snap-lock">[Today]</span></div>' +
+      '<div class="sqm-map snap-sqmap" id="snap-sqmap"></div><div class="sqm-foot fg-sub">' + stable + ' stablecoins left out · size and colour by how far a coin moved on ' + snapDate(k) + '</div>';
+  }
+  function snapSquaresPaint(k, j) { /* lays the squares into the map once it has its size */
+    var map = document.getElementById("snap-sqmap"); if (!map) return;
+    var ch = snapChg[k] || {}, W = map.clientWidth, H = map.clientHeight; if (!(W > 0 && H > 0)) return;
+    var items = [];
+    j.coins.slice(0, snapSqTop).forEach(function (c, i) { var S = String(c[0]).toUpperCase(); if (STABLECOINS.indexOf(S) > -1) return; var p = ch[S] && ch[S].pc; if (p == null) return; var live = coins.filter(function (x) { return String(x.symbol).toUpperCase() === S; })[0]; items.push({ sym: S, pc: p, c: live || { symbol: S, name: c[1], image: "" } }); });
+    var cap = function (x) { return Math.pow(Math.min(Math.abs(x.pc), 100), 0.8); }, mean = items.reduce(function (s, x) { return s + cap(x); }, 0) / Math.max(1, items.length);
+    items.forEach(function (x) { x.w = cap(x) + 0.15 * mean + 1e-6; });
+    var upL = items.filter(function (x) { return x.pc >= 0; }).sort(function (a, b) { return b.w - a.w; }), dnL = items.filter(function (x) { return x.pc < 0; }).sort(function (a, b) { return b.w - a.w; });
+    var su = upL.reduce(function (s, x) { return s + x.w; }, 0), sd = dnL.reduce(function (s, x) { return s + x.w; }, 0), share = su + sd > 0 ? su / (su + sd) : 1;
+    var Gw = !dnL.length ? W : !upL.length ? 0 : W * Math.max(share, 0.5), Rw = !upL.length ? W : !dnL.length ? 0 : W * Math.max(1 - share, 0.5), auto = W * share;
+    var gOut = [], rOut = []; sqTree(upL, 0, 0, Gw, H, gOut); sqTree(dnL, 0, 0, Rw, H, rOut); rOut.forEach(function (r) { r.x = Rw - r.x - r.w; });
+    var sq = function (r) {
+      var x = r.n, g = 1.5, m = Math.min(r.w, r.h), txt = sqFmt(x.pc), tw = function (f) { return chMeasure(txt, f) * 1.08; }, iw = r.w - 4, ih = r.h - 4, ls = 0, fs = Math.max(6, Math.min(16, m / 5.2));
+      if (tw(fs) > iw) fs = Math.max(5, fs * iw / tw(fs)); var both = Math.min(64, m * 0.5);
+      if (fs >= 6 && tw(fs) <= iw && both >= 10 && both + 2 + fs * 1.15 <= ih) ls = Math.round(both); else { fs = 0; ls = m >= 8 ? Math.round(Math.min(64, m * 0.62)) : 0; }
+      return '<div class="sqm-sq" title="' + esc(x.c.name) + ' (' + x.sym + ') · ' + txt + '" style="left:' + (r.x + g / 2) + 'px;top:' + (r.y + g / 2) + 'px;width:' + Math.max(0, r.w - g) + 'px;height:' + Math.max(0, r.h - g) + 'px;background:' + sqColor(x.pc, "today") + '">' +
+        (ls || fs ? '<span class="sqm-l">' + (ls ? '<span class="sqm-lg" style="width:' + ls + 'px;height:' + ls + 'px">' + logoHtml(x.c).replace(' loading="lazy"', '') + '</span>' : '') + (fs ? '<span class="sqm-p" style="font-size:' + fs.toFixed(1) + 'px">' + txt + '</span>' : '') + '</span>' : '') + '</div>';
+    };
+    map.innerHTML = '<div class="sqm-gl"><div class="sqm-in" style="width:' + Gw + 'px">' + gOut.map(sq).join("") + '</div></div><div class="sqm-rl"><div class="sqm-in" style="width:' + Rw + 'px">' + rOut.map(sq).join("") + '</div></div>' +
+      '<div class="sqm-front"' + (upL.length && dnL.length ? '' : ' hidden') + ' title="Drag to reveal more red or more green · double click: back to the market\'s split"><span></span></div>';
+    var gl = map.querySelector(".sqm-gl"), rl = map.querySelector(".sqm-rl"), rin = rl.querySelector(".sqm-in"), fr = map.querySelector(".sqm-front");
+    var place = function () { var x = snapSqSplit != null ? Math.max(W - Rw, Math.min(Gw, snapSqSplit * W)) : auto; gl.style.width = x + "px"; rl.style.left = x + "px"; rin.style.left = (W - Rw - x) + "px"; fr.style.left = x + "px"; };
+    place();
+    fr.onpointerdown = function (e) { e.preventDefault(); try { fr.setPointerCapture(e.pointerId); } catch (x) {} map.classList.add("dragging");
+      fr.onpointermove = function (ev) { var b = map.getBoundingClientRect(); snapSqSplit = Math.max((W - Rw) / W, Math.min(Gw / W, (ev.clientX - b.left) / b.width)); place(); };
+      fr.onpointerup = fr.onpointercancel = function () { fr.onpointermove = null; map.classList.remove("dragging"); var a = map.parentNode.querySelector("[data-snapsqauto]"); if (!a) renderSnaps(); };
+    };
+    fr.ondblclick = function () { snapSqSplit = null; renderSnaps(); };
+  }
+  function snapStakingHtml(k) { /* the Staking window's list, with the rates of that day */
+    var h = snapStakeH && snapStakeH[k];
+    if (!h) return '<div class="pf-msg">No staking rates were recorded on this day.</div>';
+    var rows = coins.map(function (c, i) {
+      var S = String(c.symbol).toUpperCase(), st = stakeData[S], r = h[S]; if (!st) return "";
+      var list = st.list.map(function (x) { return { x: x, v: r && r[x.name] != null ? r[x.name] : null }; }).sort(function (a, b) { return (b.v == null ? -1 : b.v) - (a.v == null ? -1 : a.v); }), t = list[0];
+      return '<div class="stk-row snap-stk"><span class="stk-n">' + (c.market_cap_rank || i + 1) + '</span><span class="stk-a">' + logoHtml(c) + '<b>' + esc(c.name) + '</b><i>' + esc(S) + '</i></span>' +
+        '<span class="stk-r' + (t.v == null ? ' na' : '') + '">' + (t.v == null ? 'Rate on site' : stakeRate(t.x) + ' ' + t.v.toFixed(2) + '%') + '</span><span class="lk' + (t.x.locked ? '' : ' un') + '">' + (t.x.locked ? 'Locked' : 'Unlocked') + '</span></div>';
+    }).join("");
+    return '<div class="stk-card snap-stkw"><div class="stk-head"><span>#</span><span>Asset</span><span>Best Rate</span><span></span></div>' + rows + '</div><div class="fg-sub">The rates CoinAtlas recorded on ' + snapDate(k) + '.</div>';
+  }
+  function snapPanelHtml(k, j) { /* the window behind a tile, at the bottom of the Snapshots tab, locked to that day */
     var p = snapPanel; if (!p) return "";
-    var rd = snapRead && snapRead[k], dv = snapDeriv && snapDeriv[k], sk = snapStakeH && snapStakeH[k], h = "";
-    if (p === "mcap") { var pt = pj && pj.total; h = '<div class="snap-kv"><span>Top 200 Market Cap</span><b>' + compact(j.total || 0) + '</b>' + (pt ? '<em class="' + (j.total >= pt ? 'up' : 'down') + '">' + pct((j.total / pt - 1) * 100) + '</em>' : '') + '</div><div class="snap-kv"><span>Coins recorded</span><b>[' + j.coins.length + ']</b></div><div class="snap-kv"><span>Recorded at</span><b>' + (j.taken ? new Date(j.taken).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : '–') + '</b></div><div class="snap-kv"><span>Source</span><b>' + esc(j.source || "") + '</b></div>'; }
-    if (p === "fg") { var pf = pj && pj.fg; h = '<div class="snap-big" style="color:' + fgCol(j.fg) + '">[' + j.fg + '] ' + classifyFG(j.fg) + '</div>' + (pf != null ? '<div class="snap-kv"><span>Day before</span><b style="color:' + fgCol(pf) + '">[' + pf + '] ' + classifyFG(pf) + '</b></div>' : ''); }
-    if (p === "dom") {
-      var tot = 0, st = 0; j.coins.slice(0, 200).forEach(function (c) { tot += +c[3] || 0; if (STABLECOINS.indexOf(String(c[0]).toUpperCase()) > -1) st += +c[3] || 0; });
-      var stp = tot ? st / tot * 100 : 0, alt = Math.max(0, 100 - j.btc - j.eth - stp);
-      h = [["Bitcoin", j.btc, BTC_C], ["Ethereum", j.eth, ETH_C], ["Stablecoins", stp, "var(--stable-blue)"], ["Altcoins", alt, "var(--muted)"]].map(function (d) { return '<div class="snap-bar"><span>' + d[0] + '</span><i><u style="width:' + Math.min(100, d[1]).toFixed(1) + '%;background:' + d[2] + '"></u></i><b>' + (+d[1]).toFixed(1) + '%</b></div>'; }).join("") + '<div class="fg-sub">Share of the Top 200 Market Cap.</div>';
-    }
-    if (p === "ratio") h = '<div class="snap-kv"><span>BTC|ETH Ratio</span><b>[' + (j.ratio ? (+j.ratio).toFixed(4) : '–') + ']</b></div>' + (rd ? '<div class="snap-kv"><span>Phase</span><b style="color:' + ((rd.side || rd.phase) === "ETH" ? ETH_C : BTC_C) + '">' + esc(rd.side || rd.phase || "") + '</b></div><div class="snap-kv"><span>Score</span><b>[' + (rd.score != null ? rd.score : '–') + ']</b></div><div class="snap-txt">' + esc(rd.text || "") + '</div>' : '<div class="fg-sub">No Reading was recorded this day.</div>');
+    var dv = snapDeriv && snapDeriv[k], h = "", pk = snapPrevKey(k), pj = pk && snapLists[pk];
+    if (p === "mcap") h = '<div class="snap-kv"><span>Top 200 Market Cap</span><b>[' + compact(j.total || 0) + ']</b></div>' + (pj && pj.total ? '<div class="snap-kv"><span>Snapshot before</span><b>[' + compact(pj.total) + ']</b><em class="' + (j.total >= pj.total ? 'up' : 'down') + '">' + pct((j.total / pj.total - 1) * 100) + '</em></div>' : '') + '<div class="snap-kv"><span>Coins recorded</span><b>[' + j.coins.length + ']</b></div><div class="snap-kv"><span>Recorded</span><b>' + (j.taken ? new Date(j.taken).toUTCString().slice(5, 22) + ' UTC' : '–') + '</b></div>';
     if (p === "deriv" && dv) h = '<table class="snap-tbl"><tr><td>Exchange</td><td>BTC OI</td><td>BTC Funding</td><td>ETH OI</td><td>ETH Funding</td></tr>' + Object.keys(dv).map(function (ex) { var b = dv[ex].BTC || {}, e = dv[ex].ETH || {}, f = function (v) { return v == null ? '–' : (v >= 0 ? '+' : '') + (v * 100).toFixed(4) + '%'; }; return '<tr><td>' + esc(ex) + '</td><td>' + (b.oiUsd ? compact(b.oiUsd) : '–') + '</td><td>' + f(b.funding) + '</td><td>' + (e.oiUsd ? compact(e.oiUsd) : '–') + '</td><td>' + f(e.funding) + '</td></tr>'; }).join("") + '</table>';
-    if (p === "stake" && sk) h = '<div class="snap-tags">' + Object.keys(sk).map(function (s) { return '<span>' + esc(s) + ' ' + Object.keys(sk[s]).map(function (n) { return esc(n) + ' <b>' + sk[s][n].toFixed(2) + '%</b>'; }).join(" · ") + '</span>'; }).join("") + '</div>';
-    if (p === "moves") {
-      if (!pj || !pj.coins) h = '<div class="fg-sub">The first snapshot has nothing to compare with.</div>';
-      else {
-        var top = function (l) { var o = {}; l.slice(0, 200).forEach(function (c) { o[String(c[0]).toUpperCase()] = 1; }); return o; }, a = top(j.coins), b = top(pj.coins);
-        var inn = Object.keys(a).filter(function (s) { return !b[s]; }), out = Object.keys(b).filter(function (s) { return !a[s]; });
-        var mv = Object.keys(ch).filter(function (s) { return a[s] && ch[s] != null && STABLECOINS.indexOf(s) < 0; }).map(function (s) { return [s, ch[s]]; }).sort(function (u, v) { return v[1] - u[1]; });
-        h = '<div class="snap-tags">' + (inn.length ? '<span class="in">New in Top 200 <b>' + inn.map(esc).join(", ") + '</b></span>' : '<span>No coin entered the Top 200</span>') + (out.length ? '<span class="out">Left <b>' + out.map(esc).join(", ") + '</b></span>' : '') + '</div>' +
-          '<div class="snap-mv"><div><span>Best</span>' + mv.slice(0, 5).map(function (m) { return '<em class="up">' + esc(m[0]) + ' ' + pct(m[1]) + '</em>'; }).join("") + '</div><div><span>Worst</span>' + mv.slice(-5).reverse().map(function (m) { return '<em class="down">' + esc(m[0]) + ' ' + pct(m[1]) + '</em>'; }).join("") + '</div></div>';
-      }
-    }
-    if (p === "sq") h = snapSquares(j, ch);
-    return '<div class="snap-panel">' + h + '</div>';
+    if (p === "sq") h = snapSquaresHtml(k, j);
+    if (p === "stake") h = snapStakingHtml(k);
+    if (p === "fg" || p === "ratio" || p === "dom") h = '<div id="snap-embed" class="snap-embed"></div>';
+    var names = { mcap: "Market Cap", fg: "Fear & Greed Index", dom: "Dominance", ratio: "BTC|ETH Ratio", sq: "Sentiment Squares", stake: "Staking", deriv: "Derivatives" };
+    return '<div class="snap-panel"><div class="snap-ph"><b>' + names[p] + '</b><span>[' + snapDate(k) + ']</span><button type="button" class="snap-px" data-snappanel="' + p + '" aria-label="Close">×</button></div>' + h + '</div>';
   }
-  function snapSquares(j, ch) { /* that day's Sentiment Squares ([Today]): size by how far a coin moved, green left, red right */
-    var items = j.coins.slice(0, 200).map(function (c) { var S = String(c[0]).toUpperCase(); return { s: S, pc: ch[S] }; }).filter(function (x) { return x.pc != null && x.pc !== 0 && STABLECOINS.indexOf(x.s) < 0; });
-    if (!items.length) return '<div class="fg-sub">No changes to show for this day.</div>';
-    items.forEach(function (x) { x.w = Math.min(100, Math.abs(x.pc)) + 0.15; });
-    var gr = items.filter(function (x) { return x.pc > 0; }).sort(function (a, b) { return b.w - a.w; }), rd = items.filter(function (x) { return x.pc < 0; }).sort(function (a, b) { return b.w - a.w; });
-    var W = 520, H = 250, gw = gr.reduce(function (s, x) { return s + x.w; }, 0), rw = rd.reduce(function (s, x) { return s + x.w; }, 0), split = gw + rw > 0 ? W * gw / (gw + rw) : W / 2, out = [];
-    sqTree(gr, 0, 0, split, H, out); sqTree(rd, split, 0, W - split, H, out);
-    return '<div class="snap-sq" style="aspect-ratio:' + W + '/' + H + '">' + out.map(function (o) {
-      var big = o.w > 34 && o.h > 22;
-      return '<i style="left:' + (o.x / W * 100).toFixed(3) + '%;top:' + (o.y / H * 100).toFixed(3) + '%;width:' + (o.w / W * 100).toFixed(3) + '%;height:' + (o.h / H * 100).toFixed(3) + '%;background:' + sqColor(o.n.pc, "today") + '" title="' + esc(o.n.s) + ' ' + pct(o.n.pc) + '">' + (big ? '<b>' + esc(o.n.s) + '</b><em>' + sqFmt(o.n.pc) + '</em>' : '') + '</i>';
-    }).join("") + '</div><div class="fg-sub">[Today] against the snapshot before, ' + items.length + ' coins.</div>';
-  }
-  function snapListRows(k, j, ch) { /* the whole list of the day, with each coin's [Tier]; a click shows the coin's chart of that day right here */
+  function snapListRows(k, j) {
+    var ch = snapChg[k] || {};
     return '<div class="snap-tl">' + j.coins.map(function (c, i) {
-      var S = String(c[0]).toUpperCase(), pc = ch[S], st = STABLECOINS.indexOf(S) > -1, tier = pc == null || st ? 0 : getTier(pc), col = pc == null ? "var(--muted)" : st ? "var(--stable-blue)" : pc >= 0 ? "var(--up)" : "var(--down)";
-      var tg = tier ? '<span class="snap-tier" style="color:' + (pc >= 0 ? (tier === 3 ? "var(--up)" : "var(--up-tier-" + tier + ")") : (tier === 3 ? "var(--down)" : "var(--down-tier-" + tier + ")")) + '">[Tier ' + tier + ']</span>' : '';
-      return '<div class="snap-tr' + (snapPick === S ? ' on' : '') + '" data-snappick="' + esc(S) + '"><span class="n">' + (i + 1) + '</span><span class="a"><b>' + esc(c[1]) + '</b><i>' + esc(S) + '</i>' + tg + '</span><span class="p">' + price(+c[2]) + '</span><span class="c" style="color:' + col + '">' + (pc == null ? '–' : st ? 'Stable' : pct(pc)) + '</span><span class="m">' + (c[3] ? compact(+c[3]) : '–') + '</span></div>' +
+      var S = String(c[0]).toUpperCase(), o = ch[S] || {}, pc = o.pc, st = STABLECOINS.indexOf(S) > -1;
+      var mv = pc == null ? '' : st ? '<span class="snap-pc" style="color:var(--stable-blue)">Stable</span>' : snapTierTag(pc) + '<span class="snap-pc" style="color:' + (pc >= 0 ? 'var(--up)' : 'var(--down)') + '">' + pct(pc) + '</span>';
+      return '<div class="snap-tr' + (snapPick === S ? ' on' : '') + '" data-snappick="' + esc(S) + '"><span class="n">' + (i + 1) + '</span><span class="a"><b>' + esc(c[1]) + '</b><i>' + esc(S) + '</i>' + mv + '</span><span class="p">' + price(+c[2]) + '</span><span class="m">' + (c[3] ? compact(+c[3]) : '–') + '</span></div>' +
         (snapPick === S ? '<div class="snap-chart" id="snap-chart">Loading the chart of ' + snapDate(k) + '…</div>' : '');
     }).join("") + '</div>';
   }
-  function snapLoadPick(k) { /* the picked coin's chart of that day, drawn inside the Snapshots tab */
+  function snapLoadPick(k) {
     var S = snapPick, j = snapLists[k]; if (!S || !j) return;
-    var f = ttIntra[k] || (ttIntra[k] = repoJson("data/intraday/" + k + ".json").catch(function () { return null; }));
-    f.then(function (d) {
+    snapIntra(k).then(function (d) {
       var el = document.getElementById("snap-chart"); if (!el || snapPick !== S) return;
-      var row = j.coins.filter(function (c) { return String(c[0]).toUpperCase() === S; })[0], v = d && d.coins && d.coins[S];
-      if (!row) return;
-      var live = coins.filter(function (c) { return String(c.symbol).toUpperCase() === S; })[0] || {}, c = Object.assign({}, live, { symbol: S, name: row[1], current_price: +row[2], market_cap: +row[3], pfLbl: "Price at the Snapshot" });
+      var row = j.coins.filter(function (c) { return String(c[0]).toUpperCase() === S; })[0], v = d && d.coins && d.coins[S]; if (!row) return;
+      var live = coins.filter(function (c) { return String(c.symbol).toUpperCase() === S; })[0] || {}, c = Object.assign({}, live, { symbol: S, name: row[1], current_price: v && v.length ? v[v.length - 1] : +row[2], market_cap: +row[3], pfLbl: "Close of the Day" });
       if (!v || v.length < 2) { el.innerHTML = '<div class="empty">No chart was recorded for ' + esc(S) + ' on ' + snapDate(k) + '.</div>'; return; }
-      var t = v.map(function (_, i) { return d.start + i * d.step; });
-      el.innerHTML = chart(c, { v: v.slice(), hi: v.slice(), lo: v.slice(), times: t, tag: "CoinAtlas Snapshot", live: false, dayLabel: snapDate(k) }, "CoinAtlas Snapshot", false, "snap-" + S);
+      el.innerHTML = chart(c, { v: v.slice(), hi: v.slice(), lo: v.slice(), times: v.map(function (_, i) { return d.start + i * d.step; }), tag: "CoinAtlas Snapshot", live: false, dayLabel: snapDate(k) }, "CoinAtlas Snapshot", false, "snap-" + S);
     });
   }
   function snapDayHtml(k) {
-    var j = snapLists[k], pk = snapPrevKey(k), pj = pk && snapLists[pk];
-    if (!j) return '<div class="rt-empty">Loading the snapshot…</div>';
+    var j = snapLists[k];
+    if (!j || !snapChg[k]) return '<div class="rt-empty">Loading the snapshot…</div>';
     if (!j.coins) return '<div class="rt-empty">This snapshot could not be loaded.</div>';
-    var ch = snapChange(j, pj);
-    return '<div class="snap-dh"><button type="button" class="gear stk-back" data-snapback="1">‹ All Snapshots</button><b>' + new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }) + '</b>' +
-      '<span class="snap-dl"><button type="button" data-snapdl="csv" data-k="' + k + '">[CSV]</button><button type="button" data-snapdl="json" data-k="' + k + '">[JSON]</button></span></div>' +
-      '<button type="button" class="gear snap-tt" data-tt-go="' + k + '">Time Travel to this day</button>' +
-      snapTiles(k, j, pj, ch) + snapPanelHtml(k, j, pj, ch) +
-      (snapMore[k] ? snapListRows(k, j, ch) : '') +
-      '<button type="button" class="snap-showlist" data-snapmore="' + k + '"><b>' + (snapMore[k] ? 'Hide Token List' : 'Show Token List') + '</b><span>[' + j.coins.length + ' Coins]</span></button>';
+    var list = snapMore[k];
+    return '<div class="snap-date">' + new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }) + '</div>' +
+      '<button type="button" class="gear snap-tt" data-tt-go="' + k + '">Time Travel to this day</button>' + snapTiles(k, j) +
+      (list ? '' : snapPanelHtml(k, j)) +
+      '<button type="button" class="snap-showlist' + (list ? ' open' : '') + '" data-snapmore="' + k + '"><b>' + (list ? 'Hide Token List' : 'Show Token List') + '</b><span>[' + j.coins.length + ' Coins]</span></button>' +
+      (list ? snapListRows(k, j) : '');
   }
   function renderSnaps() {
     if (!snapVisible) { snapBox.hidden = true; snapBox.innerHTML = ""; updatePinnedColVisibility(); return; }
     snapBox.hidden = false; updatePinnedColVisibility();
-    var h = '<div class="pinned-card chart-container pf-card dev-target" data-dev-name="Snapshots" data-dev-color="#a78bfa"><div class="pf-title">CoinAtlas Snapshots</div>';
+    var day = snapOpen && snapOpen.charAt(1) !== ":" ? snapOpen : null;
+    var h = '<div class="pinned-card chart-container pf-card dev-target" data-dev-name="Snapshots" data-dev-color="#a78bfa"><div class="snap-top">' +
+      (day ? '<button type="button" class="gear snap-back" data-snapback="1">‹ All Snapshots</button>' : '') + '<div class="pf-title">CoinAtlas Snapshots</div>' +
+      (day ? '<div class="snap-dlw"><button type="button" class="gear snap-dlb" data-snapdlmenu="1">Download ▾</button><div class="snap-dlm"' + (snapDlOpen ? '' : ' hidden') + '><button type="button" data-snapdl="csv" data-k="' + day + '">[CSV] Token List</button><button type="button" data-snapdl="json" data-k="' + day + '">[JSON] Full Snapshot</button><button type="button" data-snapdl="png" data-k="' + day + '">[PNG] Everything</button></div></div>' : '') + '</div>';
     if (!snapDays) h += '<div class="rt-empty">Loading snapshots…</div>';
-    else if (snapOpen && snapOpen.charAt(1) !== ":") h += snapDayHtml(snapOpen);
+    else if (day) h += snapDayHtml(day);
     else {
       var keys = snapKeys().reverse(), n = keys.length;
-      h += '<div class="fg-sub snap-note">Recorded every night at midnight New York time. [' + n + (n === 1 ? ' Day' : ' Days') + ']</div>';
+      h += '<div class="fg-sub snap-note">Recorded every night at midnight New York time, each for the day that just ended. [' + n + (n === 1 ? ' Day' : ' Days') + ']</div>';
       if (!n) h += '<div class="rt-empty">No snapshots yet.</div>';
       keys.forEach(function (k) {
         var x = snapDays[k];
@@ -3962,7 +4014,37 @@
       }
     }
     snapBox.innerHTML = h + '</div>';
-    if (snapOpen && snapPick) snapLoadPick(snapOpen);
+    if (day && snapLists[day] && snapLists[day].coins && snapChg[day]) {
+      var em = document.getElementById("snap-embed");
+      if (em && snapPanel === "fg") snapEmbedFG(em, day);
+      if (em && (snapPanel === "ratio" || snapPanel === "dom")) snapEmbedRatio(em, day, snapPanel);
+      if (snapPanel === "sq") snapSquaresPaint(day, snapLists[day]);
+      if (snapPick) snapLoadPick(day);
+    }
+  }
+  function snapPng(k) { /* everything of the day on one image: the tiles, the Sentiment Squares and the Top 50 */
+    var j = snapLists[k], ch = snapChg[k] || {}; if (!j || !j.coins) return;
+    var C = { bg: pfCss("--bg"), pop: pfCss("--pop"), fg: pfCss("--fg"), mu: pfCss("--muted"), line: pfCss("--line"), up: pfCss("--up"), dn: pfCss("--down") }, F = getComputedStyle(document.body).fontFamily;
+    var W = 1600, P = 40, S = 2, rows = j.coins.slice(0, 50), H = P + 70 + 2 * 96 + 20 + 520 + 30 + 25 * 30 + 90;
+    var cv = document.createElement("canvas"); cv.width = W * S; cv.height = H * S; var g = cv.getContext("2d"); g.scale(S, S);
+    var font = function (w, s) { g.font = w + " " + s + "px " + F; }, txt = function (t, x, y, col, al) { g.fillStyle = col; g.textAlign = al || "left"; g.fillText(t, x, y); };
+    g.fillStyle = C.pop; g.fillRect(0, 0, W, H);
+    font("700", 26); txt("CoinAtlas Snapshot", W / 2, P + 26, C.fg, "center"); font("400", 15); txt(new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }), W / 2, P + 52, C.mu, "center");
+    var rd = snapRead && snapRead[k], dv = snapDeriv && snapDeriv[k], sk = snapStakeH && snapStakeH[k], oi = 0; if (dv) Object.keys(dv).forEach(function (ex) { ["BTC", "ETH"].forEach(function (a) { var o = dv[ex] && dv[ex][a]; if (o && o.oiUsd) oi += o.oiUsd; }); });
+    var gr = 0, rr = 0; Object.keys(ch).forEach(function (s) { var p = ch[s].pc; if (STABLECOINS.indexOf(s) > -1 || p == null) return; if (p > 0) gr++; else if (p < 0) rr++; });
+    var T = [["Market Cap", "[" + compact(j.total || 0) + "]", C.fg], ["Fear & Greed", j.fg != null ? "[" + j.fg + "] " + classifyFG(j.fg) : "–", j.fg != null ? pfCss(fgCol(j.fg).replace(/var\((--[^)]+)\)/, "$1")) || C.fg : C.mu], ["BTC Dominance", (+j.btc).toFixed(1) + "%", BTC_C], ["ETH Dominance", (+j.eth).toFixed(1) + "%", ETH_C],
+      ["BTC|ETH Ratio", "[" + (+j.ratio).toFixed(2) + "]" + (rd && (rd.side || rd.phase) ? " " + (rd.side || rd.phase) + " Phase" : ""), C.fg], ["Sentiment Squares", "[" + gr + "] up · [" + rr + "] down", C.fg], ["Open Interest", oi ? "[" + compact(oi) + "]" : "–", C.fg], ["Staking", sk ? "[" + Object.keys(sk).length + " Assets]" : "–", "#c4b5fd"]];
+    var tw = (W - 2 * P - 3 * 12) / 4, y0 = P + 76;
+    T.forEach(function (t, i) { var x = P + (i % 4) * (tw + 12), y = y0 + Math.floor(i / 4) * 96; g.fillStyle = C.bg; g.fillRect(x, y, tw, 84); g.strokeStyle = C.line; g.strokeRect(x + .5, y + .5, tw - 1, 83); font("600", 12); txt(t[0].toUpperCase(), x + 16, y + 28, C.mu); font("700", 24); txt(t[1], x + 16, y + 62, t[2].indexOf("var(") === 0 ? C.fg : t[2]); });
+    var my = y0 + 2 * 96 + 10, mh = 520, items = j.coins.slice(0, 200).map(function (c) { var s = String(c[0]).toUpperCase(); return { s: s, pc: ch[s] && ch[s].pc }; }).filter(function (x) { return x.pc != null && STABLECOINS.indexOf(x.s) < 0 && x.pc !== 0; });
+    items.forEach(function (x) { x.w = Math.pow(Math.min(Math.abs(x.pc), 100), 0.8) + 0.3; });
+    var up = items.filter(function (x) { return x.pc > 0; }).sort(function (a, b) { return b.w - a.w; }), dn = items.filter(function (x) { return x.pc < 0; }).sort(function (a, b) { return b.w - a.w; }), su = up.reduce(function (s, x) { return s + x.w; }, 0), sd = dn.reduce(function (s, x) { return s + x.w; }, 0), mw = W - 2 * P, sp = su + sd > 0 ? mw * su / (su + sd) : mw / 2, o = [];
+    sqTree(up, P, my, sp, mh, o); sqTree(dn, P + sp, my, mw - sp, mh, o);
+    o.forEach(function (r) { g.fillStyle = sqColor(r.n.pc, "today"); g.fillRect(r.x + 1, r.y + 1, r.w - 2, r.h - 2); if (r.w > 44 && r.h > 30) { font("700", Math.min(18, r.w / 5)); txt(r.n.s, r.x + r.w / 2, r.y + r.h / 2, "#fff", "center"); font("400", Math.min(14, r.w / 6)); txt(sqFmt(r.n.pc), r.x + r.w / 2, r.y + r.h / 2 + 18, "rgba(255,255,255,.85)", "center"); } });
+    var ly = my + mh + 40; font("600", 12); txt("TOP 50", P, ly, C.mu); ly += 20;
+    rows.forEach(function (c, i) { var col = i < 25 ? 0 : 1, x = P + col * (mw / 2 + 10), y = ly + (i % 25) * 30, S2 = String(c[0]).toUpperCase(), pc = ch[S2] && ch[S2].pc; font("400", 14); txt(String(i + 1), x, y + 18, C.mu); font("600", 14); txt(String(c[1]).slice(0, 22) + " " + S2, x + 36, y + 18, C.fg); font("400", 14); txt(price(+c[2]), x + mw / 2 - 150, y + 18, C.fg, "right"); if (pc != null) txt(pct(pc), x + mw / 2 - 40, y + 18, pc >= 0 ? C.up : C.dn, "right"); });
+    font("700", 16); txt("CoinAtlas", W - P, H - 30, C.fg, "right"); font("400", 12); txt("Recorded at midnight New York time for the day that ended.", P, H - 30, C.mu);
+    var a = document.createElement("a"); a.href = cv.toDataURL("image/png"); a.download = "coinatlas-snapshot-" + k + ".png"; document.body.appendChild(a); a.click(); a.remove();
   }
   snapBtn.addEventListener("click", function () {
     snapVisible = !snapVisible; snapBtn.classList.toggle("active", snapVisible);
@@ -3974,18 +4056,23 @@
   });
   snapBox.addEventListener("click", function (e) {
     var t = e.target;
-    var dl = t.closest("[data-snapdl]"); if (dl) { snapDownload(dl.dataset.k, dl.dataset.snapdl); return; }
+    if (t.closest("[data-snapdlmenu]")) { snapDlOpen = !snapDlOpen; renderSnaps(); return; }
+    var dl = t.closest("[data-snapdl]"); if (dl) { snapDlOpen = false; snapDownload(dl.dataset.k, dl.dataset.snapdl); renderSnaps(); return; }
+    if (snapDlOpen && !t.closest(".snap-dlm")) { snapDlOpen = false; renderSnaps(); }
     var go = t.closest("[data-tt-go]"); if (go) { ttGo(go.dataset.ttGo); return; }
-    var mo = t.closest("[data-snapmore]"); if (mo) { snapMore[mo.dataset.snapmore] = !snapMore[mo.dataset.snapmore]; snapPick = null; renderSnaps(); return; }
     if (t.closest("[data-snapback]")) { snapOpen = null; snapPanel = null; snapPick = null; renderSnaps(); return; }
-    var pn = t.closest("[data-snappanel]"); if (pn) { snapPanel = snapPanel === pn.dataset.snappanel ? null : pn.dataset.snappanel; renderSnaps(); return; }
-    if (t.closest("#snap-chart")) return;
+    if (t.closest("[data-snapsqauto]")) { snapSqSplit = null; renderSnaps(); return; }
+    var mo = t.closest("[data-snapmore]"); if (mo) { var mk = mo.dataset.snapmore; snapMore[mk] = !snapMore[mk]; if (snapMore[mk]) snapPanel = null; snapPick = null; renderSnaps(); if (!snapMore[mk]) smoothScrollTo(snapBox, "start", 16); return; }
+    var pn = t.closest("[data-snappanel]"); if (pn) { snapPanel = snapPanel === pn.dataset.snappanel ? null : pn.dataset.snappanel; if (snapPanel && snapOpen) snapMore[snapOpen] = false; renderSnaps(); var pe = snapBox.querySelector(".snap-panel"); if (pe) smoothScrollTo(pe, "nearest", 24); return; }
+    if (t.closest("#snap-chart") || t.closest(".snap-panel")) return;
     var pk2 = t.closest("[data-snappick]"); if (pk2) { snapPick = snapPick === pk2.dataset.snappick ? null : pk2.dataset.snappick; renderSnaps(); return; }
     var b = t.closest("button[data-snap]"); if (!b) return;
-    var k = b.dataset.snap; snapOpen = snapOpen === k ? null : k; snapPanel = null; snapPick = null;
-    if (snapOpen && k.charAt(1) !== ":") { var pk = snapPrevKey(k); Promise.all([snapFile(k), pk ? snapFile(pk) : null, snapExtras()]).then(renderSnaps); }
+    var k = b.dataset.snap; snapOpen = snapOpen === k ? null : k; snapPanel = null; snapPick = null; snapSqSplit = null;
+    if (snapOpen && k.charAt(1) !== ":") { var pk = snapPrevKey(k); Promise.all([snapFile(k), pk ? snapFile(pk) : null, snapExtras(), snapDayChanges(k)]).then(renderSnaps); }
     renderSnaps();
   });
+  snapBox.addEventListener("change", function (e) { if (e.target.dataset && e.target.dataset.snapsqtop) { snapSqTop = Math.max(1, Math.min(200, Math.round(+e.target.value) || 200)); renderSnaps(); } });
+  snapBox.addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target.dataset && e.target.dataset.snapsqtop) e.target.blur(); });
 
   /* ---------- TIME TRAVEL: the whole page as it was on a day CoinAtlas recorded (the list, prices, market caps, ranks, changes, Fear & Greed, the BTC|ETH
      Formula and its Reading, Portfolio values, Staking rates, Sentiment Squares). Charts stay live; they get their own Backtesting later ---------- */
@@ -3993,6 +4080,23 @@
   function ttTone() { var v = "sepia"; try { v = localStorage.getItem("coinatlas-tt-tone") === "gold" ? "gold" : "sepia"; } catch (e) {} return v; }
   function ttApplyTone() { document.body.classList.toggle("tt-on", !!ttDay); document.body.classList.toggle("tt-sepia", !!ttDay && ttTone() === "sepia"); document.body.classList.toggle("tt-gold", !!ttDay && ttTone() === "gold"); }
   document.addEventListener("coinatlas-tt-tone", ttApplyTone);
+  var TT_FILT = { sepia: "sepia(.55) saturate(.85) contrast(.98)", gold: "sepia(.35) saturate(1.7) hue-rotate(-6deg) brightness(1.04)" };
+  function ttReveal(toPast, after) { /* like a tracker pulse: the tone grows from the middle of the screen until it covers everything (or, back to live, a clear circle grows) */
+    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches, f = TT_FILT[ttTone()];
+    if (reduce) { after(); return; }
+    var veil = document.createElement("div"), ring = document.createElement("div"); veil.className = "tt-veil"; ring.className = "tt-ring" + (toPast ? " " + ttTone() : " live");
+    veil.style.webkitBackdropFilter = veil.style.backdropFilter = f; document.body.appendChild(veil); document.body.appendChild(ring);
+    if (!toPast) after(); /* back to live: the page is clear at once, the veil of the past opens from the middle */
+    var maxR = Math.hypot(innerWidth, innerHeight) / 2 + 80, dur = 1500, t0 = performance.now(), edge = 70;
+    (function step(now) {
+      var x = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - x, 3), R = maxR * e;
+      var m = toPast ? "radial-gradient(circle at 50% 50%, #000 " + R + "px, transparent " + (R + edge) + "px)" : "radial-gradient(circle at 50% 50%, transparent " + R + "px, #000 " + (R + edge) + "px)";
+      veil.style.webkitMaskImage = veil.style.maskImage = m;
+      ring.style.width = ring.style.height = (2 * R + edge) + "px"; ring.style.opacity = String(0.9 * (1 - x));
+      if (x < 1) { requestAnimationFrame(step); return; }
+      if (toPast) after(); requestAnimationFrame(function () { veil.remove(); ring.remove(); });
+    })(t0);
+  }
   function ttWarp(from, to, done) { /* the jump: the page blurs, a big date rolls day by day to the target, a clock turns the other way */
     var ov = document.createElement("div"); ov.className = "tt-warp"; ov.innerHTML = '<div class="tt-warp-in"><svg class="tt-clock" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21"/><path class="h" d="M24 24V12"/><path class="m" d="M24 24l9 6"/></svg><div class="tt-warp-d"></div><div class="tt-warp-s">' + (to ? 'Traveling back in time' : 'Back to Live') + '</div></div>';
     document.body.appendChild(ov); ov.classList.toggle("fwd", !to);
@@ -4006,20 +4110,17 @@
       if (x < 1) { requestAnimationFrame(step); return; }
       try { done(); } catch (err) { console.error(err); } /* whatever happens, the overlay always goes away */
       ov.classList.remove("on"); setTimeout(function () { ov.remove(); }, 400);
-      if (!reduce) { /* the tone starts in the middle of the screen and pulses out over the whole page */
-        var pu = document.createElement("div"); pu.className = "tt-pulse " + (to ? "tt-pulse-" + ttTone() : "tt-pulse-live"); document.body.appendChild(pu);
-        setTimeout(function () { pu.remove(); }, 1300);
-      }
+
     })(t0);
   }
-  function ttCoins(j, pj) { /* the day's list as live coins: logos and details from today's list, everything else from the snapshot */
+  function ttCoins(j, pj, chg) { /* the day's list as live coins: logos and details from today's list, everything else from the snapshot */
     var live = {}; (ttLive ? ttLive.coins : coins).forEach(function (c) { live[String(c.symbol).toUpperCase()] = c; });
     var prev = {}; if (pj && pj.coins) pj.coins.forEach(function (c) { prev[String(c[0]).toUpperCase()] = +c[2]; });
     var open = {}, list = j.coins.slice(0, MAX_LIST).map(function (r, i) {
       var S = String(r[0]).toUpperCase(), base = live[S] || { symbol: S, name: r[1], image: "", pairs: {} }, c = Object.assign({}, base);
       c.name = r[1] || c.name; c.current_price = +r[2]; c.market_cap = +r[3] || 0; c.market_cap_rank = i + 1;
       if (r[4] != null) c.total_volume = +r[4]; if (r[5] != null) c.circulating_supply = +r[5];
-      var p0 = prev[S]; open[c.symbol] = p0 > 0 ? { open: p0, change: (c.current_price / p0 - 1) * 100 } : { open: c.current_price, change: 0 };
+      var o = chg && chg[S], p0 = prev[S]; open[c.symbol] = o && o.pc != null ? { open: o.open, change: o.pc } : p0 > 0 ? { open: p0, change: (c.current_price / p0 - 1) * 100 } : { open: c.current_price, change: 0 }; /* the day's move from its day chart */
       return c;
     });
     var ranks = null; if (pj && pj.coins) { ranks = {}; pj.coins.forEach(function (c, k) { var s = String(c[0]).toUpperCase(); if (!(s in ranks)) ranks[s] = k + 1; }); }
@@ -4047,7 +4148,7 @@
   function ttGo(k) { /* to a recorded day; k null = back to live */
     if (ttBusy || k === ttDay) return; ttBusy = true;
     var from = ttDay || new Date().toISOString().slice(0, 10);
-    var ready = k ? snapLoadDays().then(function () { var pk = snapPrevKey(k); return Promise.all([snapFile(k), pk ? snapFile(pk) : null, snapExtras()]); }) : Promise.resolve(null);
+    var ready = k ? snapLoadDays().then(function () { var pk = snapPrevKey(k); return Promise.all([snapFile(k), pk ? snapFile(pk) : null, snapExtras(), snapDayChanges(k)]); }) : Promise.resolve(null);
     if (!ttVisible) { ttVisible = true; ttBtn.classList.add("active"); renderTT(); }
     ready.then(function (r) {
       if (k && (!r || !r[0] || !r[0].coins)) { ttBusy = false; renderTT("This snapshot could not be loaded."); return; }
@@ -4055,14 +4156,15 @@
         if (k) {
           if (!ttLive) ttLive = { coins: coins, open: dayOpenCache, stake: stakeData, ranks: prevRanks, ranksDay: prevRanksDay, status: statusEl.textContent, asOf: RT.asOf, charts: chartCache, pending: chartPending };
           chartCache = {}; chartPending = {}; /* the day's own charts */
-          var t = ttCoins(r[0], r[1]); coins = t.list; dayOpenCache = t.open; prevRanks = t.ranks; prevRanksDay = snapPrevKey(k) || ""; stakeData = ttStake(k); CATS.staking = Object.keys(stakeData);
+          var t = ttCoins(r[0], r[1], r[3]); coins = t.list; dayOpenCache = t.open; prevRanks = t.ranks; prevRanksDay = snapPrevKey(k) || ""; stakeData = ttStake(k); CATS.staking = Object.keys(stakeData);
           RT.asOf = Date.parse(k + "T00:00:00Z"); ttDay = k;
           statusEl.textContent = "Time Travel · " + snapDate(k) + " · CoinAtlas Snapshot";
         } else if (ttLive) {
           coins = ttLive.coins; dayOpenCache = ttLive.open; chartCache = ttLive.charts || {}; chartPending = ttLive.pending || {}; stakeData = ttLive.stake; CATS.staking = Object.keys(stakeData); prevRanks = ttLive.ranks; prevRanksDay = ttLive.ranksDay; RT.asOf = ttLive.asOf; statusEl.textContent = ttLive.status;
           ttLive = null; ttDay = null;
         }
-        ttApplyTone(); ttRefresh(); renderTT(); ttBusy = false;
+        ttRefresh(); renderTT(); ttBusy = false;
+        if (k && !document.body.classList.contains("tt-on")) ttReveal(true, ttApplyTone); else if (!k) ttReveal(false, ttApplyTone); else ttApplyTone(); /* past to past: the tone is already there */
         if (!ttDay) pollPrices(true);
       });
     });
@@ -4749,7 +4851,7 @@
   function classifyFG(v) { v = parseInt(v, 10); if (v <= 24) return "Extreme Fear"; if (v <= 44) return "Fear"; if (v <= 55) return "Neutral"; if (v <= 75) return "Greed"; return "Extreme Greed"; }
   function fgCol(v) { if (v === null || v === undefined) return "var(--muted)"; v = +v; if (v <= 24) return "var(--down)"; if (v <= 44) return "var(--down-tier-2)"; if (v <= 55) return "#eab308"; if (v <= 75) return "var(--up-tier-2)"; return "var(--up)"; }
   function fgSrc() { /* in Time Travel the index ends on the travelled day, with the value CoinAtlas recorded that day */
-    if (!ttDay || !fgData) return fgData; var end = Date.parse(ttDay + "T23:59:59Z") / 1000, l = fgData.filter(function (d) { return d.timestamp <= end; }), j = snapLists[ttDay];
+    var day = snapDayEmbed || ttDay; if (!day || !fgData) return fgData; var end = Date.parse(day + "T23:59:59Z") / 1000, l = fgData.filter(function (d) { return d.timestamp <= end; }), j = snapLists[day];
     if (j && j.fg != null && l.length) l[l.length - 1] = { timestamp: l[l.length - 1].timestamp, value: +j.fg, value_classification: classifyFG(j.fg) };
     return l;
   }

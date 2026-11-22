@@ -494,3 +494,14 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - UI-Regel: Zahlen und Zähler in eckigen Klammern, z. B. [300 Coins], [Tier 2], [12].
 - Time Travel: Sprung kürzer (0,85 s), danach pulsiert der Ton (Sepia/Gold) von der Mitte über die Seite; Fehler beim Umschalten lassen das
   Overlay nie mehr hängen (Fear & Greed hatte im Time Travel eine verdeckte Variable und brach ab).
+- Snapshots-Tab, zweiter Rework (22.11.2026): Titelzeile mit "‹ All Snapshots" links und "Download ▾" rechts ([CSV] Token List, [JSON] Full
+  Snapshot, [PNG] Everything: Kacheln, Sentiment Squares und Top 50 auf einem Bild); Titel bleibt mittig. Einheitliche Kacheln (gleicher Grund,
+  nur der Wert farbig), kein Movers mehr. Ein Klick öffnet das echte Fenster des Tages unten im Tab: Fear & Greed (Chart bis zum Tag, Halbkreis
+  mit dem Wert, ohne Zeitauswahl; eigener Verlaufsname "snap-fg-grad"), BTC|ETH Ratio (ganzes Fenster mit RT.asOf, ohne Zeitauswahl),
+  Dominance (Dominance Graph aus dem Ratio-Fenster), Sentiment Squares (gleicher Look, Top [1-200], verschiebbare Linie, nur [Today]),
+  Staking (Liste wie im Staking-Fenster mit den Raten des Tages), Market Cap, Derivatives. Token-Liste und Fenster schließen sich gegenseitig;
+  "Hide Token List" bleibt oben (sticky). In der Liste stehen [Tier] und % links neben dem Namen.
+- Tagesänderung = Tages-Chart (Mitternacht bis Mitternacht New York, erster bis letzter Punkt); ohne Tages-Chart gegen den vorigen Snapshot.
+  Gilt für Liste, Squares, PNG und Time Travel. Grund: die Snapshots bis 20.11. wurden noch um ~18:50 New York aufgenommen (alter Zeitplan).
+- Time Travel: nach dem Sprung wächst der Ton (Sepia/Gold) als Kreis von der Bildschirmmitte, mit leuchtendem Rand (backdrop-filter + Maske),
+  bis alles bedeckt ist; zurück zu Live öffnet sich ein klarer Kreis. Header wird mit getönt.
