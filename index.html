@@ -772,6 +772,7 @@
   .snx-fgy .fg-py-grid { grid-template-columns: repeat(6, 1fr) !important; gap: 5px; } .snx-fgy .fg-annual-card { padding: 4px 2px !important; min-height: 0 !important; } .snx-fgy .fg-annual-card .val { font-size: 15px; } .snx-fgy .fg-annual-card .lbl { font-size: 10px; }
   .snx-fg .fg-gauge-col { margin: 0 !important; padding: 0 !important; } .snx-fgrow { display: flex !important; gap: 16px; align-items: center; margin-top: 10px; } .snx-fgrow > .fg-gauge-col { flex: 0 0 210px !important; width: 210px !important; min-width: 0 !important; } .snx-fgrow > .snx-fgy { flex: 1 1 auto !important; } .snx-fgrow .snx-fgy { margin: 0; }
   .snx-fgrow .fg-py-grid { grid-template-columns: repeat(4, 1fr) !important; } .snx-fgrow .fg-annual-card { padding: 8px 2px !important; } .snx-fgrow > * { min-width: 0; width: 100% !important; max-width: none !important; } .snx-fgrow .fg-py, .snx-fgrow .fg-py-body, .snx-fgrow .fg-py-grid { width: 100% !important; max-width: none !important; box-sizing: border-box; } .snx-fgrow .fg-annual-card .val { font-size: 19px; } .snx-fgrow .fg-annual-card .lbl { font-size: 11px; } .snx-fgrow .fg-py-avg { font-size: 22px; }
+  .snx.sqx { width: 2400px; } .snx.sqx .sqx-map, .snx.sqx #sqx-map { height: 1180px; } .sqx-cnt { text-align: right; font-size: 20px; } .sqm-dlb { margin-left: 10px; padding: 4px 10px; font-size: 12px; position: relative; z-index: 2; }
   .snx-t2s { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin-top: 16px; } .snx-t2s div { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; border-top: 1px solid var(--line); padding-top: 8px; } .snx-t2s span { color: var(--muted); }
   .snx-rd .snx-rdt { font-size: 15px; line-height: 1.55; font-weight: 600; margin-bottom: 12px; } .snx-fm .fg-tip { display: none !important; } .snx-fm .rt-fm-rows, .snx-fm .rt-fm-total { font-size: 14px; } .snx.tags-off .badge, .snx.tag-off-stake .badge-stake, .snx.tag-off-gain .badge-gain, .snx.tag-off-loss .badge-loss, .snx.tag-off-new .badge-new { display: none; }
   .snx-brand { display: flex; align-items: center; gap: 10px; } .snx-brand svg { width: 36px; height: 36px; stroke: var(--fg); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; } .snx-brand b { font-size: 24px; letter-spacing: -0.02em; }
@@ -4520,7 +4521,7 @@
   function sqCtrlHtml() { /* Top [1-200] on the left, the same timeframe picker as the Locked Hovercharts on the right */
     return '<div class="sqm-ctrl"><label class="sqm-top-in">Top <input type="number" min="1" max="200" step="1" inputmode="numeric" data-sqtop="1" value="' + sqS.top + '" aria-label="How many coins of the list"></label>' +
       (sqSplit != null ? '<button type="button" class="sqm-x sqm-auto" data-sqauto="1" title="Put the Sentiment Front back where the market puts it">Auto</button>' : '') +
-      '<span class="sqm-cnt"></span><div class="fg-yr-wrap tf-row sqm-tfw"><div class="fg-yr-pick"><button type="button" class="fg-yr-btn">' + sqTfLabel() + ' ▾</button><div class="fg-tf-menu sqm-tfm"><div class="fg-tf-col">' +
+      '<span class="sqm-cnt"></span><button type="button" class="gear sqm-dlb" data-sqdl="1" title="The squares as one centered image to share">Download</button><div class="fg-yr-wrap tf-row sqm-tfw"><div class="fg-yr-pick"><button type="button" class="fg-yr-btn">' + sqTfLabel() + ' ▾</button><div class="fg-tf-menu sqm-tfm"><div class="fg-tf-col">' +
       SQ_TF.map(function (t) { return '<button type="button" data-sqtf="' + t[0] + '"' + (sqS.tf === t[0] ? ' class="active"' : '') + '>' + t[1] + '</button>'; }).join("") + '</div></div></div></div></div>';
   }
   function sqMakeView() { /* the frame is built once; the squares inside are kept and moved */
@@ -4605,7 +4606,34 @@
     Array.prototype.forEach.call(rowsEl.querySelectorAll(".flash"), function (r) { r.classList.remove("flash"); }); clearTimeout(flashTimer);
     flashTimer = setTimeout(function () { tr.classList.add("flash"); flashTimer = setTimeout(function () { tr.classList.remove("flash"); }, 900); }, reduce ? 0 : 350);
   }
+  function sqPng() { /* the squares as they are right now, always the same centered image: preview first, then Download PNG */
+    var d = sqItems(); if (!d.items.length) return;
+    var K = "__sqlive", ch = {}, its = d.items.slice().sort(function (a, b) { return a.i - b.i; }), j = { coins: its.map(function (x) { return [x.sym, x.c.name, x.c.current_price, x.c.market_cap]; }) };
+    its.forEach(function (x) { ch[x.sym] = { pc: x.pc }; });
+    var up = its.filter(function (x) { return x.pc > 0; }).length, dn = its.filter(function (x) { return x.pc < 0; }).length, tf = sqTfLabel(), when = ttDay ? new Date(ttDay + "T00:00:00Z") : new Date();
+    var day = when.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: ttDay ? "UTC" : undefined }) + (ttDay ? " · Time Travel" : " · " + when.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }));
+    var ov = document.getElementById("pf-sh"); if (!ov) { ov = document.createElement("div"); ov.id = "pf-sh"; ov.className = "pf-sh"; document.body.appendChild(ov); }
+    ov.innerHTML = '<div class="pf-sh-box snx-box" role="dialog" aria-label="Sentiment Squares image"><div class="pf-sh-head"><b>Sentiment Squares Image</b><span class="pf-sh-mode">[Top ' + sqS.top + '] [' + esc(tf) + ']</span><button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
+      '<div class="pf-sh-img" id="pf-sh-img"><div class="pf-sh-wait">Building the image…</div></div><div class="pf-sh-foot"><button class="gear pf-sh-dl" type="button" id="snap-png-dl" disabled>Download PNG</button></div></div>';
+    ov.hidden = false;
+    loadH2C().then(function (h2c) {
+      var brand = (document.getElementById("logo-svg") || {}).outerHTML || "", x = document.createElement("div"); x.className = "snx sqx"; snapChg[K] = ch;
+      x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas Sentiment Squares</b><span>' + esc(day) + '</span></div><div class="sqx-cnt"><b style="color:var(--up)">[' + up + ' Up]</b> <b style="color:var(--down)">[' + dn + ' Down]</b></div></div>' +
+        '<div class="snx-card snx-sqw"><div class="snx-ch"><b>Sentiment Squares</b><span>[Top ' + sqS.top + '] [' + esc(tf) + ']</span></div><div class="sqm-map snx-sq" id="sqx-map"></div><div class="snx-wm">' + brand + '<b>CoinAtlas</b></div></div>' +
+        '<div class="snx-f"><span>Size and colour by how far a coin moved · stablecoins left out.</span><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div></div>';
+      document.body.appendChild(x);
+      var map = document.getElementById("sqx-map");
+      try { snapSqFill(map, K, j, j.coins.length, sqSplit, map.clientWidth, map.clientHeight); } finally { delete snapChg[K]; }
+      Array.prototype.forEach.call(x.querySelectorAll(".fx"), function (q) { q.style.setProperty("background-position", Math.round(Math.random() * 300) + "% 50%", "important"); });
+      return new Promise(function (res) { setTimeout(res, 700); }).then(function () { return h2c(x, { backgroundColor: pfCss("--pop"), scale: 2, useCORS: true, logging: false }); }).then(function (cv) { x.remove(); return cv; }, function (e) { x.remove(); throw e; });
+    }).then(function (cv) {
+      var url = cv.toDataURL("image/png"), im = document.getElementById("pf-sh-img"), b = document.getElementById("snap-png-dl"); if (!im) return;
+      im.innerHTML = '<img src="' + url + '" alt="Sentiment Squares image">'; b.disabled = false;
+      b.onclick = function () { var a = document.createElement("a"); a.href = url; a.download = "coinatlas-sentiment-squares-" + (ttDay || new Date().toISOString().slice(0, 10)) + ".png"; document.body.appendChild(a); a.click(); a.remove(); };
+    }).catch(function () { var im = document.getElementById("pf-sh-img"); if (im) im.innerHTML = '<div class="pf-sh-wait">The image could not be built. Please try again.</div>'; });
+  }
   sqBox.addEventListener("click", function (e) {
+    if (e.target.closest("[data-sqdl]")) { sqPng(); return; }
     var t = e.target.closest("[data-sqtf],[data-sqauto]");
     if (t) { if (t.dataset.sqtf) { if (sqS.tf !== t.dataset.sqtf) sqSwitchAt = Date.now(); sqS.tf = t.dataset.sqtf; sqSplit = null; if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } else sqSplit = null; sqSave(); sqDraw(); return; }
     var sq = e.target.closest(".sqm-sq"), c = sq && coins[+sq.dataset.i]; if (c) sqFind(c);
