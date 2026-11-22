@@ -1,0 +1,42 @@
+name: Record intraday charts
+
+# Fetches the "Today" charts (scripts/record-intraday.mjs) for days given by hand, e.g. to fill days recorded before this existed.
+# Normally this runs every night as a step of record-snapshot.yml.
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Days, comma separated (YYYY-MM-DD). Empty: every snapshot day without a chart."
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency: record-snapshot
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Record intraday charts
+        env:
+          DAYS: ${{ github.event.inputs.days }}
+        run: |
+          if [ -z "$DAYS" ]; then
+            DAYS=$(node -e 'const fs=require("fs");const have=fs.existsSync("data/intraday")?fs.readdirSync("data/intraday"):[];console.log(fs.readdirSync("data/snapshots").filter(f=>/^\d{4}-\d{2}-\d{2}\.json$/.test(f)&&!have.includes(f)).map(f=>f.slice(0,10)).join(","))')
+          fi
+          for d in $(echo "$DAYS" | tr ',' ' '); do INTRADAY_DAY="$d" node scripts/record-intraday.mjs || true; done
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/intraday
+          git diff --cached --quiet && exit 0
+          git commit -m "Record intraday charts"
+          git pull --rebase
+          git push
