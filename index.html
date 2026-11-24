@@ -795,6 +795,7 @@
   .snap-top { position: relative; } .snap-top .pf-title { padding: 0 120px; } .snap-back { position: absolute; left: 0; top: -4px; height: 28px; padding: 0 10px; font-size: 12px; }
   .snap-dlw { position: absolute; right: 0; top: -4px; z-index: 4; } .snap-dlb { height: 28px; padding: 0 10px; font-size: 12px; font-weight: 600; }
   .snap-dlm { position: absolute; right: 0; top: 34px; width: 190px; padding: 4px; background: var(--pop); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.45); display: flex; flex-direction: column; } .snap-dlm[hidden] { display: none; }
+  .snap-dlw-hov .snap-dlm { display: none; } .snap-dlw-hov:hover .snap-dlm { display: flex; } .snap-dlw-hov .snap-dlm { top: 28px; }
   .snap-dlm button { text-align: left; font: inherit; font-size: 12px; color: var(--fg); background: transparent; border: 0; border-radius: 7px; padding: 7px 10px; cursor: pointer; } .snap-dlm button:hover { background: var(--hover); }
   .snap-date { text-align: center; font-size: 12px; color: var(--muted); margin: -8px 0 12px; } .snap-wkd b { color: var(--fg); }
   .snap-in { padding: 4px 10px 10px; } .snap-in .snap-day { background: var(--card, var(--bg)); } .snap-ym { display: flex; gap: 8px; justify-content: center; margin: 4px 0 10px; } .snap-ym .gear { min-width: 92px; }
@@ -3877,6 +3878,25 @@
     var f = j.fields || ["symbol", "name", "price", "market cap", "24h volume", "circulating supply"];
     return ["rank"].concat(f).join(",") + "\n" + j.coins.map(function (c, i) { return [i + 1].concat(c.map(function (v) { v = v == null ? "" : String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; })).join(","); }).join("\n") + "\n";
   }
+  function snapZipAll(btn) { /* every recorded day as one ZIP, sorted like the weekly backup: year / Week N / day / snapshot, day chart and the day's extras */
+    if (btn.disabled) return; var label = btn.textContent; btn.disabled = true; btn.textContent = "Loading…";
+    var MON = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"], keys = snapKeys(), n = 0;
+    var lib = window.JSZip ? Promise.resolve(window.JSZip) : new Promise(function (res, rej) { var sc = document.createElement("script"); sc.src = "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"; sc.onload = function () { res(window.JSZip); }; sc.onerror = rej; document.head.appendChild(sc); });
+    Promise.all([lib, snapExtras()]).then(function (r) {
+      var zip = new r[0](), root = zip.folder("CoinAtlas Snapshots"), dom = snapDomAll || {};
+      root.file("README.txt", "CoinAtlas Snapshots\n\nEvery recorded day, sorted by year and calendar week. Each day: snapshot.json (the list at midnight New York time), intraday.json (5 minute day charts) and day.json (that day's Dominance, BTC|ETH Reading, Derivatives and Staking rates).\nSource: " + location.href.split("#")[0] + "\n");
+      return Promise.all(keys.map(function (k) {
+        return Promise.all([snapFile(k), repoJson("data/intraday/" + k + ".json").catch(function () { return null; })]).then(function (d) {
+          var iw = isoWk(k), dir = root.folder(iw.y + "/Week " + iw.w + " " + iw.y + "/" + (+k.slice(8)) + " " + MON[+k.slice(5, 7) - 1] + " " + k.slice(0, 4)), day = { date: k };
+          if (dom[k]) day.dominance = dom[k]; if (snapRead && snapRead[k]) day.reading = snapRead[k]; if (snapDeriv && snapDeriv[k]) day.derivatives = snapDeriv[k]; if (snapStakeH && snapStakeH[k]) day.staking = snapStakeH[k];
+          if (d[0]) dir.file("snapshot.json", JSON.stringify(d[0], null, 1)); if (d[1]) dir.file("intraday.json", JSON.stringify(d[1])); dir.file("day.json", JSON.stringify(day, null, 1));
+          btn.textContent = "Loading " + (++n) + "/" + keys.length;
+        });
+      })).then(function () { btn.textContent = "Packing…"; return zip.generateAsync({ type: "blob", compression: "DEFLATE" }); });
+    }).then(function (blob) {
+      var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "coinatlas-snapshots-" + new Date().toISOString().slice(0, 10) + ".zip"; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+    }).catch(function () { alert("The ZIP could not be built. Please try again."); }).then(function () { btn.disabled = false; btn.textContent = label; });
+  }
   function snapDownload(k, kind, wkId) {
     var wk = snapWeekFromId(wkId);
     if (kind === "png") { snapPng(k, wk); return; }
@@ -4044,7 +4064,7 @@
     var day = snapWk ? snapWk.last : snapOpen && snapOpen.charAt(1) !== ":" ? snapOpen : null, wkA = snapWk ? ' data-wk="' + snapWk.id + '"' : '';
     var h = '<div class="pinned-card chart-container pf-card dev-target" data-dev-name="Snapshots" data-dev-color="#a78bfa"><div class="snap-top">' +
       (day ? '<button type="button" class="gear snap-back" data-snapback="1">‹ All Snapshots</button>' : '') + '<div class="pf-title">CoinAtlas Snapshots</div>' +
-      (day ? '<div class="snap-dlw"><button type="button" class="gear snap-dlb" data-snapdlmenu="1">Download ▾</button><div class="snap-dlm"' + (snapDlOpen ? '' : ' hidden') + '><button type="button" data-snapdl="csv" data-k="' + day + '"' + wkA + '>[CSV] Token List</button><button type="button" data-snapdl="json" data-k="' + day + '"' + wkA + '>[JSON] Full Snapshot</button><button type="button" data-snapdl="png" data-k="' + day + '"' + wkA + '>[PNG] Everything</button></div></div>' : '') + '</div>';
+      (day ? '<div class="snap-dlw"><button type="button" class="gear snap-dlb" data-snapdlmenu="1">Download ▾</button><div class="snap-dlm"' + (snapDlOpen ? '' : ' hidden') + '><button type="button" data-snapdl="csv" data-k="' + day + '"' + wkA + '>[CSV] Token List</button><button type="button" data-snapdl="json" data-k="' + day + '"' + wkA + '>[JSON] Full Snapshot</button><button type="button" data-snapdl="png" data-k="' + day + '"' + wkA + '>[PNG] Everything</button></div></div>' : snapDays ? '<div class="snap-dlw snap-dlw-hov"><button type="button" class="gear snap-dlb" data-snapzip="1">Download</button><div class="snap-dlm"><button type="button" data-snapzip="1">[ZIP] All Snapshots</button></div></div>' : '') + '</div>';
     if (!snapDays) h += '<div class="rt-empty">Loading snapshots…</div>';
     else if (day) h += snapDayHtml(day, snapWk);
     else {
@@ -4281,6 +4301,7 @@
   snapBox.addEventListener("click", function (e) {
     var t = e.target;
     if (t.closest("[data-snapdlmenu]")) { snapDlOpen = !snapDlOpen; renderSnaps(); return; }
+    var zb = t.closest("[data-snapzip]"); if (zb) { snapZipAll(zb.closest(".snap-dlw").querySelector(".snap-dlb")); return; }
     var dl = t.closest("[data-snapdl]"); if (dl) { snapDlOpen = false; snapDownload(dl.dataset.k, dl.dataset.snapdl, dl.dataset.wk); renderSnaps(); return; }
     if (snapDlOpen && !t.closest(".snap-dlm")) { snapDlOpen = false; renderSnaps(); }
     var go = t.closest("[data-tt-go]"); if (go) { ttGo(go.dataset.ttGo); return; }
