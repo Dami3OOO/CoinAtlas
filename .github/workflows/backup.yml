@@ -1,0 +1,31 @@
+name: Weekly backup
+
+# Every Monday after the Sunday snapshot: every recorded day as one ZIP, sorted by year and calendar week
+# (scripts/backup-zip.mjs), attached to a GitHub Release "backup-JJJJ-Www". Also runs by hand.
+on:
+  schedule:
+    - cron: "37 9 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build the ZIP
+        run: |
+          TAG="backup-$(date -u +%G-W%V)"
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+          node scripts/backup-zip.mjs backup "coinatlas-$TAG.zip"
+      - name: Attach it to a release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title "CoinAtlas Backup $(date -u +'Week %V %G')" --notes "Every recorded day up to $(date -u +%F), sorted by year and calendar week. Restore/data is the data folder as the site reads it." --latest=false
+          gh release upload "$TAG" "coinatlas-$TAG.zip" --clobber
