@@ -778,6 +778,9 @@
   .fgx .fg-annual-section > .fg-sub:last-child { display: none; } .snx .fg-dlb { display: none; }
   .snx.fgx { width: 1700px; } .fgx .fgx-box { background: none !important; border: 0 !important; padding: 0 !important; } .fgx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; } .fgx-grid.one { grid-template-columns: 1fr; }
   .fgx .fg-top-row { display: flex !important; gap: 24px; align-items: center; margin-top: 16px; } .fgx .fg-stats-col { display: block !important; flex: 1; } .fgx .fg-gauge-col { flex: 0 0 260px; } .fgx .fgx-r .fg-annual-section { margin: 0; border: 0; padding: 0; background: none; } .fgx .fgx-more { margin: 16px 0 0; border: 0; padding: 0; background: none; } .fgx .fg-ax { margin-top: 6px; } .fgx .fg-yr-wrap { display: none !important; } .fgx .fg-annual-head .fg-timeframes { display: flex !important; pointer-events: none; } .fgx .fg-py-chev { display: none; } .fgx .fg-top-row { justify-content: center; }
+  .t2-top { display: flex; flex-direction: column; align-items: center; gap: 2px; margin: -4px 0 12px; } .t2-top b { font-size: 26px; } .t2-note { text-align: center; margin-top: 12px; } .t2-note a { color: inherit; }
+  .fomc-next { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); } .fomc-next b { font-size: 26px; font-variant-numeric: tabular-nums; color: #93c5fd; } .fomc-next > span:not(.fg-sub) { font-size: 13px; font-weight: 600; }
+  .fomc-list { display: flex; flex-direction: column; gap: 4px; } .fomc-row { display: flex; justify-content: space-between; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 12px; } .fomc-row span { color: var(--muted); } .fomc-row.past { opacity: .45; } .fomc-row.on { border-color: #93c5fd; } .fomc-row.on span { color: #93c5fd; font-weight: 700; }
   .snx-t2s { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin-top: 16px; } .snx-t2s div { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; border-top: 1px solid var(--line); padding-top: 8px; } .snx-t2s span { color: var(--muted); }
   .snx-rd .snx-rdt { font-size: 15px; line-height: 1.55; font-weight: 600; margin-bottom: 12px; } .snx-fm .fg-tip { display: none !important; } .snx-fm .rt-fm-rows, .snx-fm .rt-fm-total { font-size: 14px; } .snx.tags-off .badge, .snx.tag-off-stake .badge-stake, .snx.tag-off-gain .badge-gain, .snx.tag-off-loss .badge-loss, .snx.tag-off-new .badge-new { display: none; }
   .snx-brand { display: flex; align-items: center; gap: 10px; } .snx-brand svg { width: 36px; height: 36px; stroke: var(--fg); stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; } .snx-brand b { font-size: 24px; letter-spacing: -0.02em; }
@@ -1127,6 +1130,8 @@
     </div>
       <button class="gear" type="button" id="fg-btn">Fear & Greed Index</button>
       <button class="gear" type="button" id="ratio-btn">BTC|ETH Ratio</button>
+      <button class="gear" type="button" id="t200-btn">TOTAL 200</button>
+      <button class="gear" type="button" id="fomc-btn">FOMC</button>
       <button class="gear" type="button" id="charts-btn">Charts</button>
       <button class="gear" type="button" id="pf-btn">Portfolio Manager</button>
       <button class="gear" type="button" id="sq-btn">Sentiment Squares</button>
@@ -1150,6 +1155,8 @@
               <div class="grp"><span class="lbl">Search</span><button class="toggle" type="button" data-hb="search" role="switch" aria-checked="true" aria-label="Show Search in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Fear &amp; Greed Index</span><button class="toggle" type="button" data-hb="fg-btn" role="switch" aria-checked="true" aria-label="Show Fear &amp; Greed Index in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">BTC|ETH Ratio</span><button class="toggle" type="button" data-hb="ratio-btn" role="switch" aria-checked="true" aria-label="Show BTC|ETH Ratio in the header"><span></span></button></div>
+              <div class="grp"><span class="lbl">TOTAL 200</span><button class="toggle" type="button" data-hb="t200-btn" role="switch" aria-checked="true" aria-label="Show TOTAL 200 in the header"><span></span></button></div>
+              <div class="grp"><span class="lbl">FOMC</span><button class="toggle" type="button" data-hb="fomc-btn" role="switch" aria-checked="true" aria-label="Show FOMC in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Charts</span><button class="toggle" type="button" data-hb="charts-btn" role="switch" aria-checked="true" aria-label="Show Charts in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Portfolio Manager</span><button class="toggle" type="button" data-hb="pf-btn" role="switch" aria-checked="true" aria-label="Show Portfolio Manager in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Staking</span><button class="toggle" type="button" data-hb="stake-btn" role="switch" aria-checked="true" aria-label="Show Staking in the header"><span></span></button></div>
@@ -1277,6 +1284,8 @@
       <div id="fg-chart-container"></div>
       <div id="ui-mode-note" class="pinned-card ui-note" hidden>UI Moving Mode is turned on, Press ESC to Turn it off</div>
       <div id="tt-container" hidden></div>
+      <div id="t200-container" hidden></div>
+      <div id="fomc-container" hidden></div>
       <div id="stake-container" hidden></div>
       <div id="sq-container" hidden></div>
       <div id="roadmap-container" hidden></div>
@@ -2498,7 +2507,7 @@
   function updatePinnedColVisibility() {
     var col = document.getElementById("pinned-col");
     if (!col) return;
-    if (pinnedCoins.length > 0 || (typeof chMinis !== "undefined" && chMinis.length) || roadmapVisible || portfolioVisible || ratioVisible || uiNoteOn || sqVisible || (typeof stkVisible !== "undefined" && stkVisible) || snapVisible || (typeof ttVisible !== "undefined" && ttVisible)) col.classList.add("on");
+    if (pinnedCoins.length > 0 || (typeof chMinis !== "undefined" && chMinis.length) || roadmapVisible || portfolioVisible || ratioVisible || uiNoteOn || sqVisible || (typeof stkVisible !== "undefined" && stkVisible) || snapVisible || (typeof t2Visible !== "undefined" && (t2Visible || fomcVisible)) || (typeof ttVisible !== "undefined" && ttVisible)) col.classList.add("on");
     else col.classList.remove("on");
   }
 
@@ -4392,6 +4401,7 @@
     if (stkVisible) renderStaking();
     if (snapVisible) renderSnaps();
     if (fgVisible && fgData) { renderFGChart(); renderFGAnnual(); }
+    if (t2Visible) renderT200();
     applyStakeBadges();
   }
   var ttTfKeep = null;
@@ -4403,6 +4413,52 @@
       var o = ttTfKeep; ttTfKeep = null; Object.keys(cardTf).forEach(function (s) { cardTf[s] = o.card[s] || "1D"; }); fgTimeframe = o.fgTf; fgYear = o.fgYr; annualRange = o.ann; RT.view = o.rtV; RT.year = o.rtY; sqS.tf = o.sq; if (pfLock && o.pf) pfLock.tf = o.pf;
     }
   }
+  /* ---------- TOTAL 200: the combined market cap of the 200 largest coins, its year as a chart and in numbers ---------- */
+  var t2Visible = false, t2Year = null, t2Btn = document.getElementById("t200-btn"), t2Box = document.getElementById("t200-container");
+  function renderT200() {
+    if (!t2Visible) { t2Box.hidden = true; t2Box.innerHTML = ""; updatePinnedColVisibility(); return; }
+    t2Box.hidden = false; updatePinnedColVisibility();
+    var head = '<div class="pinned-card chart-container pf-card t2-card dev-target" data-dev-name="TOTAL 200" data-dev-color="' + T200_C + '"><div class="pf-title">TOTAL 200</div>';
+    if (!snapDomAll) { t2Box.innerHTML = head + '<div class="rt-empty">Loading TOTAL 200…</div></div>'; snapLoadDays().then(renderT200, function () { t2Box.innerHTML = head + '<div class="rt-empty">TOTAL 200 could not be loaded.</div></div>'; }); return; }
+    var ks = Object.keys(snapDomAll).filter(function (d) { return +(snapDomAll[d] || [])[2] > 0 && (!ttDay || d <= ttDay); }).sort(); if (!ks.length) { t2Box.innerHTML = head + '<div class="rt-empty">Nothing recorded yet.</div></div>'; return; }
+    var last = ks[ks.length - 1], ys = []; ks.forEach(function (d) { var y = +d.slice(0, 4); if (ys.indexOf(y) < 0) ys.unshift(y); });
+    var y = ys.indexOf(t2Year) > -1 ? t2Year : ys[0], k = ks.filter(function (d) { return +d.slice(0, 4) === y; }).pop(), v = +snapDomAll[k][2];
+    t2Box.innerHTML = head + '<div class="t2-top"><b style="color:' + T200_C + '">[' + compact(v) + ']</b><span class="fg-sub">' + (k === last ? 'Latest' : 'End of ' + y) + ' · ' + snapDate(k) + '</span></div>' +
+      (ys.length > 1 ? '<div class="snap-ym">' + ys.map(function (x) { return '<button type="button" class="gear' + (x === y ? ' active' : '') + '" data-t2y="' + x + '">' + x + '</button>'; }).join("") + '</div>' : '') +
+      snapYearChart(t200Points(k), y, T200_C, "cap", 520, 170, false) + snapT200Stats(k) +
+      '<div class="fg-sub t2-note">The combined market cap of the 200 largest coins, recorded every night at midnight New York time. Days before 12 Nov 2026 come from CoinGecko.</div></div>';
+  }
+  t2Btn.addEventListener("click", function () { t2Visible = !t2Visible; t2Btn.classList.toggle("active", t2Visible); renderT200(); });
+  t2Box.addEventListener("click", function (e) { var b = e.target.closest("[data-t2y]"); if (b) { t2Year = +b.dataset.t2y; renderT200(); } });
+
+  /* ---------- FOMC: countdown to the next rate decision and the meeting calendar of the Federal Reserve (tentative dates as published) ---------- */
+  var FOMC = [["2026-01-27", "2026-01-28"], ["2026-03-17", "2026-03-18"], ["2026-04-28", "2026-04-29"], ["2026-06-16", "2026-06-17"], ["2026-07-28", "2026-07-29"], ["2026-09-15", "2026-09-16"], ["2026-10-27", "2026-10-28"], ["2026-12-08", "2026-12-09"],
+    ["2027-01-26", "2027-01-27"], ["2027-03-16", "2027-03-17"], ["2027-04-27", "2027-04-28"], ["2027-06-08", "2027-06-09"], ["2027-07-27", "2027-07-28"], ["2027-09-14", "2027-09-15"], ["2027-10-26", "2027-10-27", "strategy"], ["2027-11-16", "2027-11-17"], ["2028-01-25", "2028-01-26"]];
+  var fomcVisible = false, fomcBtn = document.getElementById("fomc-btn"), fomcBox = document.getElementById("fomc-container"), fomcTimer = null;
+  function fomcAt(d) { /* 2:00 PM New York time on that day, as a moment */
+    var g = Date.parse(d + "T19:00:00Z"), h = +new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour: "numeric", hour12: false }).format(new Date(g)); return g + (14 - h) * 36e5;
+  }
+  function fomcCd(ms) { var s = Math.max(0, Math.floor(ms / 1000)), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), x = s % 60, p = function (n) { return (n < 10 ? "0" : "") + n; }; return "[" + d + "d " + p(h) + "h " + p(m) + "m " + p(x) + "s]"; }
+  function renderFOMC() {
+    clearInterval(fomcTimer);
+    if (!fomcVisible) { fomcBox.hidden = true; fomcBox.innerHTML = ""; updatePinnedColVisibility(); return; }
+    fomcBox.hidden = false; updatePinnedColVisibility();
+    var now = Date.now(), nx = FOMC.filter(function (m) { return !m[2] && fomcAt(m[1]) > now; })[0];
+    var dd = function (d, o) { return new Date(d + "T12:00:00Z").toLocaleDateString("en-GB", Object.assign({ timeZone: "UTC" }, o)); };
+    var span = function (m) { return dd(m[0], { day: "numeric" }) + "–" + dd(m[1], { day: "numeric", month: "short", year: "numeric" }); };
+    var h = '<div class="pinned-card chart-container pf-card fomc-card dev-target" data-dev-name="FOMC" data-dev-color="#93c5fd"><div class="pf-title">FOMC</div>';
+    if (nx) { var at = fomcAt(nx[1]);
+      h += '<div class="fomc-next"><span class="fg-sub">Next Rate Decision</span><b id="fomc-cd">' + fomcCd(at - now) + '</b><span>' + dd(nx[1], { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + ' · 2:00 PM New York · ' + new Date(at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + ' your time</span><span class="fg-sub">Statement at 2:00 PM, press conference at 2:30 PM</span></div>'; }
+    var y = new Date(now).getUTCFullYear();
+    h += '<div class="rt-val-title snap-sec">Meetings ' + y + ' and ' + (y + 1) + '</div><div class="fomc-list">' + FOMC.filter(function (m) { var my = +m[0].slice(0, 4); return my === y || my === y + 1; }).map(function (m) {
+      var past = fomcAt(m[1]) <= now, isNx = nx && m === nx, days = Math.ceil((fomcAt(m[1]) - now) / 864e5);
+      return '<div class="fomc-row' + (past ? ' past' : '') + (isNx ? ' on' : '') + '"><b>' + span(m) + '</b><span>' + (m[2] ? 'Strategy discussion, no decision' : past ? 'Done' : isNx ? 'Next' : 'in ' + days + ' days') + '</span></div>';
+    }).join("") + '</div><div class="fg-sub t2-note">Dates as published by the Federal Reserve; tentative until confirmed at the meeting before. Created using Data from <a href="https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm" target="_blank" rel="noopener noreferrer">federalreserve.gov</a></div></div>';
+    fomcBox.innerHTML = h;
+    if (nx) fomcTimer = setInterval(function () { var el = document.getElementById("fomc-cd"); if (!el) return clearInterval(fomcTimer); var left = fomcAt(nx[1]) - Date.now(); if (left <= 0) renderFOMC(); else el.textContent = fomcCd(left); }, 1000);
+  }
+  fomcBtn.addEventListener("click", function () { fomcVisible = !fomcVisible; fomcBtn.classList.toggle("active", fomcVisible); renderFOMC(); });
+
   function ttGo(k) { /* to a recorded day; k null = back to live */
     if (ttBusy || k === ttDay) return; ttBusy = true;
     var from = ttDay || new Date().toISOString().slice(0, 10);
@@ -4882,6 +4938,7 @@
     { title: "Charts Additions", notes: ["Planned: more Assets on the Charts screen.", "Planned: Drawings saved to the Account. Every time a Drawing is added or changed, its type and position are saved. All Drawings together are encrypted into one string of letters and numbers, tied to the Account ID, and turned back into the Drawings when the site opens. Needs the Backend and Accounts.", "Planned: Backtesting. Go back to any day in a chart and play it forward candle by candle, to test a strategy without seeing the future."], desc: "More Assets for the Charts screen, a Backtesting Feature, and Drawings that are saved to your Account, so they are still there on the next visit and on every Device." },
     { title: "Customizable Image Export", notes: ["Planned. Arrange an image before downloading it: move, resize or leave out its parts."], desc: "Every image export arranged the way you want it." },
     { title: "Tab Dragging & Quick Actions", notes: ["Planned. Long press the top of any window, like the top of a browser tab, and drag it: move windows above or below each other in the Landing Area, or drop one onto a header button for a quick action. Example: drop the Portfolio Manager onto Staking, and Staking opens with what share of your Portfolio you could stake."], desc: "Workflow shortcuts: windows you can pick up, reorder and combine." },
+    { title: "FOMC + News Calendar", st: "wip", notes: ["Works: FOMC button (off by default, Settings) with a live countdown to the next rate decision and the meeting calendar of this and next year.", "Planned: the market's odds for a cut, a hold or a hike at each meeting, and a News Calendar with the dates that move markets (CPI, jobs report, PCE, GDP, Fed speeches)."], desc: "When the big macro events happen, at a glance." },
     { title: "Snapshot Customization", notes: ["Planned. Choose which windows the Snapshot image shows, how long the list is, and add your own name or tag at the top right, in the row of the title."], desc: "More control over your own Snapshot images: show only what you want to show." },
     { title: "Final Settings Rework", notes: ["Planned. The Settings grew section by section. Once the main features stand, they get one clean structure, search, and fewer but clearer options."], desc: "A last, complete rework of the Settings window, so every option is easy to find." },
     { title: "Mobile Version / Mobile App", notes: ["Planned. The current Site is built for Desktop: on a Phone the Header Buttons run off the Screen and several Windows are too wide.", "Idea: rebuild the Phone Layout from scratch. A first step could be an installable Web App (PWA) from the same Site; a real App for the Stores can follow later."], desc: "A complete Mobile Version of CoinAtlas, made for Phones from the ground up instead of a shrunk Desktop Site, and later a Mobile App." }
@@ -7962,6 +8019,7 @@
     Array.prototype.forEach.call(document.querySelectorAll("[data-hb]"), function (t) { var k = t.dataset.hb, off = hbHidden.indexOf(k) >= 0, el = hbEl(k); t.setAttribute("aria-checked", off ? "false" : "true"); if (el) el.classList.toggle("hb-off", off); });
   }
   document.addEventListener("click", function (e) { var t = e.target.closest("[data-hb]"); if (!t) return; var k = t.dataset.hb, i = hbHidden.indexOf(k); if (i >= 0) hbHidden.splice(i, 1); else hbHidden.push(k); try { localStorage.setItem(HB_KEY, JSON.stringify(hbHidden)); } catch (x) {} hbApply(); });
+  try { if (!localStorage.getItem("coinatlas-hb-new-1")) { ["t200-btn", "fomc-btn"].forEach(function (k) { if (hbHidden.indexOf(k) < 0) hbHidden.push(k); }); localStorage.setItem(HB_KEY, JSON.stringify(hbHidden)); localStorage.setItem("coinatlas-hb-new-1", "1"); } } catch (e) { hbHidden.push("t200-btn", "fomc-btn"); } /* new header buttons start switched off */
   hbApply();
   window.addEventListener("keydown", function (e) { if (e.key === "Escape" && uiMoving) { e.stopPropagation(); setUiMoving(false); } }, true);
   actionsEl.addEventListener("pointerdown", function (e) {
