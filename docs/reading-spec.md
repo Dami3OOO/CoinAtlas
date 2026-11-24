@@ -555,3 +555,4 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Fear-&-Greed-Bild im Querformat (1700 px, Faktor 2): links Chart in eigenen Proportionen, darunter Halbkreis und History; rechts Past Years; Credit unten.
 - Fear & Greed: Monats- bzw. Datumsachse auch bei 30 Tagen / 365 Tagen. Roadmap: Customizable Image Export.
 - Fear-&-Greed-Bild: zurück zum festen Querformat (Chart, Halbkreis + History links, Past Years rechts), ohne Editor und ohne automatisches Umsortieren. Roadmap: Customizable Image Export.
+- Gram (TON) Staking-Link: Tonkeeper-Hilfeartikel ersetzt durch die Tonstakers-Anleitung (Liquid Staking). Roadmap: Tab Dragging & Quick Actions.

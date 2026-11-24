@@ -45,7 +45,7 @@ export const PROVIDERS = {
   AKT: [{ name: "Keplr", kind: "Native Staking", url: "https://wallet.keplr.app/chains/akash", locked: true }],
   HBAR: [{ name: "Hedera Staking", kind: "Native Staking", url: "https://docs.hedera.com/learn/core-concepts/staking", locked: false }],
   /* native staking with a link only (no free source for the rate yet): "Rate on site" */
-  GRAM: [{ name: "Tonkeeper Staking Guide", kind: "Native Staking", url: "https://tonkeeper.helpscoutdocs.com/article/82-how-to-stake-with-tonkeeper", locked: true }],
+  GRAM: [{ name: "Tonstakers", kind: "Liquid Staking", url: "https://faq.tonstakers.com/article/103-how-to-stake-tonstakers", locked: false }],
   SUI: [{ name: "Slush Wallet", kind: "Native Staking", url: "https://slush.app/guides/stake-and-swap-sui", locked: true }],
   TAO: [{ name: "Bittensor Docs", kind: "Native Staking", url: "https://www.bittensor.com/docs", locked: false }],
   ICP: [{ name: "NNS (Network Nervous System)", kind: "Native Staking", url: "https://nns.ic0.app", locked: true }],
