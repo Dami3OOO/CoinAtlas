@@ -3994,8 +3994,9 @@
     if (!RT.data) { el.innerHTML = '<div class="rt-empty">Loading the BTC|ETH Ratio…</div>'; rtLoad(); var n = 0, t = setInterval(function () { if (RT.data || RT.failed || ++n > 120) { clearInterval(t); if (snapOpen === k && (snapPanel === "ratio" || snapPanel === "dom")) renderSnaps(); } }, 500); return; }
     var keep = { box: ratioBox, vis: ratioVisible, asOf: RT.asOf, view: RT.view, year: RT.year, cmp: RT.cmp, data: RT.data, w: RT.w }, tmp = document.createElement("div");
     var end = Date.parse(k + "T23:59:59Z"), D = RT.data, n = 0; while (n < D.t.length && D.t[n] <= end) n++;
+    var ho = RT.holdOverride; RT.holdOverride = rtHold() || "BTC"; /* the Reading as shown once an asset is chosen */
     try { ratioBox = tmp; ratioVisible = true; RT.asOf = Date.parse(k + "T00:00:00Z"); RT.view = "YEAR"; RT.year = +k.slice(0, 4); RT.cmp = false; RT.data = { t: D.t.slice(0, n), b: D.b.slice(0, n), e: D.e.slice(0, n), r: D.r.slice(0, n) }; RT.w = null; rtRender(); } /* the year of the day, the data ends on the day */
-    finally { ratioBox = keep.box; ratioVisible = keep.vis; RT.asOf = keep.asOf; RT.view = keep.view; RT.year = keep.year; RT.cmp = keep.cmp; RT.data = keep.data; RT.w = keep.w; }
+    finally { RT.holdOverride = ho; ratioBox = keep.box; ratioVisible = keep.vis; RT.asOf = keep.asOf; RT.view = keep.view; RT.year = keep.year; RT.cmp = keep.cmp; RT.data = keep.data; RT.w = keep.w; }
     var yl = tmp.querySelector(".rt-ylist"); if (yl) { var sec = yl.closest(".fg-annual-section") || yl.parentNode; if (sec) sec.remove(); } /* no Past Years in a snapshot */
     if (part === "dom") { /* only the Dominance Graph of the Ratio window */
       var secs = tmp.querySelectorAll(".rt-chart-section"), dom = null; Array.prototype.forEach.call(secs, function (s) { if (/Dominance Graph/.test(s.textContent)) dom = s; });
@@ -4238,7 +4239,7 @@
   }
   var snapStakeOpen = null, snapPngBuild = false, snapImgKind = "", snapImgTitle = "", snapImgLast = "";
   function snapReadingNeutral(t) { /* the Reading as it is for everyone: no sentence telling what to do with what you hold */
-    return String(t).split(/(?<=[.!?])\s+/).filter(function (x) { return !/\b(your|you hold|swap your|keep your)\b/i.test(x); }).join(" ");
+    return String(t).split(/(?<=[.!?])\s+/).filter(function (x) { return !/\b(your|you hold|swap|swapping|keep your)\b/i.test(x); }).join(" ");
   }
   function snapTopCoins(j, n) { /* the snapshot's first n coins with logos and details from today's list */
     return j.coins.slice(0, n).map(function (c, i) { var S = String(c[0]).toUpperCase(), live = coins.filter(function (x) { return String(x.symbol).toUpperCase() === S; })[0] || {}; return Object.assign({}, live, { symbol: S, name: c[1], rank: i + 1 }); });
@@ -4537,7 +4538,8 @@
     if (!RT.data) { rtLoad(); return snapWait(function () { return RT.data || RT.failed; }, 15000).then(function () { return RT.data ? dxRatioImg() : null; }); }
     rtTtCut(); /* in Time Travel the data ends on the travelled day */
     var CW = 760, st = dxStage(CW), keep = { box: ratioBox, vis: ratioVisible, w: RT.w }; dxSilent = true;
-    try { ratioBox = st; ratioVisible = true; rtRender(); } finally { ratioBox = keep.box; ratioVisible = keep.vis; RT.w = keep.w; dxSilent = false; }
+    var ho = RT.holdOverride; RT.holdOverride = rtHold() || "BTC"; /* the full Reading as the site shows it once an asset is chosen; its swap sentences are left out below */
+    try { ratioBox = st; ratioVisible = true; rtRender(); } finally { ratioBox = keep.box; ratioVisible = keep.vis; RT.w = keep.w; RT.holdOverride = ho; dxSilent = false; }
     var D = RT.data, n = D.t.length - 1;
     var top = coins.slice(0, 200), tot = top.reduce(function (a, c) { return a + (+c.market_cap || 0); }, 0), cap = function (S) { var c = top.filter(function (x) { return String(x.symbol).toUpperCase() === S; })[0]; return c ? +c.market_cap / tot * 100 : 0; }, bD = cap("BTC"), eD = cap("ETH");
     var snTip = Array.prototype.filter.call(st.querySelectorAll(".rt-fm-tip .val"), function (e) { return /Season|Neutral/.test(e.textContent); })[0], sn = snTip ? (/Bitcoin Season/.test(snTip.textContent) ? "BTC" : /Ethereum Season/.test(snTip.textContent) ? "ETH" : "") : "", season = n > 90 ? (D.r[n] / D.r[n - 90] - 1) * 100 : null;
