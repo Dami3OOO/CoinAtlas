@@ -6,7 +6,7 @@
 //                              (volume and supply from Coinpaprika only, so they stay comparable from day to day).
 //                              Total, dominance and "new in the top 200" use the first 200, as the site does.
 //   readings.json              the Reading of the BTC|ETH Ratio as it stood at the end of each day: what the site really said
-//   dominance.json             one line per day: [BTC %, ETH %, total market cap, coins, source, USDT %, stablecoins %]
+//   dominance.json             one line per day: [BTC %, ETH %, total market cap, coins, source, USDT %, stablecoins %, altcoins %]
 //   new.json                   coins that entered the top 200 less than 14 snapshots ago
 //   history/btc-eth.json       every daily close of BTC and ETH since 2017 (Binance)
 //   history/fear-greed.json    every daily Fear & Greed value since 2018 (alternative.me)
@@ -129,12 +129,16 @@ export async function extras(get = getJson) {
   catch (e) { console.log("volume and supply not added:", e.message); }
   return out;
 }
+function shares(top, total, cap) { /* stablecoins and altcoins as recorded that day, so a later change of the stablecoin list never changes a past day */
+  const st = top.filter(c => STABLECOINS.includes(c[0])).reduce((a, c) => a + c[3], 0) / total * 100, b = cap("BTC") / total * 100, e = cap("ETH") / total * 100;
+  return { stable: +st.toFixed(3), alts: +Math.max(0, 100 - b - e - st).toFixed(3) };
+}
 export function build(found, ext = {}) {
   const all = found.coins.map(c => [String(c[0]).toUpperCase(), String(c[1]), +c[2] || 0, +c[3] || 0]).sort((a, b) => b[3] - a[3]).slice(0, 300);
   all.forEach(c => { const x = ext[c[0]]; c.push(x ? x[0] : null, x ? x[1] : null); });
   const top = all.slice(0, 200), total = top.reduce((s, c) => s + c[3], 0), cap = s => (top.find(c => c[0] === s) || [])[3] || 0; /* totals and dominance: the top 200, as on the site */
   if (all.length < 150 || !(cap("BTC") > 0) || !(cap("ETH") > 0)) throw new Error("incomplete list: " + all.length + " coins");
-  return { date: DAY, taken: new Date().toISOString(), ny: MODE === "midnight" || undefined, late: MODE === "backup" || undefined, source: found.source, total: Math.round(total), btc: +(cap("BTC") / total * 100).toFixed(3), eth: +(cap("ETH") / total * 100).toFixed(3), ratio: +(all.find(c => c[0] === "BTC")[2] / all.find(c => c[0] === "ETH")[2]).toFixed(4), fields: ["symbol", "name", "price", "market cap", "24h volume", "circulating supply"], coins: all };
+  return { date: DAY, taken: new Date().toISOString(), ny: MODE === "midnight" || undefined, late: MODE === "backup" || undefined, source: found.source, total: Math.round(total), btc: +(cap("BTC") / total * 100).toFixed(3), eth: +(cap("ETH") / total * 100).toFixed(3), ...shares(top, total, cap), ratio: +(all.find(c => c[0] === "BTC")[2] / all.find(c => c[0] === "ETH")[2]).toFixed(4), fields: ["symbol", "name", "price", "market cap", "24h volume", "circulating supply"], coins: all };
 }
 
 export function write(snap) {
@@ -143,7 +147,7 @@ export function write(snap) {
   writeFileSync(join(dir, snap.date + ".json"), JSON.stringify(head).slice(0, -1) + ',"coins":[\n' + coins.map(c => JSON.stringify(c)).join(",\n") + "\n]}\n");
 
   const domFile = join(DATA, "dominance.json"), dom = existsSync(domFile) ? JSON.parse(readFileSync(domFile, "utf8") || "{}") : {};
-  dom[snap.date] = [snap.btc, snap.eth, snap.total, Math.min(200, coins.length), snap.source, +((coins.slice(0, 200).find(c => c[0] === "USDT") || [0, 0, 0, 0])[3] / snap.total * 100).toFixed(3), +(coins.slice(0, 200).filter(c => STABLECOINS.includes(c[0])).reduce((a, c) => a + c[3], 0) / snap.total * 100).toFixed(3)]; /* [.., USDT %, all stablecoins %] */
+  dom[snap.date] = [snap.btc, snap.eth, snap.total, Math.min(200, coins.length), snap.source, +((coins.slice(0, 200).find(c => c[0] === "USDT") || [0, 0, 0, 0])[3] / snap.total * 100).toFixed(3), snap.stable, snap.alts]; /* [.., USDT %, stablecoins %, altcoins %] */
   writeFileSync(domFile, "{\n" + Object.keys(dom).sort().map(k => JSON.stringify(k) + ": " + JSON.stringify(dom[k])).join(",\n") + "\n}\n");
 
   // new in the top 200: how many snapshots in a row, counted back from today, a coin has been on the list

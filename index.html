@@ -4331,7 +4331,7 @@
       var tr = document.createElement("div"); tr.className = "snx-tmp"; x.appendChild(tr); snapEmbedRatio(tr, k, "all");
       var rtc = document.getElementById("snx-rt"), rd = snapRead && snapRead[k], D = RT.data, idx = -1, end = Date.parse(k + "T23:59:59Z"); if (D) for (var q = 0; q < D.t.length; q++) if (D.t[q] <= end) idx = q;
       var season = idx > 90 ? (D.r[idx] / D.r[idx - 90] - 1) * 100 : null, snTip = Array.prototype.filter.call(tr.querySelectorAll(".rt-fm-tip .val"), function (e) { return /Season|Neutral/.test(e.textContent); })[0], sn = snTip ? (/Bitcoin Season/.test(snTip.textContent) ? "BTC" : /Ethereum Season/.test(snTip.textContent) ? "ETH" : "") : "";
-      var vals = ['[' + (+j.ratio).toFixed(2) + ']', sn ? '<span style="color:' + (sn === "BTC" ? BTC_C : ETH_C) + '">[' + sn + ' Season' + (season == null ? '' : ' · ' + (season >= 0 ? '+' : '−') + Math.abs(season).toFixed(1) + '% over 90 days') + ']</span>' : '<span style="color:' + GREY_C + '">[No Season]</span>', '<span style="color:' + BTC_C + '">[BTC ' + (+j.btc).toFixed(1) + '%]</span> <span style="color:' + ETH_C + '">[ETH ' + (+j.eth).toFixed(1) + '%]</span> <span style="color:var(--muted)">[ALTS ' + Math.max(0, 100 - j.btc - j.eth).toFixed(1) + '%]</span>'];
+      var vals = ['[' + (+j.ratio).toFixed(2) + ']', sn ? '<span style="color:' + (sn === "BTC" ? BTC_C : ETH_C) + '">[' + sn + ' Season' + (season == null ? '' : ' · ' + (season >= 0 ? '+' : '−') + Math.abs(season).toFixed(1) + '% over 90 days') + ']</span>' : '<span style="color:' + GREY_C + '">[No Season]</span>', '<span style="color:' + BTC_C + '">[BTC ' + (+j.btc).toFixed(1) + '%]</span> <span style="color:' + ETH_C + '">[ETH ' + (+j.eth).toFixed(1) + '%]</span> <span style="color:#2dd4bf">[STABLES ' + (j.stable != null ? +j.stable : 0).toFixed(1) + '%]</span> <span style="color:var(--muted)">[ALTS ' + (j.alts != null ? +j.alts : Math.max(0, 100 - j.btc - j.eth)).toFixed(1) + '%]</span>'];
       Array.prototype.forEach.call(tr.querySelectorAll(".rt-chart-section"), function (s, i) { if (i > 2) return; var hd = s.querySelector(".rt-head"); if (hd) hd.insertAdjacentHTML("beforeend", '<span class="snx-val">' + vals[i] + '</span>'); rtc.appendChild(s); });
       var rdc = document.getElementById("snx-rd"), vd = tr.querySelector(".rt-vd"), fm = tr.querySelector("#rt-formula"), tb = fm && fm.querySelector(".rt-fm-total > b"), sb = fm && fm.querySelector(".rt-fm-sum b");
       if (vd) { vd.removeAttribute("id"); vd.className = "rt-vd snx-rdt"; vd.textContent = snapReadingNeutral(vd.textContent); rdc.appendChild(vd); } /* the day's Reading in its own colour, without what depends on your holdings */
@@ -4757,7 +4757,8 @@
   }
   t2Btn.addEventListener("click", function () { t2Visible = !t2Visible; t2Btn.classList.toggle("active", t2Visible); renderT200(); });
   t2Box.addEventListener("click", function (e) { var b = e.target.closest("[data-t2y]"); if (b) { t2Year = +b.dataset.t2y; renderT200(); return; } if (e.target.closest("[data-t2brk]")) { t2Brk = !t2Brk; renderT200(); } });
-  function t2Parts() { /* the Top 200 split: Bitcoin, Ethereum, every stablecoin together, and the rest */
+  function t2Parts() { /* the Top 200 split: Bitcoin, Ethereum, every stablecoin together, and the rest; a past day uses the shares recorded that day */
+    var R = ttDay && snapDomAll && snapDomAll[ttDay]; if (R && R[7] != null) { var T0 = +R[2]; return { tot: T0, rows: [["Bitcoin", BTC_C, R[0] / 100 * T0], ["Ethereum", ETH_C, R[1] / 100 * T0], ["Stablecoins", "#2dd4bf", R[6] / 100 * T0], ["Altcoins", GREY_C, R[7] / 100 * T0]] }; }
     var top = coins.slice(0, 200), tot = 0, b = 0, e = 0, st = 0; top.forEach(function (c) { var m = +c.market_cap || 0, S = String(c.symbol).toUpperCase(); tot += m; if (S === "BTC") b += m; else if (S === "ETH") e += m; else if (STABLECOINS.indexOf(S) > -1) st += m; });
     return { tot: tot, rows: [["Bitcoin", BTC_C, b], ["Ethereum", ETH_C, e], ["Stablecoins", "#2dd4bf", st], ["Altcoins", GREY_C, Math.max(0, tot - b - e - st)]] };
   }
@@ -4774,7 +4775,7 @@
     return P[P.length - 1];
   }
   function domSeries(k) { /* [t, btc, eth, stablecoins, altcoins] for every day of k's year up to k */
-    var y = k.slice(0, 4), out = []; Object.keys(snapDomAll || {}).sort().forEach(function (d) { var a = snapDomAll[d]; if (d.slice(0, 4) !== y || d > k || !(+a[0] > 0)) return; var st = a[6] != null ? +a[6] : null; out.push([Date.parse(d + "T00:00:00Z"), +a[0], +a[1], st, st == null ? null : Math.max(0, 100 - a[0] - a[1] - st)]); });
+    var y = k.slice(0, 4), out = []; Object.keys(snapDomAll || {}).sort().forEach(function (d) { var a = snapDomAll[d]; if (d.slice(0, 4) !== y || d > k || !(+a[0] > 0)) return; var st = a[6] != null ? +a[6] : null, al = a[7] != null ? +a[7] : st == null ? null : Math.max(0, 100 - a[0] - a[1] - st); out.push([Date.parse(d + "T00:00:00Z"), +a[0], +a[1], st, al]); }); /* stablecoins and altcoins as recorded that day */
     return out;
   }
   function domChart(k, W, H, focus) { /* one chart, four lines (or only the focused one, scaled to its own range), the calendar year on the x axis */

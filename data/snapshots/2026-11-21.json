@@ -1,4 +1,4 @@
-{"date":"2026-11-21","taken":"2026-11-22T05:19:15.224Z","ny":true,"source":"CoinAtlas · Aggregated · 6 sources","total":2021475825342,"btc":58.754,"eth":10.073,"ratio":35.6339,"fields":["symbol","name","price","market cap","24h volume","circulating supply"],"fg":12,"coins":[
+{"date":"2026-11-21","taken":"2026-11-22T05:19:15.224Z","ny":true,"source":"CoinAtlas · Aggregated · 6 sources","total":2021475825342,"btc":58.754,"eth":10.073,"stable":13.379,"alts":17.794,"ratio":35.6339,"fields":["symbol","name","price","market cap","24h volume","circulating supply"],"fg":12,"coins":[
 ["BTC","Bitcoin",58814.845,1187703512730.5,31796434930,null],
 ["ETH","Ethereum",1650.5300000000002,203616201795.965,9534866417,null],
 ["USDT","Tether",0.9995265524303618,178964675281.49,56750086881,null],
