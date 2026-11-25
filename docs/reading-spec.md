@@ -569,3 +569,4 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - CoinAtlas soll später weg von GitHub: eigene Website und eigener Server, der 24/7 läuft (Roadmap, letzter Punkt).
 - Bei jeder Entwicklung beachten: Daten bleiben als einfache JSON-Dateien mit festen Pfaden; alles Laden läuft über einen Loader (repoJson), dessen Quelle sich an einer Stelle umstellen lässt; Skripte laufen mit reinem Node (scripts/*.mjs), die GitHub-Workflows rufen nur diese Skripte auf; keine Funktion darf nur mit GitHub-Diensten gehen (Releases, Actions, raw.githubusercontent.com sind austauschbar).
 - Roadmap: Proper Credit & Data Rules (vor Mobile): Bedingungen aller Datenquellen prüfen, Quellen in der geforderten Form nennen, Frage nach kommerzieller Nutzung kostenloser APIs klären.
+- Live-Tag-Exporte: unter dem Datum eine zweite Zeile 'As of HH:MM Zeitzone · [Day Still in Progress]'.
