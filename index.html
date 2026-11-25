@@ -806,6 +806,7 @@
   .stk-asking { position: relative; } .stk-blur { filter: blur(4px); opacity: .4; pointer-events: none; user-select: none; } .stk-ask { position: absolute; left: 0; right: 0; top: 90px; } .stk-ask input { width: 220px; height: 34px; text-align: center; background: var(--bg); color: var(--fg); border: 1px solid #3a3a36; border-radius: 8px; font: inherit; font-size: 14px; }
   .stk-yrs { display: flex; gap: 6px; } .stk-yrs .gear { height: 26px; padding: 0 10px; font-size: 11px; }
   .dom-now { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; } .dom-now > div { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); } .dom-now span { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); } .dom-now b { font-size: 20px; } .dom-of { text-align: center; margin: 8px 0 10px; }
+  .sy-yt { position: absolute; left: 4px; transform: translateY(-50%); font-size: 10px; color: var(--muted); pointer-events: none; font-variant-numeric: tabular-nums; text-shadow: 0 0 3px var(--pop); }
   .dom-t { cursor: pointer; transition: background .15s ease; } .dom-t:hover { background: #2a2a28 !important; } .dom-t.on { border-color: var(--dc) !important; background: #2a2a28 !important; } .dom-all { display: block; margin: 0 auto 8px; font: inherit; font-size: 11px; color: var(--muted); background: none; border: 0; cursor: pointer; } .dom-all:hover { color: var(--fg); } .dmc .dm-ymin { position: absolute; left: 6px; bottom: 4px; font-size: 10px; color: var(--muted); }
   .dxi-dom { display: grid; grid-template-columns: 1fr 3fr; gap: 20px; align-items: stretch; } .dxi-domn { display: flex; flex-direction: column; justify-content: center; gap: 14px; } .dxi-domn > div:not(.fg-sub) { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); } .dxi-domn span { display: flex; align-items: center; gap: 8px; font-size: 16px; color: var(--muted); } .dxi-domn span i { width: 11px; height: 11px; border-radius: 50%; } .dxi-domn b { font-size: 34px; } .dxi-domn .fg-sub { text-align: center; }
   .dmc .dm-ymax { position: absolute; left: 6px; top: 4px; font-size: 10px; color: var(--muted); } .dm-tv { display: flex; flex-direction: column; gap: 2px; } .dm-tr { display: flex; justify-content: space-between; gap: 14px; font-size: 12px; } .dm-tr b { font-variant-numeric: tabular-nums; }
@@ -4168,12 +4169,21 @@
     var v = pts.map(function (p) { return p[1]; }), mn = Math.min.apply(null, v), mx = Math.max.apply(null, v); if (mx - mn < Math.abs(mx) * 0.002 || mx === mn) { var pad = Math.abs(mx) * 0.01 || 1; mn -= pad; mx += pad; }
     var X = function (t) { return ((t - a) / (b - a) * W).toFixed(1); }, Y = function (x) { return (H - 6 - (x - mn) / (mx - mn) * (H - 12)).toFixed(1); };
     var line = pts.map(function (p, i) { return (i ? "L" : "M") + X(p[0]) + " " + Y(p[1]); }).join(" "), id = "syg" + Math.round(Math.random() * 1e7), last = pts[pts.length - 1];
-    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" class="sy-svg" style="height:' + H + 'px"><defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + color + '" stop-opacity=".32"/><stop offset="100%" stop-color="' + color + '" stop-opacity="0"/></linearGradient></defs>' +
+    var ax = mini ? { lines: "", labels: "" } : syYAxis(kind, mn, mx, H, Y);
+    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" class="sy-svg" style="height:' + H + 'px">' + ax.lines + '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + color + '" stop-opacity=".32"/><stop offset="100%" stop-color="' + color + '" stop-opacity="0"/></linearGradient></defs>' +
       (pts.length > 1 ? '<path d="' + line + ' L' + X(last[0]) + ' ' + H + ' L' + X(pts[0][0]) + ' ' + H + ' Z" fill="url(#' + id + ')"/><path d="' + line + '" fill="none" stroke="' + color + '" stroke-width="2" vector-effect="non-scaling-stroke"/>' : '') +
       '<circle cx="' + X(last[0]) + '" cy="' + Y(last[1]) + '" r="' + (mini ? 2.5 : 3.5) + '" fill="' + color + '"/></svg>';
     if (mini) return svg;
     var mon = ["Jan", "Apr", "Jul", "Oct"].map(function (m, i) { return '<span style="left:' + (i * 25) + '%">' + m + '</span>'; }).join("") + '<span style="left:100%;transform:translateX(-100%)">Dec</span>';
-    return '<div class="sy" data-sy=\'' + JSON.stringify({ a: a, b: b, k: kind, p: pts, mn: mn, mx: mx, H: H }) + '\'>' + svg + '<div class="sy-x"></div><div class="sy-dot"></div><div class="price-tooltip sy-tip" hidden><div class="tt-time"></div><div class="tt-price"></div></div></div><div class="sy-ax">' + mon + '</div>';
+    return '<div class="sy" data-sy=\'' + JSON.stringify({ a: a, b: b, k: kind, p: pts, mn: mn, mx: mx, H: H }) + '\'>' + svg + '<div class="sy-x"></div><div class="sy-dot"></div>' + ax.labels + '<div class="price-tooltip sy-tip" hidden><div class="tt-time"></div><div class="tt-price"></div></div></div><div class="sy-ax">' + mon + '</div>';
+  }
+  function syTicks(lo, hi, n) { /* round values along the y axis: 0.5T, 1T, 1.5T … */
+    var raw = (hi - lo) / (n || 4); if (!(raw > 0)) return []; var mag = Math.pow(10, Math.floor(Math.log10(raw))), r = raw / mag, st = (r < 1.5 ? 1 : r < 3 ? 2 : r < 7 ? 5 : 10) * mag, out = [];
+    for (var v = Math.ceil(lo / st) * st; v <= hi + st * 1e-9; v += st) out.push(+v.toPrecision(12)); return out;
+  }
+  function syTick(kind, v) { if (kind === "rate" || kind === "pct") return (+v.toFixed(2)) + "%"; var a = Math.abs(v); return "$" + (a >= 1e12 ? +(v / 1e12).toFixed(2) + "T" : a >= 1e9 ? +(v / 1e9).toFixed(1) + "B" : a >= 1e6 ? +(v / 1e6).toFixed(1) + "M" : +v.toFixed(0)); }
+  function syYAxis(kind, lo, hi, H, Yf) { /* faint lines in the chart and their labels on the left */
+    var t = syTicks(lo, hi, kind === "cap" ? 6 : 5); return { lines: t.map(function (v) { var y = Yf(v); return '<line x1="0" x2="100%" y1="' + y + '" y2="' + y + '" stroke="rgba(255,255,255,.06)" vector-effect="non-scaling-stroke"/>'; }).join(""), labels: t.map(function (v) { var pc = Math.max(4, Math.min(96, +Yf(v) / H * 100)); return '<span class="sy-yt" style="top:' + pc + '%">' + syTick(kind, v) + '</span>'; }).join("") };
   }
   function syFmt(kind, v) { return kind === "rate" ? v.toFixed(2) + "%" : compact(v); }
   document.addEventListener("mousemove", function (e) { /* the tooltip of the year charts: date and value of the nearest day */
@@ -4717,10 +4727,11 @@
     if (!P.length || !vs.length) return '<div class="fg-sub">Nothing recorded in ' + y + ' yet.</div>';
     var lo = 0, mx = Math.min(100, Math.max.apply(null, vs) * 1.08); if (focus) { var v0 = Math.min.apply(null, vs), v1 = Math.max.apply(null, vs), pad = Math.max(0.2, (v1 - v0) * 0.15); lo = Math.max(0, v0 - pad); mx = Math.min(100, v1 + pad); }
     var X = function (t) { return ((t - a) / (b - a) * W).toFixed(1); }, Y = function (v) { return (H - 4 - (v - lo) / (mx - lo) * (H - 8)).toFixed(1); };
-    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" class="sy-svg" style="height:' + H + 'px">' + [0.25, 0.5, 0.75].map(function (f) { return '<line x1="0" x2="' + W + '" y1="' + Y(lo + (mx - lo) * f) + '" y2="' + Y(lo + (mx - lo) * f) + '" stroke="rgba(255,255,255,.06)"/>'; }).join("") +
+    var ax = syYAxis("pct", lo, mx, H, Y);
+    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" class="sy-svg" style="height:' + H + 'px">' + ax.lines +
       domS().filter(function (S) { return !focus || S[2] === focus; }).map(function (S) { var seg = [], cur = []; P.forEach(function (p) { if (p[S[2]] == null) { if (cur.length) seg.push(cur); cur = []; } else cur.push(X(p[0]) + "," + Y(p[S[2]])); }); if (cur.length) seg.push(cur); return seg.map(function (c) { return '<polyline fill="none" stroke="' + S[1] + '" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="' + c.join(" ") + '"/>'; }).join(""); }).join("") + '</svg>';
     var mon = ["Jan", "Apr", "Jul", "Oct"].map(function (m, i) { return '<span style="left:' + (i * 25) + '%">' + m + '</span>'; }).join("") + '<span style="left:100%;transform:translateX(-100%)">Dec</span>';
-    return '<div class="sy dmc" data-dm=\'' + JSON.stringify({ a: a, b: b, p: P }) + '\'>' + svg + '<div class="sy-x"></div><div class="price-tooltip sy-tip" hidden><div class="tt-time"></div><div class="dm-tv"></div></div><span class="dm-ymax">' + (focus ? mx.toFixed(1) : mx.toFixed(0)) + '%</span>' + (focus ? '<span class="dm-ymin">' + lo.toFixed(1) + '%</span>' : '') + '</div><div class="sy-ax">' + mon + '</div>';
+    return '<div class="sy dmc" data-dm=\'' + JSON.stringify({ a: a, b: b, p: P }) + '\'>' + svg + '<div class="sy-x"></div><div class="price-tooltip sy-tip" hidden><div class="tt-time"></div><div class="dm-tv"></div></div>' + ax.labels + '</div><div class="sy-ax">' + mon + '</div>';
   }
   document.addEventListener("mousemove", function (e) { /* the tooltip of the Dominance chart: all four shares of that day */
     var el = e.target.closest && e.target.closest(".dmc"); Array.prototype.forEach.call(document.querySelectorAll(".dmc .sy-tip:not([hidden])"), function (t) { if (!el || !el.contains(t)) { t.hidden = true; t.parentNode.querySelector(".sy-x").style.opacity = 0; } });
@@ -5125,9 +5136,8 @@
     }).join("");
     var inner = '<div class="stk-bar"><button type="button" class="gear stk-back" data-stkback="1">‹ ' + (stk.fromPf ? 'Portfolio' : 'All Assets') + '</button><span class="stk-asset">' + logoHtml(c) + '<b>' + esc(c.name) + '</b><i>' + esc(sym) + '</i></span><span></span></div>' +
       stkAmtField(sym) + '<div class="stk-eq" id="stk-eq">' + (tokens > 0 ? '≈ ' + price(tokens * px) : 'Pick a provider to see what you would have after 365 days') + '</div>' +
-      '<div class="stk-list">' + res + '</div>' + stkChartHtml(sym, st) + STK_NOTE;
-    if (stk.asked === sym) return inner;
-    return '<div class="stk-asking"><div class="stk-blur">' + inner + '</div><div class="stk-ask dx-ask"><span>How much ' + esc(sym) + ' do you hold?</span><input id="stk-ask-amt" inputmode="decimal" placeholder="Amount of ' + esc(sym) + '" autocomplete="off"><div><button type="button" data-stkask="go">Continue</button><button type="button" data-stkask="skip">Continue without an Amount</button></div></div></div>';
+      '<div class="stk-list">' + res + '</div>' + STK_NOTE; /* each provider's own rate history sits in its view */
+    return inner;
   }
   function stkProvHtml() { /* one provider: what the amount becomes in 365 days, the gain, and this provider's own rate history */
     var sym = stk.sym, st = stakeData[sym], c = stkCoin(sym), x = st && st.list.filter(function (y) { return y.name === stk.prov; })[0];
