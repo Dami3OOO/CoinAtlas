@@ -780,8 +780,11 @@
   .fgx .fg-top-row { display: flex !important; gap: 24px; align-items: center; margin-top: 16px; } .fgx .fg-stats-col { display: block !important; flex: 1; } .fgx .fg-gauge-col { flex: 0 0 260px; } .fgx .fgx-r .fg-annual-section { margin: 0; border: 0; padding: 0; background: none; } .fgx .fgx-more { margin: 16px 0 0; border: 0; padding: 0; background: none; } .fgx .fg-ax { margin-top: 6px; } .fgx .fg-yr-wrap { display: none !important; } .fgx .fg-annual-head .fg-timeframes { display: flex !important; pointer-events: none; } .fgx .fg-py-chev { display: none; } .fgx .fg-top-row { justify-content: center; }
   .dx-tt { margin: -4px 0 12px; padding: 10px 12px; border: 1px solid #facc15; border-radius: 8px; color: #facc15; font-size: 12px; text-align: center; background: rgba(250,204,21,.06); }
   .dx-list { display: flex; flex-direction: column; gap: 6px; } .dx-item { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; text-align: left; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); font: inherit; cursor: pointer; } .dx-item:hover { background: #2a2a28; } .dx-item b { font-size: 13px; } .dx-item span { grid-column: 1; font-size: 11px; color: var(--muted); } .dx-item i { grid-row: 1 / span 2; grid-column: 2; font-style: normal; font-size: 12px; font-weight: 700; color: var(--muted); }
+  .dx-wrap { border-radius: 8px; } .dx-wrap.on .dx-item { border-color: #3a3a36; background: #2a2a28; } .dx-pick { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; padding: 10px; margin-top: 4px; border: 1px solid var(--line); border-radius: 8px; background: var(--pop); }
+  .dx-pick .fg-tf-col { display: flex; flex-direction: column; gap: 4px; min-width: 120px; } .dx-pick .fg-tf-col b { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 0 4px 2px; } .dx-pick .fg-tf-col button { text-align: left; font: inherit; font-size: 12px; color: var(--fg); background: transparent; border: 0; border-radius: 6px; padding: 6px 8px; cursor: pointer; } .dx-pick .fg-tf-col button:hover { background: var(--hover); } .dx-pick .fg-tf-col button.active { background: #2a2a28; font-weight: 700; }
+  .dx-which { flex: 1; } .dx-which select { height: 30px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 0 8px; font: inherit; font-size: 12px; } .dx-go { margin-left: auto; height: 30px; padding: 0 12px; font-size: 12px; font-weight: 700; }
   .dx-snap { display: grid; grid-template-columns: 50px 1fr auto; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 12px; font-weight: 600; } .dx-snap select { min-width: 0; height: 30px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 0 8px; font: inherit; font-size: 12px; } .dx-fmt { display: flex; gap: 4px; } .dx-fmt .gear { height: 30px; padding: 0 8px; font-size: 11px; }
-  .wpx-body { display: flex; justify-content: center; } .snx.wpx .snx-h { display: flex; flex-direction: column; align-items: center; gap: 14px; } .snx.wpx .snx-h > div:last-child { display: none; } .snx.wpx .pinned-card { margin: 0; }
+  .wpx-body { display: flex; justify-content: center; } .wpx-cols { display: flex; gap: 24px; align-items: flex-start; } .wpx-col { display: flex; flex-direction: column; gap: 12px; flex: none; } .wpx-col > * { margin-top: 0 !important; } .snx.wpx .pinned-card { margin: 0; }
   .t2-top { display: flex; flex-direction: column; align-items: center; gap: 2px; margin: -4px 0 12px; } .t2-top b { font-size: 26px; } .t2-note { text-align: center; margin-top: 12px; } .t2-note a { color: inherit; }
   .fomc-next { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); } .fomc-next b { font-size: 26px; font-variant-numeric: tabular-nums; color: #93c5fd; } .fomc-next > span:not(.fg-sub) { font-size: 13px; font-weight: 600; }
   .fomc-list { display: flex; flex-direction: column; gap: 4px; } .fomc-row { display: flex; justify-content: space-between; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 12px; } .fomc-row span { color: var(--muted); } .fomc-row.past { opacity: .45; } .fomc-row.on { border-color: #93c5fd; } .fomc-row.on span { color: #93c5fd; font-weight: 700; }
@@ -4236,16 +4239,16 @@
       '<div class="pf-sh-img" id="pf-sh-img"><div class="pf-sh-wait">Building the image…</div></div><div class="pf-sh-foot"><button class="gear pf-sh-dl" type="button" id="snap-png-dl" disabled>Download PNG</button></div></div>';
     ov.hidden = false;
     if (!fgData && !fgLoading) loadFGData(); if (!RT.data) rtLoad();
-    Promise.all([loadH2C(), LV ? LV.j : snapFile(k), snapExtras(), LV ? LV.chg : snapDayChanges(k), snapWait(function () { return fgData && RT.data; }, 15000), snapWeekLoad(wk)]).then(function (r) {
+    return Promise.all([loadH2C(), LV ? LV.j : snapFile(k), snapExtras(), LV ? LV.chg : snapDayChanges(k), snapWait(function () { return fgData && RT.data; }, 15000), snapWeekLoad(wk)]).then(function (r) {
       var h2c = r[0], j = r[1]; if (!j || !j.coins) throw new Error("no snapshot");
       if (wk && snapWChg[wk.id]) { wkKeep = snapChg[k]; snapChg[k] = snapWChg[wk.id]; wkSwapped = true; } /* the week's moves while the image is built */
       if (LV) { wkKeep = snapChg[k]; snapChg[k] = LV.chg; wkSwapped = true; if (snapStakeH && !snapStakeH[k]) { var sks = Object.keys(snapStakeH).sort(); if (sks.length) { snapStakeH[k] = snapStakeH[sks[sks.length - 1]]; lvStake = true; } } } /* live: today's moves so far, the latest staking rates */
       var x = document.createElement("div"); x.className = "snx"; x.id = "snx"; snapPngBuild = true;
-      var isWeek = /^W/.test(snapImgKind || ""), brand = (document.getElementById("logo-svg") || {}).outerHTML || "", day = LV ? new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + " · " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " [Live]" : snapImgTitle || new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+      var isWeek = /^W/.test(snapImgKind || ""), brand = (document.getElementById("logo-svg") || {}).outerHTML || "", day = LV && wk ? wk.name + ' · ' + wk.range + ' · up to ' + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + ' [Live]' : LV ? new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + " · " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " [Live]" : snapImgTitle || new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
       var skH = (snapStakeH && snapStakeH[k]) || {}, stakeCoins = snapTopCoins(j, 50).filter(function (c) { return stakeData[c.symbol] && skH[c.symbol] && Object.keys(skH[c.symbol]).length; }); /* only rates the image can show */
       var rdo = snapRead && snapRead[snapImgLast || k], rdS = rdo ? (rdo.side || rdo.phase ? (rdo.side || rdo.phase) + ' Phase' : '') : '', rdT = rdo && rdo.text ? snapReadingNeutral(rdo.text) : '';
       x.className = "snx " + document.body.className.split(/\s+/).filter(function (c) { return /^(tags-off|tag-off-)/.test(c); }).join(" "); /* the settings of the site carry into the image */
-      x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas ' + (LV ? 'Live' : isWeek ? 'Weekly' : 'Daily') + ' Snapshot</b><span>' + day + '</span></div><div></div></div>' +
+      x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas ' + (LV ? (wk ? 'Live Weekly' : 'Live') : isWeek ? 'Weekly' : 'Daily') + ' Snapshot</b><span>' + day + '</span></div><div></div></div>' +
         '<div class="snx-body">' +
           '<div class="snx-col snx-left"><div class="snx-card snx-listc"><div class="snx-ch"><b>Top 50</b><span>' + (wk ? '[' + wk.name + '] · Tier and gain of the week' : '[Today] · Tier and gain of the day') + '</span></div><table><tbody>' + snapRowsHtml(k, j, 0, 50) + '</tbody></table></div></div>' +
           '<div class="snx-col snx-right">' +
@@ -4413,6 +4416,7 @@
     if (fgVisible && fgData) { renderFGChart(); renderFGAnnual(); }
     if (t2Visible) renderT200();
     if (dxVisible) renderDX();
+    if (fomcVisible) renderFOMC();
     applyStakeBadges();
   }
   var ttTfKeep = null;
@@ -4425,7 +4429,7 @@
     }
   }
   /* ---------- DATA EXPORT: every image export in one place. Live = what the site shows right now (in Time Travel: the travelled day), or any recorded Snapshot ---------- */
-  var dxVisible = false, dxSrc = "live", dxBtn = document.getElementById("dx-btn"), dxBox = document.getElementById("dx-container");
+  var dxVisible = false, dxBtn = document.getElementById("dx-btn"), dxBox = document.getElementById("dx-container");
   var DX = [["default", "CoinAtlas Default", "Top 50, TOTAL 200, Fear & Greed, BTC|ETH, Staking and Sentiment Squares on one image"], ["fg", "Fear & Greed Index", "The chart as you set it, the wheel, History and Past Years"], ["sq", "Sentiment Squares", "The squares as they are right now"], ["ratio", "BTC|ETH Ratio", "The whole window as it is set"], ["stake", "Staking", "The Staking window as it is open"], ["t200", "TOTAL 200", "The year of the Top 200 market cap"], ["fomc", "FOMC", "Countdown and meeting calendar"]];
   function dxToday() { return new Date(nyDay(Date.now()).start + 6 * 36e5).toISOString().slice(0, 10); }
   function dxLiveJ() { /* the list as it is right now, in the shape of a snapshot */
@@ -4433,20 +4437,43 @@
     top.forEach(function (c) { var S = String(c.symbol).toUpperCase(), pc = dayOpenCache[c.symbol] ? changeOf(c) : c.price_change_percentage_24h; chg[S] = { pc: pc == null || !isFinite(pc) ? null : +pc, src: "live" }; });
     return { j: { coins: top.map(function (c) { return [String(c.symbol).toUpperCase(), c.name, +c.current_price, +c.market_cap, +c.total_volume || 0, +c.circulating_supply || 0]; }), total: total, btc: (+f("BTC").market_cap || 0) / total * 100, eth: (+f("ETH").market_cap || 0) / total * 100, ratio: (+f("BTC").current_price || 0) / (+f("ETH").current_price || 1) }, chg: chg };
   }
-  function winPng(name, btn, box) { /* a window exactly as it is open on the site, photographed with the CoinAtlas header */
+  var dxWhen = "", dxTf = "", dxPick = null, dxMode = "live", dxSpan = "day";
+  function winPng(name, btn, box) { /* a window as it is set on the site, laid out wide for a desktop screen and photographed with the CoinAtlas header */
     var was = btn.classList.contains("active"); if (!was) btn.click();
     var ov = document.getElementById("pf-sh"); if (!ov) { ov = document.createElement("div"); ov.id = "pf-sh"; ov.className = "pf-sh"; document.body.appendChild(ov); }
-    ov.innerHTML = '<div class="pf-sh-box snx-box" role="dialog" aria-label="' + esc(name) + ' image"><div class="pf-sh-head"><b>' + esc(name) + ' Image</b><span class="pf-sh-mode">' + (ttDay ? snapDate(ttDay) + ' · Time Travel' : 'Live') + '</span><button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
+    var when = ttDay ? new Date(ttDay + "T00:00:00Z") : new Date(), day = dxWhen || (when.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: ttDay ? "UTC" : undefined }) + (ttDay ? " · Time Travel" : " · " + when.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })));
+    ov.innerHTML = '<div class="pf-sh-box snx-box" role="dialog" aria-label="' + esc(name) + ' image"><div class="pf-sh-head"><b>' + esc(name) + ' Image</b><span class="pf-sh-mode">' + esc(day) + '</span><button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
       '<div class="pf-sh-img" id="pf-sh-img"><div class="pf-sh-wait">Building the image…</div></div><div class="pf-sh-foot"><button class="gear pf-sh-dl" type="button" id="snap-png-dl" disabled>Download PNG</button></div></div>';
     ov.hidden = false;
-    Promise.all([loadH2C(), snapWait(function () { return box.querySelector(".pinned-card") && !/Loading/.test(box.textContent); }, 12000)]).then(function (r) {
+    return Promise.all([loadH2C(), snapWait(function () { return box.querySelector(".pinned-card") && !/Loading/.test(box.textContent); }, 12000)]).then(function (r) {
       return new Promise(function (res) { setTimeout(res, 400); }).then(function () {
         var card = box.querySelector(".pinned-card"); if (!card) throw new Error("no window");
-        var w = card.getBoundingClientRect().width, brand = (document.getElementById("logo-svg") || {}).outerHTML || "", when = ttDay ? new Date(ttDay + "T00:00:00Z") : new Date(), x = document.createElement("div"); x.className = "snx wpx"; x.style.width = Math.max(720, w + 96) + "px";
-        var day = when.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: ttDay ? "UTC" : undefined }) + (ttDay ? " · Time Travel" : " · " + when.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
+        var w = Math.round(card.getBoundingClientRect().width), brand = (document.getElementById("logo-svg") || {}).outerHTML || "", x = document.createElement("div"); x.className = "snx wpx";
         x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas ' + esc(name) + '</b><span>' + esc(day) + '</span></div><div></div></div><div class="wpx-body"></div>';
-        var c = card.cloneNode(true); c.style.width = w + "px"; c.style.margin = "0 auto"; Array.prototype.forEach.call(c.querySelectorAll(".chart-close-btn, .snap-dlw, [data-sqdl], [data-fgdl], .fg-tf-menu"), function (n) { n.remove(); });
-        Array.prototype.forEach.call(c.querySelectorAll("[id]"), function (n) { if (!n.closest("svg")) n.removeAttribute("id"); }); /* gradients inside charts keep theirs */ x.querySelector(".wpx-body").appendChild(c); document.body.appendChild(x);
+        var c = card.cloneNode(true); c.style.width = w + "px"; Array.prototype.forEach.call(c.querySelectorAll(".chart-close-btn, .snap-dlw, .fg-tf-menu, .rt-ask, .rt-why, .rt-chg, .rt-title-row .gear, .rt-rd-hs"), function (n) { n.remove(); }); Array.prototype.forEach.call(c.querySelectorAll(".rt-rd-body.asking"), function (n) { n.classList.remove("asking"); }); /* only what the window shows, no controls */
+        Array.prototype.forEach.call(c.querySelectorAll("[id]"), function (n) { if (!n.closest("svg")) n.removeAttribute("id"); });
+        x.style.width = (w + 96) + "px"; x.querySelector(".wpx-body").appendChild(c); document.body.appendChild(x);
+        /* wide, like a desktop screen: the window's parts flow into columns as wide as on the site (nothing stretched); long lists split across them */
+        var top = [], items = [], total = 0;
+        Array.prototype.slice.call(c.children).forEach(function (n) { if (/\b(pf-title|snap-top|rt-title-row)\b/.test(n.className)) top.push(n); else { var h = n.offsetHeight + 12; items.push({ el: n, h: h }); total += h; } });
+        var nc = Math.max(2, Math.min(5, Math.round(Math.sqrt(total * 16 / (9 * w))))), target = total / nc, flat = [];
+        var split = function (it, depth) { /* a part taller than a column is split into its own parts, as deep as needed; each piece keeps its frames */
+          var kids = Array.prototype.slice.call(it.el.children);
+          if (it.h > target * 0.85 && depth < 4 && kids.length >= 2 && !it.el.querySelector(":scope > svg")) kids.forEach(function (k2) { split({ el: k2, h: k2.offsetHeight + 4, path: it.path.concat([it.el]) }, depth + 1); });
+          else flat.push(it);
+        };
+        items.forEach(function (it) { it.path = []; split(it, 0); });
+        var row = document.createElement("div"), cols = [], ch = 0, chain = []; row.className = "wpx-cols";
+        for (var q = 0; q < nc; q++) { var d = document.createElement("div"); d.className = "wpx-col"; d.style.width = w - 40 + "px"; cols.push(d); row.appendChild(d); }
+        var ci = 0; flat.forEach(function (it) {
+          if (ch > 0 && ch + it.h > target * 1.06 && ci < nc - 1) { ci++; ch = 0; chain = []; }
+          var k3 = 0; while (k3 < chain.length && k3 < it.path.length && chain[k3][0] === it.path[k3]) k3++; chain = chain.slice(0, k3);
+          for (var z = k3; z < it.path.length; z++) { var sh = it.path[z].cloneNode(false); (chain.length ? chain[chain.length - 1][1] : cols[ci]).appendChild(sh); chain.push([it.path[z], sh]); }
+          (chain.length ? chain[chain.length - 1][1] : cols[ci]).appendChild(it.el); ch += it.h;
+        });
+        cols.forEach(function (d) { if (!d.children.length) d.remove(); });
+        c.innerHTML = ""; top.forEach(function (n) { c.appendChild(n); }); c.appendChild(row);
+        var cw = row.children.length * w + (row.children.length - 1) * 24; c.style.width = cw + "px"; x.style.width = (cw + 96) + "px";
         Array.prototype.forEach.call(x.querySelectorAll("svg, svg *"), function (n) {
           ["fill", "stroke", "stop-color", "color"].forEach(function (at) { var v = n.getAttribute && n.getAttribute(at); if (v && v.indexOf("var(") > -1) n.setAttribute(at, v.replace(/var\((--[\w-]+)\)/g, function (m, nm) { return pfCss(nm); })); });
         });
@@ -4459,38 +4486,75 @@
       b.onclick = function () { var a = document.createElement("a"); a.href = url; a.download = "coinatlas-" + name.toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-" + (ttDay || new Date().toISOString().slice(0, 10)) + ".png"; document.body.appendChild(a); a.click(); a.remove(); };
     }).catch(function () { if (!was && btn.classList.contains("active")) btn.click(); var im = document.getElementById("pf-sh-img"); if (im) im.innerHTML = '<div class="pf-sh-wait">The image could not be built. Please try again.</div>'; });
   }
-  function dxRun(id) {
-    if (id === "default") { if (ttDay) snapPng(ttDay); else { snapLiveJ = dxLiveJ(); snapPng(dxToday()); } return; }
-    if (id === "fg") { if (fgData) fgPng(); else { if (!fgLoading) loadFGData(); snapWait(function () { return fgData; }, 15000).then(fgPng); } return; }
-    if (id === "sq") { var on = sqVisible; if (!on) sqBtn.click(); setTimeout(function () { sqPng(); if (!on) sqBtn.click(); }, on ? 0 : 2500); return; }
+  function dxShot(id) { /* the image of one export type, from whatever the page shows right now; returns when it is built */
+    if (id === "fg") return (fgData ? Promise.resolve() : (fgLoading || loadFGData(), snapWait(function () { return fgData; }, 15000))).then(fgPng);
+    if (id === "sq") { var on = sqVisible; if (!on) sqBtn.click(); else { sqVal = {}; sqDraw(); } return snapWait(function () { var d = sqItems(); return d.items.length && !d.pend.length; }, 9000).then(function () { return new Promise(function (r) { setTimeout(r, 900); }); }).then(sqPng).then(function () { if (!on) sqBtn.click(); }); }
     if (id === "ratio") return winPng("BTC|ETH Ratio", ratioBtn, ratioBox);
     if (id === "stake") return winPng("Staking", stkBtn, stkBox);
     if (id === "t200") return winPng("TOTAL 200", t2Btn, t2Box);
     if (id === "fomc") return winPng("FOMC", fomcBtn, fomcBox);
+    return Promise.resolve();
   }
+  function dxWeekOpens(wk) { /* each coin's open of the week (first recorded day), for the moves up to now */
+    return wk && wk.first ? snapDayChanges(wk.first) : Promise.resolve({});
+  }
+  function dxBorrow(k, chg, fn) { /* the whole page shows day k (chg: a week's moves) while fn builds its image, then goes back to where it was */
+    var prev = ttDay;
+    return Promise.all([ttLoad(k), prev ? ttLoad(prev) : null]).then(function (r) {
+      ttSwitch(k, r[0], chg); ttRefresh();
+      var back = function () { if (prev) ttSwitch(prev, r[1]); else ttSwitch(null); ttRefresh(); renderTT(); };
+      return Promise.resolve().then(fn).then(back, function (e) { back(); throw e; });
+    });
+  }
+  function dxGo(id, mode, span, key) { /* mode live|snap, span day|week, key the chosen Snapshot day or week */
+    var wk = span === "week" ? (mode === "live" ? snapWeekFromId(dxCurWeek()) : snapWeekFromId(key)) : null, name = (DX.filter(function (d) { return d[0] === id; })[0] || [])[1];
+    var done = function () { dxWhen = ""; dxTf = ""; };
+    if (id === "default") {
+      if (mode === "snap") return wk ? snapWeekLoad(wk).then(function () { return snapPng(wk.last, wk); }) : snapPng(key);
+      if (ttDay) return wk ? snapWeekLoad(wk).then(function () { return snapPng(wk.last, wk); }) : snapPng(ttDay);
+      var LV = dxLiveJ(); if (!wk) { snapLiveJ = LV; return snapPng(dxToday()); }
+      return dxWeekOpens(wk).then(function (op) { Object.keys(LV.chg).forEach(function (S) { var o = op[S], live = LV.j.coins.filter(function (c) { return c[0] === S; })[0]; if (o && o.open > 0 && live) LV.chg[S] = { pc: (live[2] / o.open - 1) * 100, open: o.open, src: "week" }; }); snapLiveJ = LV; return snapPng(dxToday(), wk); });
+    }
+    if (mode === "snap") {
+      if (wk) { dxWhen = wk.name + " · " + wk.range; dxTf = wk.name; return snapWeekLoad(wk).then(function () { return dxBorrow(wk.last, snapWChg[wk.id], function () { return dxShot(id); }); }).then(done, done); }
+      dxWhen = new Date(key + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }) + " · Snapshot";
+      return dxBorrow(key, null, function () { return dxShot(id); }).then(done, done);
+    }
+    if (wk && id === "sq") { /* live week: today's prices against the week's open */
+      dxWhen = wk.name + " · " + wk.range + " · up to now"; dxTf = "This Week";
+      return dxWeekOpens(wk).then(function (op) { var keep = dayOpenCache, m = {}; Object.keys(keep).forEach(function (s0) { m[s0] = keep[s0]; }); coins.forEach(function (c) { var o = op[String(c.symbol).toUpperCase()]; if (o && o.open > 0) m[c.symbol] = { open: o.open, change: (c.current_price / o.open - 1) * 100 }; }); dayOpenCache = m;
+        return dxShot(id).then(function () { dayOpenCache = keep; if (sqVisible) { sqVal = {}; sqDraw(); } }, function () { dayOpenCache = keep; }); }).then(done, done);
+    }
+    return dxShot(id);
+  }
+  function dxCurWeek() { var iw = isoWk(ttDay || dxToday()); return iw.y + "-W" + (iw.w < 10 ? "0" : "") + iw.w; }
   function renderDX() {
     if (!dxVisible) { dxBox.hidden = true; dxBox.innerHTML = ""; updatePinnedColVisibility(); return; }
     dxBox.hidden = false; updatePinnedColVisibility();
+    if (!snapDays) { snapLoadDays().then(renderDX); }
+    var weekly = function (id) { return id === "default" || id === "sq"; }, ks = snapKeys().reverse(), wks = []; ks.forEach(function (k) { var iw = isoWk(k), id = iw.y + "-W" + (iw.w < 10 ? "0" : "") + iw.w; if (wks.indexOf(id) < 0) wks.push(id); });
     var h = '<div class="pinned-card chart-container pf-card dx-card dev-target" data-dev-name="Data Export" data-dev-color="#a78bfa"><div class="pf-title">Data Export</div>' +
-      (ttDay ? '<div class="dx-tt">You are Time Traveling: exports show ' + snapDate(ttDay) + ', drawn from that day\'s Snapshot, not the live data.</div>' : '') +
-      '<div class="snap-ym"><button type="button" class="gear' + (dxSrc === "live" ? ' active' : '') + '" data-dxsrc="live">' + (ttDay ? 'Time Travel' : 'Live') + '</button><button type="button" class="gear' + (dxSrc === "snap" ? ' active' : '') + '" data-dxsrc="snap">Snapshot</button></div>';
-    if (dxSrc === "live") h += '<div class="dx-list">' + DX.map(function (d) { return '<button type="button" class="dx-item" data-dx="' + d[0] + '"><b>' + d[1] + '</b><span>' + d[2] + '</span><i>[PNG]</i></button>'; }).join("") + '</div><div class="fg-sub t2-note">' + (ttDay ? 'Every export shows the travelled day.' : 'Every export shows the data as it is on the site right now.') + ' Windows are exported the way you have set them.</div>';
-    else if (!snapDays) { h += '<div class="rt-empty">Loading the recorded days…</div>'; snapLoadDays().then(renderDX); }
-    else {
-      var ks = snapKeys().reverse(), wks = []; ks.forEach(function (k) { var iw = isoWk(k), id = iw.y + "-W" + (iw.w < 10 ? "0" : "") + iw.w; if (wks.indexOf(id) < 0) wks.push(id); });
-      var row = function (lbl, sel, attr) { return '<div class="dx-snap"><span>' + lbl + '</span>' + sel + '<div class="dx-fmt"><button type="button" class="gear" data-' + attr + '="png">[PNG]</button><button type="button" class="gear" data-' + attr + '="csv">[CSV]</button><button type="button" class="gear" data-' + attr + '="json">[JSON]</button></div></div>'; };
-      h += row("Day", '<select id="dx-day">' + ks.map(function (k) { return '<option value="' + k + '">' + snapDate(k) + '</option>'; }).join("") + '</select>', "dxday") +
-        row("Week", '<select id="dx-week">' + wks.map(function (id) { var w = snapWeekFromId(id); return '<option value="' + id + '">' + w.name + ' [' + w.range + ']</option>'; }).join("") + '</select>', "dxweek") +
-        '<div class="fg-sub t2-note">The same downloads as in the Snapshots tab: the Daily or Weekly Snapshot image, the token list as CSV, the full Snapshot as JSON.</div>';
-    }
-    dxBox.innerHTML = h + '</div>';
+      (ttDay ? '<div class="dx-tt">You are Time Traveling: Live exports show ' + snapDate(ttDay) + ', drawn from that day\'s Snapshot, not the live data.</div>' : '') + '<div class="dx-list">';
+    DX.forEach(function (d) {
+      var open = dxPick === d[0];
+      h += '<div class="dx-wrap' + (open ? ' on' : '') + '"><button type="button" class="dx-item" data-dx="' + d[0] + '"><b>' + d[1] + '</b><span>' + d[2] + '</span><i>[PNG] ' + (open ? '▴' : '▾') + '</i></button>';
+      if (open) {
+        var sp = weekly(d[0]) ? dxSpan : "day";
+        h += '<div class="dx-pick"><div class="fg-tf-col"><b>Source</b><button type="button" data-dxmode="live"' + (dxMode === "live" ? ' class="active"' : '') + '>' + (ttDay ? 'Time Travel' : 'Live') + '</button><button type="button" data-dxmode="snap"' + (dxMode === "snap" ? ' class="active"' : '') + '>Snapshot</button></div>' +
+          '<div class="fg-tf-col"><b>' + (dxMode === "live" ? (ttDay ? snapDate(ttDay) : 'Now') : 'Range') + '</b><button type="button" data-dxspan="day"' + (sp === "day" ? ' class="active"' : '') + '>' + (dxMode === "live" ? 'Current Day' : 'Day') + '</button>' + (weekly(d[0]) ? '<button type="button" data-dxspan="week"' + (sp === "week" ? ' class="active"' : '') + '>' + (dxMode === "live" ? 'Current Week' : 'Week') + '</button>' : '') + '</div>' +
+          (dxMode === "snap" ? '<div class="fg-tf-col dx-which"><b>' + (sp === "week" ? 'Week' : 'Day') + '</b>' + (sp === "week" ? '<select id="dx-sel">' + wks.map(function (id) { var w = snapWeekFromId(id); return '<option value="' + id + '">' + w.name + ' [' + w.range + ']</option>'; }).join("") + '</select>' : '<select id="dx-sel">' + ks.map(function (k) { return '<option value="' + k + '">' + snapDate(k) + '</option>'; }).join("") + '</select>') + '</div>' : '') +
+          '<button type="button" class="gear dx-go" data-dxgo="' + d[0] + '">Export PNG</button></div>';
+      }
+      h += '</div>';
+    });
+    dxBox.innerHTML = h + '</div><div class="fg-sub t2-note">Pick an export, then where its data comes from: Live (the current day or the current week up to now) or a recorded Snapshot (a day or a week). Windows are exported the way you have set them.</div></div>';
   }
   dxBtn.addEventListener("click", function () { dxVisible = !dxVisible; dxBtn.classList.toggle("active", dxVisible); renderDX(); });
   dxBox.addEventListener("click", function (e) {
-    var t = e.target, s1 = t.closest("[data-dxsrc]"); if (s1) { dxSrc = s1.dataset.dxsrc; renderDX(); return; }
-    var it = t.closest("[data-dx]"); if (it) { dxRun(it.dataset.dx); return; }
-    var d = t.closest("[data-dxday]"); if (d) { var k = document.getElementById("dx-day").value; Promise.all([snapFile(k), snapExtras(), snapDayChanges(k)]).then(function () { snapDownload(k, d.dataset.dxday); }); return; }
-    var w = t.closest("[data-dxweek]"); if (w) { var id = document.getElementById("dx-week").value, wk = snapWeekFromId(id); snapWeekLoad(wk).then(function () { snapDownload(wk.last, w.dataset.dxweek, id); }); }
+    var t = e.target, it = t.closest("[data-dx]"); if (it) { dxPick = dxPick === it.dataset.dx ? null : it.dataset.dx; renderDX(); return; }
+    var m = t.closest("[data-dxmode]"); if (m) { dxMode = m.dataset.dxmode; renderDX(); return; }
+    var sp = t.closest("[data-dxspan]"); if (sp) { dxSpan = sp.dataset.dxspan; renderDX(); return; }
+    var g = t.closest("[data-dxgo]"); if (g) { var sel = document.getElementById("dx-sel"), span = (g.dataset.dxgo === "default" || g.dataset.dxgo === "sq") ? dxSpan : "day"; if (dxMode === "snap" && !sel) return; g.disabled = true; g.textContent = "Building…"; Promise.resolve(dxGo(g.dataset.dxgo, dxMode, span, sel && sel.value)).catch(function () {}).then(function () { renderDX(); }); return; }
   });
 
   /* ---------- TOTAL 200: the combined market cap of the 200 largest coins, its year as a chart and in numbers ---------- */
@@ -4523,7 +4587,7 @@
     clearInterval(fomcTimer);
     if (!fomcVisible) { fomcBox.hidden = true; fomcBox.innerHTML = ""; updatePinnedColVisibility(); return; }
     fomcBox.hidden = false; updatePinnedColVisibility();
-    var now = Date.now(), nx = FOMC.filter(function (m) { return !m[2] && fomcAt(m[1]) > now; })[0];
+    var now = ttDay ? nyDay(Date.parse(ttDay + "T12:00:00Z")).end : Date.now(), nx = FOMC.filter(function (m) { return !m[2] && fomcAt(m[1]) > now; })[0]; /* in Time Travel: as seen at the end of the travelled day */
     var dd = function (d, o) { return new Date(d + "T12:00:00Z").toLocaleDateString("en-GB", Object.assign({ timeZone: "UTC" }, o)); };
     var span = function (m) { return dd(m[0], { day: "numeric" }) + "–" + dd(m[1], { day: "numeric", month: "short", year: "numeric" }); };
     var h = '<div class="pinned-card chart-container pf-card fomc-card dev-target" data-dev-name="FOMC" data-dev-color="#93c5fd"><div class="pf-title">FOMC</div>';
@@ -4535,10 +4599,23 @@
       return '<div class="fomc-row' + (past ? ' past' : '') + (isNx ? ' on' : '') + '"><b>' + span(m) + '</b><span>' + (m[2] ? 'Strategy discussion, no decision' : past ? 'Done' : isNx ? 'Next' : 'in ' + days + ' days') + '</span></div>';
     }).join("") + '</div><div class="fg-sub t2-note">Dates as published by the Federal Reserve; tentative until confirmed at the meeting before. Created using Data from <a href="https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm" target="_blank" rel="noopener noreferrer">federalreserve.gov</a></div></div>';
     fomcBox.innerHTML = h;
-    if (nx) fomcTimer = setInterval(function () { var el = document.getElementById("fomc-cd"); if (!el) return clearInterval(fomcTimer); var left = fomcAt(nx[1]) - Date.now(); if (left <= 0) renderFOMC(); else el.textContent = fomcCd(left); }, 1000);
+    if (nx && !ttDay) fomcTimer = setInterval(function () { var el = document.getElementById("fomc-cd"); if (!el) return clearInterval(fomcTimer); var left = fomcAt(nx[1]) - Date.now(); if (left <= 0) renderFOMC(); else el.textContent = fomcCd(left); }, 1000);
   }
   fomcBtn.addEventListener("click", function () { fomcVisible = !fomcVisible; fomcBtn.classList.toggle("active", fomcVisible); renderFOMC(); });
 
+  function ttSwitch(k, r, chg) { /* the page's data becomes day k (r = its files; chg = other moves, e.g. a week's), or live again for k null */
+    if (k) {
+      if (!ttLive) ttLive = { coins: coins, open: dayOpenCache, stake: stakeData, ranks: prevRanks, ranksDay: prevRanksDay, status: statusEl.textContent, asOf: RT.asOf, charts: chartCache, pending: chartPending };
+      chartCache = {}; chartPending = {}; /* the day's own charts */
+      var t = ttCoins(r[0], r[1], chg || r[3]); coins = t.list; dayOpenCache = t.open; prevRanks = t.ranks; prevRanksDay = snapPrevKey(k) || ""; stakeData = ttStake(k); CATS.staking = Object.keys(stakeData);
+      RT.asOf = Date.parse(k + "T00:00:00Z"); ttDay = k; ttLockTf(k);
+      statusEl.textContent = "Time Travel · " + snapDate(k) + " · CoinAtlas Snapshot";
+    } else if (ttLive) {
+      coins = ttLive.coins; dayOpenCache = ttLive.open; chartCache = ttLive.charts || {}; chartPending = ttLive.pending || {}; stakeData = ttLive.stake; CATS.staking = Object.keys(stakeData); prevRanks = ttLive.ranks; prevRanksDay = ttLive.ranksDay; RT.asOf = ttLive.asOf; statusEl.textContent = ttLive.status;
+      ttLive = null; ttDay = null; ttLockTf(null);
+    }
+  }
+  function ttLoad(k) { var pk = snapPrevKey(k); return Promise.all([snapFile(k), pk ? snapFile(pk) : null, snapExtras(), snapDayChanges(k)]); }
   function ttGo(k) { /* to a recorded day; k null = back to live */
     if (ttBusy || k === ttDay) return; ttBusy = true;
     var from = ttDay || new Date().toISOString().slice(0, 10);
@@ -4547,16 +4624,7 @@
     ready.then(function (r) {
       if (k && (!r || !r[0] || !r[0].coins)) { ttBusy = false; renderTT("This snapshot could not be loaded."); return; }
       ttWarp(from, k, function () {
-        if (k) {
-          if (!ttLive) ttLive = { coins: coins, open: dayOpenCache, stake: stakeData, ranks: prevRanks, ranksDay: prevRanksDay, status: statusEl.textContent, asOf: RT.asOf, charts: chartCache, pending: chartPending };
-          chartCache = {}; chartPending = {}; /* the day's own charts */
-          var t = ttCoins(r[0], r[1], r[3]); coins = t.list; dayOpenCache = t.open; prevRanks = t.ranks; prevRanksDay = snapPrevKey(k) || ""; stakeData = ttStake(k); CATS.staking = Object.keys(stakeData);
-          RT.asOf = Date.parse(k + "T00:00:00Z"); ttDay = k; ttLockTf(k);
-          statusEl.textContent = "Time Travel · " + snapDate(k) + " · CoinAtlas Snapshot";
-        } else if (ttLive) {
-          coins = ttLive.coins; dayOpenCache = ttLive.open; chartCache = ttLive.charts || {}; chartPending = ttLive.pending || {}; stakeData = ttLive.stake; CATS.staking = Object.keys(stakeData); prevRanks = ttLive.ranks; prevRanksDay = ttLive.ranksDay; RT.asOf = ttLive.asOf; statusEl.textContent = ttLive.status;
-          ttLive = null; ttDay = null; ttLockTf(null);
-        }
+        ttSwitch(k, r);
         ttRefresh(); renderTT(); ttBusy = false;
         if (k && !document.body.classList.contains("tt-on")) ttReveal(true, ttApplyTone); else if (!k) ttReveal(false, ttApplyTone); else ttApplyTone(); /* past to past: the tone is already there */
         if (!ttDay) pollPrices(true);
@@ -4773,13 +4841,13 @@
     var d = sqItems(); if (!d.items.length) return;
     var K = "__sqlive", ch = {}, its = d.items.slice().sort(function (a, b) { return a.i - b.i; }), j = { coins: its.map(function (x) { return [x.sym, x.c.name, x.c.current_price, x.c.market_cap]; }) };
     its.forEach(function (x) { ch[x.sym] = { pc: x.pc }; });
-    var up = its.filter(function (x) { return x.pc > 0; }).length, dn = its.filter(function (x) { return x.pc < 0; }).length, tf = sqTfLabel(), when = ttDay ? new Date(ttDay + "T00:00:00Z") : new Date();
-    var day = when.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: ttDay ? "UTC" : undefined }) + (ttDay ? " · Time Travel" : " · " + when.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }));
+    var up = its.filter(function (x) { return x.pc > 0; }).length, dn = its.filter(function (x) { return x.pc < 0; }).length, tf = dxTf || sqTfLabel(), when = ttDay ? new Date(ttDay + "T00:00:00Z") : new Date();
+    var day = dxWhen || (when.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: ttDay ? "UTC" : undefined }) + (ttDay ? " · Time Travel" : " · " + when.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })));
     var ov = document.getElementById("pf-sh"); if (!ov) { ov = document.createElement("div"); ov.id = "pf-sh"; ov.className = "pf-sh"; document.body.appendChild(ov); }
     ov.innerHTML = '<div class="pf-sh-box snx-box" role="dialog" aria-label="Sentiment Squares image"><div class="pf-sh-head"><b>Sentiment Squares Image</b><span class="pf-sh-mode">[Top ' + sqS.top + '] [' + esc(tf) + ']</span><button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
       '<div class="pf-sh-img" id="pf-sh-img"><div class="pf-sh-wait">Building the image…</div></div><div class="pf-sh-foot"><button class="gear pf-sh-dl" type="button" id="snap-png-dl" disabled>Download PNG</button></div></div>';
     ov.hidden = false;
-    loadH2C().then(function (h2c) {
+    return loadH2C().then(function (h2c) {
       var brand = (document.getElementById("logo-svg") || {}).outerHTML || "", x = document.createElement("div"); x.className = "snx sqx"; snapChg[K] = ch;
       x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas Sentiment Squares</b><span>' + esc(day) + ' · [Top ' + sqS.top + '] [' + esc(tf) + ']</span></div><div class="sqx-cnt"><b style="color:var(--up)">[' + up + ' Up]</b> <b style="color:var(--down)">[' + dn + ' Down]</b></div></div>' +
         '<div class="snx-card snx-sqw"><div class="sqm-map snx-sq" id="sqx-map"></div></div>' +
@@ -5022,7 +5090,7 @@
     { title: "Data Export Customizability", notes: ["Planned. Data Export (header, off by default) already holds every image export: CoinAtlas Default and each window (Fear & Greed, Sentiment Squares, BTC|ETH Ratio, Staking, TOTAL 200, FOMC), live or from a Snapshot.", "Next, more control over each image: choose which parts it shows, how long lists are and how wide each part is, light or dark look, square or story formats for social media, your own name or tag in the title row, and saved presets you can export again with one click."], desc: "Images that look exactly the way you want to share them." },
     { title: "Snapshot Customization", notes: ["Planned. Choose which windows the Snapshot image shows, how long the list is, and add your own name or tag at the top right, in the row of the title."], desc: "More control over your own Snapshot images: show only what you want to show." },
     { title: "Final Settings Rework", notes: ["Planned. The Settings grew section by section. Once the main features stand, they get one clean structure, search, and fewer but clearer options."], desc: "A last, complete rework of the Settings window, so every option is easy to find." },
-    { title: "Mobile Version / Mobile App", notes: ["Planned. The current Site is built for Desktop: on a Phone the Header Buttons run off the Screen and several Windows are too wide.", "Idea: rebuild the Phone Layout from scratch. A first step could be an installable Web App (PWA) from the same Site; a real App for the Stores can follow later."], desc: "A complete Mobile Version of CoinAtlas, made for Phones from the ground up instead of a shrunk Desktop Site, and later a Mobile App." }
+    { title: "Mobile Version / Mobile App", notes: ["Planned. The current Site is built for Desktop: on a Phone the Header Buttons run off the Screen and several Windows are too wide.", "Not only the Site: every image export (Data Export, Snapshots) and every other UI needs its own phone layout too.", "Idea: rebuild the Phone Layout from scratch. A first step could be an installable Web App (PWA) from the same Site; a real App for the Stores can follow later."], desc: "A complete Mobile Version of CoinAtlas, made for Phones from the ground up instead of a shrunk Desktop Site, and later a Mobile App." }
   ];
 
   var roadmapOpen = {};
@@ -5291,12 +5359,12 @@
     if (!fgData) return;
     var tfName = (fgContainer.querySelector(".fg-yr-btn") || {}).textContent || ""; tfName = tfName.replace(/\s*▾\s*$/, "");
     var flt = { bull: "Bull Years", bear: "Bear Years", bridge: "Bridge Years", all: "All Years" }[yearlyFilter] || "All Years";
-    var when = ttDay ? new Date(ttDay + "T00:00:00Z") : new Date(), day = when.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: ttDay ? "UTC" : undefined }) + (ttDay ? " · Time Travel" : "");
+    var when = ttDay ? new Date(ttDay + "T00:00:00Z") : new Date(), day = dxWhen || (when.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: ttDay ? "UTC" : undefined }) + (ttDay ? " · Time Travel" : ""));
     var ov = document.getElementById("pf-sh"); if (!ov) { ov = document.createElement("div"); ov.id = "pf-sh"; ov.className = "pf-sh"; document.body.appendChild(ov); }
     ov.innerHTML = '<div class="pf-sh-box snx-box" role="dialog" aria-label="Fear and Greed image"><div class="pf-sh-head"><b>Fear & Greed Image</b><span class="pf-sh-mode">[' + esc(tfName) + ']' + (yearlyOn ? ' [' + flt + ']' : '') + '</span><button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
       '<div class="pf-sh-img" id="pf-sh-img"><div class="pf-sh-wait">Building the image…</div></div><div class="pf-sh-foot"><button class="gear pf-sh-dl" type="button" id="snap-png-dl" disabled>Download PNG</button></div></div>';
     ov.hidden = false;
-    loadH2C().then(function (h2c) {
+    return loadH2C().then(function (h2c) {
       var brand = (document.getElementById("logo-svg") || {}).outerHTML || "", x = document.createElement("div"); x.className = "snx fgx";
       x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas Fear & Greed Index</b><span>' + esc(day) + ' · [' + esc(tfName) + ']' + (yearlyOn ? ' [' + flt + ']' : '') + '</span></div><div></div></div><div class="snx-card snx-fg fgx-box" id="fgx-box"></div>';
       document.body.appendChild(x);
@@ -7824,7 +7892,14 @@
         "The charts are linked: hovering one shows the same day on the other two.",
         "The Formula describes where the market stands. It does not predict the future and is not financial advice."]) + '</div>';
   }
+  var RT_BOX = document.getElementById("ratio-container");
+  function rtTtCut() { /* in Time Travel the Ratio window only knows the days up to the travelled day */
+    if (ratioBox !== RT_BOX || !RT.data) return;
+    if (ttDay && RT.data.ttCut !== ttDay) { var F = RT.data.ttCut ? RT.ttFull : RT.data, end = Date.parse(ttDay + "T23:59:59Z"), n = 0; while (n < F.t.length && F.t[n] <= end) n++; RT.ttFull = F; RT.data = { t: F.t.slice(0, n), b: F.b.slice(0, n), e: F.e.slice(0, n), r: F.r.slice(0, n), ttCut: ttDay }; RT.w = null; }
+    else if (!ttDay && RT.data.ttCut) { RT.data = RT.ttFull; RT.ttFull = null; RT.w = null; }
+  }
   function rtRender() {
+    rtTtCut();
     if (!ratioVisible) { ratioBox.hidden = true; ratioBox.innerHTML = ""; updatePinnedColVisibility(); return; }
     ratioBox.hidden = false; updatePinnedColVisibility();
     var h = '<div class="pinned-card chart-container pf-card rt-card dev-target" data-dev-name="BTC|ETH Ratio" data-dev-color="#a78bfa"><div class="rt-title-row"><button type="button" class="gear' + (rtTipsVisible ? ' active' : '') + '" data-rt-tips="1" style="font-size:11px;height:28px;padding:0 10px">Usage Tips</button><div class="pf-title" style="text-align:center">Bitcoin|Ethereum Ratio</div><div></div></div><div id="rt-live">' + rtLiveHtml() + '</div><div class="rt-desc">How many ETH one BTC buys</div>';
