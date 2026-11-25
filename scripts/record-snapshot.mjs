@@ -6,7 +6,7 @@
 //                              (volume and supply from Coinpaprika only, so they stay comparable from day to day).
 //                              Total, dominance and "new in the top 200" use the first 200, as the site does.
 //   readings.json              the Reading of the BTC|ETH Ratio as it stood at the end of each day: what the site really said
-//   dominance.json             one line per day: [BTC %, ETH %, total market cap, coins, source, USDT %]
+//   dominance.json             one line per day: [BTC %, ETH %, total market cap, coins, source, USDT %, stablecoins %]
 //   new.json                   coins that entered the top 200 less than 14 snapshots ago
 //   history/btc-eth.json       every daily close of BTC and ETH since 2017 (Binance)
 //   history/fear-greed.json    every daily Fear & Greed value since 2018 (alternative.me)
@@ -17,6 +17,7 @@
 // The list comes from the page itself: index.html is opened in a headless browser and its own
 // top 200 is read out, so the snapshot always matches what the site shows. If the page cannot
 // build a list, CoinGecko's or CoinPaprika's top 200 is stored instead and marked as such.
+import { STABLECOINS } from "./stablecoins.mjs";
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, join } from "node:path";
@@ -142,7 +143,7 @@ export function write(snap) {
   writeFileSync(join(dir, snap.date + ".json"), JSON.stringify(head).slice(0, -1) + ',"coins":[\n' + coins.map(c => JSON.stringify(c)).join(",\n") + "\n]}\n");
 
   const domFile = join(DATA, "dominance.json"), dom = existsSync(domFile) ? JSON.parse(readFileSync(domFile, "utf8") || "{}") : {};
-  dom[snap.date] = [snap.btc, snap.eth, snap.total, Math.min(200, coins.length), snap.source, +((coins.slice(0, 200).find(c => c[0] === "USDT") || [0, 0, 0, 0])[3] / snap.total * 100).toFixed(3)];
+  dom[snap.date] = [snap.btc, snap.eth, snap.total, Math.min(200, coins.length), snap.source, +((coins.slice(0, 200).find(c => c[0] === "USDT") || [0, 0, 0, 0])[3] / snap.total * 100).toFixed(3), +(coins.slice(0, 200).filter(c => STABLECOINS.includes(c[0])).reduce((a, c) => a + c[3], 0) / snap.total * 100).toFixed(3)]; /* [.., USDT %, all stablecoins %] */
   writeFileSync(domFile, "{\n" + Object.keys(dom).sort().map(k => JSON.stringify(k) + ": " + JSON.stringify(dom[k])).join(",\n") + "\n}\n");
 
   // new in the top 200: how many snapshots in a row, counted back from today, a coin has been on the list

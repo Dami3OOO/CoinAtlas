@@ -797,6 +797,11 @@
   .dx-which { flex: 1; } .dx-which select { height: 30px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 0 8px; font: inherit; font-size: 12px; } .dx-go { margin-left: auto; height: 30px; padding: 0 12px; font-size: 12px; font-weight: 700; }
   .dx-snap { display: grid; grid-template-columns: 50px 1fr auto; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 12px; font-weight: 600; } .dx-snap select { min-width: 0; height: 30px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 0 8px; font: inherit; font-size: 12px; } .dx-fmt { display: flex; gap: 4px; } .dx-fmt .gear { height: 30px; padding: 0 8px; font-size: 11px; }
   .wpx-body { display: flex; justify-content: center; } .wpx-cols { display: flex; gap: 24px; align-items: flex-start; } .wpx-col { display: flex; flex-direction: column; gap: 12px; flex: none; } .wpx-col > * { margin-top: 0 !important; } .snx.wpx .pinned-card { margin: 0; }
+  .t2-src { text-align: center; white-space: nowrap; font-size: 11px; color: var(--muted); margin-top: 14px; } .t2-src a { color: inherit; text-decoration: underline; } .t2-src a:hover { color: var(--fg); }
+  .t2-brkb { margin-top: 12px; } .t2-brk { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; } .t2-br { display: grid; grid-template-columns: 1fr auto 64px; gap: 4px 10px; align-items: center; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 13px; } .t2-bn { display: flex; align-items: center; gap: 8px; font-weight: 600; } .t2-bn i, .dom-now i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; } .t2-bp { text-align: right; font-weight: 700; } .t2-bar { grid-column: 1 / -1; height: 4px; border-radius: 2px; background: rgba(255,255,255,.06); overflow: hidden; } .t2-bar div { height: 100%; border-radius: 2px; }
+  .stk-yrs { display: flex; gap: 6px; } .stk-yrs .gear { height: 26px; padding: 0 10px; font-size: 11px; }
+  .dom-now { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; } .dom-now > div { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); } .dom-now span { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); } .dom-now b { font-size: 20px; } .dom-of { text-align: center; margin: 8px 0 10px; }
+  .dmc .dm-ymax { position: absolute; left: 6px; top: 4px; font-size: 10px; color: var(--muted); } .dm-tv { display: flex; flex-direction: column; gap: 2px; } .dm-tr { display: flex; justify-content: space-between; gap: 14px; font-size: 12px; } .dm-tr b { font-variant-numeric: tabular-nums; }
   .t2-top { display: flex; flex-direction: column; align-items: center; gap: 2px; margin: -4px 0 12px; } .t2-top b { font-size: 26px; } .t2-note { text-align: center; margin-top: 12px; } .t2-note a { color: inherit; }
   .fomc-next { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); } .fomc-next b { font-size: 26px; font-variant-numeric: tabular-nums; color: #93c5fd; } .fomc-next > span:not(.fg-sub) { font-size: 13px; font-weight: 600; }
   .fomc-list { display: flex; flex-direction: column; gap: 4px; } .fomc-row { display: flex; justify-content: space-between; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 12px; } .fomc-row span { color: var(--muted); } .fomc-row.past { opacity: .45; } .fomc-row.on { border-color: #93c5fd; } .fomc-row.on span { color: #93c5fd; font-weight: 700; }
@@ -1150,6 +1155,7 @@
       <button class="gear" type="button" id="fg-btn">Fear & Greed Index</button>
       <button class="gear" type="button" id="ratio-btn">BTC|ETH Ratio</button>
       <button class="gear" type="button" id="t200-btn">TOTAL 200</button>
+      <button class="gear" type="button" id="dom-btn">Dominance</button>
       <button class="gear" type="button" id="fomc-btn">FOMC</button>
       <button class="gear" type="button" id="charts-btn">Charts</button>
       <button class="gear" type="button" id="pf-btn">Portfolio Manager</button>
@@ -1176,6 +1182,7 @@
               <div class="grp"><span class="lbl">Fear &amp; Greed Index</span><button class="toggle" type="button" data-hb="fg-btn" role="switch" aria-checked="true" aria-label="Show Fear &amp; Greed Index in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">BTC|ETH Ratio</span><button class="toggle" type="button" data-hb="ratio-btn" role="switch" aria-checked="true" aria-label="Show BTC|ETH Ratio in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">TOTAL 200</span><button class="toggle" type="button" data-hb="t200-btn" role="switch" aria-checked="true" aria-label="Show TOTAL 200 in the header"><span></span></button></div>
+              <div class="grp"><span class="lbl">Dominance</span><button class="toggle" type="button" data-hb="dom-btn" role="switch" aria-checked="true" aria-label="Show Dominance in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">FOMC</span><button class="toggle" type="button" data-hb="fomc-btn" role="switch" aria-checked="true" aria-label="Show FOMC in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Charts</span><button class="toggle" type="button" data-hb="charts-btn" role="switch" aria-checked="true" aria-label="Show Charts in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Portfolio Manager</span><button class="toggle" type="button" data-hb="pf-btn" role="switch" aria-checked="true" aria-label="Show Portfolio Manager in the header"><span></span></button></div>
@@ -1307,6 +1314,7 @@
       <div id="tt-container" hidden></div>
       <div id="dx-container" hidden></div>
       <div id="t200-container" hidden></div>
+      <div id="dom-container" hidden></div>
       <div id="fomc-container" hidden></div>
       <div id="stake-container" hidden></div>
       <div id="sq-container" hidden></div>
@@ -2530,7 +2538,7 @@
     if (typeof dxSilent !== "undefined" && dxSilent) return; /* an export drawing out of sight changes nothing on the page */
     var col = document.getElementById("pinned-col");
     if (!col) return;
-    if (pinnedCoins.length > 0 || (typeof chMinis !== "undefined" && chMinis.length) || roadmapVisible || portfolioVisible || ratioVisible || uiNoteOn || sqVisible || (typeof stkVisible !== "undefined" && stkVisible) || snapVisible || (typeof t2Visible !== "undefined" && (t2Visible || fomcVisible || dxVisible)) || (typeof ttVisible !== "undefined" && ttVisible)) col.classList.add("on");
+    if (pinnedCoins.length > 0 || (typeof chMinis !== "undefined" && chMinis.length) || roadmapVisible || portfolioVisible || ratioVisible || uiNoteOn || sqVisible || (typeof stkVisible !== "undefined" && stkVisible) || snapVisible || (typeof t2Visible !== "undefined" && (t2Visible || fomcVisible || dxVisible || domVisible)) || (typeof ttVisible !== "undefined" && ttVisible)) col.classList.add("on");
     else col.classList.remove("on");
   }
 
@@ -4161,7 +4169,7 @@
   }
   function syFmt(kind, v) { return kind === "rate" ? v.toFixed(2) + "%" : compact(v); }
   document.addEventListener("mousemove", function (e) { /* the tooltip of the year charts: date and value of the nearest day */
-    var el = e.target.closest && e.target.closest(".sy"); var all = document.querySelectorAll(".sy .sy-tip:not([hidden])");
+    var el = e.target.closest && e.target.closest(".sy:not(.dmc)"); var all = document.querySelectorAll(".sy:not(.dmc) .sy-tip:not([hidden])");
     Array.prototype.forEach.call(all, function (t) { if (!el || !el.contains(t)) { t.hidden = true; t.parentNode.querySelector(".sy-x").style.opacity = 0; t.parentNode.querySelector(".sy-dot").style.opacity = 0; } });
     if (!el) return;
     var d = el._d || (el._d = JSON.parse(el.dataset.sy)), r = el.getBoundingClientRect(), t = d.a + (e.clientX - r.left) / r.width * (d.b - d.a), best = d.p[0];
@@ -4428,6 +4436,7 @@
     if (snapVisible) renderSnaps();
     if (fgVisible && fgData) { renderFGChart(); renderFGAnnual(); }
     if (t2Visible) renderT200();
+    if (domVisible) renderDom();
     if (dxVisible) renderDX();
     if (fomcVisible) renderFOMC();
     applyStakeBadges();
@@ -4559,7 +4568,7 @@
       var ks = Object.keys(snapDomAll || {}).filter(function (d) { return +(snapDomAll[d] || [])[2] > 0 && (!ttDay || d <= ttDay); }).sort(), k = ks[ks.length - 1]; if (!k) return null;
       var y = +k.slice(0, 4), x = dxFrame("TOTAL 200", 2480), body = x.querySelector(".dxi-body");
       body.innerHTML = '<div class="dxi-t2"><div class="snx-card"><div class="snx-ch"><b style="color:' + T200_C + '">TOTAL 200 · ' + y + '</b><span>Market cap of the 200 largest coins</span></div>' + snapYearChart(t200Points(k), y, T200_C, "cap", 1500, 520, false) + '</div>' +
-        '<div class="snx-card dxi-t2r"><div class="t2-top"><b style="color:' + T200_C + '">[' + compact(+snapDomAll[k][2]) + ']</b><span class="fg-sub">' + snapDate(k) + '</span></div>' + snapT200Stats(k) + '<div class="fg-sub t2-note">Recorded every night at midnight New York time. Days before 12 Nov 2026 come from CoinGecko.</div></div></div>';
+        '<div class="snx-card dxi-t2r"><div class="t2-top"><b style="color:' + T200_C + '">[' + compact(+snapDomAll[k][2]) + ']</b><span class="fg-sub">' + snapDate(k) + '</span></div>' + t2BreakHtml() + '<div class="t2-src">Before 12 Nov 2026: Created using Data from coingecko.com</div></div></div>';
       return dxCapture(x, "TOTAL 200");
     });
   }
@@ -4660,7 +4669,7 @@
   });
 
   /* ---------- TOTAL 200: the combined market cap of the 200 largest coins, its year as a chart and in numbers ---------- */
-  var t2Visible = false, t2Year = null, t2Btn = document.getElementById("t200-btn"), t2Box = document.getElementById("t200-container");
+  var t2Visible = false, t2Brk = false, t2Year = null, t2Btn = document.getElementById("t200-btn"), t2Box = document.getElementById("t200-container");
   function renderT200() {
     if (!t2Visible) { t2Box.hidden = true; t2Box.innerHTML = ""; updatePinnedColVisibility(); return; }
     t2Box.hidden = false; updatePinnedColVisibility();
@@ -4671,11 +4680,60 @@
     var y = ys.indexOf(t2Year) > -1 ? t2Year : ys[0], k = ks.filter(function (d) { return +d.slice(0, 4) === y; }).pop(), v = +snapDomAll[k][2];
     t2Box.innerHTML = head + '<div class="t2-top"><b style="color:' + T200_C + '">[' + compact(v) + ']</b><span class="fg-sub">' + (k === last ? 'Latest' : 'End of ' + y) + ' · ' + snapDate(k) + '</span></div>' +
       (ys.length > 1 ? '<div class="snap-ym">' + ys.map(function (x) { return '<button type="button" class="gear' + (x === y ? ' active' : '') + '" data-t2y="' + x + '">' + x + '</button>'; }).join("") + '</div>' : '') +
-      snapYearChart(t200Points(k), y, T200_C, "cap", 520, 170, false) + snapT200Stats(k) +
-      '<div class="fg-sub t2-note">The combined market cap of the 200 largest coins, recorded every night at midnight New York time. Days before 12 Nov 2026 come from CoinGecko.</div></div>';
+      snapYearChart(t200Points(k), y, T200_C, "cap", 520, 170, false) +
+      '<button type="button" class="snap-showlist t2-brkb' + (t2Brk ? ' open' : '') + '" data-t2brk="1"><b>Marketcap Breakdown</b><span>[' + (ttDay ? snapDate(ttDay) : 'Live') + ']</span></button>' + (t2Brk ? t2BreakHtml() : '') +
+      '<div class="t2-src">Before 12 Nov 2026: Created using Data from <a href="https://www.coingecko.com" target="_blank" rel="noopener noreferrer">CoinGecko</a></div></div>';
   }
   t2Btn.addEventListener("click", function () { t2Visible = !t2Visible; t2Btn.classList.toggle("active", t2Visible); renderT200(); });
-  t2Box.addEventListener("click", function (e) { var b = e.target.closest("[data-t2y]"); if (b) { t2Year = +b.dataset.t2y; renderT200(); } });
+  t2Box.addEventListener("click", function (e) { var b = e.target.closest("[data-t2y]"); if (b) { t2Year = +b.dataset.t2y; renderT200(); return; } if (e.target.closest("[data-t2brk]")) { t2Brk = !t2Brk; renderT200(); } });
+  function t2Parts() { /* the Top 200 split: Bitcoin, Ethereum, every stablecoin together, and the rest */
+    var top = coins.slice(0, 200), tot = 0, b = 0, e = 0, st = 0; top.forEach(function (c) { var m = +c.market_cap || 0, S = String(c.symbol).toUpperCase(); tot += m; if (S === "BTC") b += m; else if (S === "ETH") e += m; else if (STABLECOINS.indexOf(S) > -1) st += m; });
+    return { tot: tot, rows: [["Bitcoin", BTC_C, b], ["Ethereum", ETH_C, e], ["Stablecoins", "var(--stable-blue)", st], ["Altcoins", GREY_C, Math.max(0, tot - b - e - st)]] };
+  }
+  function t2BreakHtml() {
+    var P = t2Parts(); if (!P.tot) return '<div class="rt-empty">No list loaded yet.</div>';
+    return '<div class="t2-brk">' + P.rows.map(function (r) { var pc = r[2] / P.tot * 100; return '<div class="t2-br"><span class="t2-bn"><i style="background:' + r[1] + '"></i>' + r[0] + '</span><b>[' + compact(r[2]) + ']</b><span class="t2-bp" style="color:' + r[1] + '">' + pc.toFixed(1) + '%</span><div class="t2-bar"><div style="width:' + pc.toFixed(2) + '%;background:' + r[1] + '"></div></div></div>'; }).join("") + '</div>';
+  }
+
+  /* ---------- DOMINANCE: Bitcoin, Ethereum, Stablecoins and Altcoins as shares of the Top 200, one chart per calendar year ---------- */
+  var domVisible = false, domYear = null, domBtn = document.getElementById("dom-btn"), domBox = document.getElementById("dom-container");
+  function domS() { return [["Bitcoin", BTC_C, 1], ["Ethereum", ETH_C, 2], ["Stablecoins", "var(--stable-blue)", 3], ["Altcoins", GREY_C, 4]]; } /* colours are read when drawing, after they exist */
+  function domSeries(k) { /* [t, btc, eth, stablecoins, altcoins] for every day of k's year up to k */
+    var y = k.slice(0, 4), out = []; Object.keys(snapDomAll || {}).sort().forEach(function (d) { var a = snapDomAll[d]; if (d.slice(0, 4) !== y || d > k || !(+a[0] > 0)) return; var st = a[6] != null ? +a[6] : null; out.push([Date.parse(d + "T00:00:00Z"), +a[0], +a[1], st, st == null ? null : Math.max(0, 100 - a[0] - a[1] - st)]); });
+    return out;
+  }
+  function domChart(k, W, H) { /* one chart, four lines, the calendar year on the x axis */
+    var y = +k.slice(0, 4), a = Date.UTC(y, 0, 1), b = Date.UTC(y + 1, 0, 1), P = domSeries(k), vs = []; P.forEach(function (p) { for (var q = 1; q < 5; q++) if (p[q] != null) vs.push(p[q]); });
+    if (!P.length) return '<div class="fg-sub">Nothing recorded in ' + y + ' yet.</div>';
+    var mx = Math.min(100, Math.max.apply(null, vs) * 1.08), X = function (t) { return ((t - a) / (b - a) * W).toFixed(1); }, Y = function (v) { return (H - 4 - v / mx * (H - 8)).toFixed(1); };
+    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" class="sy-svg" style="height:' + H + 'px">' + [0.25, 0.5, 0.75].map(function (f) { return '<line x1="0" x2="' + W + '" y1="' + Y(mx * f) + '" y2="' + Y(mx * f) + '" stroke="rgba(255,255,255,.06)"/>'; }).join("") +
+      domS().map(function (S) { var seg = [], cur = []; P.forEach(function (p) { if (p[S[2]] == null) { if (cur.length) seg.push(cur); cur = []; } else cur.push(X(p[0]) + "," + Y(p[S[2]])); }); if (cur.length) seg.push(cur); return seg.map(function (c) { return '<polyline fill="none" stroke="' + S[1] + '" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="' + c.join(" ") + '"/>'; }).join(""); }).join("") + '</svg>';
+    var mon = ["Jan", "Apr", "Jul", "Oct"].map(function (m, i) { return '<span style="left:' + (i * 25) + '%">' + m + '</span>'; }).join("") + '<span style="left:100%;transform:translateX(-100%)">Dec</span>';
+    return '<div class="sy dmc" data-dm=\'' + JSON.stringify({ a: a, b: b, p: P }) + '\'>' + svg + '<div class="sy-x"></div><div class="price-tooltip sy-tip" hidden><div class="tt-time"></div><div class="dm-tv"></div></div><span class="dm-ymax">' + mx.toFixed(0) + '%</span></div><div class="sy-ax">' + mon + '</div>';
+  }
+  document.addEventListener("mousemove", function (e) { /* the tooltip of the Dominance chart: all four shares of that day */
+    var el = e.target.closest && e.target.closest(".dmc"); Array.prototype.forEach.call(document.querySelectorAll(".dmc .sy-tip:not([hidden])"), function (t) { if (!el || !el.contains(t)) { t.hidden = true; t.parentNode.querySelector(".sy-x").style.opacity = 0; } });
+    if (!el) return; var d = el._d || (el._d = JSON.parse(el.dataset.dm)), r = el.getBoundingClientRect(), t = d.a + (e.clientX - r.left) / r.width * (d.b - d.a), best = d.p[0];
+    d.p.forEach(function (p) { if (Math.abs(p[0] - t) < Math.abs(best[0] - t)) best = p; });
+    var tip = el.querySelector(".sy-tip"), ln = el.querySelector(".sy-x"); ln.style.left = ((best[0] - d.a) / (d.b - d.a) * 100) + "%"; ln.style.opacity = 1;
+    tip.querySelector(".tt-time").textContent = new Date(best[0]).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+    tip.querySelector(".dm-tv").innerHTML = domS().map(function (S) { var v = best[S[2]]; return '<div class="dm-tr"><span style="color:' + S[1] + '">' + S[0] + '</span><b>' + (v == null ? '–' : v.toFixed(1) + '%') + '</b></div>'; }).join("");
+    tip.hidden = false; var tw = tip.offsetWidth || 160, px = e.clientX - r.left; tip.style.left = Math.max(4, Math.min(r.width - tw - 4, px - tw - 12 < 4 ? px + 14 : px - tw - 12)) + "px"; tip.style.top = "6px";
+  }, { passive: true });
+  function renderDom() {
+    if (!domVisible) { domBox.hidden = true; domBox.innerHTML = ""; updatePinnedColVisibility(); return; }
+    domBox.hidden = false; updatePinnedColVisibility();
+    var head = '<div class="pinned-card chart-container pf-card dom-card dev-target" data-dev-name="Dominance" data-dev-color="#f7931a"><div class="pf-title">Market Cap Dominance</div>';
+    if (!snapDomAll) { domBox.innerHTML = head + '<div class="rt-empty">Loading…</div></div>'; snapLoadDays().then(renderDom); return; }
+    var ks = Object.keys(snapDomAll).filter(function (d) { return +(snapDomAll[d] || [])[0] > 0 && (!ttDay || d <= ttDay); }).sort(); if (!ks.length) { domBox.innerHTML = head + '<div class="rt-empty">Nothing recorded yet.</div></div>'; return; }
+    var ys = []; ks.forEach(function (d) { var Y = +d.slice(0, 4); if (ys.indexOf(Y) < 0) ys.unshift(Y); });
+    var y = ys.indexOf(domYear) > -1 ? domYear : ys[0], k = ks.filter(function (d) { return +d.slice(0, 4) === y; }).pop(), P = domSeries(k), L = P[P.length - 1];
+    domBox.innerHTML = head + '<div class="dom-now">' + domS().map(function (S) { var v = L && L[S[2]]; return '<div><span><i style="background:' + S[1] + '"></i>' + S[0] + '</span><b style="color:' + S[1] + '">' + (v == null ? '–' : v.toFixed(1) + '%') + '</b></div>'; }).join("") + '</div><div class="fg-sub dom-of">Share of the Top 200 market cap · ' + snapDate(k) + '</div>' +
+      (ys.length > 1 ? '<div class="snap-ym">' + ys.map(function (Y) { return '<button type="button" class="gear' + (Y === y ? ' active' : '') + '" data-domy="' + Y + '">' + Y + '</button>'; }).join("") + '</div>' : '') +
+      domChart(k, 520, 240) + '<div class="t2-src">Before 12 Nov 2026: Created using Data from <a href="https://www.coingecko.com" target="_blank" rel="noopener noreferrer">CoinGecko</a></div></div>';
+  }
+  domBtn.addEventListener("click", function () { domVisible = !domVisible; domBtn.classList.toggle("active", domVisible); renderDom(); });
+  domBox.addEventListener("click", function (e) { var b = e.target.closest("[data-domy]"); if (b) { domYear = +b.dataset.domy; renderDom(); } });
 
   /* ---------- FOMC: countdown to the next rate decision and the meeting calendar of the Federal Reserve (tentative dates as published) ---------- */
   var FOMC = [["2026-01-27", "2026-01-28"], ["2026-03-17", "2026-03-18"], ["2026-04-28", "2026-04-29"], ["2026-06-16", "2026-06-17"], ["2026-07-28", "2026-07-29"], ["2026-09-15", "2026-09-16"], ["2026-10-27", "2026-10-28"], ["2026-12-08", "2026-12-09"],
@@ -5053,19 +5111,14 @@
       '<div class="stk-list">' + res + '</div>' + STK_NOTE + stkChartHtml(sym, st);
   }
 
-  function stkChartHtml(sym, st) { /* the best provider's rate over the chosen time, lavender, from 30 recorded days on */
-    var top = stkTop(st), days = stkDays(), pts = [];
-    if (stkHist) Object.keys(stkHist).sort().forEach(function (d) { var v = stkHist[d][sym] && stkHist[d][sym][top.name]; if (v > 0) pts.push([Date.parse(d + "T00:00:00Z"), v]); });
-    var head = '<div class="stk-ch-h"><div><div class="chart-sub-header">Rate History</div><div class="stk-ch-s">' + esc(top.name) + ' · ' + (top.apy == null ? 'no public rate' : stakeRate(top)) + '</div></div>' + stkPicker() + '</div>';
-    if (pts.length < 30) return '<div class="stk-ch">' + head + '<div class="stk-ch-empty">The rate history shows from 30 recorded days on' + (stkHist ? ' (' + pts.length + ' of 30 so far).' : '.') + ' The rate is recorded every night.</div></div>';
-    var cut = Date.now() - days * 864e5; pts = pts.filter(function (p) { return p[0] >= cut; }); if (pts.length < 2) pts = pts.slice(-2);
-    var W = 520, H = 150, mn = Math.min.apply(null, pts.map(function (p) { return p[1]; })), mx = Math.max.apply(null, pts.map(function (p) { return p[1]; })); if (mx - mn < 0.2) { mn -= 0.1; mx += 0.1; }
-    var t0 = pts[0][0], t1 = pts[pts.length - 1][0] || t0 + 1, X = function (t) { return ((t - t0) / Math.max(1, t1 - t0) * W).toFixed(1); }, Y = function (v) { return (H - 6 - (v - mn) / (mx - mn) * (H - 12)).toFixed(1); };
-    var line = pts.map(function (p, i) { return (i ? "L" : "M") + X(p[0]) + " " + Y(p[1]); }).join(" ");
-    var fd = function (t) { return new Date(t).toLocaleDateString("en-US", { day: "numeric", month: "short" }); };
-    return '<div class="stk-ch">' + head + '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" class="stk-svg"><path d="' + line + ' L' + W + ' ' + H + ' L0 ' + H + ' Z" fill="rgba(196,181,253,.12)"/><path d="' + line + '" fill="none" stroke="#c4b5fd" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>' +
-      '<div class="stk-ch-ax"><span>' + fd(t0) + '</span><span>low ' + mn.toFixed(2) + '% · now ' + pts[pts.length - 1][1].toFixed(2) + '% · high ' + mx.toFixed(2) + '%</span><span>' + fd(t1) + '</span></div></div>';
+  var stkChY = null;
+  function stkChartHtml(sym, st) { /* the best provider's rate over the calendar year, lavender, like TOTAL 200; this year and the next */
+    var top = stkTop(st), cy = +(ttDay || dxToday()).slice(0, 4), y = stkChY === cy + 1 ? cy + 1 : cy, end = ttDay || "9999", pts = [];
+    if (stkHist) Object.keys(stkHist).sort().forEach(function (d) { var v = stkHist[d][sym] && stkHist[d][sym][top.name]; if (v > 0 && +d.slice(0, 4) === y && d <= end) pts.push([Date.parse(d + "T00:00:00Z"), v]); });
+    var head = '<div class="stk-ch-h"><div><div class="chart-sub-header">Rate History</div><div class="stk-ch-s">' + esc(top.name) + ' · ' + (top.apy == null ? 'no public rate' : stakeRate(top)) + '</div></div><div class="stk-yrs">' + [cy, cy + 1].map(function (Y) { return '<button type="button" class="gear' + (Y === y ? ' active' : '') + '" data-stky="' + Y + '">' + Y + '</button>'; }).join("") + '</div></div>';
+    return '<div class="stk-ch">' + head + (stkHist ? snapYearChart(pts, y, "#c4b5fd", "rate", 520, 150, false) : '<div class="stk-ch-empty">Loading the rate history…</div>') + '</div>';
   }
+  document.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest("[data-stky]"); if (b) { stkChY = +b.dataset.stky; renderStaking(); } });
 
   function stkPfRows() { /* the Portfolio Manager's holdings that can be staked, with their best option */
     return pfRows().map(function (r) { var sym = String(r.c.symbol).toUpperCase(), st = stakeData[sym]; return st ? { r: r, sym: sym, st: st, top: stkTop(st) } : null; }).filter(Boolean);
@@ -8279,7 +8332,7 @@
     Array.prototype.forEach.call(document.querySelectorAll("[data-hb]"), function (t) { var k = t.dataset.hb, off = hbHidden.indexOf(k) >= 0, el = hbEl(k); t.setAttribute("aria-checked", off ? "false" : "true"); if (el) el.classList.toggle("hb-off", off); });
   }
   document.addEventListener("click", function (e) { var t = e.target.closest("[data-hb]"); if (!t) return; var k = t.dataset.hb, i = hbHidden.indexOf(k); if (i >= 0) hbHidden.splice(i, 1); else hbHidden.push(k); try { localStorage.setItem(HB_KEY, JSON.stringify(hbHidden)); } catch (x) {} hbApply(); });
-  try { if (!localStorage.getItem("coinatlas-hb-new-1")) { ["t200-btn", "fomc-btn"].forEach(function (k) { if (hbHidden.indexOf(k) < 0) hbHidden.push(k); }); localStorage.setItem(HB_KEY, JSON.stringify(hbHidden)); localStorage.setItem("coinatlas-hb-new-1", "1"); } if (!localStorage.getItem("coinatlas-hb-new-2")) { if (hbHidden.indexOf("dx-btn") < 0) hbHidden.push("dx-btn"); localStorage.setItem(HB_KEY, JSON.stringify(hbHidden)); localStorage.setItem("coinatlas-hb-new-2", "1"); } } catch (e) { hbHidden.push("t200-btn", "fomc-btn", "dx-btn"); } /* new header buttons start switched off */
+  try { if (!localStorage.getItem("coinatlas-hb-new-1")) { ["t200-btn", "fomc-btn"].forEach(function (k) { if (hbHidden.indexOf(k) < 0) hbHidden.push(k); }); localStorage.setItem(HB_KEY, JSON.stringify(hbHidden)); localStorage.setItem("coinatlas-hb-new-1", "1"); } if (!localStorage.getItem("coinatlas-hb-new-2")) { if (hbHidden.indexOf("dx-btn") < 0) hbHidden.push("dx-btn"); localStorage.setItem(HB_KEY, JSON.stringify(hbHidden)); localStorage.setItem("coinatlas-hb-new-2", "1"); } if (!localStorage.getItem("coinatlas-hb-new-3")) { if (hbHidden.indexOf("dom-btn") < 0) hbHidden.push("dom-btn"); localStorage.setItem(HB_KEY, JSON.stringify(hbHidden)); localStorage.setItem("coinatlas-hb-new-3", "1"); } } catch (e) { hbHidden.push("t200-btn", "fomc-btn", "dx-btn", "dom-btn"); } /* new header buttons start switched off */
   hbApply();
   window.addEventListener("keydown", function (e) { if (e.key === "Escape" && uiMoving) { e.stopPropagation(); setUiMoving(false); } }, true);
   actionsEl.addEventListener("pointerdown", function (e) {

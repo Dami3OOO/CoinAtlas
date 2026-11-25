@@ -1,0 +1,2 @@
+// The stablecoins CoinAtlas leaves out of moves and counts as "Stablecoins" in the dominance (the same list as STABLECOINS in index.html).
+export const STABLECOINS = ["USDT", "USDC", "DAI", "BUSD", "TUSD", "USDP", "FDUSD", "PYUSD", "USDD", "USDE", "USDB", "GUSD", "FRAX", "LUSD", "USDS", "CRVUSD", "USD1", "USDG", "RLUSD", "GHO", "USD0", "AUSD", "USDAI", "USDF", "USDGO", "OUSD", "BFUSD", "USDTB", "EURC", "EURT", "EURS", "EURI", "EURCV", "AEUR", "EURE", "EUROC", "EURR", "VEUR", "GBPT", "TGBP", "XCHF", "VCHF", "JPYC", "GYEN", "XSGD", "BRZ", "BRLA", "TRYB", "FIDD"];

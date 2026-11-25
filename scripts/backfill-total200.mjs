@@ -6,6 +6,7 @@
 // Coins that were in the top 200 back then but are below 500 today are missing, so old totals can be a little low; the source of
 // those days says so. Runs on demand: .github/workflows/backfill-total200.yml. With a free CoinGecko demo key (secret COINGECKO_KEY)
 // it is faster; without one it waits between requests to stay inside the public limit.
+import { STABLECOINS } from "./stablecoins.mjs";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -29,7 +30,7 @@ export function totals(series, firstOwn) { /* series: { id: { sym, caps: { day: 
     const top = days[d].filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]).slice(0, 200); if (top.length < 150) return;
     const tot = top.reduce((a, x) => a + x[1], 0), cap = s => (top.find(x => x[0] === s) || [0, 0])[1];
     if (!cap("BTC") || !cap("ETH")) return;
-    out[d] = [+(cap("BTC") / tot * 100).toFixed(3), +(cap("ETH") / tot * 100).toFixed(3), Math.round(tot), top.length, "CoinGecko backfill (today's top 500)", +(cap("USDT") / tot * 100).toFixed(3)];
+    out[d] = [+(cap("BTC") / tot * 100).toFixed(3), +(cap("ETH") / tot * 100).toFixed(3), Math.round(tot), top.length, "CoinGecko backfill (today's top 500)", +(cap("USDT") / tot * 100).toFixed(3), +(top.filter(x => STABLECOINS.includes(x[0])).reduce((a, x) => a + x[1], 0) / tot * 100).toFixed(3)];
   });
   return out;
 }
