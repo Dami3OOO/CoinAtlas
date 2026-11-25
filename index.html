@@ -793,6 +793,8 @@
   .dx-ask div { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; } .dx-ask button { font: inherit; font-size: 13px; font-weight: 700; color: var(--fg); background: var(--bg); border: 1px solid #3a3a36; border-radius: 18px; padding: 9px 22px; min-width: 120px; cursor: pointer; transition: transform .15s ease, background .15s ease; } .dx-ask button:hover { transform: translateY(-1px); background: #2a2a28; }
   .dx-rows { width: 100%; display: flex; flex-direction: column; gap: 6px; } .dx-rows .snap-head { border: 1px solid var(--line); border-radius: 8px; background: var(--bg); } .dx-rows .snap-head:hover { background: #2a2a28; }
   .dx-combb { margin-top: 10px; } .dx-grid.picking .dx-tile.off { opacity: .25; cursor: default; }
+  body.dx-combining #pf-sh { display: none !important; } body.dx-combining .snx .snx-h { display: flex; justify-content: flex-end; }
+  .dx-wait { display: flex; align-items: center; justify-content: center; gap: 10px; } .dx-spin { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--fg); animation: dxSpin .8s linear infinite; } @keyframes dxSpin { to { transform: rotate(360deg); } }
   body.dx-combining .snx .snx-h > .snx-brand, body.dx-combining .snx .snx-h > .snx-t, body.dx-combining .snx .snx-wm, body.dx-combining .snx .snx-f .snx-brand { display: none !important; } body.dx-combining .snx { padding-top: 10px; padding-bottom: 10px; } /* one title and one watermark for the combined image */
   .snx.dxc { padding-top: 40px; padding-bottom: 10px; } .dxc-f { display: flex; justify-content: flex-end; } .snx.dxc:has(.dxc-f) { padding-top: 10px; padding-bottom: 30px; } .dx-grid.picking .dx-tile { opacity: .7; } .dx-grid.picking .dx-tile.on { opacity: 1; border-color: #a78bfa; background: #2a2a28; } .dx-n { font-style: normal; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; margin-left: 6px; border-radius: 50%; background: #a78bfa; color: #111; font-size: 11px; vertical-align: 2px; }
   .dx-cb { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 10px; align-items: stretch; } .dx-cb .snap-showlist { margin: 0; } .dx-cb .snap-showlist:disabled { opacity: .5; cursor: default; } .dx-cb .gear { height: auto; padding: 0 16px; }
@@ -4663,19 +4665,22 @@
   function dxNowText() { return "As of " + new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZoneName: "short" }) + " · [Day Still in Progress]"; } /* the time under the date of a live day */
   var dxComb = null;
   function dxCombine(ids) { /* both exports are built without their headers, then put into one PNG under one title, the first above the second, one watermark at the bottom right */
+    if (dxBusy) return; dxBusy = true;
     var cvs = []; dxSink = cvs; dxComb = null; renderDX(); document.body.classList.add("dx-combining");
     var names = ids.map(function (id) { return (DX.filter(function (d) { return d[0] === id; })[0] || [])[1]; });
-    var run = Promise.resolve(); ids.forEach(function (id) { run = run.then(function () { var n0 = cvs.length; return Promise.resolve(dxGo(id, "live", "day")).then(function () { if (cvs.length === n0) throw new Error("no image"); }); }); });
+    var co = document.createElement("div"); co.className = "pf-sh dx-comb-ov"; document.body.appendChild(co); /* its own preview while both parts are built out of sight */
+    var step = function (n) { co.innerHTML = '<div class="pf-sh-box snx-box"><div class="pf-sh-head"><b>Combined Image</b><span class="pf-sh-mode">' + esc(names.join(" + ")) + '</span></div><div class="pf-sh-img"><div class="pf-sh-wait dx-wait"><i class="dx-spin"></i>' + (n < 2 ? 'Building ' + esc(names[n]) + '… [' + (n + 1) + '/2]' : 'Putting both into one image…') + '</div></div></div>'; };
+    var run = Promise.resolve(); ids.forEach(function (id, n) { run = run.then(function () { step(n); var n0 = cvs.length; return Promise.resolve(dxGo(id, "live", "day")).then(function () { if (cvs.length === n0) throw new Error("no image"); }); }); });
     var TT = { default: "Daily Snapshot", fg: "Fear & Greed Index", sq: "Sentiment Squares", ratio: "BTC|ETH Ratio", stake: "Staking", t200: "TOTAL 200", dom: "Market Cap Dominance", fomc: "FOMC" };
     return run.then(function () {
-      dxSink = null; document.body.classList.remove("dx-combining");
+      step(2); dxSink = null; document.body.classList.remove("dx-combining");
       var A = cvs[cvs.length - 2], B = cvs[cvs.length - 1], W = Math.max(A.width, B.width), brand = (document.getElementById("logo-svg") || {}).outerHTML || "";
       var day = ttDay ? new Date(ttDay + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }) + " · Time Travel" : new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + "\n" + dxNowText();
       var mk = function (html) { var d = document.createElement("div"); d.className = "snx dxc"; d.style.width = W / 2 + "px"; d.innerHTML = html; document.body.appendChild(d); return d; };
       var hd = mk('<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas ' + esc(ids.map(function (id) { return TT[id]; }).join(" & ")) + '</b><span>' + esc(day) + '</span></div><div></div></div>'), ft = mk('<div class="dxc-f"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div></div>');
       Array.prototype.forEach.call(hd.querySelectorAll("svg, svg *"), function () {});
       return loadH2C0().then(function (h2c) { return Promise.all([h2c(hd, { backgroundColor: pfCss("--pop"), scale: 2, logging: false }), h2c(ft, { backgroundColor: pfCss("--pop"), scale: 2, logging: false })]); }).then(function (hf) {
-      hd.remove(); ft.remove(); var H0 = hf[0], F0 = hf[1], c = document.createElement("canvas"); c.width = W; c.height = H0.height + A.height + B.height + F0.height;
+      hd.remove(); ft.remove(); co.remove(); dxBusy = false; var H0 = hf[0], F0 = hf[1], c = document.createElement("canvas"); c.width = W; c.height = H0.height + A.height + B.height + F0.height;
       var g = c.getContext("2d"); g.fillStyle = pfCss("--pop"); g.fillRect(0, 0, W, c.height); g.drawImage(H0, 0, 0); g.drawImage(A, Math.round((W - A.width) / 2), H0.height); g.drawImage(B, Math.round((W - B.width) / 2), H0.height + A.height); g.drawImage(F0, 0, H0.height + A.height + B.height);
       var ov = document.getElementById("pf-sh"); if (!ov) { ov = document.createElement("div"); ov.id = "pf-sh"; ov.className = "pf-sh"; document.body.appendChild(ov); }
       var url = c.toDataURL("image/png"); ov.hidden = false;
@@ -4683,7 +4688,7 @@
         '<div class="pf-sh-img" id="pf-sh-img"><img src="' + url + '" alt="Combined image"></div><div class="pf-sh-foot"><button class="gear pf-sh-dl" type="button" id="snap-png-dl">Download PNG</button></div></div>';
       document.getElementById("snap-png-dl").onclick = function () { var a = document.createElement("a"); a.href = url; a.download = "coinatlas-" + ids.join("-") + "-" + (ttDay || new Date().toISOString().slice(0, 10)) + ".png"; document.body.appendChild(a); a.click(); a.remove(); };
       });
-    }).catch(function () { dxSink = null; document.body.classList.remove("dx-combining"); var im = document.getElementById("pf-sh-img"); if (im) im.innerHTML = '<div class="pf-sh-wait">The combined image could not be built. Please try again.</div>'; });
+    }).catch(function () { dxSink = null; dxBusy = false; co.remove(); document.body.classList.remove("dx-combining"); dxPending("Combined Image"); var im = document.getElementById("pf-sh-img"); if (im) im.innerHTML = '<div class="pf-sh-wait">The combined image could not be built. Please try again.</div>'; });
   }
   function dxCurWeek() { var iw = isoWk(ttDay || dxToday()); return iw.y + "-W" + (iw.w < 10 ? "0" : "") + iw.w; }
   function renderDX() { /* step by step, each step the whole window: the export, then Live or Snapshot, then the range, then the day or week */
@@ -4711,9 +4716,17 @@
     } else h += '<div class="dx-step"><div class="dx-what">' + esc(d[1]) + '</div><div class="rt-empty">Building the image…</div></div>';
     dxBox.innerHTML = h + '</div>';
   }
+  var dxBusy = false;
+  function dxPending(title, note) { /* the preview opens at once, so a click never looks like it did nothing */
+    var ov = document.getElementById("pf-sh"); if (!ov) { ov = document.createElement("div"); ov.id = "pf-sh"; ov.className = "pf-sh"; document.body.appendChild(ov); }
+    ov.innerHTML = '<div class="pf-sh-box snx-box" role="dialog" aria-label="' + esc(title) + '"><div class="pf-sh-head"><b>' + esc(title) + '</b><span class="pf-sh-mode"></span><button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div><div class="pf-sh-img" id="pf-sh-img"><div class="pf-sh-wait dx-wait"><i class="dx-spin"></i>' + esc(note || "Building the image…") + '</div></div><div class="pf-sh-foot"><button class="gear pf-sh-dl" type="button" id="snap-png-dl" disabled>Download PNG</button></div></div>';
+    ov.hidden = false;
+  }
   function dxStart(key) { /* runs the chosen export, then the window starts over */
+    if (dxBusy) return; dxBusy = true;
     var id = dxPick, mode = dxMode, span = (id === "default" || id === "sq") ? (dxSpan || "day") : "day"; renderDX();
-    Promise.resolve(dxGo(id, mode, span, key)).catch(function () {}).then(function () { dxPick = null; dxMode = null; dxSpan = null; renderDX(); });
+    dxPending(((DX.filter(function (d) { return d[0] === id; })[0] || [])[1] || "Export") + " Image");
+    Promise.resolve(dxGo(id, mode, span, key)).catch(function () {}).then(function () { dxBusy = false; dxPick = null; dxMode = null; dxSpan = null; renderDX(); });
   }
   dxBtn.addEventListener("click", function () { dxVisible = !dxVisible; dxBtn.classList.toggle("active", dxVisible); renderDX(); });
   dxBox.addEventListener("click", function (e) {
