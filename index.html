@@ -4246,13 +4246,13 @@
     return Promise.all([loadH2C(), LV ? LV.j : snapFile(k), snapExtras(), LV ? LV.chg : snapDayChanges(k), snapWait(function () { return fgData && RT.data; }, 15000), snapWeekLoad(wk)]).then(function (r) {
       var h2c = r[0], j = r[1]; if (!j || !j.coins) throw new Error("no snapshot");
       if (wk && snapWChg[wk.id]) { wkKeep = snapChg[k]; snapChg[k] = snapWChg[wk.id]; wkSwapped = true; } /* the week's moves while the image is built */
-      if (LV) { wkKeep = snapChg[k]; snapChg[k] = LV.chg; wkSwapped = true; if (snapStakeH && !snapStakeH[k]) { var sks = Object.keys(snapStakeH).sort(); if (sks.length) { snapStakeH[k] = snapStakeH[sks[sks.length - 1]]; lvStake = true; } } } /* live: today's moves so far, the latest staking rates */
+      if (LV) { if (!wkSwapped) wkKeep = snapChg[k]; snapChg[k] = LV.chg; wkSwapped = true; if (snapStakeH && !snapStakeH[k]) { var sks = Object.keys(snapStakeH).sort(); if (sks.length) { snapStakeH[k] = snapStakeH[sks[sks.length - 1]]; lvStake = true; } } } /* live: today's moves so far, the latest staking rates */
       var x = document.createElement("div"); x.className = "snx"; x.id = "snx"; snapPngBuild = true;
-      var isWeek = /^W/.test(snapImgKind || ""), brand = (document.getElementById("logo-svg") || {}).outerHTML || "", day = LV && !wk ? new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + " · " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " [Live]" : snapImgTitle || new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+      var isWeek = /^W/.test(snapImgKind || ""), brand = (document.getElementById("logo-svg") || {}).outerHTML || "", day = LV && !wk ? new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + " [Day Still in Progress]" : snapImgTitle || new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
       var skH = (snapStakeH && snapStakeH[k]) || {}, stakeCoins = snapTopCoins(j, 50).filter(function (c) { return stakeData[c.symbol] && skH[c.symbol] && Object.keys(skH[c.symbol]).length; }); /* only rates the image can show */
       var rdo = snapRead && snapRead[snapImgLast || k], rdS = rdo ? (rdo.side || rdo.phase ? (rdo.side || rdo.phase) + ' Phase' : '') : '', rdT = rdo && rdo.text ? snapReadingNeutral(rdo.text) : '';
       x.className = "snx " + document.body.className.split(/\s+/).filter(function (c) { return /^(tags-off|tag-off-)/.test(c); }).join(" "); /* the settings of the site carry into the image */
-      x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas ' + (LV && !wk ? 'Live' : isWeek ? 'Weekly' : 'Daily') + ' Snapshot</b><span>' + day + '</span></div><div></div></div>' +
+      x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas ' + (isWeek ? 'Weekly' : 'Daily') + ' Snapshot</b><span>' + day + '</span></div><div></div></div>' +
         '<div class="snx-body">' +
           '<div class="snx-col snx-left"><div class="snx-card snx-listc"><div class="snx-ch"><b>Top 50</b><span>' + (wk ? '[' + wk.name + '] · Tier and gain of the week' : '[Today] · Tier and gain of the day') + '</span></div><table><tbody>' + snapRowsHtml(k, j, 0, 50) + '</tbody></table></div></div>' +
           '<div class="snx-col snx-right">' +
@@ -4312,7 +4312,7 @@
     }).then(function (cv) {
       var url = cv.toDataURL("image/png"), im = document.getElementById("pf-sh-img"), b = document.getElementById("snap-png-dl"); if (!im) return;
       im.innerHTML = '<img src="' + url + '" alt="Snapshot image">'; b.disabled = false;
-      b.onclick = function () { var a = document.createElement("a"); a.href = url; a.download = LV && !wk ? "coinatlas-live-" + k + "-" + new Date().toTimeString().slice(0, 5).replace(":", "") + ".png" : wk ? "coinatlas-weekly-snapshot-" + wk.id + ".png" : "coinatlas-daily-snapshot-" + k + ".png"; document.body.appendChild(a); a.click(); a.remove(); };
+      b.onclick = function () { var a = document.createElement("a"); a.href = url; a.download = LV && !wk ? "coinatlas-daily-snapshot-" + k + ".png" : wk ? "coinatlas-weekly-snapshot-" + wk.id + ".png" : "coinatlas-daily-snapshot-" + k + ".png"; document.body.appendChild(a); a.click(); a.remove(); };
     }).catch(function () { snapPngBuild = false; if (wkSwapped) { snapChg[k] = wkKeep; wkSwapped = false; } if (lvStake) { delete snapStakeH[k]; lvStake = false; } var im = document.getElementById("pf-sh-img"); if (im) im.innerHTML = '<div class="pf-sh-wait">The image could not be built. Please try again.</div>'; });
   }
   snapBtn.addEventListener("click", function () {
@@ -4525,11 +4525,12 @@
       return dxBorrow(key, null, function () { return dxShot(id); }).then(done, done);
     }
     if (wk && id === "sq") { /* live week: today's prices against the week's open */
-      dxWhen = wk.name + " · " + wk.range + " · up to now"; dxTf = "This Week";
+      dxWhen = wk.name + " · " + wk.range + " [Week Still in Progress]"; dxTf = "This Week";
       return dxWeekOpens(wk).then(function (op) { var keep = dayOpenCache, m = {}; Object.keys(keep).forEach(function (s0) { m[s0] = keep[s0]; }); coins.forEach(function (c) { var o = op[String(c.symbol).toUpperCase()]; if (o && o.open > 0) m[c.symbol] = { open: o.open, change: (c.current_price / o.open - 1) * 100 }; }); dayOpenCache = m;
         return dxShot(id).then(function () { dayOpenCache = keep; if (sqVisible) { sqVal = {}; sqDraw(); } }, function () { dayOpenCache = keep; }); }).then(done, done);
     }
-    return dxShot(id);
+    if (!ttDay) dxWhen = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + " [Day Still in Progress]"; /* live: the day is not over yet */
+    return dxShot(id).then(done, done);
   }
   function dxCurWeek() { var iw = isoWk(ttDay || dxToday()); return iw.y + "-W" + (iw.w < 10 ? "0" : "") + iw.w; }
   function renderDX() { /* step by step, each step the whole window: the export, then Live or Snapshot, then the range, then the day or week */
