@@ -792,7 +792,9 @@
   .dx-step { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 18px 0 6px; } .dx-what { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; } .dx-ask { display: flex; flex-direction: column; align-items: center; gap: 12px; font-size: 15px; font-weight: 700; animation: rtAskIn .45s ease both; }
   .dx-ask div { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; } .dx-ask button { font: inherit; font-size: 13px; font-weight: 700; color: var(--fg); background: var(--bg); border: 1px solid #3a3a36; border-radius: 18px; padding: 9px 22px; min-width: 120px; cursor: pointer; transition: transform .15s ease, background .15s ease; } .dx-ask button:hover { transform: translateY(-1px); background: #2a2a28; }
   .dx-rows { width: 100%; display: flex; flex-direction: column; gap: 6px; } .dx-rows .snap-head { border: 1px solid var(--line); border-radius: 8px; background: var(--bg); } .dx-rows .snap-head:hover { background: #2a2a28; }
-  .dx-combb { margin-top: 10px; } .dx-grid.picking .dx-tile { opacity: .7; } .dx-grid.picking .dx-tile.on { opacity: 1; border-color: #a78bfa; background: #2a2a28; } .dx-n { font-style: normal; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; margin-left: 6px; border-radius: 50%; background: #a78bfa; color: #111; font-size: 11px; vertical-align: 2px; }
+  .dx-combb { margin-top: 10px; } .dx-grid.picking .dx-tile.off { opacity: .25; cursor: default; }
+  body.dx-combining .snx .snx-h > .snx-brand, body.dx-combining .snx .snx-h > .snx-t, body.dx-combining .snx .snx-wm, body.dx-combining .snx .snx-f .snx-brand { display: none !important; } body.dx-combining .snx { padding-top: 10px; padding-bottom: 10px; } /* one title and one watermark for the combined image */
+  .snx.dxc { padding-top: 40px; padding-bottom: 10px; } .dxc-f { display: flex; justify-content: flex-end; } .snx.dxc:has(.dxc-f) { padding-top: 10px; padding-bottom: 30px; } .dx-grid.picking .dx-tile { opacity: .7; } .dx-grid.picking .dx-tile.on { opacity: 1; border-color: #a78bfa; background: #2a2a28; } .dx-n { font-style: normal; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; margin-left: 6px; border-radius: 50%; background: #a78bfa; color: #111; font-size: 11px; vertical-align: 2px; }
   .dx-cb { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 10px; align-items: stretch; } .dx-cb .snap-showlist { margin: 0; } .dx-cb .snap-showlist:disabled { opacity: .5; cursor: default; } .dx-cb .gear { height: auto; padding: 0 16px; }
   .dx-wrap { border-radius: 8px; } .dx-wrap.on .dx-item { border-color: #3a3a36; background: #2a2a28; } .dx-pick { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; padding: 10px; margin-top: 4px; border: 1px solid var(--line); border-radius: 8px; background: var(--pop); }
   .dx-pick .fg-tf-col { display: flex; flex-direction: column; gap: 4px; min-width: 120px; } .dx-pick .fg-tf-col b { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 0 4px 2px; } .dx-pick .fg-tf-col button { text-align: left; font: inherit; font-size: 12px; color: var(--fg); background: transparent; border: 0; border-radius: 6px; padding: 6px 8px; cursor: pointer; } .dx-pick .fg-tf-col button:hover { background: var(--hover); } .dx-pick .fg-tf-col button.active { background: #2a2a28; font-weight: 700; }
@@ -4170,6 +4172,7 @@
     var a = Date.UTC(year, 0, 1), b = Date.UTC(year + 1, 0, 1);
     if (!pts.length) return '<div class="fg-sub">Nothing recorded in ' + year + ' yet.</div>';
     var v = pts.map(function (p) { return p[1]; }), mn = Math.min.apply(null, v), mx = Math.max.apply(null, v); if (mx - mn < Math.abs(mx) * 0.002 || mx === mn) { var pad = Math.abs(mx) * 0.01 || 1; mn -= pad; mx += pad; }
+    if (!mini && kind === "cap") { var fl = Math.floor(mn / 1e12) * 1e12; if (fl > 0 && mn - fl < (mx - mn) * 0.25) { mn = fl; } } /* reach down to the next whole trillion when it is close, so it gets its label */
     var X = function (t) { return ((t - a) / (b - a) * W).toFixed(1); }, Y = function (x) { return (H - 6 - (x - mn) / (mx - mn) * (H - 12)).toFixed(1); };
     var line = pts.map(function (p, i) { return (i ? "L" : "M") + X(p[0]) + " " + Y(p[1]); }).join(" "), id = "syg" + Math.round(Math.random() * 1e7), last = pts[pts.length - 1];
     var ax = mini ? { lines: "", labels: "" } : syYAxis(kind, mn, mx, H, Y);
@@ -4186,7 +4189,8 @@
   }
   function syTick(kind, v) { if (kind === "rate" || kind === "pct") return (+v.toFixed(2)) + "%"; var a = Math.abs(v); return "$" + (a >= 1e12 ? +(v / 1e12).toFixed(2) + "T" : a >= 1e9 ? +(v / 1e9).toFixed(1) + "B" : a >= 1e6 ? +(v / 1e6).toFixed(1) + "M" : +v.toFixed(0)); }
   function syYAxis(kind, lo, hi, H, Yf) { /* faint lines in the chart and their labels on the left */
-    var t = syTicks(lo, hi, kind === "cap" ? 6 : 5); return { lines: t.map(function (v) { var y = Yf(v); return '<line x1="0" x2="100%" y1="' + y + '" y2="' + y + '" stroke="rgba(255,255,255,.06)" vector-effect="non-scaling-stroke"/>'; }).join(""), labels: t.map(function (v) { var pc = Math.max(4, Math.min(96, +Yf(v) / H * 100)); return '<span class="sy-yt" style="top:' + pc + '%">' + syTick(kind, v) + '</span>'; }).join("") };
+    var t = kind === "cap" ? (function () { var o = []; for (var v = Math.ceil(lo / 1e12) * 1e12; v <= hi; v += 1e12) o.push(v); return o; })() : syTicks(lo, hi, 5); /* market caps: whole trillions only */
+    return { lines: kind === "cap" ? "" : t.map(function (v) { var y = Yf(v); return '<line x1="0" x2="100%" y1="' + y + '" y2="' + y + '" stroke="rgba(255,255,255,.06)" vector-effect="non-scaling-stroke"/>'; }).join(""), labels: t.map(function (v) { var pc = Math.max(4, Math.min(96, +Yf(v) / H * 100)); return '<span class="sy-yt" style="top:' + pc + '%">' + syTick(kind, v) + '</span>'; }).join("") };
   }
   function syFmt(kind, v) { return kind === "rate" ? v.toFixed(2) + "%" : compact(v); }
   document.addEventListener("mousemove", function (e) { /* the tooltip of the year charts: date and value of the nearest day */
@@ -4657,19 +4661,28 @@
   }
   function dxNowText() { return "As of " + new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", timeZoneName: "short" }) + " · [Day Still in Progress]"; } /* the time under the date of a live day */
   var dxComb = null;
-  function dxCombine(ids) { /* both exports are built as usual, then put into one PNG: the first above the second, centred */
-    var cvs = []; dxSink = cvs; dxComb = null; renderDX();
+  function dxCombine(ids) { /* both exports are built without their headers, then put into one PNG under one title, the first above the second, one watermark at the bottom right */
+    var cvs = []; dxSink = cvs; dxComb = null; renderDX(); document.body.classList.add("dx-combining");
     var names = ids.map(function (id) { return (DX.filter(function (d) { return d[0] === id; })[0] || [])[1]; });
     var run = Promise.resolve(); ids.forEach(function (id) { run = run.then(function () { var n0 = cvs.length; return Promise.resolve(dxGo(id, "live", "day")).then(function () { if (cvs.length === n0) throw new Error("no image"); }); }); });
+    var TT = { default: "Daily Snapshot", fg: "Fear & Greed Index", sq: "Sentiment Squares", ratio: "BTC|ETH Ratio", stake: "Staking", t200: "TOTAL 200", dom: "Market Cap Dominance", fomc: "FOMC" };
     return run.then(function () {
-      dxSink = null; var A = cvs[cvs.length - 2], B = cvs[cvs.length - 1], gap = 40, W = Math.max(A.width, B.width), c = document.createElement("canvas"); c.width = W; c.height = A.height + gap + B.height;
-      var g = c.getContext("2d"); g.fillStyle = pfCss("--pop"); g.fillRect(0, 0, W, c.height); g.drawImage(A, Math.round((W - A.width) / 2), 0); g.drawImage(B, Math.round((W - B.width) / 2), A.height + gap);
+      dxSink = null; document.body.classList.remove("dx-combining");
+      var A = cvs[cvs.length - 2], B = cvs[cvs.length - 1], W = Math.max(A.width, B.width), brand = (document.getElementById("logo-svg") || {}).outerHTML || "";
+      var day = ttDay ? new Date(ttDay + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }) + " · Time Travel" : new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + "\n" + dxNowText();
+      var mk = function (html) { var d = document.createElement("div"); d.className = "snx dxc"; d.style.width = W / 2 + "px"; d.innerHTML = html; document.body.appendChild(d); return d; };
+      var hd = mk('<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas ' + esc(ids.map(function (id) { return TT[id]; }).join(" & ")) + '</b><span>' + esc(day) + '</span></div><div></div></div>'), ft = mk('<div class="dxc-f"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div></div>');
+      Array.prototype.forEach.call(hd.querySelectorAll("svg, svg *"), function () {});
+      return loadH2C0().then(function (h2c) { return Promise.all([h2c(hd, { backgroundColor: pfCss("--pop"), scale: 2, logging: false }), h2c(ft, { backgroundColor: pfCss("--pop"), scale: 2, logging: false })]); }).then(function (hf) {
+      hd.remove(); ft.remove(); var H0 = hf[0], F0 = hf[1], c = document.createElement("canvas"); c.width = W; c.height = H0.height + A.height + B.height + F0.height;
+      var g = c.getContext("2d"); g.fillStyle = pfCss("--pop"); g.fillRect(0, 0, W, c.height); g.drawImage(H0, 0, 0); g.drawImage(A, Math.round((W - A.width) / 2), H0.height); g.drawImage(B, Math.round((W - B.width) / 2), H0.height + A.height); g.drawImage(F0, 0, H0.height + A.height + B.height);
       var ov = document.getElementById("pf-sh"); if (!ov) { ov = document.createElement("div"); ov.id = "pf-sh"; ov.className = "pf-sh"; document.body.appendChild(ov); }
       var url = c.toDataURL("image/png"); ov.hidden = false;
       ov.innerHTML = '<div class="pf-sh-box snx-box" role="dialog" aria-label="Combined image"><div class="pf-sh-head"><b>Combined Image</b><span class="pf-sh-mode">' + esc(names.join(" + ")) + '</span><button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
         '<div class="pf-sh-img" id="pf-sh-img"><img src="' + url + '" alt="Combined image"></div><div class="pf-sh-foot"><button class="gear pf-sh-dl" type="button" id="snap-png-dl">Download PNG</button></div></div>';
       document.getElementById("snap-png-dl").onclick = function () { var a = document.createElement("a"); a.href = url; a.download = "coinatlas-" + ids.join("-") + "-" + (ttDay || new Date().toISOString().slice(0, 10)) + ".png"; document.body.appendChild(a); a.click(); a.remove(); };
-    }).catch(function () { dxSink = null; var im = document.getElementById("pf-sh-img"); if (im) im.innerHTML = '<div class="pf-sh-wait">The combined image could not be built. Please try again.</div>'; });
+      });
+    }).catch(function () { dxSink = null; document.body.classList.remove("dx-combining"); var im = document.getElementById("pf-sh-img"); if (im) im.innerHTML = '<div class="pf-sh-wait">The combined image could not be built. Please try again.</div>'; });
   }
   function dxCurWeek() { var iw = isoWk(ttDay || dxToday()); return iw.y + "-W" + (iw.w < 10 ? "0" : "") + iw.w; }
   function renderDX() { /* step by step, each step the whole window: the export, then Live or Snapshot, then the range, then the day or week */
@@ -4682,7 +4695,7 @@
     var ask = function (q, btns) { return '<div class="dx-step"><div class="dx-what">' + esc(d[1]) + '</div><div class="dx-ask"><span>' + q + '</span><div>' + btns.map(function (b) { return '<button type="button" ' + b[0] + '>' + b[1] + '</button>'; }).join("") + '</div></div></div>'; };
     if (!d) {
       var cm = dxComb !== null;
-      h += '<div class="dx-grid' + (cm ? ' picking' : '') + '">' + DX.map(function (x) { var on = cm && dxComb.indexOf(x[0]) > -1; return '<button type="button" class="dx-tile' + (on ? ' on' : '') + '" data-dx="' + x[0] + '"><b>' + x[1] + (on ? ' <i class="dx-n">' + (dxComb.indexOf(x[0]) + 1) + '</i>' : '') + '</b><span>' + x[2] + '</span></button>'; }).join("") + '</div>' +
+      h += '<div class="dx-grid' + (cm ? ' picking' : '') + '">' + DX.map(function (x) { var on = cm && dxComb.indexOf(x[0]) > -1, off = cm && x[0] === "default"; return '<button type="button" class="dx-tile' + (on ? ' on' : '') + (off ? ' off' : '') + '" data-dx="' + x[0] + '"' + (off ? ' disabled title="Already holds every other export"' : '') + '><b>' + x[1] + (on ? ' <i class="dx-n">' + (dxComb.indexOf(x[0]) + 1) + '</i>' : '') + '</b><span>' + x[2] + '</span></button>'; }).join("") + '</div>' +
         (cm ? '<div class="fg-sub t2-note">Mark two exports. They are put into one PNG, the first above the second' + (ttDay ? ', both showing ' + snapDate(ttDay) : ', both live') + '.</div><div class="dx-cb"><button type="button" class="snap-showlist" data-dxcomb="go"' + (dxComb.length === 2 ? '' : ' disabled') + '><b>' + (dxComb.length === 2 ? 'Combine into one PNG' : 'Marked [' + dxComb.length + '/2]') + '</b></button><button type="button" class="gear" data-dxcomb="off">Cancel</button></div>'
           : '<button type="button" class="snap-showlist dx-combb" data-dxcomb="on"><b>Combine Exports</b><span>Two exports in one PNG</span></button><div class="fg-sub t2-note">Every image is made for a desktop screen. Windows are exported the way you have set them.</div>');
     } else if (!dxMode) {
@@ -4706,7 +4719,7 @@
     var t = e.target, weekly = dxPick === "default" || dxPick === "sq";
     if (t.closest("[data-dxback]")) { if (dxSpan && weekly) dxSpan = null; else if (dxMode) { dxMode = null; dxSpan = null; } else dxPick = null; renderDX(); return; }
     var cb = t.closest("[data-dxcomb]"); if (cb) { var a = cb.dataset.dxcomb; if (a === "on") dxComb = []; else if (a === "off") dxComb = null; else if (dxComb && dxComb.length === 2) { dxCombine(dxComb.slice()); return; } renderDX(); return; }
-    var it = t.closest("[data-dx]"); if (it) { if (dxComb !== null) { var q = dxComb.indexOf(it.dataset.dx); if (q > -1) dxComb.splice(q, 1); else if (dxComb.length < 2) dxComb.push(it.dataset.dx); renderDX(); return; } dxPick = it.dataset.dx; dxMode = null; dxSpan = null; renderDX(); return; }
+    var it = t.closest("[data-dx]"); if (it) { if (dxComb !== null) { if (it.dataset.dx === "default") return; var q = dxComb.indexOf(it.dataset.dx); if (q > -1) dxComb.splice(q, 1); else if (dxComb.length < 2) dxComb.push(it.dataset.dx); renderDX(); return; } dxPick = it.dataset.dx; dxMode = null; dxSpan = null; renderDX(); return; }
     var m = t.closest("[data-dxmode]"); if (m) { dxMode = m.dataset.dxmode; dxSpan = weekly ? null : "day"; if (dxMode === "live" && !weekly) dxStart(); else renderDX(); return; }
     var sp = t.closest("[data-dxspan]"); if (sp) { dxSpan = sp.dataset.dxspan; if (dxMode === "live") dxStart(); else renderDX(); return; }
     var k = t.closest("[data-dxkey]"); if (k) dxStart(k.dataset.dxkey);
