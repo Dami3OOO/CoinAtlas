@@ -778,6 +778,10 @@
   .fgx .fg-annual-section > .fg-sub:last-child { display: none; } .snx .fg-dlb { display: none; }
   .snx.fgx { width: 1700px; } .fgx .fgx-box { background: none !important; border: 0 !important; padding: 0 !important; } .fgx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; } .fgx-grid.one { grid-template-columns: 1fr; }
   .fgx .fg-top-row { display: flex !important; gap: 24px; align-items: center; margin-top: 16px; } .fgx .fg-stats-col { display: block !important; flex: 1; } .fgx .fg-gauge-col { flex: 0 0 260px; } .fgx .fgx-r .fg-annual-section { margin: 0; border: 0; padding: 0; background: none; } .fgx .fgx-more { margin: 16px 0 0; border: 0; padding: 0; background: none; } .fgx .fg-ax { margin-top: 6px; } .fgx .fg-yr-wrap { display: none !important; } .fgx .fg-annual-head .fg-timeframes { display: flex !important; pointer-events: none; } .fgx .fg-py-chev { display: none; } .fgx .fg-top-row { justify-content: center; }
+  .dx-tt { margin: -4px 0 12px; padding: 10px 12px; border: 1px solid #facc15; border-radius: 8px; color: #facc15; font-size: 12px; text-align: center; background: rgba(250,204,21,.06); }
+  .dx-list { display: flex; flex-direction: column; gap: 6px; } .dx-item { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; text-align: left; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); font: inherit; cursor: pointer; } .dx-item:hover { background: #2a2a28; } .dx-item b { font-size: 13px; } .dx-item span { grid-column: 1; font-size: 11px; color: var(--muted); } .dx-item i { grid-row: 1 / span 2; grid-column: 2; font-style: normal; font-size: 12px; font-weight: 700; color: var(--muted); }
+  .dx-snap { display: grid; grid-template-columns: 50px 1fr auto; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 12px; font-weight: 600; } .dx-snap select { min-width: 0; height: 30px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 0 8px; font: inherit; font-size: 12px; } .dx-fmt { display: flex; gap: 4px; } .dx-fmt .gear { height: 30px; padding: 0 8px; font-size: 11px; }
+  .wpx-body { display: flex; justify-content: center; } .snx.wpx .snx-h { display: flex; flex-direction: column; align-items: center; gap: 14px; } .snx.wpx .snx-h > div:last-child { display: none; } .snx.wpx .pinned-card { margin: 0; }
   .t2-top { display: flex; flex-direction: column; align-items: center; gap: 2px; margin: -4px 0 12px; } .t2-top b { font-size: 26px; } .t2-note { text-align: center; margin-top: 12px; } .t2-note a { color: inherit; }
   .fomc-next { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); } .fomc-next b { font-size: 26px; font-variant-numeric: tabular-nums; color: #93c5fd; } .fomc-next > span:not(.fg-sub) { font-size: 13px; font-weight: 600; }
   .fomc-list { display: flex; flex-direction: column; gap: 4px; } .fomc-row { display: flex; justify-content: space-between; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-size: 12px; } .fomc-row span { color: var(--muted); } .fomc-row.past { opacity: .45; } .fomc-row.on { border-color: #93c5fd; } .fomc-row.on span { color: #93c5fd; font-weight: 700; }
@@ -1138,6 +1142,7 @@
       <button class="gear" type="button" id="stake-btn">Staking</button>
       <button class="gear" type="button" id="roadmap-btn">Roadmap</button>
       <button class="gear" type="button" id="snap-btn">Snapshots</button>
+      <button class="gear" type="button" id="dx-btn">Data Export</button>
       <button class="gear" type="button" id="tt-btn">Time Travel</button>
       <button class="gear" type="button" id="manual-refresh" aria-label="Refresh prices" style="padding:0; width:36px;">
         <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
@@ -1163,6 +1168,7 @@
               <div class="grp"><span class="lbl">Sentiment Squares</span><button class="toggle" type="button" data-hb="sq-btn" role="switch" aria-checked="true" aria-label="Show Sentiment Squares in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Roadmap</span><button class="toggle" type="button" data-hb="roadmap-btn" role="switch" aria-checked="true" aria-label="Show Roadmap in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Snapshots</span><button class="toggle" type="button" data-hb="snap-btn" role="switch" aria-checked="true" aria-label="Show Snapshots in the header"><span></span></button></div>
+              <div class="grp"><span class="lbl">Data Export</span><button class="toggle" type="button" data-hb="dx-btn" role="switch" aria-checked="true" aria-label="Show Data Export in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Time Travel</span><button class="toggle" type="button" data-hb="tt-btn" role="switch" aria-checked="true" aria-label="Show Time Travel in the header"><span></span></button></div>
               <div class="grp"><span class="lbl">Refresh Button</span><button class="toggle" type="button" data-hb="manual-refresh" role="switch" aria-checked="true" aria-label="Show Refresh Button in the header"><span></span></button></div>
               <button class="gear wide-btn" type="button" id="moveui-btn">UI Moving Mode</button>
@@ -1284,6 +1290,7 @@
       <div id="fg-chart-container"></div>
       <div id="ui-mode-note" class="pinned-card ui-note" hidden>UI Moving Mode is turned on, Press ESC to Turn it off</div>
       <div id="tt-container" hidden></div>
+      <div id="dx-container" hidden></div>
       <div id="t200-container" hidden></div>
       <div id="fomc-container" hidden></div>
       <div id="stake-container" hidden></div>
@@ -2507,7 +2514,7 @@
   function updatePinnedColVisibility() {
     var col = document.getElementById("pinned-col");
     if (!col) return;
-    if (pinnedCoins.length > 0 || (typeof chMinis !== "undefined" && chMinis.length) || roadmapVisible || portfolioVisible || ratioVisible || uiNoteOn || sqVisible || (typeof stkVisible !== "undefined" && stkVisible) || snapVisible || (typeof t2Visible !== "undefined" && (t2Visible || fomcVisible)) || (typeof ttVisible !== "undefined" && ttVisible)) col.classList.add("on");
+    if (pinnedCoins.length > 0 || (typeof chMinis !== "undefined" && chMinis.length) || roadmapVisible || portfolioVisible || ratioVisible || uiNoteOn || sqVisible || (typeof stkVisible !== "undefined" && stkVisible) || snapVisible || (typeof t2Visible !== "undefined" && (t2Visible || fomcVisible || dxVisible)) || (typeof ttVisible !== "undefined" && ttVisible)) col.classList.add("on");
     else col.classList.remove("on");
   }
 
@@ -4220,22 +4227,25 @@
     return '<div class="snx-t2s">' + kv("Today", '<b style="color:' + T200_C + '">[' + compact(last) + ']</b>') + kv("Previous Day", c(last, v[v.length - 2])) + kv("Year Start", '<b>[' + compact(v[0]) + ']</b>') + kv("Year to Date", c(last, v[0])) +
       kv("Year High · " + d(hi), '<b>[' + compact(v[hi]) + ']</b>') + kv("From the High", c(last, v[hi])) + kv("Year Low · " + d(lo), '<b>[' + compact(v[lo]) + ']</b>') + kv("From the Low", c(last, v[lo])) + '</div>';
   }
+  var snapLiveJ = null; /* set by Data Export: the next image is built from the list as it is right now */
   function snapPng(k, wk) { /* the whole day (or week) as one landscape image, built from the real UI and photographed, with a preview first */
+    var LV = snapLiveJ; snapLiveJ = null; var lvStake = false;
     snapImgKind = wk ? "W" : "D"; snapImgTitle = wk ? wk.name + " · " + wk.range + (wk.have.length < 7 && !(snapDays && snapDays[wk.days[6]]) && wk.days[6] >= new Date(Date.now() - 864e5).toISOString().slice(0, 10) ? " [Week Still in Progress]" : "") : ""; snapImgLast = k; var wkKeep = null, wkSwapped = false;
     var ov = document.getElementById("pf-sh"); if (!ov) { ov = document.createElement("div"); ov.id = "pf-sh"; ov.className = "pf-sh"; document.body.appendChild(ov); }
-    ov.innerHTML = '<div class="pf-sh-box snx-box" role="dialog" aria-label="Snapshot image"><div class="pf-sh-head"><b>Snapshot Image</b><span class="pf-sh-mode">' + (wk ? wk.name + ' [' + wk.range + ']' : snapDate(k)) + '</span><button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
+    ov.innerHTML = '<div class="pf-sh-box snx-box" role="dialog" aria-label="Snapshot image"><div class="pf-sh-head"><b>' + (LV ? 'Live Image' : 'Snapshot Image') + '</b><span class="pf-sh-mode">' + (LV ? 'Live · ' + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : wk ? wk.name + ' [' + wk.range + ']' : snapDate(k)) + '</span><button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
       '<div class="pf-sh-img" id="pf-sh-img"><div class="pf-sh-wait">Building the image…</div></div><div class="pf-sh-foot"><button class="gear pf-sh-dl" type="button" id="snap-png-dl" disabled>Download PNG</button></div></div>';
     ov.hidden = false;
     if (!fgData && !fgLoading) loadFGData(); if (!RT.data) rtLoad();
-    Promise.all([loadH2C(), snapFile(k), snapExtras(), snapDayChanges(k), snapWait(function () { return fgData && RT.data; }, 15000), snapWeekLoad(wk)]).then(function (r) {
+    Promise.all([loadH2C(), LV ? LV.j : snapFile(k), snapExtras(), LV ? LV.chg : snapDayChanges(k), snapWait(function () { return fgData && RT.data; }, 15000), snapWeekLoad(wk)]).then(function (r) {
       var h2c = r[0], j = r[1]; if (!j || !j.coins) throw new Error("no snapshot");
       if (wk && snapWChg[wk.id]) { wkKeep = snapChg[k]; snapChg[k] = snapWChg[wk.id]; wkSwapped = true; } /* the week's moves while the image is built */
+      if (LV) { wkKeep = snapChg[k]; snapChg[k] = LV.chg; wkSwapped = true; if (snapStakeH && !snapStakeH[k]) { var sks = Object.keys(snapStakeH).sort(); if (sks.length) { snapStakeH[k] = snapStakeH[sks[sks.length - 1]]; lvStake = true; } } } /* live: today's moves so far, the latest staking rates */
       var x = document.createElement("div"); x.className = "snx"; x.id = "snx"; snapPngBuild = true;
-      var isWeek = /^W/.test(snapImgKind || ""), brand = (document.getElementById("logo-svg") || {}).outerHTML || "", day = snapImgTitle || new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+      var isWeek = /^W/.test(snapImgKind || ""), brand = (document.getElementById("logo-svg") || {}).outerHTML || "", day = LV ? new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + " · " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + " [Live]" : snapImgTitle || new Date(k + "T00:00:00Z").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
       var skH = (snapStakeH && snapStakeH[k]) || {}, stakeCoins = snapTopCoins(j, 50).filter(function (c) { return stakeData[c.symbol] && skH[c.symbol] && Object.keys(skH[c.symbol]).length; }); /* only rates the image can show */
       var rdo = snapRead && snapRead[snapImgLast || k], rdS = rdo ? (rdo.side || rdo.phase ? (rdo.side || rdo.phase) + ' Phase' : '') : '', rdT = rdo && rdo.text ? snapReadingNeutral(rdo.text) : '';
       x.className = "snx " + document.body.className.split(/\s+/).filter(function (c) { return /^(tags-off|tag-off-)/.test(c); }).join(" "); /* the settings of the site carry into the image */
-      x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas ' + (isWeek ? 'Weekly' : 'Daily') + ' Snapshot</b><span>' + day + '</span></div><div></div></div>' +
+      x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas ' + (LV ? 'Live' : isWeek ? 'Weekly' : 'Daily') + ' Snapshot</b><span>' + day + '</span></div><div></div></div>' +
         '<div class="snx-body">' +
           '<div class="snx-col snx-left"><div class="snx-card snx-listc"><div class="snx-ch"><b>Top 50</b><span>' + (wk ? '[' + wk.name + '] · Tier and gain of the week' : '[Today] · Tier and gain of the day') + '</span></div><table><tbody>' + snapRowsHtml(k, j, 0, 50) + '</tbody></table></div></div>' +
           '<div class="snx-col snx-right">' +
@@ -4248,7 +4258,7 @@
             '<div class="snx-card snx-sqw"><div class="snx-ch"><b>Sentiment Squares</b><span>Top 200</span></div><div class="sqm-map snx-sq" id="snx-sq"></div><div class="snx-wm">' + brand + '<b>CoinAtlas</b></div></div>' +
           '</div>' +
         '</div>' +
-        '<div class="snx-f"><span>Created using Data from coingecko.com, binance.com, bitget.com, alternative.me and defillama.com · ' + (wk ? 'Every move from the open of ' + snapDate(wk.first) + ' to the close of ' + snapDate(k) + ' · [' + wk.have.length + '/7 Snapshots] · recorded at midnight New York time.' : 'Recorded at midnight New York time for the day that ended.') + '</span><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div></div>';
+        '<div class="snx-f"><span>Created using Data from coingecko.com, binance.com, bitget.com, alternative.me and defillama.com · ' + (wk ? 'Every move from the open of ' + snapDate(wk.first) + ' to the close of ' + snapDate(k) + ' · [' + wk.have.length + '/7 Snapshots] · recorded at midnight New York time.' : (LV ? 'Live data: today\'s moves since midnight New York time, as shown on the site when the image was made.' : 'Recorded at midnight New York time for the day that ended.')) + '</span><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div></div>';
       document.body.appendChild(x);
       /* Fear & Greed: the year's chart above the half wheel */
       var fgc = document.getElementById("snx-fg"); snapEmbedFG(fgc, k);
@@ -4290,13 +4300,13 @@
         var b = sv.getBoundingClientRect(), c = sv.cloneNode(true); c.setAttribute("xmlns", "http://www.w3.org/2000/svg"); c.setAttribute("width", Math.round(b.width)); c.setAttribute("height", Math.round(b.height)); c.removeAttribute("style");
         var im = new Image(); im.width = Math.round(b.width); im.height = Math.round(b.height); im.style.display = "block"; im.style.margin = "0 auto"; im.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(new XMLSerializer().serializeToString(c)); sv.parentNode.replaceChild(im, sv);
       });
-      snapPngBuild = false; if (wkSwapped) { snapChg[k] = wkKeep; wkSwapped = false; }
+      snapPngBuild = false; if (wkSwapped) { snapChg[k] = wkKeep; wkSwapped = false; } if (lvStake) { delete snapStakeH[k]; lvStake = false; }
       return new Promise(function (res) { setTimeout(res, 700); }).then(function () { return h2c(x, { backgroundColor: pfCss("--pop"), scale: 2, useCORS: true, logging: false }); }).then(function (cv) { x.remove(); return cv; }, function (e) { x.remove(); throw e; });
     }).then(function (cv) {
       var url = cv.toDataURL("image/png"), im = document.getElementById("pf-sh-img"), b = document.getElementById("snap-png-dl"); if (!im) return;
       im.innerHTML = '<img src="' + url + '" alt="Snapshot image">'; b.disabled = false;
-      b.onclick = function () { var a = document.createElement("a"); a.href = url; a.download = wk ? "coinatlas-weekly-snapshot-" + wk.id + ".png" : "coinatlas-daily-snapshot-" + k + ".png"; document.body.appendChild(a); a.click(); a.remove(); };
-    }).catch(function () { snapPngBuild = false; if (wkSwapped) { snapChg[k] = wkKeep; wkSwapped = false; } var im = document.getElementById("pf-sh-img"); if (im) im.innerHTML = '<div class="pf-sh-wait">The image could not be built. Please try again.</div>'; });
+      b.onclick = function () { var a = document.createElement("a"); a.href = url; a.download = LV ? "coinatlas-live-" + k + "-" + new Date().toTimeString().slice(0, 5).replace(":", "") + ".png" : wk ? "coinatlas-weekly-snapshot-" + wk.id + ".png" : "coinatlas-daily-snapshot-" + k + ".png"; document.body.appendChild(a); a.click(); a.remove(); };
+    }).catch(function () { snapPngBuild = false; if (wkSwapped) { snapChg[k] = wkKeep; wkSwapped = false; } if (lvStake) { delete snapStakeH[k]; lvStake = false; } var im = document.getElementById("pf-sh-img"); if (im) im.innerHTML = '<div class="pf-sh-wait">The image could not be built. Please try again.</div>'; });
   }
   snapBtn.addEventListener("click", function () {
     snapVisible = !snapVisible; snapBtn.classList.toggle("active", snapVisible);
@@ -4402,6 +4412,7 @@
     if (snapVisible) renderSnaps();
     if (fgVisible && fgData) { renderFGChart(); renderFGAnnual(); }
     if (t2Visible) renderT200();
+    if (dxVisible) renderDX();
     applyStakeBadges();
   }
   var ttTfKeep = null;
@@ -4413,6 +4424,75 @@
       var o = ttTfKeep; ttTfKeep = null; Object.keys(cardTf).forEach(function (s) { cardTf[s] = o.card[s] || "1D"; }); fgTimeframe = o.fgTf; fgYear = o.fgYr; annualRange = o.ann; RT.view = o.rtV; RT.year = o.rtY; sqS.tf = o.sq; if (pfLock && o.pf) pfLock.tf = o.pf;
     }
   }
+  /* ---------- DATA EXPORT: every image export in one place. Live = what the site shows right now (in Time Travel: the travelled day), or any recorded Snapshot ---------- */
+  var dxVisible = false, dxSrc = "live", dxBtn = document.getElementById("dx-btn"), dxBox = document.getElementById("dx-container");
+  var DX = [["default", "CoinAtlas Default", "Top 50, TOTAL 200, Fear & Greed, BTC|ETH, Staking and Sentiment Squares on one image"], ["fg", "Fear & Greed Index", "The chart as you set it, the wheel, History and Past Years"], ["sq", "Sentiment Squares", "The squares as they are right now"], ["ratio", "BTC|ETH Ratio", "The whole window as it is set"], ["stake", "Staking", "The Staking window as it is open"], ["t200", "TOTAL 200", "The year of the Top 200 market cap"], ["fomc", "FOMC", "Countdown and meeting calendar"]];
+  function dxToday() { return new Date(nyDay(Date.now()).start + 6 * 36e5).toISOString().slice(0, 10); }
+  function dxLiveJ() { /* the list as it is right now, in the shape of a snapshot */
+    var top = coins.slice(0, 300), t200 = top.slice(0, 200), total = t200.reduce(function (a, c) { return a + (+c.market_cap || 0); }, 0), f = function (S) { return top.filter(function (c) { return String(c.symbol).toUpperCase() === S; })[0] || {}; }, chg = {};
+    top.forEach(function (c) { var S = String(c.symbol).toUpperCase(), pc = dayOpenCache[c.symbol] ? changeOf(c) : c.price_change_percentage_24h; chg[S] = { pc: pc == null || !isFinite(pc) ? null : +pc, src: "live" }; });
+    return { j: { coins: top.map(function (c) { return [String(c.symbol).toUpperCase(), c.name, +c.current_price, +c.market_cap, +c.total_volume || 0, +c.circulating_supply || 0]; }), total: total, btc: (+f("BTC").market_cap || 0) / total * 100, eth: (+f("ETH").market_cap || 0) / total * 100, ratio: (+f("BTC").current_price || 0) / (+f("ETH").current_price || 1) }, chg: chg };
+  }
+  function winPng(name, btn, box) { /* a window exactly as it is open on the site, photographed with the CoinAtlas header */
+    var was = btn.classList.contains("active"); if (!was) btn.click();
+    var ov = document.getElementById("pf-sh"); if (!ov) { ov = document.createElement("div"); ov.id = "pf-sh"; ov.className = "pf-sh"; document.body.appendChild(ov); }
+    ov.innerHTML = '<div class="pf-sh-box snx-box" role="dialog" aria-label="' + esc(name) + ' image"><div class="pf-sh-head"><b>' + esc(name) + ' Image</b><span class="pf-sh-mode">' + (ttDay ? snapDate(ttDay) + ' · Time Travel' : 'Live') + '</span><button class="chart-close-btn" type="button" id="pf-sh-x" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>' +
+      '<div class="pf-sh-img" id="pf-sh-img"><div class="pf-sh-wait">Building the image…</div></div><div class="pf-sh-foot"><button class="gear pf-sh-dl" type="button" id="snap-png-dl" disabled>Download PNG</button></div></div>';
+    ov.hidden = false;
+    Promise.all([loadH2C(), snapWait(function () { return box.querySelector(".pinned-card") && !/Loading/.test(box.textContent); }, 12000)]).then(function (r) {
+      return new Promise(function (res) { setTimeout(res, 400); }).then(function () {
+        var card = box.querySelector(".pinned-card"); if (!card) throw new Error("no window");
+        var w = card.getBoundingClientRect().width, brand = (document.getElementById("logo-svg") || {}).outerHTML || "", when = ttDay ? new Date(ttDay + "T00:00:00Z") : new Date(), x = document.createElement("div"); x.className = "snx wpx"; x.style.width = Math.max(720, w + 96) + "px";
+        var day = when.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: ttDay ? "UTC" : undefined }) + (ttDay ? " · Time Travel" : " · " + when.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
+        x.innerHTML = '<div class="snx-h"><div class="snx-brand">' + brand + '<b>CoinAtlas</b></div><div class="snx-t"><b>CoinAtlas ' + esc(name) + '</b><span>' + esc(day) + '</span></div><div></div></div><div class="wpx-body"></div>';
+        var c = card.cloneNode(true); c.style.width = w + "px"; c.style.margin = "0 auto"; Array.prototype.forEach.call(c.querySelectorAll(".chart-close-btn, .snap-dlw, [data-sqdl], [data-fgdl], .fg-tf-menu"), function (n) { n.remove(); });
+        Array.prototype.forEach.call(c.querySelectorAll("[id]"), function (n) { if (!n.closest("svg")) n.removeAttribute("id"); }); /* gradients inside charts keep theirs */ x.querySelector(".wpx-body").appendChild(c); document.body.appendChild(x);
+        Array.prototype.forEach.call(x.querySelectorAll("svg, svg *"), function (n) {
+          ["fill", "stroke", "stop-color", "color"].forEach(function (at) { var v = n.getAttribute && n.getAttribute(at); if (v && v.indexOf("var(") > -1) n.setAttribute(at, v.replace(/var\((--[\w-]+)\)/g, function (m, nm) { return pfCss(nm); })); });
+        });
+        return r[0](x, { backgroundColor: pfCss("--pop"), scale: 2, useCORS: true, logging: false }).then(function (cv) { x.remove(); return cv; }, function (e) { x.remove(); throw e; });
+      });
+    }).then(function (cv) {
+      if (!was) btn.click();
+      var url = cv.toDataURL("image/png"), im = document.getElementById("pf-sh-img"), b = document.getElementById("snap-png-dl"); if (!im) return;
+      im.innerHTML = '<img src="' + url + '" alt="' + esc(name) + ' image">'; b.disabled = false;
+      b.onclick = function () { var a = document.createElement("a"); a.href = url; a.download = "coinatlas-" + name.toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-" + (ttDay || new Date().toISOString().slice(0, 10)) + ".png"; document.body.appendChild(a); a.click(); a.remove(); };
+    }).catch(function () { if (!was && btn.classList.contains("active")) btn.click(); var im = document.getElementById("pf-sh-img"); if (im) im.innerHTML = '<div class="pf-sh-wait">The image could not be built. Please try again.</div>'; });
+  }
+  function dxRun(id) {
+    if (id === "default") { if (ttDay) snapPng(ttDay); else { snapLiveJ = dxLiveJ(); snapPng(dxToday()); } return; }
+    if (id === "fg") { if (fgData) fgPng(); else { if (!fgLoading) loadFGData(); snapWait(function () { return fgData; }, 15000).then(fgPng); } return; }
+    if (id === "sq") { var on = sqVisible; if (!on) sqBtn.click(); setTimeout(function () { sqPng(); if (!on) sqBtn.click(); }, on ? 0 : 2500); return; }
+    if (id === "ratio") return winPng("BTC|ETH Ratio", ratioBtn, ratioBox);
+    if (id === "stake") return winPng("Staking", stkBtn, stkBox);
+    if (id === "t200") return winPng("TOTAL 200", t2Btn, t2Box);
+    if (id === "fomc") return winPng("FOMC", fomcBtn, fomcBox);
+  }
+  function renderDX() {
+    if (!dxVisible) { dxBox.hidden = true; dxBox.innerHTML = ""; updatePinnedColVisibility(); return; }
+    dxBox.hidden = false; updatePinnedColVisibility();
+    var h = '<div class="pinned-card chart-container pf-card dx-card dev-target" data-dev-name="Data Export" data-dev-color="#a78bfa"><div class="pf-title">Data Export</div>' +
+      (ttDay ? '<div class="dx-tt">You are Time Traveling: exports show ' + snapDate(ttDay) + ', drawn from that day\'s Snapshot, not the live data.</div>' : '') +
+      '<div class="snap-ym"><button type="button" class="gear' + (dxSrc === "live" ? ' active' : '') + '" data-dxsrc="live">' + (ttDay ? 'Time Travel' : 'Live') + '</button><button type="button" class="gear' + (dxSrc === "snap" ? ' active' : '') + '" data-dxsrc="snap">Snapshot</button></div>';
+    if (dxSrc === "live") h += '<div class="dx-list">' + DX.map(function (d) { return '<button type="button" class="dx-item" data-dx="' + d[0] + '"><b>' + d[1] + '</b><span>' + d[2] + '</span><i>[PNG]</i></button>'; }).join("") + '</div><div class="fg-sub t2-note">' + (ttDay ? 'Every export shows the travelled day.' : 'Every export shows the data as it is on the site right now.') + ' Windows are exported the way you have set them.</div>';
+    else if (!snapDays) { h += '<div class="rt-empty">Loading the recorded days…</div>'; snapLoadDays().then(renderDX); }
+    else {
+      var ks = snapKeys().reverse(), wks = []; ks.forEach(function (k) { var iw = isoWk(k), id = iw.y + "-W" + (iw.w < 10 ? "0" : "") + iw.w; if (wks.indexOf(id) < 0) wks.push(id); });
+      var row = function (lbl, sel, attr) { return '<div class="dx-snap"><span>' + lbl + '</span>' + sel + '<div class="dx-fmt"><button type="button" class="gear" data-' + attr + '="png">[PNG]</button><button type="button" class="gear" data-' + attr + '="csv">[CSV]</button><button type="button" class="gear" data-' + attr + '="json">[JSON]</button></div></div>'; };
+      h += row("Day", '<select id="dx-day">' + ks.map(function (k) { return '<option value="' + k + '">' + snapDate(k) + '</option>'; }).join("") + '</select>', "dxday") +
+        row("Week", '<select id="dx-week">' + wks.map(function (id) { var w = snapWeekFromId(id); return '<option value="' + id + '">' + w.name + ' [' + w.range + ']</option>'; }).join("") + '</select>', "dxweek") +
+        '<div class="fg-sub t2-note">The same downloads as in the Snapshots tab: the Daily or Weekly Snapshot image, the token list as CSV, the full Snapshot as JSON.</div>';
+    }
+    dxBox.innerHTML = h + '</div>';
+  }
+  dxBtn.addEventListener("click", function () { dxVisible = !dxVisible; dxBtn.classList.toggle("active", dxVisible); renderDX(); });
+  dxBox.addEventListener("click", function (e) {
+    var t = e.target, s1 = t.closest("[data-dxsrc]"); if (s1) { dxSrc = s1.dataset.dxsrc; renderDX(); return; }
+    var it = t.closest("[data-dx]"); if (it) { dxRun(it.dataset.dx); return; }
+    var d = t.closest("[data-dxday]"); if (d) { var k = document.getElementById("dx-day").value; Promise.all([snapFile(k), snapExtras(), snapDayChanges(k)]).then(function () { snapDownload(k, d.dataset.dxday); }); return; }
+    var w = t.closest("[data-dxweek]"); if (w) { var id = document.getElementById("dx-week").value, wk = snapWeekFromId(id); snapWeekLoad(wk).then(function () { snapDownload(wk.last, w.dataset.dxweek, id); }); }
+  });
+
   /* ---------- TOTAL 200: the combined market cap of the 200 largest coins, its year as a chart and in numbers ---------- */
   var t2Visible = false, t2Year = null, t2Btn = document.getElementById("t200-btn"), t2Box = document.getElementById("t200-container");
   function renderT200() {
@@ -4609,7 +4689,7 @@
   }
   function sqMakeView() { /* the frame is built once; the squares inside are kept and moved */
     if (sqView && sqBox.contains(sqView.map)) return sqView;
-    sqBox.innerHTML = '<div class="pinned-card chart-container pf-card dev-target sqm-card" data-dev-name="Sentiment Squares" data-dev-color="#34d399"><div class="snap-top"><div class="pf-title">Sentiment Squares</div><div class="snap-dlw"><button type="button" class="gear snap-dlb" data-sqdl="1" title="The squares as one centered image to share">Download</button></div></div>' +
+    sqBox.innerHTML = '<div class="pinned-card chart-container pf-card dev-target sqm-card" data-dev-name="Sentiment Squares" data-dev-color="#34d399"><div class="snap-top"><div class="pf-title">Sentiment Squares</div></div>' +
       '<div class="sqm-ctrl-w"></div><div class="sqm-map"><div class="sqm-gl"><div class="sqm-in"></div><div class="sqm-flyl"></div></div><div class="sqm-rl"><div class="sqm-in"></div><div class="sqm-flyl"></div></div>' +
       '<div class="sqm-front" title="Drag to reveal more red or more green · double click: back to the market\'s split"><span></span></div></div><div class="sqm-foot fg-sub"></div></div>';
     var m = sqBox.querySelector(".sqm-map");
@@ -4937,8 +5017,9 @@
     { title: "Portfolio Manager Network Additions", notes: ["Planned. Now: Ethereum, Base, Arbitrum, Optimism, Polygon, BNB Chain, Avalanche and Solana. Next without the Backend: more EVM chains via public RPCs, plus Bitcoin and Tron addresses. Sites like CoinGecko or CoinMarketCap cover 25+ networks through paid indexer APIs (e.g. Zerion, Moralis, Covalent); that needs the Backend for the API key.", "Once the Backend exists: Swaps on Solana, and on BNB Chain and Avalanche (these need an API key that must not sit in the public Site)."], desc: "More Networks for the Portfolio Manager, so Wallets on every common Chain are read, together with their Swaps." },
     { title: "Charts Additions", notes: ["Planned: more Assets on the Charts screen.", "Planned: Drawings saved to the Account. Every time a Drawing is added or changed, its type and position are saved. All Drawings together are encrypted into one string of letters and numbers, tied to the Account ID, and turned back into the Drawings when the site opens. Needs the Backend and Accounts.", "Planned: Backtesting. Go back to any day in a chart and play it forward candle by candle, to test a strategy without seeing the future."], desc: "More Assets for the Charts screen, a Backtesting Feature, and Drawings that are saved to your Account, so they are still there on the next visit and on every Device." },
     { title: "Customizable Image Export", notes: ["Planned. Arrange an image before downloading it: move, resize or leave out its parts."], desc: "Every image export arranged the way you want it." },
-    { title: "Tab Dragging & Quick Actions", notes: ["Planned. Long press the top of any window, like the top of a browser tab, and drag it: move windows above or below each other in the Landing Area, or drop one onto a header button for a quick action. Example: drop the Portfolio Manager onto Staking, and Staking opens with what share of your Portfolio you could stake."], desc: "Workflow shortcuts: windows you can pick up, reorder and combine." },
+    { title: "Tab Dragging & Quick Actions", notes: ["Planned. Long press the top of any window, like the top of a browser tab, and drag it: move windows above or below each other in the Landing Area, or drop one onto a header button for a quick action. Example: drop the Portfolio Manager onto Staking, and Staking opens with what share of your Portfolio you could stake.", "Drop any window onto Data Export, and its image export opens right away."], desc: "Workflow shortcuts: windows you can pick up, reorder and combine." },
     { title: "FOMC + News Calendar", st: "wip", notes: ["Works: FOMC button (off by default, Settings) with a live countdown to the next rate decision and the meeting calendar of this and next year.", "Planned: the market's odds for a cut, a hold or a hike at each meeting, and a News Calendar with the dates that move markets (CPI, jobs report, PCE, GDP, Fed speeches)."], desc: "When the big macro events happen, at a glance." },
+    { title: "Data Export Customizability", notes: ["Planned. Data Export (header, off by default) already holds every image export: CoinAtlas Default and each window (Fear & Greed, Sentiment Squares, BTC|ETH Ratio, Staking, TOTAL 200, FOMC), live or from a Snapshot.", "Next, more control over each image: choose which parts it shows, how long lists are and how wide each part is, light or dark look, square or story formats for social media, your own name or tag in the title row, and saved presets you can export again with one click."], desc: "Images that look exactly the way you want to share them." },
     { title: "Snapshot Customization", notes: ["Planned. Choose which windows the Snapshot image shows, how long the list is, and add your own name or tag at the top right, in the row of the title."], desc: "More control over your own Snapshot images: show only what you want to show." },
     { title: "Final Settings Rework", notes: ["Planned. The Settings grew section by section. Once the main features stand, they get one clean structure, search, and fewer but clearer options."], desc: "A last, complete rework of the Settings window, so every option is easy to find." },
     { title: "Mobile Version / Mobile App", notes: ["Planned. The current Site is built for Desktop: on a Phone the Header Buttons run off the Screen and several Windows are too wide.", "Idea: rebuild the Phone Layout from scratch. A first step could be an installable Web App (PWA) from the same Site; a real App for the Stores can follow later."], desc: "A complete Mobile Version of CoinAtlas, made for Phones from the ground up instead of a shrunk Desktop Site, and later a Mobile App." }
@@ -5317,7 +5398,7 @@
     var header = '<div class="fg-header dev-target" data-dev-name="Index Header" data-dev-color="#fbbf24">' +
       '<div class="fg-header-left"><h3>Fear & Greed Index</h3><span class="fg-current-val ' + valClass + '">' + current.value_classification + " (" + current.value + ")</span></div>" +
       '<div id="fg-timer"></div>' +
-      '<div class="fg-hr">' + yearWrap + '<button type="button" class="gear snap-dlb fg-dlb" data-fgdl="1" title="This chart and your Past Years filter as one image to share">Download</button></div></div>';
+      '<div class="fg-hr">' + yearWrap + '</div></div>';
 
     var details = '<div id="fg-details-container">' +
       '<div class="fg-top-row">' +
@@ -8019,7 +8100,7 @@
     Array.prototype.forEach.call(document.querySelectorAll("[data-hb]"), function (t) { var k = t.dataset.hb, off = hbHidden.indexOf(k) >= 0, el = hbEl(k); t.setAttribute("aria-checked", off ? "false" : "true"); if (el) el.classList.toggle("hb-off", off); });
   }
   document.addEventListener("click", function (e) { var t = e.target.closest("[data-hb]"); if (!t) return; var k = t.dataset.hb, i = hbHidden.indexOf(k); if (i >= 0) hbHidden.splice(i, 1); else hbHidden.push(k); try { localStorage.setItem(HB_KEY, JSON.stringify(hbHidden)); } catch (x) {} hbApply(); });
-  try { if (!localStorage.getItem("coinatlas-hb-new-1")) { ["t200-btn", "fomc-btn"].forEach(function (k) { if (hbHidden.indexOf(k) < 0) hbHidden.push(k); }); localStorage.setItem(HB_KEY, JSON.stringify(hbHidden)); localStorage.setItem("coinatlas-hb-new-1", "1"); } } catch (e) { hbHidden.push("t200-btn", "fomc-btn"); } /* new header buttons start switched off */
+  try { if (!localStorage.getItem("coinatlas-hb-new-1")) { ["t200-btn", "fomc-btn"].forEach(function (k) { if (hbHidden.indexOf(k) < 0) hbHidden.push(k); }); localStorage.setItem(HB_KEY, JSON.stringify(hbHidden)); localStorage.setItem("coinatlas-hb-new-1", "1"); } if (!localStorage.getItem("coinatlas-hb-new-2")) { if (hbHidden.indexOf("dx-btn") < 0) hbHidden.push("dx-btn"); localStorage.setItem(HB_KEY, JSON.stringify(hbHidden)); localStorage.setItem("coinatlas-hb-new-2", "1"); } } catch (e) { hbHidden.push("t200-btn", "fomc-btn", "dx-btn"); } /* new header buttons start switched off */
   hbApply();
   window.addEventListener("keydown", function (e) { if (e.key === "Escape" && uiMoving) { e.stopPropagation(); setUiMoving(false); } }, true);
   actionsEl.addEventListener("pointerdown", function (e) {
