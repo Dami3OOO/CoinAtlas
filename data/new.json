@@ -1,7 +1,25 @@
 {
- "updated": "2026-11-24",
- "snapshots": 13,
+ "updated": "2026-11-25",
+ "snapshots": 14,
  "window": 14,
- "ready": false,
- "coins": {}
+ "ready": true,
+ "coins": {
+  "LEO": 2,
+  "FRAX": 3,
+  "MMT": 8,
+  "PROS": 9,
+  "FIDD": 12,
+  "DATA": 1,
+  "ARIA": 3,
+  "FORM": 3,
+  "BUSD": 12,
+  "GAS": 12,
+  "QRL": 3,
+  "ATH": 4,
+  "FLUID": 1,
+  "DEXE": 4,
+  "2Z": 1,
+  "GUSD": 5,
+  "CHEEMS": 1
+ }
 }
