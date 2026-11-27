@@ -1,11 +1,11 @@
 {
- "updated": "2026-11-25",
+ "updated": "2026-11-26",
  "source": "DefiLlama Yields (base rate only)",
  "missing": [],
  "assets": {
-  "ETH": {"label":"Staking","best":2.35,"list":[{"name":"Coinbase (cbETH)","kind":"Liquid Staking","url":"https://www.coinbase.com/cbeth","locked":false,"apy":2.35,"tvl":346229542},{"name":"Lido","kind":"Liquid Staking","url":"https://stake.lido.fi","locked":false,"apy":2.25,"tvl":16460854124},{"name":"Rocket Pool","kind":"Liquid Staking","url":"https://stake.rocketpool.net","locked":false,"apy":1.85,"tvl":813044794}]},
-  "SOL": {"label":"Staking","best":5.36,"list":[{"name":"Marinade","kind":"Liquid Staking","url":"https://marinade.finance","locked":false,"apy":5.36,"tvl":157588528},{"name":"Solana (native)","kind":"Native Staking","url":"https://solana.com/staking","locked":true,"apy":5.33,"tvl":null,"note":"network average, before validator fee"},{"name":"Jito","kind":"Liquid Staking","url":"https://www.jito.network/staking/","locked":false,"apy":4.74,"tvl":714459499}]},
-  "AVAX": {"label":"Staking","best":3.98,"list":[{"name":"Benqi (sAVAX)","kind":"Liquid Staking","url":"https://benqi.fi","locked":false,"apy":3.98,"tvl":157540734},{"name":"Core Wallet","kind":"Native Staking","url":"https://core.app/stake/","locked":true,"apy":null,"tvl":null}]},
+  "ETH": {"label":"Staking","best":2.29,"list":[{"name":"Lido","kind":"Liquid Staking","url":"https://stake.lido.fi","locked":false,"apy":2.29,"tvl":16699552084},{"name":"Coinbase (cbETH)","kind":"Liquid Staking","url":"https://www.coinbase.com/cbeth","locked":false,"apy":2.28,"tvl":347441739},{"name":"Rocket Pool","kind":"Liquid Staking","url":"https://stake.rocketpool.net","locked":false,"apy":1.84,"tvl":824799069}]},
+  "SOL": {"label":"Staking","best":5.46,"list":[{"name":"Marinade","kind":"Liquid Staking","url":"https://marinade.finance","locked":false,"apy":5.46,"tvl":159722164},{"name":"Solana (native)","kind":"Native Staking","url":"https://solana.com/staking","locked":true,"apy":5.32,"tvl":null,"note":"network average, before validator fee"},{"name":"Jito","kind":"Liquid Staking","url":"https://www.jito.network/staking/","locked":false,"apy":4.74,"tvl":726599824}]},
+  "AVAX": {"label":"Staking","best":7.09,"list":[{"name":"Benqi (sAVAX)","kind":"Liquid Staking","url":"https://benqi.fi","locked":false,"apy":7.09,"tvl":158652055},{"name":"Core Wallet","kind":"Native Staking","url":"https://core.app/stake/","locked":true,"apy":null,"tvl":null}]},
   "ADA": {"label":"Staking","best":2.11,"list":[{"name":"Cardano Stake Pool Delegation","kind":"Native Staking","url":"https://cardano.org/stake-pool-delegation/","locked":false,"apy":2.11,"tvl":null,"note":"network average, before validator fee"}]},
   "DOT": {"label":"Staking","best":null,"list":[{"name":"Polkadot Staking Dashboard","kind":"Native Staking","url":"https://staking.polkadot.cloud","locked":true,"apy":null,"tvl":null}]},
   "ATOM": {"label":"Staking","best":15.4,"list":[{"name":"Keplr","kind":"Native Staking","url":"https://wallet.keplr.app/chains/cosmos-hub","locked":true,"apy":15.4,"tvl":null,"note":"network average, before validator fee"}]},
@@ -13,13 +13,13 @@
   "OSMO": {"label":"Staking","best":null,"list":[{"name":"Keplr","kind":"Native Staking","url":"https://wallet.keplr.app/chains/osmosis","locked":true,"apy":null,"tvl":null}]},
   "INJ": {"label":"Staking","best":9.16,"list":[{"name":"Injective Hub","kind":"Native Staking","url":"https://hub.injective.network/stake","locked":true,"apy":9.16,"tvl":null,"note":"network average, before validator fee"}]},
   "POL": {"label":"Staking","best":null,"list":[{"name":"Polygon Staking","kind":"Native Staking","url":"https://staking.polygon.technology","locked":true,"apy":null,"tvl":null}]},
-  "BNB": {"label":"Staking","best":0.57,"list":[{"name":"BNB Chain Staking","kind":"Native Staking","url":"https://www.bnbchain.org/en/bnb-staking","locked":true,"apy":0.57,"tvl":null,"note":"network average, before validator fee"}]},
+  "BNB": {"label":"Staking","best":0.64,"list":[{"name":"BNB Chain Staking","kind":"Native Staking","url":"https://www.bnbchain.org/en/bnb-staking","locked":true,"apy":0.64,"tvl":null,"note":"network average, before validator fee"}]},
   "HYPE": {"label":"Staking","best":2.18,"list":[{"name":"Hyperliquid","kind":"Native Staking","url":"https://app.hyperliquid.xyz/staking","locked":true,"apy":2.18,"tvl":null,"note":"network average, before validator fee"}]},
   "TRX": {"label":"Staking","best":3.21,"list":[{"name":"TRON Stake 2.0","kind":"Native Staking","url":"https://developers.tron.network/docs/staking-on-tron-network","locked":true,"apy":3.21,"tvl":null,"note":"network average, before validator fee"}]},
   "APT": {"label":"Staking","best":7,"list":[{"name":"Aptos Staking","kind":"Native Staking","url":"https://aptos.dev/network/blockchain/staking","locked":true,"apy":7,"tvl":null,"note":"network average, before validator fee"}]},
   "NEAR": {"label":"Staking","best":5.51,"list":[{"name":"MyNearWallet","kind":"Native Staking","url":"https://app.mynearwallet.com/staking","locked":true,"apy":5.51,"tvl":null,"note":"network average, before validator fee"}]},
-  "EGLD": {"label":"Staking","best":9.07,"list":[{"name":"MultiversX Staking","kind":"Native Staking","url":"https://multiversx.com/staking","locked":true,"apy":9.07,"tvl":null,"note":"network average, before validator fee"}]},
-  "AKT": {"label":"Staking","best":4.42,"list":[{"name":"Keplr","kind":"Native Staking","url":"https://wallet.keplr.app/chains/akash","locked":true,"apy":4.42,"tvl":null,"note":"network average, before validator fee"}]},
+  "EGLD": {"label":"Staking","best":9.06,"list":[{"name":"MultiversX Staking","kind":"Native Staking","url":"https://multiversx.com/staking","locked":true,"apy":9.06,"tvl":null,"note":"network average, before validator fee"}]},
+  "AKT": {"label":"Staking","best":4.43,"list":[{"name":"Keplr","kind":"Native Staking","url":"https://wallet.keplr.app/chains/akash","locked":true,"apy":4.43,"tvl":null,"note":"network average, before validator fee"}]},
   "HBAR": {"label":"Staking","best":1.71,"list":[{"name":"Hedera Staking","kind":"Native Staking","url":"https://docs.hedera.com/learn/core-concepts/staking","locked":false,"apy":1.71,"tvl":null,"note":"network average, before validator fee"}]},
   "GRAM": {"label":"Staking","best":null,"list":[{"name":"Tonstakers","kind":"Liquid Staking","url":"https://faq.tonstakers.com/article/103-how-to-stake-tonstakers","locked":false,"apy":null,"tvl":null}]},
   "SUI": {"label":"Staking","best":null,"list":[{"name":"Slush Wallet","kind":"Native Staking","url":"https://slush.app/guides/stake-and-swap-sui","locked":true,"apy":null,"tvl":null}]},
@@ -47,8 +47,8 @@
   "BDX": {"label":"Staking","best":null,"list":[{"name":"Beldex","kind":"Native Staking","url":"https://www.beldex.io","locked":true,"apy":null,"tvl":null}]},
   "VET": {"label":"Staking","best":null,"list":[{"name":"VeChain StarGate","kind":"Native Staking","url":"https://stargate.vechain.org","locked":true,"apy":null,"tvl":null}]},
   "XEC": {"label":"Staking","best":null,"list":[{"name":"eCash Staking","kind":"Native Staking","url":"https://e.cash/staking","locked":true,"apy":null,"tvl":null}]},
-  "USDC": {"label":"Lending","best":3.08,"list":[{"name":"Aave","kind":"Lending","url":"https://app.aave.com","locked":false,"apy":3.08,"tvl":818269888}]},
-  "USDT": {"label":"Lending","best":3.08,"list":[{"name":"Aave","kind":"Lending","url":"https://app.aave.com","locked":false,"apy":3.08,"tvl":504700705}]},
-  "DAI": {"label":"Lending","best":2.83,"list":[{"name":"Aave","kind":"Lending","url":"https://app.aave.com","locked":false,"apy":2.83,"tvl":20647596}]}
+  "USDC": {"label":"Lending","best":3,"list":[{"name":"Aave","kind":"Lending","url":"https://app.aave.com","locked":false,"apy":3,"tvl":873800382}]},
+  "USDT": {"label":"Lending","best":3.06,"list":[{"name":"Aave","kind":"Lending","url":"https://app.aave.com","locked":false,"apy":3.06,"tvl":513663630}]},
+  "DAI": {"label":"Lending","best":2.87,"list":[{"name":"Aave","kind":"Lending","url":"https://app.aave.com","locked":false,"apy":2.87,"tvl":19924838}]}
  }
 }
