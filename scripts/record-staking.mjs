@@ -30,7 +30,8 @@ export const PROVIDERS = {
     { name: "Core Wallet", kind: "Native Staking", url: "https://core.app/stake/", locked: true }
   ],
   ADA: [{ name: "Cardano Stake Pool Delegation", kind: "Native Staking", url: "https://cardano.org/stake-pool-delegation/", locked: false }],
-  DOT: [{ name: "Polkadot Staking Dashboard", kind: "Native Staking", url: "https://staking.polkadot.cloud", locked: true }],
+  DOT: [{ name: "Polkadot Staking Dashboard", kind: "Native Staking", url: "https://staking.polkadot.cloud", locked: true },
+    { name: "Bifrost (vDOT)", kind: "Liquid Staking", url: "https://app.bifrost.io/vstaking/vDOT", locked: false, pools: { project: ["bifrost-liquid-staking"], symbol: "VDOT", chain: "Polkadot" } }],
   ATOM: [{ name: "Keplr", kind: "Native Staking", url: "https://wallet.keplr.app/chains/cosmos-hub", locked: true }],
   TIA: [{ name: "Keplr", kind: "Native Staking", url: "https://wallet.keplr.app/chains/celestia", locked: true }],
   OSMO: [{ name: "Keplr", kind: "Native Staking", url: "https://wallet.keplr.app/chains/osmosis", locked: true }],
@@ -49,9 +50,11 @@ export const PROVIDERS = {
   SUI: [{ name: "Slush Wallet", kind: "Native Staking", url: "https://slush.app/guides/stake-and-swap-sui", locked: true }],
   TAO: [{ name: "Bittensor Docs", kind: "Native Staking", url: "https://www.bittensor.com/docs", locked: false }],
   ICP: [{ name: "NNS (Network Nervous System)", kind: "Native Staking", url: "https://nns.ic0.app", locked: true }],
-  STX: [{ name: "Leather Wallet", kind: "Native Staking", url: "https://app.leather.io/posts/stacking", locked: true, note: "Stacking, paid in BTC" }],
+  STX: [{ name: "Leather Wallet", kind: "Native Staking", url: "https://app.leather.io/posts/stacking", locked: true, note: "Stacking, paid in BTC" },
+    { name: "StackingDAO (stSTX)", kind: "Liquid Staking", url: "https://www.stackingdao.com", locked: false, pools: { project: ["stackingdao"], symbol: "STSTX", chain: "Stacks" } }],
   DASH: [{ name: "Dash Masternodes", kind: "Native Staking", url: "https://www.dash.org/masternodes/", locked: false, note: "1,000 DASH per masternode" }],
-  FLR: [{ name: "Flare Portal", kind: "Native Staking", url: "https://portal.flare.network", locked: false }],
+  FLR: [{ name: "Flare Portal", kind: "Native Staking", url: "https://portal.flare.network", locked: false },
+    { name: "Sceptre (sFLR)", kind: "Liquid Staking", url: "https://www.sceptre.fi", locked: false, pools: { project: ["sceptre-liquid"], symbol: "SFLR", chain: "Flare" } }],
   XDC: [{ name: "XDC Masternodes", kind: "Native Staking", url: "https://master.xinfin.network", locked: true }],
   GNO: [{ name: "Gnosis Validator Deposit", kind: "Native Staking", url: "https://docs.gnosischain.com/node/manual/validator/deposit", locked: true, note: "1 GNO per validator" }],
   SEI: [{ name: "Sei Staking Guide", kind: "Native Staking", url: "https://docs.sei.io/learn/general-staking", locked: true }],
@@ -79,7 +82,8 @@ const MAX_APY = 30; /* a base rate above this is not real staking: left out */
 
 /* pools: DefiLlama's list. Each option gets the base rate of its biggest matching pool; the 3 best per coin are kept (options without a rate last) */
 /* native staking: the network's rate from free official sources (tested: probe of 21.11.2026). Before the validator's commission.
-   Each returns the APR in %, or null. Avalanche, Polkadot, Polygon, Osmosis, Sui (public JSON-RPC switched off), TON and Tezos have no reliable free source: they keep "Rate on site" */
+   Each returns the APR in %, or null. Probe of 27.11.2026: Sei and Osmosis via cosmos.directory, TON (Gram) via tonapi.io; Polkadot (Subscan needs a key), Polygon, Sui (JSON-RPC switched off,
+   GraphQL without APY), Tezos and the smaller chains still have no free source: they keep "Rate on site", where a liquid option on DefiLlama may add a rate */
 const NATIVE_NOTE = "network average, before validator fee";
 async function jget(url, body) {
   const r = await fetch(url, { method: body ? "POST" : "GET", headers: { accept: "application/json", "content-type": "application/json" }, body: body ? JSON.stringify(body) : undefined, signal: AbortSignal.timeout(60000) });
@@ -106,6 +110,12 @@ export const NATIVE_RATES = {
     const w = v.reduce((s, x) => s + +x.totalStaked, 0); return w > 0 ? v.reduce((s, x) => s + x.apy * +x.totalStaked, 0) / w * 100 : null;
   } },
   AKT: { "Keplr": cosmos("akash") },
+  SEI: { "Sei Staking Guide": cosmos("sei") },
+  OSMO: { "Keplr": cosmos("osmosis") },
+  GRAM: { "Tonstakers": async () => { /* tonapi.io lists TON's staking pools with their APY; Tonstakers is the liquid one */
+    const p = ((await jget("https://tonapi.io/v2/staking/pools")).pools || []).filter(x => /tonstakers/i.test(x.name) && x.apy > 0).sort((a, b) => (b.total_amount || 0) - (a.total_amount || 0))[0];
+    return p ? +p.apy : null;
+  } },
   APT: { "Aptos Staking": async () => { /* the reward rate per epoch, times the epochs in a year */
     const c = (await jget("https://api.mainnet.aptoslabs.com/v1/accounts/0x1/resource/0x1::staking_config::StakingConfig")).data, b = (await jget("https://api.mainnet.aptoslabs.com/v1/accounts/0x1/resource/0x1::block::BlockResource")).data;
     return +c.rewards_rate / +c.rewards_rate_denominator * (365 * 24 * 3600e6 / +b.epoch_interval) * 100;
@@ -154,7 +164,7 @@ export function build(pools, native = {}) {
         if (m) { apy = +m.apyBase.toFixed(2); tvl = Math.round(m.tvlUsd || 0); }
       }
       let note = p.note;
-      if (!p.pools && native[sym] && native[sym][p.name] > 0) { apy = native[sym][p.name]; note = (note ? note + " · " : "") + NATIVE_NOTE; }
+      if (!p.pools && native[sym] && native[sym][p.name] > 0) { apy = native[sym][p.name]; if (p.kind === "Native Staking") note = (note ? note + " · " : "") + NATIVE_NOTE; }
       return { name: p.name, kind: p.kind, url: p.url, locked: p.locked, apy, tvl, note: note || undefined };
     }).filter(x => x.apy !== null || !PROVIDERS[sym].find(p => p.name === x.name).pools) /* a pool that was not found is left out, not shown without a rate */
       .sort((a, b) => (b.apy ?? -1) - (a.apy ?? -1)).slice(0, 3);
