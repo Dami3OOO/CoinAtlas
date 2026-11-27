@@ -46,7 +46,7 @@ export const PROVIDERS = {
   AKT: [{ name: "Keplr", kind: "Native Staking", url: "https://wallet.keplr.app/chains/akash", locked: true }],
   HBAR: [{ name: "Hedera Staking", kind: "Native Staking", url: "https://docs.hedera.com/learn/core-concepts/staking", locked: false }],
   /* native staking with a link only (no free source for the rate yet): "Rate on site" */
-  GRAM: [{ name: "Tonstakers", kind: "Liquid Staking", url: "https://faq.tonstakers.com/article/103-how-to-stake-tonstakers", locked: false }],
+  GRAM: [{ name: "Tonstakers", kind: "Liquid Staking", url: "https://app.tonstakers.com", locked: false }],
   SUI: [{ name: "Slush Wallet", kind: "Native Staking", url: "https://slush.app/guides/stake-and-swap-sui", locked: true }],
   TAO: [{ name: "Bittensor Docs", kind: "Native Staking", url: "https://www.bittensor.com/docs", locked: false }],
   ICP: [{ name: "NNS (Network Nervous System)", kind: "Native Staking", url: "https://nns.ic0.app", locked: true }],
@@ -82,7 +82,7 @@ const MAX_APY = 30; /* a base rate above this is not real staking: left out */
 
 /* pools: DefiLlama's list. Each option gets the base rate of its biggest matching pool; the 3 best per coin are kept (options without a rate last) */
 /* native staking: the network's rate from free official sources (tested: probe of 21.11.2026). Before the validator's commission.
-   Each returns the APR in %, or null. Probe of 27.11.2026: Sei and Osmosis via cosmos.directory, TON (Gram) via tonapi.io; Polkadot (Subscan needs a key), Polygon, Sui (JSON-RPC switched off,
+   Each returns the APR in %, or null. Probe of 27.11.2026: Sei and Osmosis via cosmos.directory; TON (Gram) via tonapi.io was tried and left out (its 12.9 % did not match Tonstakers' own ~4-5 %); Polkadot (Subscan needs a key), Polygon, Sui (JSON-RPC switched off,
    GraphQL without APY), Tezos and the smaller chains still have no free source: they keep "Rate on site", where a liquid option on DefiLlama may add a rate */
 const NATIVE_NOTE = "network average, before validator fee";
 async function jget(url, body) {
@@ -112,10 +112,6 @@ export const NATIVE_RATES = {
   AKT: { "Keplr": cosmos("akash") },
   SEI: { "Sei Staking Guide": cosmos("sei") },
   OSMO: { "Keplr": cosmos("osmosis") },
-  GRAM: { "Tonstakers": async () => { /* tonapi.io lists TON's staking pools with their APY; Tonstakers is the liquid one */
-    const p = ((await jget("https://tonapi.io/v2/staking/pools")).pools || []).filter(x => /tonstakers/i.test(x.name) && x.apy > 0).sort((a, b) => (b.total_amount || 0) - (a.total_amount || 0))[0];
-    return p ? +p.apy : null;
-  } },
   APT: { "Aptos Staking": async () => { /* the reward rate per epoch, times the epochs in a year */
     const c = (await jget("https://api.mainnet.aptoslabs.com/v1/accounts/0x1/resource/0x1::staking_config::StakingConfig")).data, b = (await jget("https://api.mainnet.aptoslabs.com/v1/accounts/0x1/resource/0x1::block::BlockResource")).data;
     return +c.rewards_rate / +c.rewards_rate_denominator * (365 * 24 * 3600e6 / +b.epoch_interval) * 100;

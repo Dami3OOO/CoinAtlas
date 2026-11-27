@@ -21,7 +21,7 @@
   "EGLD": {"label":"Staking","best":9.07,"list":[{"name":"MultiversX Staking","kind":"Native Staking","url":"https://multiversx.com/staking","locked":true,"apy":9.07,"tvl":null,"note":"network average, before validator fee"}]},
   "AKT": {"label":"Staking","best":4.43,"list":[{"name":"Keplr","kind":"Native Staking","url":"https://wallet.keplr.app/chains/akash","locked":true,"apy":4.43,"tvl":null,"note":"network average, before validator fee"}]},
   "HBAR": {"label":"Staking","best":1.71,"list":[{"name":"Hedera Staking","kind":"Native Staking","url":"https://docs.hedera.com/learn/core-concepts/staking","locked":false,"apy":1.71,"tvl":null,"note":"network average, before validator fee"}]},
-  "GRAM": {"label":"Staking","best":12.92,"list":[{"name":"Tonstakers","kind":"Liquid Staking","url":"https://faq.tonstakers.com/article/103-how-to-stake-tonstakers","locked":false,"apy":12.92,"tvl":null}]},
+  "GRAM": {"label":"Staking","best":null,"list":[{"name":"Tonstakers","kind":"Liquid Staking","url":"https://app.tonstakers.com","locked":false,"apy":null,"tvl":null}]},
   "SUI": {"label":"Staking","best":null,"list":[{"name":"Slush Wallet","kind":"Native Staking","url":"https://slush.app/guides/stake-and-swap-sui","locked":true,"apy":null,"tvl":null}]},
   "TAO": {"label":"Staking","best":null,"list":[{"name":"Bittensor Docs","kind":"Native Staking","url":"https://www.bittensor.com/docs","locked":false,"apy":null,"tvl":null}]},
   "ICP": {"label":"Staking","best":null,"list":[{"name":"NNS (Network Nervous System)","kind":"Native Staking","url":"https://nns.ic0.app","locked":true,"apy":null,"tvl":null}]},
