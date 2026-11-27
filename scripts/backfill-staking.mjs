@@ -15,8 +15,10 @@ for (const sym of Object.keys(PROVIDERS)) for (const p of PROVIDERS[sym]) {
   const m = pools.filter(x => p.pools.project.indexOf(x.project) > -1 && String(x.symbol).toUpperCase() === p.pools.symbol && x.chain === p.pools.chain && x.apyBase > 0 && x.apyBase < MAX_APY).sort((a, b) => (b.tvlUsd || 0) - (a.tvlUsd || 0))[0];
   if (!m) { console.log("no pool: " + sym + " " + p.name); continue; }
   let rows; try { rows = (await get("https://yields.llama.fi/chart/" + m.pool)).data || []; } catch (e) { console.log(sym + " " + p.name + ": " + e.message); continue; }
-  for (const r of rows) {
-    const d = String(r.timestamp).slice(0, 10), v = +r.apyBase;
+  const vals = rows.map(r => +r.apyBase), med = i => { const w = vals.slice(Math.max(0, i - 15), i + 16).filter(x => x > 0).sort((a, b) => a - b); return w.length ? w[w.length >> 1] : 0; };
+  for (const [i, r] of rows.entries()) {
+    const d = String(r.timestamp).slice(0, 10), v = +r.apyBase, m = med(i);
+    if (m > 0 && (v > m * 1.8 || v < m / 1.8)) continue; /* a one-day spike in the pool's history is left out */
     if (d < START || d >= today || !(v > 0 && v < MAX_APY)) continue;
     const day = hist[d] = hist[d] || {}; if (day[sym] && day[sym][p.name] != null) continue; /* a recorded rate stays */
     (day[sym] = day[sym] || {})[p.name] = +v.toFixed(2); added++;

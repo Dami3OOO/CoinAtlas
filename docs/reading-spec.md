@@ -589,3 +589,4 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - BTC|ETH-Fenster: Dominance Graph zeigt nur noch BTC und ETH (Linie, Legende, Tooltip); Stablecoins und Altcoins gibt es im Dominance-Fenster. Gilt auch für das Snapshot-PNG und den BTC|ETH-Export.
 - FOMC: Termine zeigen nur den Tag der Entscheidung (z. B. „Wed, 9 Dec 2026“) statt beider Sitzungstage, im Fenster und im Export.
 - Staking-Hinweis (Rate, not sponsored, Quellen) zentriert und mit mehr Abstand zum Chart.
+- Nachgetragene Staking-Tage ohne Eintages-Spitzen: Werte über dem 1,8-Fachen oder unter einem 1,8tel des Medians von ±15 Tagen fallen weg (46 Stück), auch künftig im Backfill-Skript.
