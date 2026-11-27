@@ -816,7 +816,7 @@
   .sy-yt::before { content: ""; display: inline-block; width: 6px; height: 1px; margin-right: 5px; vertical-align: middle; background: var(--muted); opacity: .7; } /* the label belongs to exactly this height */
   .sy-yt { position: absolute; left: 100%; margin-left: 2px; transform: translateY(-50%); font-size: 10px; color: var(--muted); pointer-events: none; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .dom-t { cursor: pointer; transition: background .15s ease; } .dom-t:hover { background: #2a2a28 !important; } .dom-t.on { border-color: var(--dc) !important; background: #2a2a28 !important; } .dom-all { display: block; margin: 0 auto 8px; font: inherit; font-size: 11px; color: var(--muted); background: none; border: 0; cursor: pointer; } .dom-all:hover { color: var(--fg); } .dmc .dm-ymin { position: absolute; left: 6px; bottom: 4px; font-size: 10px; color: var(--muted); }
-  .dxi-dom { display: grid; grid-template-columns: 3fr 1fr; gap: 20px; align-items: stretch; } .dxi-dom > .dxi-domn { order: 2; } /* chart left, numbers right, like TOTAL 200 */ .dxi-domn { display: flex; flex-direction: column; justify-content: center; gap: 14px; } .dxi-domn > div:not(.fg-sub) { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); } .dxi-domn span { display: flex; align-items: center; gap: 8px; font-size: 16px; color: var(--muted); } .dxi-domn span i { width: 11px; height: 11px; border-radius: 50%; } .dxi-domn b { font-size: 34px; } .dxi-domn .fg-sub { text-align: center; }
+  .dxi-dom { display: grid; grid-template-columns: 3fr 1fr; gap: 20px; align-items: stretch; } .dxi-dom > .dxi-domn { order: 2; } /* chart left, numbers right, like TOTAL 200 */ .dxi-domn { display: flex; flex-direction: column; justify-content: center; gap: 14px; } .dxi-domn > div:not(.fg-sub) { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); } .dxi-domn span { display: flex; align-items: center; gap: 8px; font-size: 16px; color: var(--muted); } .dxi-domn span i { width: 11px; height: 11px; border-radius: 50%; } .dxi-domn b { font-size: 34px; } .dxi-domn > div.dim { opacity: .4; } .dxi-domn > div.on { background: #2a2a28; } .dxi-domn .fg-sub { text-align: center; }
   .dmc .dm-ymax { position: absolute; left: 6px; top: 4px; font-size: 10px; color: var(--muted); } .dm-tv { display: flex; flex-direction: column; gap: 2px; } .dm-tr { display: flex; justify-content: space-between; gap: 14px; font-size: 12px; } .dm-tr b { font-variant-numeric: tabular-nums; }
   .t2-top { display: flex; flex-direction: column; align-items: center; gap: 2px; margin: -4px 0 12px; } .t2-top b { font-size: 26px; } .t2-note { text-align: center; margin-top: 12px; } .t2-note a { color: inherit; }
   .fomc-next { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); } .fomc-next b { font-size: 26px; font-variant-numeric: tabular-nums; color: #93c5fd; } .fomc-next > span:not(.fg-sub) { font-size: 13px; font-weight: 600; }
@@ -4587,7 +4587,8 @@
     return dxCapture(x, "BTC|ETH Ratio");
   }
   function dxStakeImg() { /* every asset with a rate, in columns: rank, logo, best rate, Locked or Unlocked */
-    var rows = coins.slice(0, 200).map(function (c, i) { var S = String(c.symbol).toUpperCase(), st = stakeData[S]; if (!st) return null; var b = st.list.filter(function (x) { return x.apy != null; }).sort(function (a, b2) { return b2.apy - a.apy; })[0]; return { c: c, i: i, b: b, st: st }; }).filter(Boolean);
+    var q = String(stk.q || "").trim().toLowerCase();
+    var rows = coins.slice(0, 200).map(function (c, i) { var S = String(c.symbol).toUpperCase(), st = stakeData[S]; if (!st) return null; if (q && String(c.name).toLowerCase().indexOf(q) < 0 && S.toLowerCase().indexOf(q) < 0) return null; /* the search typed in the window */ var b = st.list.filter(function (x) { return x.apy != null; }).sort(function (a, b2) { return b2.apy - a.apy; })[0]; return { c: c, i: i, b: b, st: st }; }).filter(Boolean);
     var rated = rows.filter(function (r) { return r.b; }), other = rows.length - rated.length, x = dxFrame("Staking", 2000), body = x.querySelector(".dxi-body");
     var col = function (part) { return '<div class="stk-card"><div class="stk-head"><span>#</span><span>Asset</span><span>Best Rate</span><span></span></div>' + part.map(function (r) { return '<div class="stk-row"><span class="stk-n">' + (r.c.market_cap_rank || r.i + 1) + '</span><span class="stk-a">' + logoHtml(r.c).replace(' loading="lazy"', '') + '<b>' + esc(r.c.name) + '</b><i>' + esc(String(r.c.symbol).toUpperCase()) + '</i></span><span class="stk-r">' + stakeRate(r.b) + ' ' + r.b.apy.toFixed(2) + '%</span><span class="lk' + (r.b.locked ? '' : ' un') + '">' + (r.b.locked ? 'Locked' : 'Unlocked') + '</span></div>'; }).join("") + '</div>'; };
     var nC = 2, per = Math.ceil(rated.length / nC), parts = []; for (var q = 0; q < nC; q++) parts.push(rated.slice(q * per, (q + 1) * per));
@@ -4597,9 +4598,10 @@
   function dxT200Img() { /* the year as a wide chart, the numbers beside it */
     return (snapDomAll ? Promise.resolve() : snapLoadDays()).then(function () {
       var ks = Object.keys(snapDomAll || {}).filter(function (d) { return +(snapDomAll[d] || [])[2] > 0 && (!ttDay || d <= ttDay); }).sort(), k = ks[ks.length - 1]; if (!k) return null;
+      if (t2Year && t2Year !== +k.slice(0, 4)) { var kY = ks.filter(function (d) { return +d.slice(0, 4) === t2Year; }).pop(); if (kY) k = kY; } /* the year chosen in the window */
       var y = +k.slice(0, 4), x = dxFrame("TOTAL 200", 2480), body = x.querySelector(".dxi-body");
       body.innerHTML = '<div class="dxi-t2"><div class="snx-card"><div class="snx-ch"><b style="color:' + T200_C + '">TOTAL 200 · ' + y + '</b><span>Market cap of the 200 largest coins</span></div>' + snapYearChart(t200Points(k), y, T200_C, "cap", 1500, 520, false) + '</div>' +
-        '<div class="snx-card dxi-t2r"><div class="t2-top"><b style="color:' + T200_C + '">[' + compact(+snapDomAll[k][2]) + ']</b><span class="fg-sub">' + snapDate(k) + '</span></div>' + t2BreakHtml() + '<div class="t2-src">Before 12 Nov 2026: Created using Data from coingecko.com</div></div></div>';
+        '<div class="snx-card dxi-t2r"><div class="t2-top"><b style="color:' + T200_C + '">[' + compact(+snapDomAll[k][2]) + ']</b><span class="fg-sub">' + snapDate(k) + '</span></div>' + t2BreakHtml(k) + '<div class="t2-src">Before 12 Nov 2026: Created using Data from coingecko.com</div></div></div>';
       return dxCapture(x, "TOTAL 200");
     });
   }
@@ -4752,26 +4754,30 @@
     t2Box.innerHTML = head + '<div class="t2-top"><b style="color:' + T200_C + '">[' + compact(v) + ']</b><span class="fg-sub">' + (k === last ? 'Latest' : 'End of ' + y) + ' · ' + snapDate(k) + '</span></div>' +
       (ys.length > 1 ? '<div class="snap-ym">' + ys.map(function (x) { return '<button type="button" class="gear' + (x === y ? ' active' : '') + '" data-t2y="' + x + '">' + x + '</button>'; }).join("") + '</div>' : '') +
       snapYearChart(t200Points(k), y, T200_C, "cap", 520, 170, false) +
-      '<button type="button" class="snap-showlist t2-brkb' + (t2Brk ? ' open' : '') + '" data-t2brk="1"><b>Marketcap Breakdown</b><span>[' + (ttDay ? snapDate(ttDay) : 'Live') + ']</span></button>' + (t2Brk ? t2BreakHtml() : '') +
+      '<button type="button" class="snap-showlist t2-brkb' + (t2Brk ? ' open' : '') + '" data-t2brk="1"><b>Marketcap Breakdown</b><span>[' + (ttDay ? snapDate(ttDay) : k === last ? 'Live' : snapDate(k)) + ']</span></button>' + (t2Brk ? t2BreakHtml(k) : '') +
       '<div class="t2-src">Before 12 Nov 2026: Created using Data from <a href="https://www.coingecko.com" target="_blank" rel="noopener noreferrer">CoinGecko</a></div></div>';
   }
   t2Btn.addEventListener("click", function () { t2Visible = !t2Visible; t2Btn.classList.toggle("active", t2Visible); renderT200(); });
   t2Box.addEventListener("click", function (e) { var b = e.target.closest("[data-t2y]"); if (b) { t2Year = +b.dataset.t2y; renderT200(); return; } if (e.target.closest("[data-t2brk]")) { t2Brk = !t2Brk; renderT200(); } });
-  function t2Parts() { /* the Top 200 split: Bitcoin, Ethereum, every stablecoin together, and the rest; a past day uses the shares recorded that day */
-    var R = ttDay && snapDomAll && snapDomAll[ttDay]; if (R && R[7] != null) { var T0 = +R[2]; return { tot: T0, rows: [["Bitcoin", BTC_C, R[0] / 100 * T0], ["Ethereum", ETH_C, R[1] / 100 * T0], ["Stablecoins", "#2dd4bf", R[6] / 100 * T0], ["Altcoins", GREY_C, R[7] / 100 * T0]] }; }
+  function t2LastKey() { return Object.keys(snapDomAll || {}).filter(function (d) { return !ttDay || d <= ttDay; }).sort().pop(); }
+  function t2Parts(k) { /* the Top 200 split: Bitcoin, Ethereum, every stablecoin together, and the rest; live from the list, or the shares recorded on a past day (Time Travel, an earlier year) */
+    var use = ttDay || (k && k !== t2LastKey() ? k : null), R = use && snapDomAll && snapDomAll[use];
+    if (R && R[6] != null) { var T0 = +R[2], al = R[7] != null ? +R[7] : Math.max(0, 100 - R[0] - R[1] - R[6]); return { tot: T0, rows: [["Bitcoin", BTC_C, R[0] / 100 * T0], ["Ethereum", ETH_C, R[1] / 100 * T0], ["Stablecoins", "#2dd4bf", R[6] / 100 * T0], ["Altcoins", GREY_C, al / 100 * T0]] }; }
+    if (R) { var T1 = +R[2]; return { tot: T1, rows: [["Bitcoin", BTC_C, R[0] / 100 * T1], ["Ethereum", ETH_C, R[1] / 100 * T1], ["Stablecoins", "#2dd4bf", null], ["Altcoins", GREY_C, null]] }; } /* a day without recorded stablecoins: no guess */
     var top = coins.slice(0, 200), tot = 0, b = 0, e = 0, st = 0; top.forEach(function (c) { var m = +c.market_cap || 0, S = String(c.symbol).toUpperCase(); tot += m; if (S === "BTC") b += m; else if (S === "ETH") e += m; else if (STABLECOINS.indexOf(S) > -1) st += m; });
     return { tot: tot, rows: [["Bitcoin", BTC_C, b], ["Ethereum", ETH_C, e], ["Stablecoins", "#2dd4bf", st], ["Altcoins", GREY_C, Math.max(0, tot - b - e - st)]] };
   }
-  function t2BreakHtml() {
-    var P = t2Parts(); if (!P.tot) return '<div class="rt-empty">No list loaded yet.</div>';
-    return '<div class="t2-brk">' + P.rows.map(function (r) { var pc = r[2] / P.tot * 100; return '<div class="t2-br"><span class="t2-bn"><i style="background:' + r[1] + '"></i>' + r[0] + '</span><b>[' + compact(r[2]) + ']</b><span class="t2-bp" style="color:' + r[1] + '">' + pc.toFixed(1) + '%</span><div class="t2-bar"><div style="width:' + pc.toFixed(2) + '%;background:' + r[1] + '"></div></div></div>'; }).join("") + '</div>';
+  function t2BreakHtml(k) {
+    var P = t2Parts(k); if (!P.tot) return '<div class="rt-empty">No list loaded yet.</div>';
+    return '<div class="t2-brk">' + P.rows.map(function (r) { var pc = r[2] / P.tot * 100; if (r[2] == null) return '<div class="t2-br"><span class="t2-bn"><i style="background:' + r[1] + '"></i>' + r[0] + '</span><b>–</b><span class="t2-bp" style="color:var(--muted)">–</span><div class="t2-bar"><div style="width:0"></div></div></div>';
+      return '<div class="t2-br"><span class="t2-bn"><i style="background:' + r[1] + '"></i>' + r[0] + '</span><b>[' + compact(r[2]) + ']</b><span class="t2-bp" style="color:' + r[1] + '">' + pc.toFixed(1) + '%</span><div class="t2-bar"><div style="width:' + pc.toFixed(2) + '%;background:' + r[1] + '"></div></div></div>'; }).join("") + '</div>';
   }
 
   /* ---------- DOMINANCE: Bitcoin, Ethereum, Stablecoins and Altcoins as shares of the Top 200, one chart per calendar year ---------- */
   var domVisible = false, domFocus = null, domYear = null, domBtn = document.getElementById("dom-btn"), domBox = document.getElementById("dom-container");
   function domS() { return [["Bitcoin", BTC_C, 1], ["Ethereum", ETH_C, 2], ["Stablecoins", "#2dd4bf", 3], ["Altcoins", GREY_C, 4]]; } /* colours are read when drawing, after they exist */
   function domNow(k, P) { /* the four shares shown on top: live from the list (like the Marketcap Breakdown) unless an earlier year or a past day is shown */
-    if (!ttDay && k === Object.keys(snapDomAll || {}).sort().pop() || ttDay && k === ttDay) { var T = t2Parts(); if (T.tot > 0) return [0].concat(T.rows.map(function (r) { return r[2] / T.tot * 100; })); }
+    if (k === t2LastKey()) { var T = t2Parts(k); if (T.tot > 0) return [0].concat(T.rows.map(function (r) { return r[2] == null ? null : r[2] / T.tot * 100; })); } /* the latest day: the same numbers as the Marketcap Breakdown */
     return P[P.length - 1];
   }
   function domSeries(k) { /* [t, btc, eth, stablecoins, altcoins] for every day of k's year up to k */
@@ -4815,9 +4821,10 @@
   function dxDomImg() { /* the four shares big, and all four lines over the year */
     return (snapDomAll ? Promise.resolve() : snapLoadDays()).then(function () {
       var ks = Object.keys(snapDomAll || {}).filter(function (d) { return +(snapDomAll[d] || [])[0] > 0 && (!ttDay || d <= ttDay); }).sort(), k = ks[ks.length - 1]; if (!k) return null;
-      var P = domSeries(k), L = domNow(k, P), x = dxFrame("Market Cap Dominance", 2400), body = x.querySelector(".dxi-body");
-      body.innerHTML = '<div class="dxi-dom"><div class="snx-card dxi-domn">' + domS().map(function (S) { var v = L && L[S[2]]; return '<div><span><i style="background:' + S[1] + '"></i>' + S[0] + '</span><b style="color:' + S[1] + '">' + (v == null ? '–' : v.toFixed(1) + '%') + '</b></div>'; }).join("") + '<div class="fg-sub">Share of the Top 200 market cap · ' + (ttDay ? snapDate(k) : 'Live') + '</div></div>' +
-        '<div class="snx-card"><div class="snx-ch"><b>Dominance · ' + k.slice(0, 4) + '</b><span>Bitcoin, Ethereum, Stablecoins and Altcoins</span></div>' + domChart(k, 1500, 520) + '</div></div><div class="t2-src">Before 12 Nov 2026: Created using Data from coingecko.com</div>';
+      if (domYear && domYear !== +k.slice(0, 4)) { var kY = ks.filter(function (d) { return +d.slice(0, 4) === domYear; }).pop(); if (kY) k = kY; } /* the year chosen in the window */
+      var P = domSeries(k), L = domNow(k, P), F = domFocus && domS().filter(function (S) { return S[2] === domFocus; })[0], x = dxFrame("Market Cap Dominance", 2400), body = x.querySelector(".dxi-body");
+      body.innerHTML = '<div class="dxi-dom"><div class="snx-card dxi-domn">' + domS().map(function (S) { var v = L && L[S[2]]; return '<div' + (F ? (F[2] === S[2] ? ' class="on" style="border-color:' + S[1] + '"' : ' class="dim"') : '') + '><span><i style="background:' + S[1] + '"></i>' + S[0] + '</span><b style="color:' + S[1] + '">' + (v == null ? '–' : v.toFixed(1) + '%') + '</b></div>'; }).join("") + '<div class="fg-sub">Share of the Top 200 market cap · ' + (!ttDay && k === t2LastKey() ? 'Live' : snapDate(k)) + '</div></div>' +
+        '<div class="snx-card"><div class="snx-ch"><b>' + (F ? F[0] + ' Dominance · ' : 'Dominance · ') + k.slice(0, 4) + '</b><span>' + (F ? 'Scaled to its own range' : 'Bitcoin, Ethereum, Stablecoins and Altcoins') + '</span></div>' + domChart(k, 1500, 520, domFocus) + '</div></div><div class="t2-src">Before 12 Nov 2026: Created using Data from coingecko.com</div>';
       return dxCapture(x, "Market Cap Dominance");
     });
   }
