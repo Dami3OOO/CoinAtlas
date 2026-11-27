@@ -3586,7 +3586,7 @@
     caPrice: '<path d="M4 4h16v11h-9l-3 5v-5H4z"/>', caRange: '<rect x="3" y="4" width="18" height="16" rx="1"/><path d="M12 7.5v9M9.5 10L12 7.5l2.5 2.5M9.5 14L12 16.5l2.5-2.5"/>', mag: '<path d="M6 3v8a6 6 0 0012 0V3h-4v8a2 2 0 01-4 0V3zM6 7h4M14 7h4"/>', lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/>',
     hide: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>', trash: '<path d="M4 7h16M10 7V4h4v3M6 7l1 13h10l1-13"/>' };
   var CH_TOOLS = [["cursor", "Cursor"], ["caTrend", "Trend line"], ["caHLine", "Horizontal line"], ["caVLine", "Vertical line"], ["caRect", "Rectangle"], ["caFib", "Fib retracement"], ["caRange", "Date and price range: move in price and %, bars and time"], 0,
-    ["mag", "Magnet: drawings snap to open, high, low and close (or hold Ctrl)"], ["lock", "Lock all drawings"], ["hide", "Hide all drawings"], ["trash", "Remove all drawings of this asset"]];
+    ["mag", "Magnet: the crosshair and drawings only sit on open, high, low or close (or hold Ctrl)"], ["lock", "Lock all drawings"], ["hide", "Hide all drawings"], ["trash", "Remove all drawings of this asset"]];
   var CH_HOT = CH_TOOLS.filter(function (t) { return t && /^ca/.test(t[0]); }).map(function (t) { return t[0]; }); /* keys 1 to 6 pick the drawing tools */
   var chTools = document.getElementById("cs-tools"), chDbar = document.getElementById("cs-dbar");
   var chDset = document.createElement("div"); chDset.className = "cs-set cs-dset"; chDset.hidden = true; document.querySelector("#chart-screen .cs-body").appendChild(chDset);
@@ -3650,16 +3650,14 @@
       onRemoved: function (e) { delete chSquares[e.overlay.id]; chCursor(""); if (chDrawBusy) return false; if (chSel === e.overlay.id) { chSel = null; chDbar.hidden = true; chDset.hidden = true; } if (chDrawRec[e.overlay.id]) { delete chDrawRec[e.overlay.id]; chDrawSave(); } return false; } });
   }
   function chMode() { return "normal"; } /* the magnet is done here (chSnap), with a pull like a real magnet */
-  /* magnet: within 18 px of the open, high, low or close the crosshair and the drawing point jump onto it, and only let go after 30 px */
+  /* magnet, like TradingView's: the crosshair and the drawing point only ever sit on the open, high, low or close of the candle under the mouse, whichever is nearest; they never leave the candles */
   var chSnapState = null;
   function chMagOn() { return !!(chS.mag || chCtrl); }
   function chSnap(idx, y) {
     var dl = chChart.getDataList(), k = dl[idx]; if (!k) { chSnapState = null; return null; }
     var py = function (v) { return chChart.convertToPixel({ value: v }, { paneId: "candle_pane" }).y; };
-    if (chSnapState && chSnapState.idx === idx) { var ys = py(chSnapState.v); if (Math.abs(ys - y) < 30) return { v: chSnapState.v, y: ys }; }
     var best = null; [k.open, k.high, k.low, k.close].forEach(function (v) { var yy = py(v), d = Math.abs(yy - y); if (!best || d < best.d) best = { v: v, y: yy, d: d }; });
-    if (best && best.d < 18) { chSnapState = { idx: idx, v: best.v }; return best; }
-    chSnapState = null; return null;
+    chSnapState = best ? { idx: idx, v: best.v } : null; return best;
   }
   function chSnapPt(p) { if (!chMagOn() || !chChart || p == null || p.dataIndex == null || p.value == null) return; var s = chSnap(p.dataIndex, chChart.convertToPixel({ value: p.value }, { paneId: "candle_pane" }).y); if (s) p.value = s.v; }
   function chPatchSnap() {
