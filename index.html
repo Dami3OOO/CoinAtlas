@@ -478,7 +478,7 @@
   .sq-count { display: flex; justify-content: center; gap: 14px; font-size: 12px; font-weight: 600; margin: -6px 0 12px; font-variant-numeric: tabular-nums; }
   .sq-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; }
   .sq { aspect-ratio: 1; border-radius: 5px; cursor: crosshair; background: var(--line); display: grid; place-items: center; min-width: 0; }
-  .sqm-ctrl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; } .sqm-tfw { margin: 0; } .sqm-tfm { grid-template-columns: 110px 170px; }
+  .sqm-ctrl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; } .sqm-tfw { margin: 0; } .sqm-tfm { grid-template-columns: 110px; }
   .sqm-top-in { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
   .sqm-top-in input { width: 56px; height: 26px; font: inherit; font-size: 12px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; text-align: center; }
   .sqm-x { font: inherit; font-size: 14px; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 6px; width: 30px; height: 26px; cursor: pointer; } .sqm-x:hover { color: var(--fg); background: var(--hover); }
@@ -4926,12 +4926,10 @@
      of one side and covers the other, without moving a single square. Squares glide on every update, flash on a sudden move, fly into the new picture when
      the timeframe changes. A click locks the coin's chart in the Landing Area ---------- */
   var sqVisible = false, sqBtn = document.getElementById("sq-btn"), sqBox = document.getElementById("sq-container");
-  var SQ_KEY = "coinatlas-squares", sqS = { tf: "today", top: 200 }; try { var sqo = JSON.parse(localStorage.getItem(SQ_KEY) || "{}"); if (sqo.tf && sqo.tf !== "24h") sqS.tf = sqo.tf; if (sqo.top) sqS.top = Math.max(1, Math.min(200, +sqo.top || 200)); } catch (e) {}
+  var SQ_KEY = "coinatlas-squares", sqS = { tf: "today", top: 200 }; try { var sqo = JSON.parse(localStorage.getItem(SQ_KEY) || "{}"); if (sqo.tf && sqo.tf !== "24h" && !/^y\d{4}$/.test(sqo.tf)) sqS.tf = sqo.tf; /* a calendar year chosen while it existed falls back to Today */ if (sqo.top) sqS.top = Math.max(1, Math.min(200, +sqo.top || 200)); } catch (e) {}
   function sqSave() { try { localStorage.setItem(SQ_KEY, JSON.stringify(sqS)); } catch (e) {} }
   var SQ_TF = [["1h", "1H"], ["4h", "4H"], ["today", "Today"], ["7d", "7D"], ["30d", "30D"], ["1y", "365D"]]; /* shortest first */
-  function sqYears() { var y = new Date().getUTCFullYear(), o = []; for (var q = y; q >= 2018; q--) o.push(q); return o; } /* a whole calendar year: 1 Jan to 31 Dec, the current one up to now */
   var SQ_TIER = { today: [1, 3, 6, 10], "1h": [0.5, 1, 2, 4], "4h": [1, 2, 4, 7], "7d": [3, 8, 15, 25], "30d": [5, 15, 30, 50], "1y": [10, 40, 100, 200] };
-  sqYears().forEach(function (y) { SQ_TIER["y" + y] = SQ_TIER["1y"]; }); /* a calendar year is shaded like 365 days */
   var SQ_UP = ["#1d4a31", "#1f6a3e", "#22864b", "#29a25a", "#31c26a"], SQ_DN = ["#4b1f22", "#6c2228", "#8e272f", "#b02d36", "#d2343e"];
   var FX_SKINS = ["gold", "silver", "diamond", "emerald", "ruby", "sapphire"];
   function fxSet(el, skin) { /* puts one of the skins on an element, or takes it off */
@@ -4960,19 +4958,8 @@
       }, function () { sq4h[s] = { pc: null, at: Date.now() }; }).then(function () { sq4hBusy--; if (sqVisible && sqS.tf === "4h") { sqLoad4h(); if (!sq4hBusy) sqDraw(); } });
     })(todo.shift());
   }
-  var sqYr = {}, sqYrBusy = 0;
-  function sqLoadYear(tf) { /* each coin's move over a calendar year: the open of 1 January to the last monthly close (Binance monthly candles) */
-    var y = +tf.slice(1), a = Date.UTC(y, 0, 1), M = sqYr[tf] = sqYr[tf] || {}, todo = coins.slice(0, sqS.top).filter(function (c) { var s = String(c.symbol).toUpperCase(), x = M[s]; return STABLECOINS.indexOf(s) < 0 && (!x || (!x.busy && y === new Date().getUTCFullYear() && Date.now() - x.at > 600000)); });
-    while (sqYrBusy < 6 && todo.length) (function (c) {
-      var s = String(c.symbol).toUpperCase(), pair = (c.pairs && c.pairs.binance) || s + "USDT"; M[s] = { pc: M[s] ? M[s].pc : null, at: Date.now(), busy: true }; sqYrBusy++;
-      getJson("https://data-api.binance.vision/api/v3/klines?symbol=" + pair + "&interval=1M&startTime=" + a + "&limit=12", 10000).then(function (k) {
-        M[s] = { pc: k && k.length && +k[0][0] === a && +k[0][1] > 0 ? (+k[k.length - 1][4] / +k[0][1] - 1) * 100 : null, at: Date.now() }; /* only coins already trading on 1 January */
-      }, function () { M[s] = { pc: null, at: Date.now() }; }).then(function () { sqYrBusy--; if (sqVisible && sqS.tf === tf) { sqLoadYear(tf); if (!sqYrBusy) sqDraw(); } });
-    })(todo.shift());
-  }
   function sqPc(c) {
     if (ttDay && sqS.tf !== "today") return null; /* a past day knows its change against the day before, nothing shorter or longer */
-    if (/^y\d{4}$/.test(sqS.tf)) { var yv = sqYr[sqS.tf] && sqYr[sqS.tf][String(c.symbol).toUpperCase()]; return yv && yv.pc != null && isFinite(yv.pc) ? yv.pc : null; }
     if (sqS.tf === "today") return dayOpenCache[c.symbol] ? changeOf(c) : null;
     if (sqS.tf === "4h") { var h = sq4h[String(c.symbol).toUpperCase()]; return h && h.pc != null && isFinite(h.pc) ? h.pc : null; }
     var p = sqPap && sqPap[String(c.symbol).toUpperCase()], v = p && p.q["percent_change_" + sqS.tf];
@@ -5015,13 +5002,12 @@
     var all = d.items, up = all.filter(function (x) { return x.pc > 0; }).length, dn = all.filter(function (x) { return x.pc < 0; }).length;
     return '<b style="color:var(--up)">' + up + '</b><span>/</span><b style="color:var(--down)">' + dn + '</b><span>/</span><b style="color:var(--stable-blue)" title="Stablecoins, left out of the squares">' + d.stable + '</b>';
   }
-  function sqTfLabel() { if (/^y\d{4}$/.test(sqS.tf)) return sqS.tf.slice(1) + " · " + cycleStage(+sqS.tf.slice(1)); var t = SQ_TF.filter(function (t) { return t[0] === sqS.tf; })[0]; return t ? t[1] : "Today"; }
+  function sqTfLabel() { var t = SQ_TF.filter(function (t) { return t[0] === sqS.tf; })[0]; return t ? t[1] : "Today"; }
   function sqCtrlHtml() { /* Top [1-200] on the left, the same timeframe picker as the Locked Hovercharts on the right */
     return '<div class="sqm-ctrl"><label class="sqm-top-in">Top <input type="number" min="1" max="200" step="1" inputmode="numeric" data-sqtop="1" value="' + sqS.top + '" aria-label="How many coins of the list"></label>' +
       (sqSplit != null ? '<button type="button" class="sqm-x sqm-auto" data-sqauto="1" title="Put the Sentiment Front back where the market puts it">Auto</button>' : '') +
       '<span class="sqm-cnt"></span><div class="fg-yr-wrap tf-row sqm-tfw"><div class="fg-yr-pick"><button type="button" class="fg-yr-btn">' + sqTfLabel() + ' ▾</button><div class="fg-tf-menu sqm-tfm"><div class="fg-tf-col">' +
-      SQ_TF.map(function (t) { return '<button type="button" data-sqtf="' + t[0] + '"' + (sqS.tf === t[0] ? ' class="active"' : '') + '>' + t[1] + '</button>'; }).join("") + '</div><div class="fg-tf-col yrs">' +
-      sqYears().map(function (y) { return '<button type="button" data-sqtf="y' + y + '"' + (sqS.tf === "y" + y ? ' class="active"' : '') + '>' + y + ' · ' + cycleStage(y) + '</button>'; }).join("") + '</div></div></div></div></div>';
+      SQ_TF.map(function (t) { return '<button type="button" data-sqtf="' + t[0] + '"' + (sqS.tf === t[0] ? ' class="active"' : '') + '>' + t[1] + '</button>'; }).join("") + '</div></div></div></div></div>';
   }
   function sqMakeView() { /* the frame is built once; the squares inside are kept and moved */
     if (sqView && sqBox.contains(sqView.map)) return sqView;
@@ -5081,7 +5067,7 @@
   }
   function sqDraw() {
     if (!sqVisible) return;
-    if (sqS.tf === "4h") sqLoad4h(); else if (/^y\d{4}$/.test(sqS.tf)) sqLoadYear(sqS.tf); else if (sqS.tf !== "today") sqLoadPap();
+    if (sqS.tf === "4h") sqLoad4h(); else if (sqS.tf !== "today") sqLoadPap();
     else { coins.slice(0, sqS.top).forEach(function (c) { if (dayOpenCache[c.symbol] === undefined && !c.__pendingMidnight) { c.__pendingMidnight = true; midnightQueue.push(c); } }); processMidnightQueue(); }
     var d = sqItems(); if (d.pend.length && !sqTickT) sqTickT = setTimeout(sqTick, 220);
     sqPaint(d);
@@ -5224,7 +5210,7 @@
       '<div class="stk-proj"><div><span>Now</span><b>' + stkNum(tokens) + ' ' + esc(sym) + '</b><em>' + price(tokens * px) + '</em></div><div><span>After 365 Days</span><b>' + stkNum(tokens + g) + ' ' + esc(sym) + '</b><em>' + price((tokens + g) * px) + '</em></div><div class="gain"><span>Gain</span><b>+' + stkNum(g) + ' ' + esc(sym) + '</b><em>+' + stkPc(g / tokens * 100) + ' · ' + price(g * px) + '</em></div></div>';
     return '<div class="stk-bar"><button type="button" class="gear stk-back" data-stkback="1">‹ ' + esc(sym) + '</button><span class="stk-asset">' + logoHtml(c) + '<b>' + esc(x.name) + '</b><i>' + esc(x.kind) + '</i></span><span></span></div>' +
       '<div class="stk-pv"><span class="stk-r' + (x.apy == null ? ' na' : '') + '">' + stkRateTxt(x) + '</span>' + stkLock(x) + '</div>' +
-      stkAmtField(sym) + out + stkChartHtml(sym, st, x.name) + STK_NOTE;
+      stkAmtField(sym) + out + (x.apy == null ? '' : stkChartHtml(sym, st, x.name)) + STK_NOTE; /* no rate, no history to show */
   }
 
   var stkChY = null;

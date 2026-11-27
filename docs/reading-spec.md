@@ -590,4 +590,5 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - FOMC: Termine zeigen nur den Tag der Entscheidung (z. B. „Wed, 9 Dec 2026“) statt beider Sitzungstage, im Fenster und im Export.
 - Staking-Hinweis (Rate, not sponsored, Quellen) zentriert und mit mehr Abstand zum Chart.
 - Nachgetragene Staking-Tage ohne Eintages-Spitzen: Werte über dem 1,8-Fachen oder unter einem 1,8tel des Medians von ±15 Tagen fallen weg (46 Stück), auch künftig im Backfill-Skript.
-- Sentiment Squares: Zeitraum-Auswahl sortiert (1H, 4H, Today, 7D, 30D, 365D) und rechts Kalenderjahre 2018 bis heute (1. Jan bis 31. Dez, laufendes Jahr bis jetzt): Binance-Monatskerzen, Open des 1. Januar bis letzter Monatsschluss; nur Coins, die am 1. Januar schon gehandelt wurden. Färbung wie 365D.
+- Sentiment Squares: Zeitraum-Auswahl sortiert (1H, 4H, Today, 7D, 30D, 365D). Kalenderjahre wieder entfernt.
+- Staking-Anbieter ohne Rate („Rate on site“): keine Rate History und keine Jahresknöpfe in der Anbieter-Ansicht.
