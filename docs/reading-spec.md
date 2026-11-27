@@ -593,3 +593,4 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Sentiment Squares: Zeitraum-Auswahl sortiert (1H, 4H, Today, 7D, 30D, 365D). Kalenderjahre wieder entfernt.
 - Staking-Anbieter ohne Rate („Rate on site“): keine Rate History und keine Jahresknöpfe in der Anbieter-Ansicht.
 - Staking-Anbieter-Ansicht: der Anbieter als lila Link immer an derselben Stelle, zentriert unter Rate und Locked/Unlocked (mit und ohne Rate); ohne Rate kein Mengenfeld, kein Chart, kein Zusatztext.
+- Portfolio Manager, manuelle Wallet im Edit-Modus: Klick auf einen Coin in der Liste fügt ihn hinzu, ohne die Seite nach oben zu springen (Mengenfeld bekommt den Fokus ohne Scrollen).

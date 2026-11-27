@@ -7362,7 +7362,7 @@
       pfSaveManual(); pfWlRender();
       pfRenderBody();
       var inp = pfBox.querySelector('.pf-row[data-sym="' + sym + '"] input[data-f="amt"]');
-      if (inp) { inp.focus(); if (inp.scrollIntoView) inp.scrollIntoView({ block: "nearest" }); }
+      if (inp) { try { inp.focus({ preventScroll: true }); } catch (x) {} } /* ready for the amount, but the page stays where you are in the list */
     }
     tr.classList.add("flash"); setTimeout(function () { tr.classList.remove("flash"); }, 350);
   }, true);
