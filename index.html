@@ -4610,7 +4610,7 @@
     var dd = function (d, o) { return new Date(d + "T12:00:00Z").toLocaleDateString("en-GB", Object.assign({ timeZone: "UTC" }, o)); };
     var x = dxFrame("FOMC", 2000), body = x.querySelector(".dxi-body"), yr = function (Y) {
       return '<div class="dxi-fy"><b>' + Y + '</b><div class="dxi-fm">' + FOMC.filter(function (m) { return +m[0].slice(0, 4) === Y; }).map(function (m) { var past = fomcAt(m[1]) <= now, on = nx && m === nx, days = Math.ceil((fomcAt(m[1]) - now) / 864e5);
-        return '<div class="dxi-mt' + (past ? ' past' : '') + (on ? ' on' : '') + '"><b>' + dd(m[0], { day: "numeric" }) + '–' + dd(m[1], { day: "numeric", month: "short" }) + '</b><span>' + (m[2] ? 'Strategy only' : past ? 'Done' : on ? 'Next' : 'in ' + days + ' days') + '</span></div>'; }).join("") + '</div></div>'; };
+        return '<div class="dxi-mt' + (past ? ' past' : '') + (on ? ' on' : '') + '"><b>' + dd(m[1], { weekday: "short", day: "numeric", month: "short" }) + '</b><span>' + (m[2] ? 'Strategy only' : past ? 'Done' : on ? 'Next' : 'in ' + days + ' days') + '</span></div>'; }).join("") + '</div></div>'; };
     body.innerHTML = '<div class="dxi-fomc"><div class="snx-card fomc-next">' + (nx ? '<span class="fg-sub">Next Rate Decision</span><b>' + fomcCd(fomcAt(nx[1]) - now) + '</b><span>' + dd(nx[1], { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + '</span><span class="fg-sub">2:00 PM New York · press conference 2:30 PM</span>' : '<span>No meeting scheduled yet</span>') + '</div>' +
       '<div class="snx-card">' + yr(y) + yr(y + 1) + '</div></div><div class="fg-sub t2-note">Dates as published by the Federal Reserve; tentative until confirmed at the meeting before. Created using Data from federalreserve.gov</div>';
     return dxCapture(x, "FOMC");
@@ -4843,7 +4843,7 @@
     fomcBox.hidden = false; updatePinnedColVisibility();
     var now = ttDay ? nyDay(Date.parse(ttDay + "T12:00:00Z")).end : Date.now(), nx = FOMC.filter(function (m) { return !m[2] && fomcAt(m[1]) > now; })[0]; /* in Time Travel: as seen at the end of the travelled day */
     var dd = function (d, o) { return new Date(d + "T12:00:00Z").toLocaleDateString("en-GB", Object.assign({ timeZone: "UTC" }, o)); };
-    var span = function (m) { return dd(m[0], { day: "numeric" }) + "–" + dd(m[1], { day: "numeric", month: "short", year: "numeric" }); };
+    var span = function (m) { return dd(m[1], { weekday: "short", day: "numeric", month: "short", year: "numeric" }); }; /* the day of the decision; the meeting starts the day before */
     var h = '<div class="pinned-card chart-container pf-card fomc-card dev-target" data-dev-name="FOMC" data-dev-color="#93c5fd"><div class="pf-title">FOMC</div>';
     if (nx) { var at = fomcAt(nx[1]);
       h += '<div class="fomc-next"><span class="fg-sub">Next Rate Decision</span><b id="fomc-cd">' + fomcCd(at - now) + '</b><span>' + dd(nx[1], { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + ' · 2:00 PM New York · ' + new Date(at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + ' your time</span><span class="fg-sub">Statement at 2:00 PM, press conference at 2:30 PM</span></div>'; }
