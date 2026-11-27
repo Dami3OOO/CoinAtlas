@@ -592,3 +592,4 @@ Verteilung der Tage: 1.466 nichts zu tun, 1.189 Kauf in Fear, 209 ETH halten, 6 
 - Nachgetragene Staking-Tage ohne Eintages-Spitzen: Werte über dem 1,8-Fachen oder unter einem 1,8tel des Medians von ±15 Tagen fallen weg (46 Stück), auch künftig im Backfill-Skript.
 - Sentiment Squares: Zeitraum-Auswahl sortiert (1H, 4H, Today, 7D, 30D, 365D). Kalenderjahre wieder entfernt.
 - Staking-Anbieter ohne Rate („Rate on site“): keine Rate History und keine Jahresknöpfe in der Anbieter-Ansicht.
+- Staking-Anbieter ohne Rate: Zeile „No public rate: the rate is on <Anbieter>“ mit dem Anbieter als lila Link; kein Mengenfeld, kein Chart.
