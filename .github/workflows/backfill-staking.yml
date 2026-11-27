@@ -1,0 +1,35 @@
+name: Backfill staking history
+
+# Started by hand. Fills data/staking-history.json from a start day on (default 2026-11-12) with DefiLlama's daily pool history
+# (scripts/backfill-staking.mjs). Recorded days are never replaced; native staking has no history and stays empty before recording began.
+on:
+  workflow_dispatch:
+    inputs:
+      start:
+        description: "First day to fill (YYYY-MM-DD)"
+        default: "2026-11-12"
+
+permissions:
+  contents: write
+
+concurrency: record-snapshot
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Backfill from DefiLlama
+        run: node scripts/backfill-staking.mjs "${{ inputs.start }}"
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/staking-history.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Backfill staking history"
+          git pull --rebase
+          git push
