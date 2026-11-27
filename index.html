@@ -2743,6 +2743,7 @@
   var flashTimer;
   function jumpToSearch(i) {
     var c = displayCoins[i]; if (!c) return; 
+    if (portfolioVisible && pfManEd()) { pfAddSym(c.symbol.toUpperCase()); closeResults(); qEl.value = ""; qEl.dispatchEvent(new Event("input")); return; } /* editing a manual wallet: a search result goes straight into it */
     
     if (i >= shown) { 
       var existingIdx = pinnedCoins.findIndex(function (x) { return x.symbol === c.symbol; });
@@ -7350,20 +7351,22 @@
     place(e); popEl.classList.add("on");
   });
   pfBox.addEventListener("mouseleave", pfHideHover);
+  function pfAddSym(sym) { /* a coin into the manual wallet being edited; the amount field is ready, the page stays where it is */
+    if (!pfHolding(sym)) {
+      pfEditW.holdings.push({ sym: sym, amount: 0, chains: [] });
+      pfSaveManual(); pfWlRender();
+      pfRenderBody();
+    }
+    var inp = pfBox.querySelector('.pf-row[data-sym="' + sym + '"] input[data-f="amt"]');
+    if (inp) { try { inp.focus({ preventScroll: true }); } catch (x) {} }
+  }
   /* in Edit mode, clicking a coin in the list adds it to the portfolio; otherwise it locks its chart as usual */
   rowsEl.addEventListener("click", function (e) {
     if (!portfolioVisible || !pfManEd() || devFrozen) return;
     var tr = e.target.closest("tr"); if (!tr) return;
     e.stopPropagation();
     var c = displayCoins[+tr.dataset.i]; if (!c) return;
-    var sym = c.symbol.toUpperCase();
-    if (!pfHolding(sym)) {
-      pfEditW.holdings.push({ sym: sym, amount: 0, chains: [] });
-      pfSaveManual(); pfWlRender();
-      pfRenderBody();
-      var inp = pfBox.querySelector('.pf-row[data-sym="' + sym + '"] input[data-f="amt"]');
-      if (inp) { try { inp.focus({ preventScroll: true }); } catch (x) {} } /* ready for the amount, but the page stays where you are in the list */
-    }
+    pfAddSym(c.symbol.toUpperCase());
     tr.classList.add("flash"); setTimeout(function () { tr.classList.remove("flash"); }, 350);
   }, true);
   pfBtn.addEventListener("click", function () {
